@@ -23,7 +23,7 @@ date: '2026-03-03'
 
 ## Executive Summary
 
-SafetyProjectIdeas is an AI-powered research idea generation pipeline for BAISH (Buenos Aires AI Safety Hub). BAISH is building new research teams and needs a systematic way to discover, evaluate, and curate AI Safety research project ideas — a process that is currently entirely ad hoc.
+SafetyProjectIdeas is an AI-powered research idea generation pipeline for BAISH (Buenos Aires AI Safety Hub). BAISH is building new research teams and needs a systematic way to discover, evaluate, and curate AI Safety research project ideas — a process that is currently entirely ad hoc. The system is designed for immediate value — auto-generating scored, team-calibrated research ideas from day one using Claude's AI Safety knowledge and active web search, with a curated knowledge base built in parallel to progressively improve grounding and coverage.
 
 The pipeline automates the labor-intensive work of scanning the AI Safety research landscape — open problems lists, research agendas, recent papers, system cards, forums — and generates candidate project ideas that are scored against five quality criteria: soundness, relevance, theory of impact, low compute requirements, and accessible technical complexity. Ideas are calibrated to three team configurations: mentor-guided novice projects, individual novice projects with mentorship, and experienced researcher groups.
 
@@ -65,7 +65,8 @@ The pipeline is built as Claude Code skills with LiteLLM as the provider abstrac
 ### Technical Success
 
 - **Output quality over operational reliability:** The system should produce high-quality, well-scored ideas even if it requires some manual intervention — quality is non-negotiable, automation is nice-to-have
-- **Multi-LLM diversity:** Generation phase calls multiple LLM providers in parallel via LiteLLM, producing diverse idea pools that are then refined and deduplicated
+- **Immediate value without infrastructure:** The system produces useful, scored research ideas from day one with no KB and no pipeline infrastructure — Claude's training knowledge plus active web search is the baseline. KB enrichment improves quality progressively
+- **Multi-LLM diversity (post-MVP):** Generation phase calls multiple LLM providers in parallel via LiteLLM, producing diverse idea pools that are then refined and deduplicated
 - **Configurability:** Team profiles and scoring criteria are configurable — what defines a "good project" varies by team type (compute constraints matter for some teams, not others)
 - **Auditability:** Every pipeline stage logs inputs, decisions, and outputs so users can understand why ideas were scored/filtered the way they were
 - **Citation integrity:** Every referenced paper is verifiable (link or DOI), every claim traces to a specific source passage
@@ -82,31 +83,45 @@ The pipeline is built as Claude Code skills with LiteLLM as the provider abstrac
 
 ## Product Scope
 
-### MVP - Minimum Viable Product
+### MVP — Two Parallel Tracks
 
-- **Source → Generate → Filter/Score → Refine → Rank flow** for a complete pipeline run
-- One-liner hypothesis generation with staged filtering against configurable quality criteria
-- Relevant-context-only feeding (abstract + limitations, not full papers)
-- Multi-LLM parallel generation via LiteLLM with deduplication
-- **Model tiering** — cheaper models for quick screens, capable models for deep analysis
-- **Refine/Iterate stage** with auto-strengthen and alternative framing
-- **Basic ranking** — scored and sorted output list of ideas
-- Collaborative chat interface for human-AI co-generation and refinement
-- Configurable team profiles (mentor+novice, solo novice, experienced group)
-- Configurable scoring criteria and weights per team type
-- **Knowledge base creation and update mechanism** — build, persist, and manually update the research knowledge base the pipeline draws from
-- **Persistent memory** — pipeline accumulates knowledge and applies it across sessions
-- Basic pipeline logging for auditability
+**Track A — Ideas (day 1):**
+- Auto-batch idea generation balanced across researched categories, using Claude's AI Safety knowledge + active web search. Generation strategies include: novel directions, **variations of existing experiments** (high priority — produces well-scoped projects), and **follow-up experiments to explain observed effects**
+- `/research-landscape` skill to discover open problems lists, agendas, key sources, and which categories to cover
+- Scoring against configurable quality criteria with explicit reasoning and confidence
+- Novelty assessment: KB check (if available) → web search (always, mandatory)
+- Auto-strengthen and alternative framing for promising ideas
+- Ranked output as markdown with confidence reported throughout
+- Collaborative brainstorming as secondary mode for directed exploration
+- Evaluate existing ideas against same criteria
+- Configurable team profiles (mentor+novice, solo novice, experienced group) and scoring criteria with weights per team type
+- Participant profiles for tailored generation
+- All stages report confidence but never auto-filter — human decides
+
+**Track B — Knowledge Base (parallel):**
+- Ingest 800-paper shallow review CSV (auto-map to KB schema using existing taxonomy)
+- KB query module for selective context retrieval
+- Discover key AI Safety authors' recent work
+- `/research-sources` skill to find additional sources
+- Source connectors and document parsers (ArXiv, Semantic Scholar, web scraper)
+
+**Convergence:**
+- As Track B populates the KB, Track A automatically gets richer context
+- Full pipeline run connecting all stages once both tracks are validated
+- Pipeline logging for auditability
 - Citation verification for referenced papers
+- **Persistent memory** — pipeline accumulates knowledge and applies it across sessions
 
 ### Growth Features (Post-MVP)
 
+- **Multi-LLM parallel generation** via LiteLLM with deduplication for idea diversity
 - **Advanced ranking** with Pareto frontier and tier system (pursue now / promising / park)
 - **Continuous paper scanning** — automated monitoring of ArXiv, Alignment Forum, LessWrong, conferences
 - Idea invalidation/strengthening based on new publications
 - Source quality tracking (which sources produce the best ideas over time)
 - Filter calibration from user feedback
 - Graveyard review — periodic resurfacing of killed ideas for human spot-check
+- **Collaborator discovery** — identify potential collaborators or orgs with overlapping research interest for generated ideas
 - **Public chat interface** — anyone can use the chatbot to generate ideas fitting their specific needs
 
 ### Vision (Future)
@@ -121,11 +136,17 @@ The pipeline is built as Claude Code skills with LiteLLM as the provider abstrac
 
 Guido is the Research Coordinator at BAISH, a young AI Safety hub in Buenos Aires building its first wave of research teams. He has ~19 project slots to fill — 15 individual projects for grad students (some with mentors, some solo with guidance) and 4 team projects for more experienced groups. Until now, finding good project ideas has been entirely ad hoc: reading papers when he has time, following conversations on the Alignment Forum, occasionally stumbling on something promising. He knows he's missing important directions, but the landscape is too vast to cover manually.
 
-One morning, Guido decides it's time to run SafetyProjectIdeas for real. He starts by updating the knowledge base — the pipeline already has persistent memory from previous sessions, so it builds on what it already knows. He kicks off a full pipeline run. Multiple LLMs generate ideas in parallel — Claude, GPT, Gemini — each bringing a different creative angle to the same source material. The pipeline deduplicates, scores each idea against his configured criteria, auto-strengthens the promising ones, and produces a ranked list. Guido scans the output and immediately spots three ideas he never would have found on his own: a novel approach to evaluating deceptive alignment in tool-using agents, a low-compute replication study that could challenge a key assumption in the scalable oversight literature, and a cross-pollination between mechanistic interpretability and developmental psychology.
+He opens SafetyProjectIdeas and runs `/research-landscape` to map what's out there — the skill searches for open problems lists, research agendas, and key sources across AI Safety, reporting what categories are well-covered and where gaps exist. He reviews the landscape summary and configures which categories to prioritize.
 
-But the real value comes next. He opens the collaborative chat and says: "I have a grad student with strong NLP experience but no safety background, and she has access to a single A100 for three months. What from this list could work for her?" The agent refines its recommendations, adjusting for compute constraints and technical accessibility, and proposes a scoped project with a clear methodology. Guido iterates on it, pushes back on the impact framing, and together they shape a project proposal ready to present.
+He then runs `/generate-ideas` with his team profiles configured. The system auto-generates 40 idea sketches balanced across the researched categories — drawing on Claude's deep knowledge of AI Safety plus active web searches for current work. Each idea comes with a confidence score. He didn't build a knowledge base, didn't configure a pipeline — ideas on day one.
 
-Over the next weeks, Guido repeats this for different team configurations. By the end, he has a full research agenda — 19 staffed projects, each with a clear rationale, and the confidence that the pipeline scanned sources he never would have reached alone.
+Meanwhile, Track B is ingesting the 800-paper shallow review into the KB. As papers load in, subsequent generation runs get richer — ideas cite specific recent papers, novelty checks cross-reference the KB before hitting the web.
+
+The system auto-scores each idea against configured criteria, checks novelty (KB first, then web — always), auto-strengthens the promising ones, and produces a ranked list with confidence throughout. Guido scans the output and spots three ideas he never would have found: a novel approach to evaluating deceptive alignment in tool-using agents, a low-compute replication study challenging scalable oversight assumptions, and a cross-pollination between interpretability and developmental psychology.
+
+He opens `/brainstorm` to dig into the developmental psychology angle: "Expand on that. What specifically from developmental psych? Could a solo novice with NLP experience handle it?" They refine it together into a concrete proposal.
+
+Over the next weeks, as the KB grows and generation runs get richer, he fills all 19 project slots — each with a clear rationale, and the confidence that the system searched broadly.
 
 ### Journey 2: Guido — Configuring the Pipeline for Different Teams
 
@@ -203,12 +224,20 @@ SafetyProjectIdeas is a hybrid CLI/conversational AI tool built as Claude Code s
 
 ### Command Structure
 
-**Skill-Invoked Commands (MVP):**
-- `/run-pipeline` — Execute full Source → Generate → Filter/Score → Refine → Rank flow
-- `/update-kb` — Fetch new sources, present summary for approval, integrate
-- `/build-kb` — Initial knowledge base construction with criteria definition
+**Track A Skills (day 1):**
+- `/research-landscape` — Discover open problems lists, agendas, key sources, categories to cover
+- `/generate-ideas` — Auto-batch idea generation balanced across researched categories
+- `/score-ideas` — Score against criteria + novelty (KB if available → web always)
+- `/refine-ideas` — Auto-strengthen, alternative framings
+- `/rank-ideas` — Sorted output with confidence
+- `/brainstorm` — Collaborative chat for directed exploration (secondary mode)
+- `/evaluate-idea` — Score an existing idea against criteria
 - `/configure-teams` — Define/edit team profiles, scoring criteria, weights
-- `/brainstorm` — Enter collaborative chat mode for human-AI idea co-generation
+
+**Track B Skills (KB construction, parallel):**
+- `/research-sources` — Find additional open problems lists, agendas
+- `/build-kb` — KB construction with ingestion and approval workflow
+- `/run-pipeline` — Full end-to-end pipeline (once both tracks converge)
 
 **Batch/Scheduled Operations:**
 - Long-running processes (full pipeline runs, KB builds/updates) must be schedulable as batch jobs
@@ -248,17 +277,19 @@ Pipeline internals (how stages processed the idea) are logged but not exposed to
 
 ### Implementation Considerations
 
+- **Primary Interaction Mode:** Auto-generation (batch) is the primary mode, not interactive brainstorming. Guido's time is the bottleneck — the system auto-generates, scores, refines, and ranks. Guido reviews ranked output, then optionally brainstorms to refine specific directions. Implementation is not a bottleneck; Guido's review time is.
 - **Claude Code skills architecture** — Each major operation is a discrete skill, enabling clean separation of concerns and independent iteration
-- **LiteLLM provider abstraction** — All LLM calls go through LiteLLM, enabling model tiering and multi-provider parallel generation without provider-specific code
+- **LiteLLM provider abstraction (post-MVP)** — All LLM calls go through LiteLLM, enabling model tiering and multi-provider parallel generation without provider-specific code
 - **Persistent memory** — Pipeline state, learned preferences, and accumulated knowledge persist across sessions via Claude Code's native memory or dedicated storage
 - **Batch mode** — Skills must support non-interactive execution for scheduled runs, using pre-configured criteria instead of interactive approval
+- **Confidence reporting** — All idea outputs include confidence scores (in markdown frontmatter). Confidence is reported but never used for automated filtering — human decides what to act on
 
 ## Project Scoping & Phased Development
 
 ### MVP Strategy & Philosophy
 
-**MVP Approach:** Experience MVP with stage-by-stage validation
-**Core Principle:** Build a transparent, interactive pipeline where each stage can be run, inspected, and refined independently. The full automated pipeline is the convergence point, not the starting point.
+**MVP Approach:** Two parallel tracks — immediate idea generation + parallel KB construction
+**Core Principle:** Generate value on day one with zero KB infrastructure. Build the knowledge base in parallel to progressively improve grounding and coverage. Each track delivers standalone value. Guido's time is the bottleneck — auto-generate first, human reviews.
 **Resource Requirements:** Solo developer (guido) with Claude Code as development environment
 
 ### Progressive Elaboration Format
@@ -282,19 +313,32 @@ Ideas evolve through the pipeline — cheap to generate, progressively enriched 
 
 **Design constraint:** Proposals must be short enough that a human can scan 20+ in a sitting and compare them meaningfully, yet concrete enough to be directly actionable. Team fit is assessed separately via collaborative chat when matching proposals to specific teams.
 
+**Scoping rule — incremental deliverability:** It is acceptable for a project idea to require more time than a single project cycle to fully implement, as long as there exists a meaningful intermediate deliverable that makes real progress toward the full goal. The pipeline should not reject ambitious ideas purely on timeline grounds — instead, it should identify and articulate what a realistic first deliverable looks like. Ideas with no natural intermediate milestone (all-or-nothing projects) should be flagged as higher risk.
+
 ### MVP Development Arc
 
-The MVP follows a stage-by-stage buildout that converges to the full pipeline:
+The MVP follows two parallel tracks that converge:
 
-1. **Knowledge Base Build** — Define inclusion criteria, autonomous discovery, coarse-grained approval, structured storage
-2. **Source Stage** — Pull relevant material from KB based on criteria
-3. **Generate Stage** — Multi-LLM parallel generation via LiteLLM, brief idea sketches from source material
-4. **Filter/Score Stage** — Staged evaluation against configurable criteria, with human inspection of scoring decisions
-5. **Refine Stage** — Auto-strengthen weak scores, alternative framing, deduplication
-6. **Rank Stage** — Scored and sorted output as markdown with full citation provenance
-7. **Full Pipeline Run** — Connect all validated stages into end-to-end flow
+**Track A — Ideas (from day 1, parallel with Track B):**
+1. `/research-landscape` — Discover open problems lists, agendas, key sources, categories to cover
+2. `/generate-ideas` — Auto-batch generation balanced across researched categories (Claude knowledge + web search)
+3. `/score-ideas` — Evaluate against criteria + novelty check (KB if available → web always)
+4. `/refine-ideas` — Auto-strengthen, alternative framings
+5. `/rank-ideas` — Sorted output with confidence reported throughout
+6. `/brainstorm` — Interactive collaborative mode (secondary)
+7. `/evaluate-idea` — Score existing ideas
 
-Each stage is iterable — run it, inspect output, adjust configuration, re-run until satisfied before moving on.
+**Track B — Knowledge Base (parallel with Track A):**
+1. Ingest 800-paper shallow review CSV into KB schema
+2. KB query module for filtering and selective retrieval
+3. Key author discovery via Semantic Scholar
+4. `/research-sources` — Find additional sources
+5. Source connectors and document parsers
+6. Full KB build pipeline with approval workflow
+
+**Convergence:** As Track B populates the KB, Track A stages automatically use richer context. Full end-to-end pipeline run once both tracks validated.
+
+Each skill is iterable — run it, inspect output, adjust configuration, re-run until satisfied.
 
 ### MVP Feature Set (Phase 1)
 
@@ -304,16 +348,17 @@ Each stage is iterable — run it, inspect output, adjust configuration, re-run 
 - Journey 3 (Knowledge Base Management) — initial build with inclusion criteria and coarse-grained approval; manual update command
 
 **Must-Have Capabilities:**
-- Stage-by-stage pipeline execution (run individual stages independently)
-- Full pipeline run (all stages in sequence once validated)
-- Multi-LLM parallel generation via LiteLLM with deduplication
-- Model tiering — cheaper models for quick screens, capable models for deep analysis
+- Auto-batch idea generation as primary mode (not interactive) — Guido's time is the bottleneck
+- `/research-landscape` skill for category and source discovery
+- Active web search for novelty checks (always, KB is optional first pass)
+- Confidence reporting on all outputs (never auto-filtered — human decides)
 - Refine/Iterate stage with auto-strengthen and alternative framing
-- Basic ranking — scored and sorted output as markdown
-- Collaborative chat for inspection, steering, and brainstorming at every stage
+- Ranked output — scored and sorted as markdown with confidence
+- Collaborative brainstorming as secondary mode for directed exploration
 - Configurable team profiles and scoring criteria (YAML config files)
-- Knowledge base: autonomous initial build with user-defined inclusion criteria and coarse-grained approval
-- Knowledge base: update command with same approval workflow
+- Participant profiles for tailored generation
+- 800-paper shallow review ingestion as KB bootstrap (parallel track)
+- KB query module for selective context retrieval (enriches Track A as it builds)
 - Persistent memory across sessions
 - Pipeline logging (JSON)
 - Citation verification — every idea cites papers with verifiable links/DOIs
@@ -327,6 +372,7 @@ Each stage is iterable — run it, inspect output, adjust configuration, re-run 
 - Source quality tracking (which sources produce best ideas)
 - Filter calibration from user feedback
 - Graveyard review — periodic resurfacing of killed ideas
+- **Collaborator discovery** — identify potential collaborators or orgs with overlapping research interest for generated ideas
 - **Public chat interface** — web UI where researchers self-serve idea generation
 
 ### Vision (Phase 3)
@@ -347,7 +393,9 @@ Each stage is iterable — run it, inspect output, adjust configuration, re-run 
 
 ## Functional Requirements
 
-### Knowledge Base Management
+**Track/Phase Annotations:** Each FR section is annotated with its implementation track.
+
+### Knowledge Base Management *(Track B — parallel KB construction)*
 
 - **FR1:** Coordinator can define inclusion criteria specifying which AI Safety subfields, organizations, publication venues, and authors are in scope or explicitly excluded
 - **FR2:** Coordinator can trigger an initial knowledge base build that autonomously discovers and crawls relevant AI Safety sources filtered by the defined inclusion criteria
@@ -357,10 +405,11 @@ Each stage is iterable — run it, inspect output, adjust configuration, re-run 
 - **FR6:** Coordinator can edit inclusion criteria at any time to broaden or narrow what the pipeline tracks
 - **FR7:** System detects and flags notable changes during updates: contradictions with existing knowledge, alignment with existing ideas, and coverage gaps
 - **FR8:** Knowledge base is organized to support selective context retrieval — agents browse only the relevant subset for each task or conversation
-- **FR9:** System can filter KB content by subfield, organization, publication venue, recency, or custom tags when providing context to pipeline stages or brainstorming
+- **FR9:** System can filter KB content by subfield, organization, publication venue, recency, source code availability, or custom tags when providing context to pipeline stages or brainstorming
 - **FR10:** Coordinator can browse, search, and query the knowledge base to understand its contents, coverage, and structure
+- **FR69:** Knowledge base tracks **source code availability** as a per-paper attribute (available / partially available / not available / unknown). Papers and blog posts with publicly available source code are significantly more valuable as a basis for extension work — ideas that build on work without source code should be ranked much lower during idea generation and filtering, since extending such work is substantially harder
 
-### Knowledge Base Update Mechanisms
+### Knowledge Base Update Mechanisms *(Post-MVP)*
 
 - **FR11:** System supports push-based updates triggered by external notification subscriptions (e.g., Google Scholar alerts, LessWrong digests, newsletters) for low-cost targeted updates
 - **FR12:** System can suggest new subscriptions based on knowledge base coverage gaps or emerging relevant sources
@@ -368,12 +417,12 @@ Each stage is iterable — run it, inspect output, adjust configuration, re-run 
 - **FR14:** Both update mechanisms feed through the same coarse-grained approval workflow before KB incorporation
 - **FR15:** System can process newsletters and curated digests to identify relevant items to add to the knowledge base or the suggestions list, without incorporating newsletter content directly into the KB
 
-### Knowledge Base Suggestions
+### Knowledge Base Suggestions *(Post-MVP)*
 
 - **FR16:** When the system encounters potentially relevant material during updates or novelty assessments, it adds items to a persistent "suggestions list" for potential KB inclusion
 - **FR17:** Coordinator can review the suggestions list — approving, rejecting, or discussing items in a chat session
 
-### Pipeline Execution
+### Pipeline Execution *(Track A — day 1)*
 
 - **FR18:** Coordinator can run individual pipeline stages independently (Source, Generate, Filter/Score, Refine, Rank)
 - **FR19:** Coordinator can run the full pipeline end-to-end (all stages in sequence)
@@ -381,15 +430,17 @@ Each stage is iterable — run it, inspect output, adjust configuration, re-run 
 - **FR21:** Coordinator can intervene at any stage to correct, override, or redirect the pipeline
 - **FR22:** System logs every pipeline stage's inputs, decisions, and outputs in structured format
 
-### Idea Generation
+### Idea Generation *(Track A — day 1; FR23-FR24 multi-LLM deferred to post-MVP)*
 
-- **FR23:** System generates ideas using multiple LLM providers in parallel via LiteLLM
-- **FR24:** System deduplicates ideas across LLM providers after parallel generation
+- **FR23:** System generates ideas using multiple LLM providers in parallel via LiteLLM *(post-MVP — V1 uses Claude Code only)*
+- **FR24:** System deduplicates ideas across LLM providers after parallel generation *(post-MVP)*
 - **FR25:** System generates ideas as brief sketches (problem + direction + why it matters) for token efficiency
 - **FR26:** System feeds only relevant context (abstracts, limitations) to generation — never full papers
 - **FR27:** System uses cheaper models for simple generation tasks and more capable models for deeper analysis (model tiering)
+- **FR67:** System generates ideas by proposing **variations of existing experiments** — modifying variables, populations, methodologies, or scope of published work. This is a high-priority generation strategy because it produces well-scoped projects with clear methodology inherited from the original work
+- **FR68:** System generates ideas by proposing **follow-up experiments to explain observed effects** — when a paper reports a surprising or unexplained result, the system proposes experiments designed to isolate and explain the underlying mechanism
 
-### Idea Evaluation & Scoring
+### Idea Evaluation & Scoring *(Track A — day 1; uses web search when KB unavailable)*
 
 - **FR28:** System evaluates ideas against configurable quality criteria with configurable weights
 - **FR29:** System applies staged filtering — progressively more expensive evaluation, killing bad ideas early
@@ -400,20 +451,20 @@ Each stage is iterable — run it, inspect output, adjust configuration, re-run 
 - **FR34:** System assesses novelty of each idea against existing published work, including sources beyond the knowledge base (e.g., via web search or broader literature access), to flag whether the idea is novel, partially addressed, or already solved
 - **FR35:** System actively verifies that cited papers exist and links/DOIs resolve
 
-### Idea Refinement
+### Idea Refinement *(Track A — day 1)*
 
 - **FR36:** System auto-strengthens ideas with weak scores by attempting to improve the weakest dimensions
 - **FR37:** System generates alternative framings for promising ideas (2-3 angles on the same core insight)
 - **FR38:** System expands surviving ideas from brief sketches to include: research question, approach outline, and strength rationale
 
-### Ranking & Output
+### Ranking & Output *(Track A — day 1)*
 
 - **FR39:** System produces a ranked list of ideas sorted by overall score as a markdown file
 - **FR40:** Each final proposal includes: research question, approach, proposed first experiments, theory of impact chain, scores per criterion, and cited sources with verifiable links/DOIs
 - **FR41:** Final proposals are concise enough for a human to scan 20+ proposals in a sitting and compare meaningfully
 - **FR42:** System preserves the provenance of each idea (which KB sources contributed, which generation method produced it)
 
-### Collaborative Brainstorming
+### Collaborative Brainstorming *(Track A — day 1, secondary mode)*
 
 - **FR43:** Coordinator can enter a collaborative chat mode to brainstorm ideas with the AI agent
 - **FR44:** Coordinator can direct brainstorming by specifying topics, research areas, or specific problems to explore
@@ -422,13 +473,13 @@ Each stage is iterable — run it, inspect output, adjust configuration, re-run 
 - **FR47:** Collaborative chat has access to the full knowledge base and pipeline memory
 - **FR48:** Coordinator can pose open research questions and the system assesses whether they have been addressed in the literature, citing relevant work if found or confirming the question remains open
 
-### Evaluate Existing Ideas
+### Evaluate Existing Ideas *(Track A — day 1)*
 
 - **FR49:** Coordinator can submit an existing project idea (their own or externally sourced) for evaluation against the configured scoring criteria
 - **FR50:** System assesses the novelty of submitted ideas against published work (same capability as FR34)
 - **FR51:** System can refine and strengthen submitted ideas using the same Refine stage capabilities (auto-strengthen, alternative framing)
 
-### Configuration Management
+### Configuration Management *(Track A — day 1)*
 
 - **FR52:** Coordinator can define and edit team profiles specifying team type, compute budget, technical skills, and custom criteria weights
 - **FR53:** Coordinator can define and edit scoring criteria including definitions, default weights, and per-team-type weight overrides
@@ -437,19 +488,19 @@ Each stage is iterable — run it, inspect output, adjust configuration, re-run 
 - **FR56:** All configuration is stored in human-editable YAML files
 - **FR57:** Configuration persists across sessions
 
-### Priority Areas
+### Priority Areas *(Post-MVP)*
 
 - **FR58:** Coordinator can define organizational priority areas, and the pipeline can suggest new priority areas based on landscape analysis
 - **FR59:** Priority areas are stored persistently and browsable, similar to project ideas
 
-### Pipeline Memory & Learning
+### Pipeline Memory & Learning *(Post-MVP; minimal dedup in Track A)*
 
 - **FR60:** System persists accumulated knowledge and learned preferences across sessions
 - **FR61:** System remembers previous pipeline runs, user overrides, and configuration adjustments
 - **FR62:** System applies accumulated knowledge to improve future pipeline runs
 - **FR63:** System tracks previously generated ideas and ensures subsequent runs prioritize unexplored directions and source material not yet used
 
-### Idea Repository
+### Idea Repository *(Post-MVP)*
 
 - **FR64:** System maintains a persistent, searchable repository of all generated ideas across pipeline runs
 - **FR65:** Coordinator can provide retrospective feedback on past ideas (upgrade/downgrade scores, flag false negatives) and the system incorporates this into future scoring

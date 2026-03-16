@@ -128,7 +128,7 @@ _The session focuses on designing a repeatable, systematic process (pipeline) ra
 | Relevance check | Is this an AI Safety problem? Connects to open problems? | Cheap | Score 1-5 |
 | Feasibility check | Compute requirements, complexity, team capability match | Cheap | Score 1-5 |
 | Impact assessment | Theory of impact, risk reduction potential, expected outcome | Medium | Score 1-5 |
-| Landscape scan | Is someone else doing this? Org interest? Collaborators? | Medium | Score 1-5 |
+| Redundancy check | Is someone already doing exactly this, or is it already solved? | Medium | Score 1-5 |
 | Experiment design | Can we design cheap experiments? Backup plan? | Expensive | Score 1-5 |
 
 **Design decisions:**

@@ -23,12 +23,12 @@ _This document builds collaboratively through step-by-step discovery. Sections a
 
 | Category | FRs | Architectural Significance |
 |---|---|---|
-| Knowledge Base Management | FR1-FR10 | Core subsystem — autonomous discovery, inclusion criteria, structured storage with selective retrieval |
+| Knowledge Base Management | FR1-FR10, FR69 | Core subsystem — autonomous discovery, inclusion criteria, structured storage with selective retrieval. Tracks source code availability per paper (FR69) for filtering |
 | KB Update Mechanisms | FR11-FR15 | Push/pull update patterns, subscription management, approval workflows |
 | KB Suggestions | FR16-FR17 | Persistent suggestions list, review workflow |
 | Pipeline Execution | FR18-FR22 | Stage independence, end-to-end composition, human intervention points, structured logging |
-| Idea Generation | FR23-FR27 | V1: Single-provider generation via Claude Code with capable models. Multi-LLM parallel generation deferred to post-MVP |
-| Idea Evaluation & Scoring | FR28-FR35 | Configurable criteria/weights, staged filtering, citation verification, novelty assessment |
+| Idea Generation | FR23-FR27, FR67-FR68 | V1: Single-provider generation via Claude Code with capable models. Multi-LLM parallel generation deferred to post-MVP. Generation strategies include experiment variations (FR67) and follow-up experiments (FR68) |
+| Idea Evaluation & Scoring | FR28-FR35 | Configurable criteria/weights, staged filtering, citation verification, novelty assessment. Ideas extending papers without source code are downranked (uses FR69 KB attribute) |
 | Idea Refinement | FR36-FR38 | Auto-strengthen, alternative framing, progressive elaboration |
 | Ranking & Output | FR39-FR42 | Markdown output, provenance tracking, concise human-scannable format |
 | Collaborative Brainstorming | FR43-FR48 | Conversational mode with full KB access, directed exploration, open question assessment |
@@ -78,6 +78,8 @@ _This document builds collaboratively through step-by-step discovery. Sections a
 - **Configuration propagation:** Team profiles and scoring criteria must flow through multiple pipeline stages consistently
 - **Selective context retrieval:** Both pipeline stages and brainstorming need filtered KB access to avoid context bloat
 - **Token efficiency:** Progressive elaboration pattern (cheap sketches → expand only winners) and model tiering (cheap models for mechanical subtasks) to minimize cost
+- **Confidence reporting:** Every pipeline stage reports confidence scores on its outputs. Confidence is always reported, never used for automated filtering — the human decides what to act on
+- **Graceful KB degradation:** All pipeline stages must function without KB. When KB is unavailable or thin, stages actively search the web (ArXiv, Semantic Scholar, Google Scholar) rather than relying solely on Claude's training knowledge
 
 ## Starter Template Evaluation
 
@@ -158,7 +160,9 @@ SafetyProjectIdeas/
 - **FR66:** System can load pre-defined participant profiles (experience level, technical background, compute resources, time availability) and use them to tailor idea generation and brainstorming without requiring the user to re-enter their constraints. Profiles stored as YAML in config directory. Falls back to conversational discovery if no profile exists.
 
 **Clarified for MVP:**
-- FR43-48 (Collaborative Brainstorming) is user-facing for external users (not just guido), but only after pipeline is validated. External users use the same Claude Code interface. Brainstorming skill must be self-explanatory and guide users through describing constraints conversationally.
+- FR43-48 (Collaborative Brainstorming) and auto-generation are the first user-facing capabilities. They work immediately using Claude's native AI Safety knowledge + active web search, plus participant profiles. KB integration enriches them as Track B progresses. External users use the same Claude Code interface. Brainstorming skill must be self-explanatory and guide users through describing constraints conversationally.
+
+**Primary Interaction Mode:** Auto-generation (batch) is the primary mode, not interactive brainstorming. Guido's time is the bottleneck — the system auto-generates, scores, refines, and ranks. Guido reviews ranked output, then optionally brainstorms to refine specific directions.
 
 **Moved to post-MVP:**
 - FR11-FR15 (KB Update Mechanisms) — push/pull updates, subscriptions, newsletter processing
@@ -227,7 +231,8 @@ SafetyProjectIdeas/
     "doi": "10.xxxx/xxxxx",
     "key_findings": "LLM-extracted from parsed sections",
     "limitations": "LLM-extracted from parsed sections",
-    "relevance_notes": "LLM-extracted: why this matters for AI Safety research"
+    "relevance_notes": "LLM-extracted: why this matters for AI Safety research",
+    "source_code_available": "available | partially_available | not_available | unknown"
   },
   "sections": {
     "abstract": "...",
@@ -240,11 +245,24 @@ SafetyProjectIdeas/
 ```
 Query module never returns all sections — caller always specifies which sections they need.
 
+**Source Code Availability (FR69):**
+- Tracked per KB document as a meta field. Populated during KB build (check for GitHub/GitLab links in paper, associated repos on PapersWithCode, or code links in blog posts).
+- Pipeline stages that generate ideas by extending existing work use this field to downrank or filter out ideas building on papers without available source code — extending work without code is substantially harder and riskier.
+- Query module supports filtering by `source_code_available` so pipeline stages can preferentially draw on papers with code.
+
 **Source Priority System:**
 - Priority 1: Open problems lists — most actionable, direct idea input. Ingested and consumed first.
 - Priority 2: Key papers, org reports — specific findings, concrete results.
 - Priority 3: Research agendas, regular papers, forum posts — broad context. Research agendas are intentionally priority 3 as they tend to be too broad for direct idea generation.
 - Source stage uses priority to determine ingestion order and context allocation — high-priority sources get processed and fed to Generate first.
+
+**KB Bootstrap: 800-Paper Shallow Review Ingestion**
+- Source: CSV from github.com/arb-consulting/shallow-review-2025 (`data-dump-classify.csv`)
+- Contains: ~800 papers with title, authors, organizations, date, venue, summary, categories, `ai_safety_relevance` score (0-1), `shallow_review_inclusion` score (0-1), kind (paper/blog/forum), and nested JSON metadata
+- Also includes: `taxonomy.yaml` (7 AI Safety categories: Black-box Safety, Interpretability, Safety by Construction, Make AI Solve It, Theory, Multi-agent & Evals, Labs), scraped HTML (`.html.zst`), curated source link lists
+- Ingestion maps CSV fields to KB JSON schema: title→title, authors→authors, kind→source_type, categories→subfields/tags, summary→key_findings, ai_safety_relevance→priority
+- The existing taxonomy provides initial subfield classification — but which categories to prioritize for idea generation needs further research (via `/research-landscape`)
+- No manual curation needed — the CSV's relevance scores provide ready-made priority ranking
 
 **KB Build Pipeline (Token-Efficient):**
 1. **Discovery** — Semantic Scholar API for paper search and metadata (title, abstract, authors, venue, DOI, citation count). ArXiv API (arxiv.py) for ArXiv-specific searches. Many papers can be evaluated from abstract + metadata alone without downloading PDFs.
@@ -303,27 +321,44 @@ Query module never returns all sections — caller always specifies which sectio
 ### Project Dependencies
 
 ```bash
+# Track A (day 1 — idea generation)
 uv add pytest ruff pyyaml pydantic python-dotenv
+
+# Track B (KB infrastructure — parallel)
 uv add semanticscholar arxiv scipdf-parser trafilatura
 ```
 
 ### Decision Impact Analysis
 
-**Implementation Sequence:**
-1. Project initialization (uv, package structure, config schemas)
-2. Document parsers and source connectors (foundation for KB build)
-3. KB build pipeline (discovery → parsing → LLM extraction → storage)
-4. KB query module (frontmatter loading, filtering)
-5. Pipeline stages (Source → Generate → Filter/Score → Refine → Rank)
-6. Pipeline orchestrator (run directory, logging, end-to-end flow)
-7. Brainstorming skill (user-facing, loads KB context, supports participant profiles)
+**Implementation: Two Parallel Tracks**
+
+*Track A — Ideas (from day 1, parallel with Track B):*
+1. Project initialization (uv, package structure, config schemas for teams/criteria/participants)
+2. `/research-landscape` skill — discover open problems lists, research agendas, key sources, and which categories to cover
+3. `/generate-ideas` skill — auto-batch idea generation, balanced across researched categories. Uses KB when available, Claude knowledge + web search otherwise
+4. `/score-ideas` with novelty checking — KB first pass (if available), then always web search (ArXiv, Semantic Scholar, Google Scholar). Confidence reported on every assessment
+5. `/refine-ideas` — auto-strengthen, alternative framings, with confidence reported
+6. `/rank-ideas` — sorted output with confidence reported throughout
+7. `/brainstorm` skill — interactive collaborative mode (secondary to auto-generation)
+8. `/evaluate-idea` skill — score existing ideas against criteria
+
+*Track B — Knowledge Base (parallel with Track A):*
+1. Ingest 800-paper shallow review CSV (from github.com/arb-consulting/shallow-review-2025) — auto-map to KB schema using existing taxonomy
+2. KB query module (filtering by subfield, org, venue, recency, tags)
+3. Discover key AI Safety authors' recent work via Semantic Scholar API
+4. `/research-sources` skill — find additional open problems lists, agendas, sources
+5. Source connectors (ArXiv, Semantic Scholar, web scraper) and document parsers
+6. Full KB build pipeline with approval workflow
+
+*Convergence:* As Track B populates the KB, Track A stages automatically get richer context. Full end-to-end pipeline run once both tracks are validated.
 
 **Cross-Component Dependencies:**
-- All pipeline stages depend on KB query module for context retrieval
+- Pipeline stages use KB query module for context retrieval **when KB is available**; degrade gracefully to Claude's native knowledge + active web search when KB is empty or thin
 - Filter/Score depends on Pydantic config models for criteria/weights
 - KB build depends on document parsers (scipdf_parser, Trafilatura) and LLM extraction
-- Source stage uses priority system to select and order KB content
-- Brainstorming skill depends on KB query and participant profiles
+- Brainstorming skill depends on participant profiles and config; KB access is **additive enrichment**, not a prerequisite
+- Novelty checks ALWAYS include web search — KB is first pass (fast, cheap), web is mandatory second pass. Never KB-only
+- All pipeline stages report confidence scores but do NOT filter by confidence — human decides what to act on
 - Pipeline orchestrator depends on all stages and logging infrastructure
 
 ## Implementation Patterns & Consistency Rules
@@ -402,6 +437,26 @@ config.teams["mentor_novice"].compute_budget
 
 Never read YAML files directly in pipeline code — always go through Pydantic models.
 
+### Novelty Assessment Flow
+
+**Mandatory for all ideas (generation, scoring, evaluation):**
+1. If KB available: query KB for related work in same subfield/tags (fast, cheap)
+2. Always: search web — ArXiv, Semantic Scholar, Google Scholar for related/identical work
+3. Synthesize assessment: novel / partially addressed / already solved
+4. Report confidence in the assessment
+5. Never rely entirely on KB — web search is always mandatory
+
+### Confidence Reporting (Cross-Cutting)
+
+Every pipeline stage reports a confidence score on its outputs:
+- **Generation:** confidence in idea soundness
+- **Scoring:** confidence in each criterion score
+- **Novelty:** confidence in the novelty assessment (how thorough was the search)
+- **Refinement:** confidence that refinement improved the idea
+- **Ranking:** overall confidence
+
+Confidence is ALWAYS reported, NEVER used for automated filtering — the human decides what to act on. Confidence is included in all output formats (markdown frontmatter for ideas, JSON for logs).
+
 ### Skill Patterns
 
 - **Python invocation:** Always `uv run python -m safety_ideas.<module> <args>`
@@ -431,16 +486,19 @@ Never read YAML files directly in pipeline code — always go through Pydantic m
 SafetyProjectIdeas/
 ├── .claude/
 │   └── commands/                    # Claude Code skills
-│       ├── build-kb.md              # Initial KB construction
-│       ├── brainstorm.md            # Collaborative brainstorming (user-facing)
-│       ├── configure-teams.md       # Team profile management
+│       │   # Track A — Ideas (day 1)
+│       ├── research-landscape.md    # Discover open problems lists, agendas, categories
+│       ├── generate-ideas.md        # Auto-batch idea generation
+│       ├── score-ideas.md           # Score + novelty check (KB → web always)
+│       ├── refine-ideas.md          # Auto-strengthen, alternative framings
+│       ├── rank-ideas.md            # Sorted output with confidence
+│       ├── brainstorm.md            # Collaborative brainstorming (secondary mode)
 │       ├── evaluate-idea.md         # Score an existing idea
-│       ├── run-pipeline.md          # Full pipeline execution (all stages)
-│       ├── run-source.md            # Source stage only
-│       ├── run-generate.md          # Generate stage only
-│       ├── run-filter-score.md      # Filter/Score stage only
-│       ├── run-refine.md            # Refine stage only
-│       └── run-rank.md              # Rank stage only
+│       ├── configure-teams.md       # Team profile management
+│       │   # Track B — KB (parallel)
+│       ├── research-sources.md      # Find additional sources, agendas
+│       ├── build-kb.md              # KB construction with ingestion
+│       └── run-pipeline.md          # Full pipeline (once tracks converge)
 ├── src/
 │   └── safety_ideas/
 │       ├── __init__.py
@@ -545,7 +603,8 @@ SafetyProjectIdeas/
     "doi": "10.xxxx/xxxxx",
     "key_findings": "LLM-extracted from parsed sections",
     "limitations": "LLM-extracted from parsed sections",
-    "relevance_notes": "LLM-extracted: why this matters for AI Safety research"
+    "relevance_notes": "LLM-extracted: why this matters for AI Safety research",
+    "source_code_available": "available"
   },
   "sections": {
     "abstract": "...",
@@ -601,10 +660,12 @@ docs = kb.query(subfield="interpretability", sections=["abstract", "key_findings
 - Orchestrator manages sequencing and run directory setup
 
 **Boundary 3: KB ↔ Pipeline**
-- `kb/query.py` is the only interface between KB and pipeline stages
-- Pipeline stages never read KB files directly — always go through query module
+- `kb/query.py` is the interface between KB and pipeline stages **when KB content exists**
+- Pipeline stages and brainstorming MUST function without KB — Claude's native knowledge + active web search is the baseline; KB is augmentation
+- When KB is available, pipeline stages never read KB files directly — always go through query module
 - Query module returns metadata by default; specific sections only when explicitly requested
 - Full section dumps are never returned — caller always specifies which sections
+- Novelty assessment always follows: KB check (if available) → web search (always). Never relies entirely on KB
 
 **Boundary 4: Config ↔ Everything**
 - `config/loader.py` is the single entry point for all configuration
@@ -614,18 +675,26 @@ docs = kb.query(subfield="interpretability", sections=["abstract", "key_findings
 ### Data Flow
 
 ```
-[KB Build]
-Semantic Scholar / ArXiv / Web → connectors/ → parsers/ → kb/builder.py → data/kb/*.json
-
-[Pipeline Run]
-config/ → orchestrator.py creates run dir → source.py reads KB via query.py
-→ generate.py produces sketches → filter_score.py evaluates + novelty check (FR34)
-+ citation.py verifies → refine.py strengthens → rank.py produces final output
+[Track A — Ideas without KB (day 1)]
+config/ → generate-ideas skill → Claude generates from training knowledge + web search
+→ score (novelty: KB if available → web search always) → refine → rank
 → data/output/
 
-[Brainstorming]
+[Track A — Ideas with KB (after Track B populates KB)]
+config/ → generate-ideas skill → reads KB via query.py + Claude knowledge + web search
+→ score (novelty: KB first → web always) → refine → rank → data/output/
+
+[Track B — KB Bootstrap]
+800-paper CSV (arb-consulting/shallow-review-2025) → ingestion script → data/kb/*.json
+Semantic Scholar API → key authors' recent work → data/kb/*.json
+
+[Track B — Full KB Build (later)]
+Semantic Scholar / ArXiv / Web → connectors/ → parsers/ → kb/builder.py → data/kb/*.json
+
+[Brainstorming (secondary mode)]
 brainstorm.md skill → loads participant profile from config/participants/
-→ queries KB via kb/query.py → conversational idea generation with user
+→ queries KB via kb/query.py if available, else uses Claude knowledge + web search
+→ conversational idea generation with user
 ```
 
 ### External Integrations
@@ -749,15 +818,27 @@ Moved to post-MVP. `data/ideas/` directory remains (rank.py copies final output 
 - Respect project structure and boundaries (especially: KB only via query module, config only via Pydantic)
 - Refer to this document for all architectural questions
 
-**Implementation Sequence:**
-1. Project initialization (uv, package structure, config schemas)
-2. Document parsers and source connectors
-3. KB build pipeline (discovery → parsing → LLM extraction → storage)
-4. KB query module (JSON meta loading, filtering, section-level access)
-5. Pipeline stages (Source → Generate → Filter/Score → Refine → Rank)
-6. Pipeline memory (minimal — past idea titles for dedup)
-7. Pipeline orchestrator (run directory, logging, end-to-end flow)
-8. Brainstorming skill (user-facing, loads KB context, supports participant profiles)
+**Implementation: Two Parallel Tracks**
+
+*Track A — Ideas (from day 1, parallel with Track B):*
+1. Project initialization (uv, package structure, config schemas for teams/criteria/participants)
+2. `/research-landscape` skill — discover open problems lists, research agendas, key sources, and which categories to cover
+3. `/generate-ideas` skill — auto-batch idea generation, balanced across researched categories. Uses KB when available, Claude knowledge + web search otherwise
+4. `/score-ideas` with novelty checking — KB first pass (if available), then always web search. Confidence reported on every assessment
+5. `/refine-ideas` — auto-strengthen, alternative framings, with confidence reported
+6. `/rank-ideas` — sorted output with confidence reported throughout
+7. `/brainstorm` skill — interactive collaborative mode (secondary to auto-generation)
+8. `/evaluate-idea` skill — score existing ideas against criteria
+
+*Track B — Knowledge Base (parallel with Track A):*
+1. Ingest 800-paper shallow review CSV — auto-map to KB schema using existing taxonomy
+2. KB query module (filtering by subfield, org, venue, recency, tags)
+3. Discover key AI Safety authors' recent work via Semantic Scholar API
+4. `/research-sources` skill — find additional open problems lists, agendas, sources
+5. Source connectors (ArXiv, Semantic Scholar, web scraper) and document parsers
+6. Full KB build pipeline with approval workflow
+
+*Convergence:* As Track B populates the KB, Track A stages automatically get richer context.
 
 ## Architecture Completion Summary
 
