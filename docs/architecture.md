@@ -266,7 +266,7 @@ Query module never returns all sections — caller always specifies which sectio
 
 **KB Build Pipeline (Token-Efficient):**
 1. **Discovery** — Semantic Scholar API for paper search and metadata (title, abstract, authors, venue, DOI, citation count). ArXiv API (arxiv.py) for ArXiv-specific searches. Many papers can be evaluated from abstract + metadata alone without downloading PDFs.
-2. **Automated parsing** (Python, zero LLM cost) — for papers that need deeper extraction: scipdf_parser (GROBID-based) for PDF section extraction (abstract, introduction, conclusion, discussion, limitations). Trafilatura for HTML content from forum posts and blog posts. Strip references, figures, formatting noise.
+2. **Automated parsing** (Python, zero LLM cost) — for papers that need deeper extraction: Docling (IBM) for PDF section extraction (abstract, introduction, conclusion, discussion, limitations). LessWrong/Alignment Forum content retrieved via their public GraphQL API (returns HTML or Markdown directly — no scraping needed). Trafilatura for HTML content from research org blog posts (MIRI, Anthropic, etc.). Strip references, figures, formatting noise.
 3. **LLM extraction** (reads parsed sections only, not full paper) — generates frontmatter: key_findings, limitations summary, relevance_notes, subfield/tag classification.
 4. **Full storage** — original content stored in markdown body for future deep-dive access.
 
@@ -274,10 +274,11 @@ Query module never returns all sections — caller always specifies which sectio
 
 | Source Type | Discovery | Parsing | Libraries |
 |---|---|---|---|
-| ArXiv papers | arxiv.py + Semantic Scholar API | PDF section extraction | scipdf_parser (GROBID) |
-| Alignment Forum / LessWrong | Web scraping | HTML → clean text | Trafilatura |
-| Org reports / agendas | Manual or Semantic Scholar | PDF section extraction | scipdf_parser |
-| Open problems lists | Manual curation | HTML or PDF as appropriate | Trafilatura or scipdf_parser |
+| ArXiv papers | arxiv.py + Semantic Scholar API | PDF section extraction | Docling (IBM) |
+| Alignment Forum / LessWrong | GraphQL API | Structured content (HTML/Markdown) | Direct API (requests/httpx) — no scraping needed |
+| Org reports / agendas | Manual or Semantic Scholar | PDF section extraction | Docling |
+| Research org blogs | Manual curation | HTML → clean text | Trafilatura |
+| Open problems lists | Manual curation | HTML or PDF as appropriate | Trafilatura or Docling |
 
 **KB Querying:**
 - Python module loads and filters JSON meta from KB files on each query
@@ -325,8 +326,10 @@ Query module never returns all sections — caller always specifies which sectio
 uv add pytest ruff pyyaml pydantic python-dotenv
 
 # Track B (KB infrastructure — parallel)
-uv add semanticscholar arxiv scipdf-parser trafilatura
+uv add semanticscholar arxiv docling trafilatura
 ```
+
+**Note:** Semantic Scholar API requires a free API key for reliable rate limits (1 req/sec dedicated). Register at semanticscholar.org and add the key to `.env`.
 
 ### Decision Impact Analysis
 
@@ -347,7 +350,7 @@ uv add semanticscholar arxiv scipdf-parser trafilatura
 2. KB query module (filtering by subfield, org, venue, recency, tags)
 3. Discover key AI Safety authors' recent work via Semantic Scholar API
 4. `/research-sources` skill — find additional open problems lists, agendas, sources
-5. Source connectors (ArXiv, Semantic Scholar, web scraper) and document parsers
+5. Source connectors (ArXiv, Semantic Scholar, LessWrong/AF GraphQL API, blog scraper) and document parsers
 6. Full KB build pipeline with approval workflow
 
 *Convergence:* As Track B populates the KB, Track A stages automatically get richer context. Full end-to-end pipeline run once both tracks are validated.
@@ -355,7 +358,7 @@ uv add semanticscholar arxiv scipdf-parser trafilatura
 **Cross-Component Dependencies:**
 - Pipeline stages use KB query module for context retrieval **when KB is available**; degrade gracefully to Claude's native knowledge + active web search when KB is empty or thin
 - Filter/Score depends on Pydantic config models for criteria/weights
-- KB build depends on document parsers (scipdf_parser, Trafilatura) and LLM extraction
+- KB build depends on document parsers (Docling, Trafilatura, LessWrong/AF GraphQL API) and LLM extraction
 - Brainstorming skill depends on participant profiles and config; KB access is **additive enrichment**, not a prerequisite
 - Hybrid novelty assessment ALWAYS includes web search — KB is first pass (fast, cheap), web is mandatory second pass. Never KB-only. "Already solved" is a hard gate; "novel"/"partially addressed" feed a derived novelty score into configurable criteria
 - All pipeline stages report confidence scores but do NOT filter by confidence — human decides what to act on
@@ -445,7 +448,7 @@ Never read YAML files directly in pipeline code — always go through Pydantic m
 2. Always: search web — ArXiv, Semantic Scholar, Google Scholar for related/identical work
 3. Synthesize assessment: classify as novel / partially addressed / already solved, with supporting evidence (NFR6)
 4. **Hard gate:** "Already solved" classification eliminates the idea immediately — no further scoring or refinement, regardless of other criteria scores
-5. **Derived score:** The classification (novel/partially addressed) is converted to a novelty score that feeds into the configurable scoring criteria alongside theory_of_impact, low_compute, accessible_complexity, etc.
+5. **Derived score:** The classification (novel/partially addressed) is converted to a novelty score that feeds into the configurable scoring criteria alongside theory_of_impact, low_compute, accessible_complexity, narrow_scope, etc.
 6. **Per-team weighting:** Novelty weight is configurable per team type — experienced groups weight it high (these projects should break new ground), novice teams can weight it low (replication studies and variations of existing experiments are valuable learning exercises, per FR67)
 7. Report confidence in the assessment
 8. Never rely entirely on KB — web search is always mandatory
@@ -523,10 +526,11 @@ SafetyProjectIdeas/
 │       │   ├── __init__.py
 │       │   ├── arxiv.py             # ArXiv API via arxiv.py
 │       │   ├── semantic_scholar.py  # Semantic Scholar API
-│       │   ├── web_scraper.py       # Alignment Forum, LessWrong via Trafilatura
+│       │   ├── web_scraper.py       # Research org blogs via Trafilatura
+│       │   ├── lesswrong.py         # LessWrong/Alignment Forum via GraphQL API
 │       │   └── parsers/
 │       │       ├── __init__.py
-│       │       ├── pdf_parser.py    # PDF section extraction via scipdf_parser
+│       │       ├── pdf_parser.py    # PDF section extraction via Docling
 │       │       └── html_parser.py   # HTML content extraction via Trafilatura
 │       ├── pipeline/
 │       │   ├── __init__.py
@@ -571,6 +575,7 @@ SafetyProjectIdeas/
 │   ├── connectors/
 │   │   ├── test_arxiv.py
 │   │   ├── test_semantic_scholar.py
+│   │   ├── test_lesswrong.py
 │   │   └── parsers/
 │   │       ├── test_pdf_parser.py
 │   │       └── test_html_parser.py
@@ -707,10 +712,11 @@ brainstorm.md skill → loads participant profile from config/participants/
 
 | Integration | Module | Purpose |
 |---|---|---|
-| Semantic Scholar API | `connectors/semantic_scholar.py` | Paper discovery, metadata, abstracts |
+| Semantic Scholar API | `connectors/semantic_scholar.py` | Paper discovery, metadata, abstracts (requires free API key) |
 | ArXiv API | `connectors/arxiv.py` | ArXiv paper search and PDF download |
-| Alignment Forum / LessWrong | `connectors/web_scraper.py` | Forum post scraping |
-| GROBID (via scipdf_parser) | `connectors/parsers/pdf_parser.py` | PDF section extraction |
+| LessWrong / Alignment Forum GraphQL API | `connectors/lesswrong.py` | Forum post content retrieval (no scraping — direct API) |
+| Research org blogs | `connectors/web_scraper.py` | Blog post scraping via Trafilatura |
+| Docling (IBM) | `connectors/parsers/pdf_parser.py` | PDF section extraction (pure Python, no Docker) |
 
 ## Architecture Validation Results
 
@@ -777,7 +783,7 @@ Moved to post-MVP. `data/ideas/` directory remains (rank.py copies final output 
 - [x] Technology stack fully specified (Python, uv, pytest, ruff, Pydantic)
 - [x] Storage format decided (JSON KB with section-level access)
 - [x] Inter-stage data format decided (hybrid markdown/JSON)
-- [x] External libraries selected (scipdf_parser, Trafilatura, arxiv.py, Semantic Scholar)
+- [x] External libraries selected (Docling, Trafilatura, arxiv.py, Semantic Scholar, LessWrong/AF GraphQL API)
 - [x] Credential management decided (.env + python-dotenv)
 
 **✅ Implementation Patterns**
@@ -805,7 +811,7 @@ Moved to post-MVP. `data/ideas/` directory remains (rank.py copies final output 
 - Token-efficient KB build pipeline (parse first, LLM reads sections only)
 - Section-level KB access prevents accidental token waste
 - Modular pipeline stages with file-based communication — easy to debug and iterate independently
-- Standard Python tooling (uv, pytest, ruff, Pydantic) — no exotic dependencies
+- Standard Python tooling (uv, pytest, ruff, Pydantic) — no exotic dependencies, no Docker/Java required
 - Source priority system ensures highest-value content drives idea generation
 
 **Areas for Future Enhancement (Post-MVP):**
@@ -841,7 +847,7 @@ Moved to post-MVP. `data/ideas/` directory remains (rank.py copies final output 
 2. KB query module (filtering by subfield, org, venue, recency, tags)
 3. Discover key AI Safety authors' recent work via Semantic Scholar API
 4. `/research-sources` skill — find additional open problems lists, agendas, sources
-5. Source connectors (ArXiv, Semantic Scholar, web scraper) and document parsers
+5. Source connectors (ArXiv, Semantic Scholar, LessWrong/AF GraphQL API, blog scraper) and document parsers
 6. Full KB build pipeline with approval workflow
 
 *Convergence:* As Track B populates the KB, Track A stages automatically get richer context.

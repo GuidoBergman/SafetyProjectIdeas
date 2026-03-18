@@ -159,7 +159,7 @@ This document provides the complete epic and story breakdown for SafetyProjectId
 
 **From Architecture — KB Build Pipeline (Token-Efficient):**
 - Discovery via Semantic Scholar API and ArXiv API (arxiv.py)
-- Automated parsing (zero LLM cost): scipdf_parser (GROBID) for PDFs, Trafilatura for HTML
+- Automated parsing (zero LLM cost): Docling (IBM) for PDFs, LessWrong/AF GraphQL API for forum content, Trafilatura for research org blogs
 - LLM extraction reads parsed sections only (not full papers) — generates frontmatter fields
 - 800-paper shallow review CSV bootstrap from github.com/arb-consulting/shallow-review-2025
 
@@ -340,7 +340,7 @@ So that the system is ready for idea generation from day one.
 **Given** no config files exist yet
 **When** the developer creates default config files
 **Then** `config/teams.yaml` contains BAISH's three team profiles (mentor_novice, solo_novice, experienced_group)
-**And** `config/criteria.yaml` contains the three default scoring criteria (theory_of_impact, low_compute, accessible_complexity) each with a well-defined rubric anchoring score levels to concrete descriptions, default weights, and per-team-type overrides, plus a derived "novelty" criterion whose score comes from the hybrid novelty assessment (FR34) — configurable weight per team type but score is not manually assigned
+**And** `config/criteria.yaml` contains the four default scoring criteria (theory_of_impact, low_compute, accessible_complexity, narrow_scope) each with a well-defined rubric anchoring score levels to concrete descriptions, default weights, and per-team-type overrides, plus a derived "novelty" criterion whose score comes from the hybrid novelty assessment (FR34) — configurable weight per team type but score is not manually assigned
 **And** `config/pipeline.yaml` contains default model assignments and threshold settings
 **And** `config/kb-criteria.yaml` contains default inclusion criteria for AI Safety subfields
 **And** all config files are human-readable and editable YAML
@@ -564,7 +564,7 @@ So that pipeline stages and brainstorming can draw on structured AI Safety resea
 **Given** the 800-paper shallow review CSV and scraped HTML (`.html.zst`) from github.com/arb-consulting/shallow-review-2025 are available
 **When** the ingestion script runs
 **Then** CSV fields are mapped to KB JSON schema: title→title, authors→authors, kind→source_type, categories→subfields/tags, summary→key_findings, ai_safety_relevance→priority
-**And** sections are extracted from the scraped HTML using Trafilatura (for HTML sources) and from linked PDFs using scipdf_parser where available
+**And** sections are extracted from the scraped HTML using Trafilatura (for blog sources) and from linked PDFs using Docling where available
 **And** LLM extraction (using cheap models) reads parsed sections to generate frontmatter fields: key_findings, limitations, relevance_notes, subfield/tag classification
 **And** each paper is stored as a JSON file in `data/kb/` following the naming convention `{source_venue}_{sanitized_title}_{date}.json`
 **And** each JSON file has `meta` and `sections` keys per the architecture spec
@@ -590,8 +590,8 @@ So that the KB stays comprehensive and grounded in current AI Safety research be
 **Given** the coordinator has defined inclusion criteria in `config/kb-criteria.yaml` (FR1)
 **When** the coordinator invokes `/build-kb`
 **Then** the system autonomously discovers and crawls relevant AI Safety sources filtered by inclusion criteria (FR2)
-**And** uses source connectors: Semantic Scholar API for paper search and metadata, ArXiv API (arxiv.py) for ArXiv papers, Trafilatura for HTML content from forum posts and blog posts
-**And** uses document parsers: scipdf_parser (GROBID) for PDF section extraction, Trafilatura for HTML
+**And** uses source connectors: Semantic Scholar API for paper search and metadata, ArXiv API (arxiv.py) for ArXiv papers, LessWrong/Alignment Forum GraphQL API for forum posts, Trafilatura for research org blog posts
+**And** uses document parsers: Docling for PDF section extraction, Trafilatura for HTML from blogs
 **And** applies the source priority system: Priority 1 (open problems lists), Priority 2 (key papers), Priority 3 (research agendas, org reports, regular papers, forum posts)
 **And** for long documents (e.g., system cards 150+ pages), only relevant subsections are extracted and summarized by cheap models — summaries must capture all relevant results (safety evaluations, capability assessments, risk findings) while excluding irrelevant content
 **And** automated parsing (zero LLM cost) extracts sections first; LLM extraction using cheap models reads parsed sections only to generate frontmatter fields (key_findings, limitations, relevance_notes, subfield/tag classification)

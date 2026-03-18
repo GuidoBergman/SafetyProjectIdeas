@@ -37,4 +37,6 @@ SCORING_CRITERIA = [
     "theory_of_impact",
     "low_compute",
     "accessible_complexity",
+    "narrow_scope",
+    "novelty",
 ]

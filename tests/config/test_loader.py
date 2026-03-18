@@ -119,5 +119,5 @@ def test_load_default_config_files():
     assert "mentor_novice" in config.teams
     assert "solo_novice" in config.teams
     assert "experienced_group" in config.teams
-    assert len(config.criteria) == 3
+    assert len(config.criteria) == 4
     assert len(config.kb_criteria.subfields_in_scope) > 0
