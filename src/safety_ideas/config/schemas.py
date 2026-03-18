@@ -13,7 +13,6 @@ class TeamProfile(BaseModel):
 
     name: str = Field(description="Team display name")
     team_type: TeamType = Field(description="Team type classification")
-    compute_budget: str = Field(description="Available compute resources (e.g., 'low', 'medium', 'high')")
     technical_skills: list[str] = Field(default_factory=list, description="Technical skills available")
     criteria_weights: dict[str, float] = Field(
         default_factory=dict,
@@ -21,15 +20,23 @@ class TeamProfile(BaseModel):
     )
 
 
+class RubricLevel(BaseModel):
+    """A single level in a scoring rubric."""
+
+    score: int = Field(ge=1, le=5, description="Numeric score for this level")
+    label: str = Field(description="Short label (e.g., 'Weak', 'Strong')")
+    description: str = Field(description="What this score level means for this criterion")
+
+
 class ScoringCriteria(BaseModel):
     """A single scoring criterion for idea evaluation."""
 
     name: str = Field(description="Criterion identifier")
     description: str = Field(description="Human-readable description of the criterion")
-    default_weight: float = Field(ge=0.0, le=10.0, description="Default weight for scoring")
-    team_type_overrides: dict[str, float] = Field(
-        default_factory=dict,
-        description="Per-team-type weight overrides (team_type -> weight)",
+    default_weight: float = Field(ge=0.0, le=5.0, description="Default weight for scoring")
+    rubric: list[RubricLevel] = Field(
+        default_factory=list,
+        description="Ordered rubric levels defining what each score means for this criterion",
     )
 
 
@@ -60,7 +67,7 @@ class StageModelAssignment(BaseModel):
 class StageThreshold(BaseModel):
     """Threshold settings for a filter stage."""
 
-    min_score: float = Field(ge=0.0, le=10.0, description="Minimum score to pass filter")
+    min_score: float = Field(ge=0.0, le=5.0, description="Minimum score to pass filter")
     max_ideas: int = Field(ge=1, description="Maximum ideas to pass through")
 
 

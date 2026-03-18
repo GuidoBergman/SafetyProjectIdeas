@@ -16,7 +16,6 @@ def config_dir(tmp_path):
             {
                 "name": "Test Team",
                 "team_type": "mentor_novice",
-                "compute_budget": "low",
                 "technical_skills": ["python"],
                 "criteria_weights": {"low_compute": 2.0},
             }
@@ -25,10 +24,9 @@ def config_dir(tmp_path):
     criteria = {
         "criteria": [
             {
-                "name": "soundness",
-                "description": "Is the idea sound?",
-                "default_weight": 2.0,
-                "team_type_overrides": {"mentor_novice": 1.5},
+                "name": "theory_of_impact",
+                "description": "Does this idea advance AI Safety?",
+                "default_weight": 1.5,
             }
         ]
     }
@@ -37,7 +35,7 @@ def config_dir(tmp_path):
             "generate": {"model": "sonnet", "fallback": "haiku"},
         },
         "thresholds": {
-            "filter_score": {"min_score": 5.0, "max_ideas": 20},
+            "filter_score": {"min_score": 3.0, "max_ideas": 20},
         },
     }
     kb_criteria = {
@@ -64,7 +62,7 @@ def test_load_config_valid(config_dir):
     assert "mentor_novice" in config.teams
     assert config.teams["mentor_novice"].name == "Test Team"
     assert len(config.criteria) == 1
-    assert config.criteria[0].name == "soundness"
+    assert config.criteria[0].name == "theory_of_impact"
     assert config.pipeline.model_assignments["generate"].model == "sonnet"
     assert config.kb_criteria.subfields_in_scope == ["mechanistic_interpretability"]
 
@@ -100,7 +98,6 @@ def test_load_config_invalid_data(config_dir):
             {
                 "name": "Bad Team",
                 "team_type": "nonexistent_type",
-                "compute_budget": "low",
             }
         ]
     }
@@ -122,5 +119,5 @@ def test_load_default_config_files():
     assert "mentor_novice" in config.teams
     assert "solo_novice" in config.teams
     assert "experienced_group" in config.teams
-    assert len(config.criteria) == 5
+    assert len(config.criteria) == 3
     assert len(config.kb_criteria.subfields_in_scope) > 0

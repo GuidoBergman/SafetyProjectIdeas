@@ -4,6 +4,8 @@ Manage BAISH team profiles, scoring criteria, pipeline settings, and participant
 
 ## Getting Started
 
+**IMPORTANT:** Before presenting any configuration options to the user, always read the Pydantic schemas in `src/safety_ideas/config/schemas.py` and `src/safety_ideas/config/participants.py` to discover the current valid values for all constrained fields (Literals, enums, validators). Do not assume values — they may have changed. Always list all valid values for each constrained field when presenting options to the user.
+
 First, display the current configuration:
 
 ```bash
@@ -15,42 +17,50 @@ Review the output and tell me what you'd like to change. I can help with:
 ## Available Operations
 
 ### Team Profiles
-- **Add/edit a team profile** - Specify name, team_type (mentor_novice | solo_novice | experienced_group), compute_budget, technical_skills, and criteria_weights
+- **Add/edit a team profile** - Specify name, team_type, compute_budget, technical_skills, and criteria_weights
 - **Remove a team profile** - Remove by team_type
+
+When presenting team profile options, read the schemas to list all current valid values for `team_type`, `compute_budget`, and `technical_skills`.
 
 To add or update a team:
 ```bash
-uv run python -m safety_ideas.config.cli add-team '{"name": "Team Name", "team_type": "mentor_novice", "compute_budget": "low", "technical_skills": ["python_basics"], "criteria_weights": {"low_compute": 2.0}}'
+uv run python -m safety_ideas.config.cli add-team '{"name": "Team Name", "team_type": "<valid_team_type>", "compute_budget": "<valid_budget>", "technical_skills": ["<valid_skill>"], "criteria_weights": {"<criterion_name>": 2.0}}'
 ```
 
 To remove a team:
 ```bash
-uv run python -m safety_ideas.config.cli remove-team mentor_novice
+uv run python -m safety_ideas.config.cli remove-team <team_type>
 ```
 
 ### Scoring Criteria
-- **Add/edit scoring criteria** - Specify name, description, default_weight (0-10), and optional team_type_overrides
+- **Add/edit scoring criteria** - Specify name, description, and default_weight (0-5)
 - **Add custom criteria** beyond the default set (FR54)
 - **Remove scoring criteria** by name
-- **Modify weights** per team type
+- Per-team weight overrides are configured in team profiles via `criteria_weights`
+
+When presenting criteria options, read the schemas to list the valid range for `default_weight`. Also check `config/criteria.yaml` for the existing criteria names.
 
 To add or update a criterion:
 ```bash
-uv run python -m safety_ideas.config.cli add-criterion '{"name": "novelty", "description": "How novel is this idea?", "default_weight": 2.0, "team_type_overrides": {"experienced_group": 3.0}}'
+uv run python -m safety_ideas.config.cli add-criterion '{"name": "learning_value", "description": "Does this project teach the researcher important safety concepts?", "default_weight": 2.0}'
 ```
 
 To remove a criterion:
 ```bash
-uv run python -m safety_ideas.config.cli remove-criterion novelty
+uv run python -m safety_ideas.config.cli remove-criterion learning_value
 ```
 
+> **Note:** The "novelty" criterion is derived from the hybrid novelty assessment (FR34) — its score comes from evidence-based search, not manual assignment. Its weight is configurable per team type via `criteria_weights` in team profiles.
+
 ### Pipeline Settings (FR55)
-- **Change model assignments** per pipeline stage (source, generate, filter_score, refine, rank)
-- **Adjust thresholds** for filter stages (min_score, max_ideas)
+- **Change model assignments** per pipeline stage
+- **Adjust thresholds** for filter stages
+
+When presenting pipeline options, read the schemas to list all valid pipeline stage names, model options, and threshold constraints.
 
 To update pipeline settings:
 ```bash
-uv run python -m safety_ideas.config.cli update-pipeline '{"model_assignments": {"generate": {"model": "opus", "fallback": "sonnet"}}, "thresholds": {"filter_score": {"min_score": 6.0, "max_ideas": 15}}}'
+uv run python -m safety_ideas.config.cli update-pipeline '{"model_assignments": {"<stage>": {"model": "<model>", "fallback": "<model>"}}, "thresholds": {"<stage>": {"min_score": 3.0, "max_ideas": 15}}}'
 ```
 
 ### Participant Profiles
@@ -58,9 +68,11 @@ uv run python -m safety_ideas.config.cli update-pipeline '{"model_assignments": 
 - Profiles are saved to `config/participants/<name>.yaml`
 - Profiles are auto-loaded when available (AC3), with conversational fallback when not (AC4)
 
+When presenting participant options, read the schemas to list all valid values for `experience_level`, `compute_resources`, `time_availability`, and `technical_background`.
+
 To save a participant profile:
 ```bash
-uv run python -m safety_ideas.config.cli save-participant '{"name": "alice", "experience_level": "beginner", "technical_background": ["python_basics"], "compute_resources": "low", "time_availability": "part_time"}'
+uv run python -m safety_ideas.config.cli save-participant '{"name": "alice", "experience_level": "<valid_level>", "technical_background": ["<valid_skill>"], "compute_resources": "<valid_resource>", "time_availability": "<valid_availability>"}'
 ```
 
 ## Validation

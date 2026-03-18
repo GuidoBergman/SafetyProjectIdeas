@@ -25,7 +25,7 @@ date: '2026-03-03'
 
 SafetyProjectIdeas is an AI-powered research idea generation pipeline for BAISH (Buenos Aires AI Safety Hub). BAISH is building new research teams and needs a systematic way to discover, evaluate, and curate AI Safety research project ideas — a process that is currently entirely ad hoc. The system is designed for immediate value — auto-generating scored, team-calibrated research ideas from day one using Claude's AI Safety knowledge and active web search, with a curated knowledge base built in parallel to progressively improve grounding and coverage.
 
-The pipeline automates the labor-intensive work of scanning the AI Safety research landscape — open problems lists, research agendas, recent papers, system cards, forums — and generates candidate project ideas that are scored against five quality criteria: soundness, relevance, theory of impact, low compute requirements, and accessible technical complexity. Ideas are calibrated to three team configurations: mentor-guided novice projects, individual novice projects with mentorship, and experienced researcher groups.
+The pipeline automates the labor-intensive work of scanning the AI Safety research landscape — open problems lists, research agendas, recent papers, system cards, forums — and generates candidate project ideas that are scored against configurable quality criteria: theory of impact, low compute requirements, accessible technical complexity, and novelty (plus any custom criteria the coordinator adds). Each criterion has a well-defined rubric that anchors score levels to concrete descriptions, ensuring consistency across scoring runs. The first three are evaluated by LLM judgment against their rubrics; novelty is a derived criterion — assessed separately through evidence-based search (KB + mandatory web search), classified as novel/partially addressed/already solved, then converted to a score that teams can weight. "Already solved" is a hard gate that kills an idea regardless of other scores. Ideas are calibrated to three team configurations: mentor-guided novice projects, individual novice projects with mentorship, and experienced researcher groups.
 
 Beyond automation, SafetyProjectIdeas provides an always-up-to-date AI research partner that BAISH team leads can brainstorm with — one that has internalized the current state of AI Safety research and can surface connections and directions that manual curation would miss.
 
@@ -89,7 +89,7 @@ The pipeline is built as Claude Code skills with LiteLLM as the provider abstrac
 - Auto-batch idea generation balanced across researched categories, using Claude's AI Safety knowledge + active web search. Generation strategies include: novel directions, **variations of existing experiments** (high priority — produces well-scoped projects), and **follow-up experiments to explain observed effects**
 - `/research-landscape` skill to discover open problems lists, agendas, key sources, and which categories to cover
 - Scoring against configurable quality criteria with explicit reasoning and confidence
-- Novelty assessment: KB check (if available) → web search (always, mandatory)
+- Hybrid novelty assessment: evidence-based search (KB check if available → web search always, mandatory) produces a classification (novel/partially addressed/already solved) that feeds a derived "novelty" score into the configurable criteria. "Already solved" is a hard gate. Novelty weight is configurable per team — low for novice teams doing replication studies, high for experienced groups
 - Auto-strengthen and alternative framing for promising ideas
 - Ranked output as markdown with confidence reported throughout
 - Collaborative brainstorming as secondary mode for directed exploration
@@ -140,9 +140,9 @@ He opens SafetyProjectIdeas and runs `/research-landscape` to map what's out the
 
 He then runs `/generate-ideas` with his team profiles configured. The system auto-generates 40 idea sketches balanced across the researched categories — drawing on Claude's deep knowledge of AI Safety plus active web searches for current work. Each idea comes with a confidence score. He didn't build a knowledge base, didn't configure a pipeline — ideas on day one.
 
-Meanwhile, Track B is ingesting the 800-paper shallow review into the KB. As papers load in, subsequent generation runs get richer — ideas cite specific recent papers, novelty checks cross-reference the KB before hitting the web.
+Meanwhile, Track B is ingesting the 800-paper shallow review into the KB. As papers load in, subsequent generation runs get richer — ideas cite specific recent papers, the hybrid novelty assessment cross-references the KB before hitting the web.
 
-The system auto-scores each idea against configured criteria, checks novelty (KB first, then web — always), auto-strengthens the promising ones, and produces a ranked list with confidence throughout. Guido scans the output and spots three ideas he never would have found: a novel approach to evaluating deceptive alignment in tool-using agents, a low-compute replication study challenging scalable oversight assumptions, and a cross-pollination between interpretability and developmental psychology.
+The system auto-scores each idea against configured criteria, runs the hybrid novelty assessment (KB first if available, then web — always) which both hard-gates "already solved" ideas and feeds a derived novelty score into the criteria, auto-strengthens the promising ones, and produces a ranked list with confidence throughout. Guido scans the output and spots three ideas he never would have found: a novel approach to evaluating deceptive alignment in tool-using agents, a low-compute replication study challenging scalable oversight assumptions, and a cross-pollination between interpretability and developmental psychology.
 
 He opens `/brainstorm` to dig into the developmental psychology angle: "Expand on that. What specifically from developmental psych? Could a solo novice with NLP experience handle it?" They refine it together into a concrete proposal.
 
@@ -156,7 +156,7 @@ Before running his first real pipeline cycle, Guido needs to set up SafetyProjec
 - **Solo Novice with Guidance:** Similar constraints but even more emphasis on clear methodology — the student needs to be able to follow a well-defined research plan with periodic mentor check-ins.
 - **Experienced Group:** Compute is less of a constraint, technical depth is welcome, but theory of impact must be exceptionally strong — these projects should move the needle on real safety problems.
 
-He also adjusts the scoring criteria. For the experienced group, he removes the "low compute" criterion entirely and doubles the weight on "theory of impact." For the novice profiles, he adds a custom criterion: "learning value" — does this project teach the researcher important safety concepts?
+He also adjusts the scoring criteria. For the experienced group, he removes the "low compute" criterion entirely, doubles the weight on "theory of impact," and increases the novelty weight — these projects should break new ground. For the novice profiles, he lowers the novelty weight (replication studies and variations of existing experiments are valuable learning exercises) and adds a custom criterion: "learning value" — does this project teach the researcher important safety concepts?
 
 He saves the configuration and runs a test batch. The output looks different for each profile — the experienced group gets ambitious multi-month projects, while the novice profiles get focused, well-scoped studies. Guido tweaks the weights after seeing the first results, and the pipeline remembers his adjustments for next time.
 
@@ -227,7 +227,7 @@ SafetyProjectIdeas is a hybrid CLI/conversational AI tool built as Claude Code s
 **Track A Skills (day 1):**
 - `/research-landscape` — Discover open problems lists, agendas, key sources, categories to cover
 - `/generate-ideas` — Auto-batch idea generation balanced across researched categories
-- `/score-ideas` — Score against criteria + novelty (KB if available → web always)
+- `/score-ideas` — Score against criteria + hybrid novelty assessment (KB if available → web always; hard gate on "already solved"; derived novelty score feeds into configurable criteria)
 - `/refine-ideas` — Auto-strengthen, alternative framings
 - `/rank-ideas` — Sorted output with confidence
 - `/brainstorm` — Collaborative chat for directed exploration (secondary mode)
@@ -260,7 +260,7 @@ SafetyProjectIdeas is a hybrid CLI/conversational AI tool built as Claude Code s
 All configuration lives in YAML files:
 
 - **Team profiles** (`teams.yaml`) — Team name, type (mentor+novice / solo novice / experienced group), compute budget, technical skills, custom criteria and weights
-- **Scoring criteria** (`criteria.yaml`) — Criteria definitions, default weights, per-team-type weight overrides
+- **Scoring criteria** (`criteria.yaml`) — Criteria definitions, rubrics (score levels anchored to concrete descriptions for consistency), default weights, per-team-type weight overrides. Includes the derived "novelty" criterion whose score comes from the evidence-based novelty assessment
 - **Knowledge base inclusion criteria** (`kb-criteria.yaml`) — Subfields in scope, organizations to track, publication venues, explicit exclusions
 - **Pipeline settings** (`pipeline.yaml`) — Model assignments per stage (tiering), LLM providers for parallel generation, threshold settings per filter stage
 
@@ -322,7 +322,7 @@ The MVP follows two parallel tracks that converge:
 **Track A — Ideas (from day 1, parallel with Track B):**
 1. `/research-landscape` — Discover open problems lists, agendas, key sources, categories to cover
 2. `/generate-ideas` — Auto-batch generation balanced across researched categories (Claude knowledge + web search)
-3. `/score-ideas` — Evaluate against criteria + novelty check (KB if available → web always)
+3. `/score-ideas` — Evaluate against criteria + hybrid novelty assessment (KB if available → web always; hard gate on "already solved"; derived novelty score)
 4. `/refine-ideas` — Auto-strengthen, alternative framings
 5. `/rank-ideas` — Sorted output with confidence reported throughout
 6. `/brainstorm` — Interactive collaborative mode (secondary)
@@ -350,7 +350,7 @@ Each skill is iterable — run it, inspect output, adjust configuration, re-run 
 **Must-Have Capabilities:**
 - Auto-batch idea generation as primary mode (not interactive) — Guido's time is the bottleneck
 - `/research-landscape` skill for category and source discovery
-- Active web search for novelty checks (always, KB is optional first pass)
+- Hybrid novelty assessment: evidence-based search (KB optional first pass, web always) with hard gate on "already solved" and derived novelty score for team-specific weighting
 - Confidence reporting on all outputs (never auto-filtered — human decides)
 - Refine/Iterate stage with auto-strengthen and alternative framing
 - Ranked output — scored and sorted as markdown with confidence
@@ -444,11 +444,11 @@ Each skill is iterable — run it, inspect output, adjust configuration, re-run 
 
 - **FR28:** System evaluates ideas against configurable quality criteria with configurable weights
 - **FR29:** System applies staged filtering — progressively more expensive evaluation, killing bad ideas early
-- **FR30:** System scores each idea per criterion with explicit reasoning for each score
+- **FR30:** System scores each idea per criterion against a well-defined rubric with explicit reasoning for each score, ensuring consistency across scoring runs
 - **FR31:** System applies threshold settings per filter stage to control which ideas advance
 - **FR32:** Every scored idea includes cited papers with verifiable links or DOIs
 - **FR33:** Every claim in an idea traces back to a specific source passage in the knowledge base
-- **FR34:** System assesses novelty of each idea against existing published work, including sources beyond the knowledge base (e.g., via web search or broader literature access), to flag whether the idea is novel, partially addressed, or already solved
+- **FR34:** System performs a hybrid novelty assessment on each idea: (1) evidence-based search against existing published work — KB first if available, then mandatory web search (ArXiv, Semantic Scholar, Google Scholar) — classifying each idea as novel, partially addressed, or already solved with supporting evidence; (2) "already solved" classification is a hard gate that eliminates the idea regardless of other scores; (3) the classification is converted to a derived "novelty" score that feeds into the configurable scoring criteria, enabling per-team weighting (e.g., low novelty weight for novice teams doing replication studies, high novelty weight for experienced groups)
 - **FR35:** System actively verifies that cited papers exist and links/DOIs resolve
 
 ### Idea Refinement *(Track A — day 1)*
@@ -476,13 +476,13 @@ Each skill is iterable — run it, inspect output, adjust configuration, re-run 
 ### Evaluate Existing Ideas *(Track A — day 1)*
 
 - **FR49:** Coordinator can submit an existing project idea (their own or externally sourced) for evaluation against the configured scoring criteria
-- **FR50:** System assesses the novelty of submitted ideas against published work (same capability as FR34)
+- **FR50:** System assesses the novelty of submitted ideas against published work using the same hybrid approach as FR34 (evidence-based search → hard gate on "already solved" → derived novelty score)
 - **FR51:** System can refine and strengthen submitted ideas using the same Refine stage capabilities (auto-strengthen, alternative framing)
 
 ### Configuration Management *(Track A — day 1)*
 
 - **FR52:** Coordinator can define and edit team profiles specifying team type, compute budget, technical skills, and custom criteria weights
-- **FR53:** Coordinator can define and edit scoring criteria including definitions, default weights, and per-team-type weight overrides
+- **FR53:** Coordinator can define and edit scoring criteria including definitions, rubrics (score levels anchored to concrete descriptions), default weights, and per-team-type weight overrides
 - **FR54:** Coordinator can add custom scoring criteria beyond the default set
 - **FR55:** Coordinator can configure pipeline settings including model assignments per stage and LLM providers for parallel generation
 - **FR56:** All configuration is stored in human-editable YAML files
@@ -517,7 +517,7 @@ Each skill is iterable — run it, inspect output, adjust configuration, re-run 
 
 - **NFR4:** Zero tolerance for hallucinated citations — if a referenced paper cannot be verified to exist (valid link or DOI resolves), it is excluded from the output entirely
 - **NFR5:** Factual claims about existing research or findings must trace back to a verifiable source. Novel insights and cross-pollinations generated by the pipeline are not required to trace to a single source.
-- **NFR6:** Novelty assessments must include evidence — confirming no existing work was found via both KB and broader search, or flagging the idea as partially or fully addressed
+- **NFR6:** Novelty assessments must include evidence — confirming no existing work was found via both KB and broader search, or flagging the idea as partially or fully addressed. The derived novelty score must be traceable to the underlying evidence and classification
 - **NFR7:** Scoring reasoning must be explicit and auditable — no opaque scores without justification
 
 ### Integration

@@ -28,7 +28,7 @@ _This document builds collaboratively through step-by-step discovery. Sections a
 | KB Suggestions | FR16-FR17 | Persistent suggestions list, review workflow |
 | Pipeline Execution | FR18-FR22 | Stage independence, end-to-end composition, human intervention points, structured logging |
 | Idea Generation | FR23-FR27, FR67-FR68 | V1: Single-provider generation via Claude Code with capable models. Multi-LLM parallel generation deferred to post-MVP. Generation strategies include experiment variations (FR67) and follow-up experiments (FR68) |
-| Idea Evaluation & Scoring | FR28-FR35 | Configurable criteria/weights, staged filtering, citation verification, novelty assessment. Ideas extending papers without source code are downranked (uses FR69 KB attribute) |
+| Idea Evaluation & Scoring | FR28-FR35 | Configurable criteria/weights, staged filtering, citation verification, hybrid novelty assessment (evidence-based search → classification → hard gate on "already solved" → derived novelty score feeds into configurable criteria with per-team weighting). Ideas extending papers without source code are downranked (uses FR69 KB attribute) |
 | Idea Refinement | FR36-FR38 | Auto-strengthen, alternative framing, progressive elaboration |
 | Ranking & Output | FR39-FR42 | Markdown output, provenance tracking, concise human-scannable format |
 | Collaborative Brainstorming | FR43-FR48 | Conversational mode with full KB access, directed exploration, open question assessment |
@@ -336,7 +336,7 @@ uv add semanticscholar arxiv scipdf-parser trafilatura
 1. Project initialization (uv, package structure, config schemas for teams/criteria/participants)
 2. `/research-landscape` skill — discover open problems lists, research agendas, key sources, and which categories to cover
 3. `/generate-ideas` skill — auto-batch idea generation, balanced across researched categories. Uses KB when available, Claude knowledge + web search otherwise
-4. `/score-ideas` with novelty checking — KB first pass (if available), then always web search (ArXiv, Semantic Scholar, Google Scholar). Confidence reported on every assessment
+4. `/score-ideas` with hybrid novelty assessment — evidence-based search (KB first pass if available, then always web search), hard gate on "already solved", derived novelty score feeds into configurable criteria with per-team weighting. Confidence reported on every assessment
 5. `/refine-ideas` — auto-strengthen, alternative framings, with confidence reported
 6. `/rank-ideas` — sorted output with confidence reported throughout
 7. `/brainstorm` skill — interactive collaborative mode (secondary to auto-generation)
@@ -357,7 +357,7 @@ uv add semanticscholar arxiv scipdf-parser trafilatura
 - Filter/Score depends on Pydantic config models for criteria/weights
 - KB build depends on document parsers (scipdf_parser, Trafilatura) and LLM extraction
 - Brainstorming skill depends on participant profiles and config; KB access is **additive enrichment**, not a prerequisite
-- Novelty checks ALWAYS include web search — KB is first pass (fast, cheap), web is mandatory second pass. Never KB-only
+- Hybrid novelty assessment ALWAYS includes web search — KB is first pass (fast, cheap), web is mandatory second pass. Never KB-only. "Already solved" is a hard gate; "novel"/"partially addressed" feed a derived novelty score into configurable criteria
 - All pipeline stages report confidence scores but do NOT filter by confidence — human decides what to act on
 - Pipeline orchestrator depends on all stages and logging infrastructure
 
@@ -437,19 +437,25 @@ config.teams["mentor_novice"].compute_budget
 
 Never read YAML files directly in pipeline code — always go through Pydantic models.
 
-### Novelty Assessment Flow
+### Hybrid Novelty Assessment Flow
 
-**Mandatory for all ideas (generation, scoring, evaluation):**
+**Mandatory for all ideas (generation, scoring, evaluation). Uses a hybrid approach — separate evidence-based assessment that feeds a derived score into configurable criteria:**
+
 1. If KB available: query KB for related work in same subfield/tags (fast, cheap)
 2. Always: search web — ArXiv, Semantic Scholar, Google Scholar for related/identical work
-3. Synthesize assessment: novel / partially addressed / already solved
-4. Report confidence in the assessment
-5. Never rely entirely on KB — web search is always mandatory
+3. Synthesize assessment: classify as novel / partially addressed / already solved, with supporting evidence (NFR6)
+4. **Hard gate:** "Already solved" classification eliminates the idea immediately — no further scoring or refinement, regardless of other criteria scores
+5. **Derived score:** The classification (novel/partially addressed) is converted to a novelty score that feeds into the configurable scoring criteria alongside theory_of_impact, low_compute, accessible_complexity, etc.
+6. **Per-team weighting:** Novelty weight is configurable per team type — experienced groups weight it high (these projects should break new ground), novice teams can weight it low (replication studies and variations of existing experiments are valuable learning exercises, per FR67)
+7. Report confidence in the assessment
+8. Never rely entirely on KB — web search is always mandatory
+
+**Why hybrid?** Novelty requires a fundamentally different methodology from other criteria (evidence-based search vs. LLM judgment), and "already solved" must be a hard gate. But "partially addressed" is a spectrum that teams should be able to weight — a novice replication study has different novelty needs than an experienced group's flagship project. The hybrid approach preserves the gate, the evidence, and the configurability.
 
 ### Confidence Reporting (Cross-Cutting)
 
 Every pipeline stage reports a confidence score on its outputs:
-- **Generation:** confidence in idea soundness
+- **Generation:** confidence in idea quality
 - **Scoring:** confidence in each criterion score
 - **Novelty:** confidence in the novelty assessment (how thorough was the search)
 - **Refinement:** confidence that refinement improved the idea
@@ -489,7 +495,7 @@ SafetyProjectIdeas/
 │       │   # Track A — Ideas (day 1)
 │       ├── research-landscape.md    # Discover open problems lists, agendas, categories
 │       ├── generate-ideas.md        # Auto-batch idea generation
-│       ├── score-ideas.md           # Score + novelty check (KB → web always)
+│       ├── score-ideas.md           # Score + hybrid novelty (KB → web always → hard gate → derived score)
 │       ├── refine-ideas.md          # Auto-strengthen, alternative framings
 │       ├── rank-ideas.md            # Sorted output with confidence
 │       ├── brainstorm.md            # Collaborative brainstorming (secondary mode)
@@ -528,7 +534,7 @@ SafetyProjectIdeas/
 │       │   ├── memory.py            # Load past idea titles from data/ideas/ to avoid repetition
 │       │   ├── source.py            # Source stage: select KB context by priority
 │       │   ├── generate.py          # Generate stage: idea sketches from source material
-│       │   ├── filter_score.py      # Filter/Score stage: evaluate against criteria + novelty check (FR34)
+│       │   ├── filter_score.py      # Filter/Score stage: evaluate against criteria + hybrid novelty assessment (FR34: evidence search → hard gate → derived score)
 │       │   ├── refine.py            # Refine stage: strengthen, reframe
 │       │   └── rank.py              # Rank stage: sort, format final output
 │       └── verification/
@@ -665,7 +671,7 @@ docs = kb.query(subfield="interpretability", sections=["abstract", "key_findings
 - When KB is available, pipeline stages never read KB files directly — always go through query module
 - Query module returns metadata by default; specific sections only when explicitly requested
 - Full section dumps are never returned — caller always specifies which sections
-- Novelty assessment always follows: KB check (if available) → web search (always). Never relies entirely on KB
+- Hybrid novelty assessment always follows: KB check (if available) → web search (always) → classification → hard gate on "already solved" → derived novelty score. Never relies entirely on KB
 
 **Boundary 4: Config ↔ Everything**
 - `config/loader.py` is the single entry point for all configuration
@@ -677,12 +683,12 @@ docs = kb.query(subfield="interpretability", sections=["abstract", "key_findings
 ```
 [Track A — Ideas without KB (day 1)]
 config/ → generate-ideas skill → Claude generates from training knowledge + web search
-→ score (novelty: KB if available → web search always) → refine → rank
+→ score (hybrid novelty: KB if available → web search always → hard gate "already solved" → derived novelty score) → refine → rank
 → data/output/
 
 [Track A — Ideas with KB (after Track B populates KB)]
 config/ → generate-ideas skill → reads KB via query.py + Claude knowledge + web search
-→ score (novelty: KB first → web always) → refine → rank → data/output/
+→ score (hybrid novelty: KB first → web always → hard gate → derived score) → refine → rank → data/output/
 
 [Track B — KB Bootstrap]
 800-paper CSV (arb-consulting/shallow-review-2025) → ingestion script → data/kb/*.json
@@ -725,7 +731,7 @@ brainstorm.md skill → loads participant profile from config/participants/
 | KB Management (FR1-FR4, FR6, FR8-FR10) | ✅ Covered | `kb/` module + `build-kb.md` skill |
 | Pipeline Execution (FR18-FR22) | ✅ Covered | `pipeline/orchestrator.py` + per-stage skills |
 | Idea Generation (FR23-FR27) | ✅ Covered | `source.py` + `generate.py`. Multi-LLM deferred, model tiering via Claude family |
-| Evaluation & Scoring (FR28-FR35) | ✅ Covered | `filter_score.py` + `citation.py`. FR34 novelty check in filter_score |
+| Evaluation & Scoring (FR28-FR35) | ✅ Covered | `filter_score.py` + `citation.py`. FR34 hybrid novelty assessment in filter_score (evidence-based search → hard gate → derived score) |
 | Refinement (FR36-FR38) | ✅ Covered | `refine.py` |
 | Ranking & Output (FR39-FR42) | ✅ Covered | `rank.py` |
 | Brainstorming (FR43-FR48, FR66) | ✅ Covered | `brainstorm.md` skill + participant profiles |
@@ -824,7 +830,7 @@ Moved to post-MVP. `data/ideas/` directory remains (rank.py copies final output 
 1. Project initialization (uv, package structure, config schemas for teams/criteria/participants)
 2. `/research-landscape` skill — discover open problems lists, research agendas, key sources, and which categories to cover
 3. `/generate-ideas` skill — auto-batch idea generation, balanced across researched categories. Uses KB when available, Claude knowledge + web search otherwise
-4. `/score-ideas` with novelty checking — KB first pass (if available), then always web search. Confidence reported on every assessment
+4. `/score-ideas` with hybrid novelty assessment — evidence-based search (KB first pass if available, then always web search), hard gate on "already solved", derived novelty score feeds into configurable criteria. Confidence reported on every assessment
 5. `/refine-ideas` — auto-strengthen, alternative framings, with confidence reported
 6. `/rank-ideas` — sorted output with confidence reported throughout
 7. `/brainstorm` skill — interactive collaborative mode (secondary to auto-generation)

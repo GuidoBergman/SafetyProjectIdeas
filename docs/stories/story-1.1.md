@@ -60,7 +60,7 @@ So that the system is ready for idea generation from day one.
 **Given** no config files exist yet
 **When** the developer creates default config files
 **Then** `config/teams.yaml` contains BAISH's three team profiles (mentor_novice, solo_novice, experienced_group)
-**And** `config/criteria.yaml` contains the five default scoring criteria (soundness, relevance, theory_of_impact, low_compute, accessible_complexity) with default weights and per-team-type overrides
+**And** `config/criteria.yaml` contains the three default scoring criteria (theory_of_impact, low_compute, accessible_complexity) each with a well-defined rubric anchoring score levels to concrete descriptions, default weights, and per-team-type overrides, plus a derived "novelty" criterion whose score comes from the hybrid novelty assessment (FR34) — configurable weight per team type but score is not manually assigned
 **And** `config/pipeline.yaml` contains default model assignments and threshold settings
 **And** `config/kb-criteria.yaml` contains default inclusion criteria for AI Safety subfields
 **And** all config files are human-readable and editable YAML
@@ -85,7 +85,7 @@ So that the system is ready for idea generation from day one.
 - **Config validation via Pydantic:** All configuration is accessed through Pydantic models. No raw YAML dict access in pipeline code. This ensures type safety and clear error messages.
 - **YAML as source of truth:** Config files are human-editable YAML (FR56). Pydantic validates on load, but the YAML files are the canonical source.
 - **Three team types:** mentor_novice, solo_novice, experienced_group -- these map to BAISH's actual team configurations.
-- **Five default scoring criteria:** soundness, relevance, theory_of_impact, low_compute, accessible_complexity -- with per-team-type weight overrides (e.g., experienced_group removes low_compute, doubles theory_of_impact).
+- **Three default scoring criteria + one derived:** theory_of_impact, low_compute, accessible_complexity -- each with a well-defined rubric (score levels anchored to concrete descriptions for consistency) and per-team-type weight overrides (e.g., experienced_group removes low_compute, doubles theory_of_impact). A fourth criterion, "novelty", is derived from the hybrid novelty assessment (FR34) -- its weight is configurable per team type but its score comes from evidence-based search, not LLM judgment.
 
 ### File Structure
 

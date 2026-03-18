@@ -34,8 +34,6 @@ TEAM_TYPES = ["mentor_novice", "solo_novice", "experienced_group"]
 
 # Scoring criteria names
 SCORING_CRITERIA = [
-    "soundness",
-    "relevance",
     "theory_of_impact",
     "low_compute",
     "accessible_complexity",

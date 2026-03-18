@@ -28,14 +28,12 @@ class TestSaveTeams:
             TeamProfile(
                 name="Test Team",
                 team_type="mentor_novice",
-                compute_budget="low",
                 technical_skills=["python"],
                 criteria_weights={"low_compute": 2.0},
             ),
             TeamProfile(
                 name="Expert Team",
                 team_type="experienced_group",
-                compute_budget="high",
             ),
         ]
         path = tmp_path / "teams.yaml"
@@ -57,10 +55,9 @@ class TestSaveCriteria:
     def test_save_and_reload(self, tmp_path):
         criteria = [
             ScoringCriteria(
-                name="soundness",
-                description="Is the idea sound?",
-                default_weight=2.0,
-                team_type_overrides={"mentor_novice": 1.5},
+                name="theory_of_impact",
+                description="Does this idea advance AI Safety?",
+                default_weight=1.5,
             ),
         ]
         path = tmp_path / "criteria.yaml"
@@ -68,8 +65,8 @@ class TestSaveCriteria:
 
         data = load_yaml(path)
         assert len(data["criteria"]) == 1
-        assert data["criteria"][0]["name"] == "soundness"
-        assert data["criteria"][0]["default_weight"] == 2.0
+        assert data["criteria"][0]["name"] == "theory_of_impact"
+        assert data["criteria"][0]["default_weight"] == 1.5
 
     def test_save_custom_criterion(self, tmp_path):
         """FR54: custom criteria beyond defaults."""
@@ -93,7 +90,7 @@ class TestSavePipeline:
                 "generate": StageModelAssignment(model="opus", fallback="sonnet"),
             },
             thresholds={
-                "filter_score": StageThreshold(min_score=6.0, max_ideas=15),
+                "filter_score": StageThreshold(min_score=3.0, max_ideas=15),
             },
         )
         path = tmp_path / "pipeline.yaml"
@@ -101,7 +98,7 @@ class TestSavePipeline:
 
         data = load_yaml(path)
         assert data["model_assignments"]["generate"]["model"] == "opus"
-        assert data["thresholds"]["filter_score"]["min_score"] == 6.0
+        assert data["thresholds"]["filter_score"]["min_score"] == 3.0
 
 
 class TestSaveParticipant:

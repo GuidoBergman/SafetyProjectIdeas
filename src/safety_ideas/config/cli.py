@@ -37,7 +37,6 @@ def show_config() -> None:
     print("=== Team Profiles ===")
     for team_type, team in config.teams.items():
         print(f"\n  [{team_type}] {team.name}")
-        print(f"    Compute: {team.compute_budget}")
         print(f"    Skills: {', '.join(team.technical_skills) if team.technical_skills else 'none'}")
         if team.criteria_weights:
             print(f"    Weight overrides: {team.criteria_weights}")
@@ -46,8 +45,6 @@ def show_config() -> None:
     for c in config.criteria:
         print(f"\n  [{c.name}] {c.description}")
         print(f"    Default weight: {c.default_weight}")
-        if c.team_type_overrides:
-            print(f"    Overrides: {c.team_type_overrides}")
 
     print("\n=== Pipeline Settings ===")
     for stage, assignment in config.pipeline.model_assignments.items():
