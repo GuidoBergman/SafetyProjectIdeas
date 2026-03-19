@@ -8,10 +8,12 @@ from dotenv import load_dotenv
 from pydantic import ValidationError
 
 from safety_ideas.config.schemas import (
+    DEFAULT_TEAM,
     KBCriteria,
     PipelineSettings,
     ScoringCriteria,
     TeamProfile,
+    TeamType,
 )
 from safety_ideas.constants import PROJECT_ROOT
 from safety_ideas.utils import load_yaml
@@ -24,13 +26,14 @@ class AppConfig:
     """Container for all validated configuration."""
 
     teams: dict[str, TeamProfile] = field(default_factory=dict)
+    default_team: TeamType = DEFAULT_TEAM
     criteria: list[ScoringCriteria] = field(default_factory=list)
     pipeline: PipelineSettings = field(default_factory=PipelineSettings)
     kb_criteria: KBCriteria = field(default_factory=KBCriteria)
 
 
-def _load_teams(path: Path) -> dict[str, TeamProfile]:
-    """Load and validate team profiles from YAML."""
+def _load_teams(path: Path) -> tuple[dict[str, TeamProfile], TeamType]:
+    """Load and validate team profiles and default_team from YAML."""
     data = load_yaml(path)
     teams = {}
     for team_data in data.get("teams", []):
@@ -39,7 +42,13 @@ def _load_teams(path: Path) -> dict[str, TeamProfile]:
             teams[profile.team_type] = profile
         except ValidationError as e:
             raise ValueError(f"Invalid team profile in {path}: {e}") from e
-    return teams
+    default_team: TeamType = data.get("default_team", DEFAULT_TEAM)
+    if teams and default_team not in teams:
+        raise ValueError(
+            f"default_team '{default_team}' in {path} does not match any defined team type. "
+            f"Available: {list(teams.keys())}"
+        )
+    return teams, default_team
 
 
 def _load_criteria(path: Path) -> list[ScoringCriteria]:
@@ -102,8 +111,11 @@ def load_config(
     pipeline_path = config_dir / "pipeline.yaml"
     kb_criteria_path = config_dir / "kb-criteria.yaml"
 
+    teams, default_team = _load_teams(teams_path)
+
     return AppConfig(
-        teams=_load_teams(teams_path),
+        teams=teams,
+        default_team=default_team,
         criteria=_load_criteria(criteria_path),
         pipeline=_load_pipeline(pipeline_path),
         kb_criteria=_load_kb_criteria(kb_criteria_path),

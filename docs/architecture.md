@@ -29,8 +29,8 @@ _This document builds collaboratively through step-by-step discovery. Sections a
 | Pipeline Execution | FR18-FR22 | Stage independence, end-to-end composition, human intervention points, structured logging |
 | Idea Generation | FR23-FR27, FR67-FR68 | V1: Single-provider generation via Claude Code with capable models. Multi-LLM parallel generation deferred to post-MVP. Generation strategies include experiment variations (FR67) and follow-up experiments (FR68) |
 | Idea Evaluation & Scoring | FR28-FR35 | Configurable criteria/weights, staged filtering, citation verification, hybrid novelty assessment (evidence-based search → classification → hard gate on "already solved" → derived novelty score feeds into configurable criteria with per-team weighting). Ideas extending papers without source code are downranked (uses FR69 KB attribute) |
-| Idea Refinement | FR36-FR38 | Auto-strengthen, alternative framing, progressive elaboration |
-| Ranking & Output | FR39-FR42 | Markdown output, provenance tracking, concise human-scannable format |
+| Idea Refinement & Proposal Assembly | FR36-FR38, FR40 | Auto-strengthen, alternative framing, assemble full proposals (research question, approach, experiments, impact chain, citations) so Rank has complete signal |
+| Ranking & Output | FR39, FR41-FR42 | Re-score full proposals, sort, filter, format markdown output, provenance tracking, concise human-scannable format |
 | Collaborative Brainstorming | FR43-FR48 | Conversational mode with full KB access, directed exploration, open question assessment |
 | Evaluate Existing Ideas | FR49-FR51 | External idea ingestion through same scoring/refinement pipeline |
 | Configuration Management | FR52-FR57 | YAML-based, human-editable, persistent across sessions |
@@ -42,7 +42,7 @@ _This document builds collaboratively through step-by-step discovery. Sections a
 
 | Area | NFRs | Architectural Impact |
 |---|---|---|
-| Cost Efficiency | NFR1-NFR3 | Model tiering within Claude family — capable models (Sonnet/Opus) for creative/analytical work (generation, scoring, refinement), cheaper models (Haiku) for mechanical subtasks (citation verification, format validation, dedup checks). Token minimization via progressive elaboration |
+| Cost Efficiency | NFR1-NFR3 | Model tiering within Claude family — capable models (Sonnet/Opus) for creative/analytical work (generation, scoring, refinement, proposal assembly), cheaper models (Haiku) for mechanical subtasks (citation verification, format validation, dedup checks, ranking/sorting). Token minimization via progressive elaboration |
 | Accuracy & Reliability | NFR4-NFR7 | Citation verification pipeline, source traceability, explicit scoring reasoning |
 | Integration | NFR8-NFR10 | V1: Modular source connectors for KB (ArXiv, forums, etc.) only. LLM provider abstraction deferred to post-MVP |
 | Maintainability & Modularity | NFR11-NFR13 | Stage independence, externalized config, well-defined inter-stage interfaces |
@@ -209,8 +209,8 @@ SafetyProjectIdeas/
 **Inter-Stage Data Format: Hybrid (Markdown + JSON)**
 - **Generate stage** outputs idea sketches as markdown files (natural document format for creative content)
 - **Filter/Score stage** outputs JSON (structured scores, reasoning per criterion, numeric thresholds)
-- **Refine stage** outputs enriched markdown (expanded research questions, approach outlines)
-- **Rank stage** outputs final markdown proposals with embedded score metadata
+- **Refine stage** outputs full proposals as markdown (research question, approach, first experiments, theory of impact chain, cited sources)
+- **Rank stage** re-scores full proposals, sorts, filters, and outputs final ranked markdown with embedded score metadata
 - Each stage writes to its run directory; next stage reads from previous
 
 **KB Document Structure (JSON with section-level access):**
@@ -340,8 +340,8 @@ uv add semanticscholar arxiv docling trafilatura
 2. `/research-landscape` skill — discover open problems lists, research agendas, key sources, and which categories to cover
 3. `/generate-ideas` skill — auto-batch idea generation, balanced across researched categories. Uses KB when available, Claude knowledge + web search otherwise
 4. `/score-ideas` with hybrid novelty assessment — evidence-based search (KB first pass if available, then always web search), hard gate on "already solved", derived novelty score feeds into configurable criteria with per-team weighting. Confidence reported on every assessment
-5. `/refine-ideas` — auto-strengthen, alternative framings, with confidence reported
-6. `/rank-ideas` — sorted output with confidence reported throughout
+5. `/refine-ideas` — auto-strengthen, alternative framings, assemble full proposals, with confidence reported
+6. `/rank-ideas` — re-score full proposals, sort, filter, with confidence reported throughout
 7. `/brainstorm` skill — interactive collaborative mode (secondary to auto-generation)
 8. `/evaluate-idea` skill — score existing ideas against criteria
 
@@ -499,8 +499,8 @@ SafetyProjectIdeas/
 │       ├── research-landscape.md    # Discover open problems lists, agendas, categories
 │       ├── generate-ideas.md        # Auto-batch idea generation
 │       ├── score-ideas.md           # Score + hybrid novelty (KB → web always → hard gate → derived score)
-│       ├── refine-ideas.md          # Auto-strengthen, alternative framings
-│       ├── rank-ideas.md            # Sorted output with confidence
+│       ├── refine-ideas.md          # Auto-strengthen, alternative framings, assemble full proposals
+│       ├── rank-ideas.md            # Re-score full proposals, sort, filter
 │       ├── brainstorm.md            # Collaborative brainstorming (secondary mode)
 │       ├── evaluate-idea.md         # Score an existing idea
 │       ├── configure-teams.md       # Team profile management
@@ -539,8 +539,8 @@ SafetyProjectIdeas/
 │       │   ├── source.py            # Source stage: select KB context by priority
 │       │   ├── generate.py          # Generate stage: idea sketches from source material
 │       │   ├── filter_score.py      # Filter/Score stage: evaluate against criteria + hybrid novelty assessment (FR34: evidence search → hard gate → derived score)
-│       │   ├── refine.py            # Refine stage: strengthen, reframe
-│       │   └── rank.py              # Rank stage: sort, format final output
+│       │   ├── refine.py            # Refine stage: strengthen, reframe, assemble full proposals
+│       │   └── rank.py              # Rank stage: re-score full proposals, sort, filter, format output
 │       └── verification/
 │           ├── __init__.py
 │           └── citation.py          # Citation/DOI verification
@@ -646,8 +646,8 @@ docs = kb.query(subfield="interpretability", sections=["abstract", "key_findings
 | Pipeline Execution (FR18-FR22) | `src/safety_ideas/pipeline/` | `orchestrator.py` |
 | Idea Generation (FR23-FR27) | `src/safety_ideas/pipeline/` | `source.py`, `generate.py` |
 | Evaluation & Scoring (FR28-FR35) | `src/safety_ideas/pipeline/` | `filter_score.py` + `verification/citation.py` |
-| Idea Refinement (FR36-FR38) | `src/safety_ideas/pipeline/` | `refine.py` |
-| Ranking & Output (FR39-FR42) | `src/safety_ideas/pipeline/` | `rank.py` |
+| Idea Refinement & Proposal Assembly (FR36-FR38, FR40) | `src/safety_ideas/pipeline/` | `refine.py` |
+| Ranking & Output (FR39, FR41-FR42) | `src/safety_ideas/pipeline/` | `rank.py` |
 | Brainstorming (FR43-FR48, FR66) | `.claude/commands/` | `brainstorm.md` |
 | Evaluate Existing Ideas (FR49-FR51) | `.claude/commands/` | `evaluate-idea.md` |
 | Configuration (FR52-FR57) | `src/safety_ideas/config/` + `config/` | `schemas.py`, `loader.py`, YAML files |
@@ -738,8 +738,8 @@ brainstorm.md skill → loads participant profile from config/participants/
 | Pipeline Execution (FR18-FR22) | ✅ Covered | `pipeline/orchestrator.py` + per-stage skills |
 | Idea Generation (FR23-FR27) | ✅ Covered | `source.py` + `generate.py`. Multi-LLM deferred, model tiering via Claude family |
 | Evaluation & Scoring (FR28-FR35) | ✅ Covered | `filter_score.py` + `citation.py`. FR34 hybrid novelty assessment in filter_score (evidence-based search → hard gate → derived score) |
-| Refinement (FR36-FR38) | ✅ Covered | `refine.py` |
-| Ranking & Output (FR39-FR42) | ✅ Covered | `rank.py` |
+| Refinement & Proposal Assembly (FR36-FR38, FR40) | ✅ Covered | `refine.py` |
+| Ranking & Output (FR39, FR41-FR42) | ✅ Covered | `rank.py` |
 | Brainstorming (FR43-FR48, FR66) | ✅ Covered | `brainstorm.md` skill + participant profiles |
 | Evaluate Existing (FR49-FR51) | ✅ Covered | `evaluate-idea.md` skill |
 | Configuration (FR52-FR57) | ✅ Covered | `config/` + Pydantic schemas |
@@ -837,8 +837,8 @@ Moved to post-MVP. `data/ideas/` directory remains (rank.py copies final output 
 2. `/research-landscape` skill — discover open problems lists, research agendas, key sources, and which categories to cover
 3. `/generate-ideas` skill — auto-batch idea generation, balanced across researched categories. Uses KB when available, Claude knowledge + web search otherwise
 4. `/score-ideas` with hybrid novelty assessment — evidence-based search (KB first pass if available, then always web search), hard gate on "already solved", derived novelty score feeds into configurable criteria. Confidence reported on every assessment
-5. `/refine-ideas` — auto-strengthen, alternative framings, with confidence reported
-6. `/rank-ideas` — sorted output with confidence reported throughout
+5. `/refine-ideas` — auto-strengthen, alternative framings, assemble full proposals, with confidence reported
+6. `/rank-ideas` — re-score full proposals, sort, filter, with confidence reported throughout
 7. `/brainstorm` skill — interactive collaborative mode (secondary to auto-generation)
 8. `/evaluate-idea` skill — score existing ideas against criteria
 

@@ -228,8 +228,8 @@ SafetyProjectIdeas is a hybrid CLI/conversational AI tool built as Claude Code s
 - `/research-landscape` — Discover open problems lists, agendas, key sources, categories to cover
 - `/generate-ideas` — Auto-batch idea generation balanced across researched categories
 - `/score-ideas` — Score against criteria + hybrid novelty assessment (KB if available → web always; hard gate on "already solved"; derived novelty score feeds into configurable criteria)
-- `/refine-ideas` — Auto-strengthen, alternative framings
-- `/rank-ideas` — Sorted output with confidence
+- `/refine-ideas` — Auto-strengthen, alternative framings, assemble full proposals
+- `/rank-ideas` — Re-score full proposals, sort, filter
 - `/brainstorm` — Collaborative chat for directed exploration (secondary mode)
 - `/evaluate-idea` — Score an existing idea against criteria
 - `/configure-teams` — Define/edit team profiles, scoring criteria, weights
@@ -300,10 +300,10 @@ Ideas evolve through the pipeline — cheap to generate, progressively enriched 
 |---|---|---|
 | Generate | Brief idea sketch (2-3 sentences: problem + direction + why it matters) | Cheap to produce, easy to kill bad ideas early |
 | Filter/Score | Sketch + scores + reasoning per criterion | Evaluate against configurable criteria |
-| Refine | Expanded: research question, approach outline, why this framing is strong | Strengthen promising ideas before final ranking |
-| Rank | Full concise proposal (see below) | Human-scannable output for decision-making |
+| Refine | Full concise proposal (see below) | Assemble complete proposals so ranking has full signal |
+| Rank | Refined proposals re-scored and sorted | Re-score full proposals, sort, filter, format output |
 
-**Final Proposal Output (post-Rank):**
+**Full Proposal Output (post-Refine):**
 - Research question
 - Approach (concise methodology outline)
 - Proposed first experiments
@@ -323,8 +323,8 @@ The MVP follows two parallel tracks that converge:
 1. `/research-landscape` — Discover open problems lists, agendas, key sources, categories to cover
 2. `/generate-ideas` — Auto-batch generation balanced across researched categories (Claude knowledge + web search)
 3. `/score-ideas` — Evaluate against criteria + hybrid novelty assessment (KB if available → web always; hard gate on "already solved"; derived novelty score)
-4. `/refine-ideas` — Auto-strengthen, alternative framings
-5. `/rank-ideas` — Sorted output with confidence reported throughout
+4. `/refine-ideas` — Auto-strengthen, alternative framings, assemble full proposals
+5. `/rank-ideas` — Re-score full proposals, sort, filter, with confidence reported throughout
 6. `/brainstorm` — Interactive collaborative mode (secondary)
 7. `/evaluate-idea` — Score existing ideas
 
@@ -455,12 +455,12 @@ Each skill is iterable — run it, inspect output, adjust configuration, re-run 
 
 - **FR36:** System auto-strengthens ideas with weak scores by attempting to improve the weakest dimensions
 - **FR37:** System generates alternative framings for promising ideas (2-3 angles on the same core insight)
-- **FR38:** System expands surviving ideas from brief sketches to include: research question, approach outline, and strength rationale
+- **FR38:** System assembles surviving ideas into full proposals: research question, approach outline, proposed first experiments, theory of impact chain, strength rationale, and cited sources with verifiable links/DOIs. This assembly happens in Refine so that Rank has complete proposals to score against
 
 ### Ranking & Output *(Track A — day 1)*
 
-- **FR39:** System produces a ranked list of ideas sorted by overall score as a markdown file
-- **FR40:** Each final proposal includes: research question, approach, proposed first experiments, theory of impact chain, scores per criterion, and cited sources with verifiable links/DOIs
+- **FR39:** System re-scores full proposals from Refine against criteria (now with richer signal from complete proposals) and produces a ranked list sorted by overall score as a markdown file
+- **FR40:** Each final proposal carries forward the full content assembled in Refine: research question, approach, proposed first experiments, theory of impact chain, scores per criterion, and cited sources with verifiable links/DOIs
 - **FR41:** Final proposals are concise enough for a human to scan 20+ proposals in a sitting and compare meaningfully
 - **FR42:** System preserves the provenance of each idea (which KB sources contributed, which generation method produced it)
 

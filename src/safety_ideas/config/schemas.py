@@ -7,6 +7,8 @@ from pydantic import BaseModel, Field
 
 TeamType = Literal["mentor_novice", "solo_novice", "experienced_group"]
 
+DEFAULT_TEAM: TeamType = "mentor_novice"
+
 
 class TeamProfile(BaseModel):
     """Profile for a BAISH team configuration."""

@@ -34,9 +34,12 @@ def show_config() -> None:
     """Display current configuration summary."""
     config = load_config(load_env=False)
 
+    print(f"=== Default Team: {config.default_team} ===\n")
+
     print("=== Team Profiles ===")
     for team_type, team in config.teams.items():
-        print(f"\n  [{team_type}] {team.name}")
+        default_marker = " (DEFAULT)" if team_type == config.default_team else ""
+        print(f"\n  [{team_type}] {team.name}{default_marker}")
         print(f"    Skills: {', '.join(team.technical_skills) if team.technical_skills else 'none'}")
         if team.criteria_weights:
             print(f"    Weight overrides: {team.criteria_weights}")
@@ -116,9 +119,30 @@ def remove_team(team_type: str) -> None:
     if team_type not in config.teams:
         print(f"Team type '{team_type}' not found.", file=sys.stderr)
         sys.exit(1)
+    if team_type == config.default_team:
+        print(
+            f"Cannot remove '{team_type}' — it is the default team. "
+            f"Use set-default-team to change the default first.",
+            file=sys.stderr,
+        )
+        sys.exit(1)
     teams_list = [t for t in config.teams.values() if t.team_type != team_type]
     save_teams(teams_list)
     print(f"Removed team profile: {team_type}")
+
+
+def set_default_team(team_type: str) -> None:
+    """Set the default team type for pipeline runs."""
+    config = load_config(load_env=False)
+    if team_type not in config.teams:
+        print(
+            f"Team type '{team_type}' not found. Available: {list(config.teams.keys())}",
+            file=sys.stderr,
+        )
+        sys.exit(1)
+    teams_list = list(config.teams.values())
+    save_teams(teams_list, default_team=team_type)
+    print(f"Default team set to: {team_type}")
 
 
 def add_criterion(json_str: str) -> None:
@@ -173,8 +197,8 @@ def main() -> None:
     if len(sys.argv) < 2:
         print("Usage: python -m safety_ideas.config.cli <command> [args]")
         print("Commands: show, validate-team, validate-criterion, validate-participant,")
-        print("          add-team, remove-team, add-criterion, remove-criterion,")
-        print("          update-pipeline, save-participant")
+        print("          add-team, remove-team, set-default-team, add-criterion,")
+        print("          remove-criterion, update-pipeline, save-participant")
         sys.exit(1)
 
     command = sys.argv[1]
@@ -191,6 +215,8 @@ def main() -> None:
         add_team(sys.argv[2])
     elif command == "remove-team":
         remove_team(sys.argv[2])
+    elif command == "set-default-team":
+        set_default_team(sys.argv[2])
     elif command == "add-criterion":
         add_criterion(sys.argv[2])
     elif command == "remove-criterion":

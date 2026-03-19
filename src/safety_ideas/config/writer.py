@@ -6,6 +6,7 @@ import yaml
 from pydantic import ValidationError
 
 from safety_ideas.config.schemas import (
+    DEFAULT_TEAM,
     KBCriteria,
     ParticipantProfile,
     PipelineSettings,
@@ -13,6 +14,7 @@ from safety_ideas.config.schemas import (
     StageModelAssignment,
     StageThreshold,
     TeamProfile,
+    TeamType,
 )
 from safety_ideas.constants import (
     CRITERIA_CONFIG,
@@ -30,12 +32,18 @@ def _write_yaml(path: Path, data: dict) -> None:
         yaml.dump(data, f, default_flow_style=False, sort_keys=False, allow_unicode=True)
 
 
-def save_teams(teams: list[TeamProfile], path: Path | None = None) -> None:
+def save_teams(
+    teams: list[TeamProfile],
+    path: Path | None = None,
+    default_team: TeamType | None = None,
+) -> None:
     """Validate and save team profiles to YAML.
 
     Args:
         teams: List of TeamProfile objects to save.
         path: Override file path (defaults to config/teams.yaml).
+        default_team: Default team type for pipeline runs. Preserved from
+            existing file if not specified.
 
     Raises:
         ValidationError: If any team profile fails validation.
@@ -45,10 +53,19 @@ def save_teams(teams: list[TeamProfile], path: Path | None = None) -> None:
     for team in teams:
         validated.append(TeamProfile.model_validate(team.model_dump()))
 
+    # Preserve existing default_team from file if not explicitly provided
+    target = path or TEAMS_CONFIG
+    if default_team is None and target.exists():
+        from safety_ideas.utils import load_yaml
+
+        existing = load_yaml(target)
+        default_team = existing.get("default_team", DEFAULT_TEAM)
+
     data = {
-        "teams": [t.model_dump() for t in validated]
+        "default_team": default_team or DEFAULT_TEAM,
+        "teams": [t.model_dump() for t in validated],
     }
-    _write_yaml(path or TEAMS_CONFIG, data)
+    _write_yaml(target, data)
 
 
 def save_criteria(criteria: list[ScoringCriteria], path: Path | None = None) -> None:

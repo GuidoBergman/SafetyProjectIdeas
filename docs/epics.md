@@ -224,9 +224,9 @@ FR34: Epic 4 - Hybrid novelty assessment (KB if available → web always → har
 FR35: Epic 4 - Verify cited papers exist
 FR36: Epic 5 - Auto-strengthen ideas with weak scores
 FR37: Epic 5 - Alternative framings for promising ideas
-FR38: Epic 5 - Expand sketches to research question + approach
-FR39: Epic 5 - Ranked list sorted by overall score
-FR40: Epic 5 - Full proposal format (question, approach, experiments, impact, scores, sources)
+FR38: Epic 5 - Assemble full proposals in Refine (question, approach, experiments, impact chain, citations)
+FR39: Epic 5 - Re-score full proposals and produce ranked list sorted by overall score
+FR40: Epic 5 - Full proposal content assembled in Refine, carried through Rank
 FR41: Epic 5 - Concise proposals for human scanning
 FR42: Epic 5 - Preserve provenance of each idea
 FR43: Epic 6 - Collaborative chat mode for brainstorming
@@ -271,8 +271,8 @@ Coordinator can auto-generate a batch of research idea sketches balanced across 
 Coordinator can evaluate generated ideas against configurable criteria with explicit reasoning, run the hybrid novelty assessment (evidence-based search → hard gate on "already solved" → derived novelty score with per-team weighting), and verify all citations.
 **FRs covered:** FR28, FR29, FR30, FR31, FR32, FR33, FR34, FR35
 
-### Epic 5: Idea Refinement & Ranked Output
-Coordinator receives auto-strengthened ideas with alternative framings, producing a ranked list of full proposals (research question, approach, impact chain, scores, cited sources) that persist across runs.
+### Epic 5: Idea Refinement, Proposal Assembly & Ranked Output
+Coordinator receives auto-strengthened ideas assembled into full proposals (research question, approach, first experiments, impact chain, cited sources) in the Refine stage, then Rank re-scores these complete proposals and produces a sorted, filtered output that persists across runs.
 **FRs covered:** FR36, FR37, FR38, FR39, FR40, FR41, FR42, FR64
 
 ### Epic 6: Collaborative Brainstorming & Idea Evaluation
@@ -417,7 +417,7 @@ So that I get thorough coverage of candidate project ideas across every area I c
 **When** the coordinator invokes `/generate-ideas`
 **Then** the system creates a pipeline run directory at `data/runs/<timestamp>/` with `run_meta.json` capturing git commit, parameters, and config snapshot
 **And** the coordinator can specify which subfields to target for generation
-**And** the generation stage can be invoked independently via `/generate-ideas`, just as each other pipeline stage (`/score-ideas`, `/refine-ideas`, `/rank-ideas`) can be invoked independently (FR18)
+**And** the generation stage can be invoked independently via `/generate-ideas`, just as each other pipeline stage (`/score-ideas`, `/refine-ideas` for refinement + proposal assembly, `/rank-ideas` for re-scoring + sorting) can be invoked independently (FR18)
 **And** generates idea sketches as brief descriptions (problem + direction + why it matters) covering all specified subfields heavily (FR25)
 **And** uses generation strategies including: novel directions, variations of existing experiments (FR67), and follow-up experiments to explain observed effects (FR68)
 **And** feeds only relevant context (abstracts, limitations) to generation — never full papers (FR26)
@@ -483,13 +483,13 @@ So that I can trust the evaluations and focus review time on the most promising 
 
 ## Epic 5: Idea Refinement & Ranked Output
 
-Coordinator receives auto-strengthened ideas with alternative framings, producing a ranked list of full proposals that persist across runs.
+Coordinator receives auto-strengthened ideas assembled into full proposals in the Refine stage, then Rank re-scores and produces a sorted, filtered output that persists across runs.
 
-### Story 5.1: Refinement, Ranking & Persistent Idea Storage
+### Story 5.1: Refinement, Proposal Assembly, Ranking & Persistent Idea Storage
 
 As a coordinator,
-I want promising ideas auto-strengthened and ranked into full proposals that I can scan efficiently and that accumulate across runs,
-So that I get actionable research project proposals and build a growing library of ideas over time.
+I want promising ideas auto-strengthened and assembled into full proposals, then re-scored and ranked so I can scan them efficiently and they accumulate across runs,
+So that I get actionable research project proposals ranked on complete information and build a growing library of ideas over time.
 
 **Acceptance Criteria:**
 
@@ -497,14 +497,13 @@ So that I get actionable research project proposals and build a growing library 
 **When** the coordinator invokes `/refine-ideas`
 **Then** the system auto-strengthens ideas with weak scores by improving the weakest dimensions (FR36)
 **And** generates 2-3 alternative framings for promising ideas (FR37)
-**And** expands surviving ideas from sketches to include: research question, approach outline, and strength rationale (FR38)
-**And** outputs refined ideas as markdown files in `data/runs/<timestamp>/refine/`
+**And** assembles surviving ideas into full proposals including: research question, approach outline, proposed first experiments, theory of impact chain, strength rationale, and cited sources with verifiable links/DOIs (FR38, FR40)
+**And** outputs full proposals as markdown files in `data/runs/<timestamp>/refine/`
 **And** reports confidence that refinement improved each idea
 
-**Given** refined ideas exist
+**Given** full proposals exist from Refine
 **When** the coordinator invokes `/rank-ideas`
-**Then** the system produces a ranked list sorted by overall score as a markdown file (FR39)
-**And** each final proposal includes: research question, approach, proposed first experiments, theory of impact chain, scores per criterion, and cited sources with verifiable links/DOIs (FR40)
+**Then** the system re-scores full proposals against criteria — now with richer signal from complete proposals (first experiments, impact chain) — and produces a ranked list sorted by overall score as a markdown file (FR39)
 **And** proposals are concise enough for a human to scan 20+ in a sitting (FR41)
 **And** the provenance of each idea is preserved — which KB sources contributed, which generation method produced it (FR42)
 **And** ranked output is written to `data/runs/<timestamp>/rank/` and copied to `data/output/`
@@ -609,12 +608,12 @@ So that the KB stays comprehensive and grounded in current AI Safety research be
 
 ## Epic 8: Full Pipeline Integration
 
-Coordinator can run the complete pipeline end-to-end with one command, producing a fully scored, refined, and ranked set of research proposals with full auditability.
+Coordinator can run the complete pipeline end-to-end with one command, producing a fully scored, refined (with full proposal assembly), and ranked set of research proposals with full auditability.
 
 ### Story 8.1: End-to-End Pipeline Orchestration
 
 As a coordinator,
-I want to run the entire pipeline (Source → Generate → Filter/Score → Refine → Rank) with a single command,
+I want to run the entire pipeline (Source → Generate → Filter/Score → Refine/Assemble → Rank) with a single command,
 So that I can produce a complete set of ranked research proposals without manually invoking each stage.
 
 **Acceptance Criteria:**
