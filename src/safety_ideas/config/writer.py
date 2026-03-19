@@ -32,10 +32,14 @@ def _write_yaml(path: Path, data: dict) -> None:
         yaml.dump(data, f, default_flow_style=False, sort_keys=False, allow_unicode=True)
 
 
+_SENTINEL = object()
+
+
 def save_teams(
     teams: list[TeamProfile],
     path: Path | None = None,
     default_team: TeamType | None = None,
+    default_participant: str | None | object = _SENTINEL,
 ) -> None:
     """Validate and save team profiles to YAML.
 
@@ -44,6 +48,8 @@ def save_teams(
         path: Override file path (defaults to config/teams.yaml).
         default_team: Default team type for pipeline runs. Preserved from
             existing file if not specified.
+        default_participant: Default participant name. Pass None to clear,
+            omit (sentinel) to preserve existing value from file.
 
     Raises:
         ValidationError: If any team profile fails validation.
@@ -53,16 +59,24 @@ def save_teams(
     for team in teams:
         validated.append(TeamProfile.model_validate(team.model_dump()))
 
-    # Preserve existing default_team from file if not explicitly provided
+    # Preserve existing defaults from file if not explicitly provided
     target = path or TEAMS_CONFIG
-    if default_team is None and target.exists():
+    existing_data: dict = {}
+    if target.exists():
         from safety_ideas.utils import load_yaml
 
-        existing = load_yaml(target)
-        default_team = existing.get("default_team", DEFAULT_TEAM)
+        existing_data = load_yaml(target)
 
-    data = {
+    if default_team is None:
+        default_team = existing_data.get("default_team", DEFAULT_TEAM)
+
+    if default_participant is _SENTINEL:
+        raw = existing_data.get("default_participant")
+        default_participant = raw if raw is not None and raw != "null" else None
+
+    data: dict = {
         "default_team": default_team or DEFAULT_TEAM,
+        "default_participant": default_participant,
         "teams": [t.model_dump() for t in validated],
     }
     _write_yaml(target, data)

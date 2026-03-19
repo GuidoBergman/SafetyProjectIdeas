@@ -355,11 +355,12 @@ So that the pipeline is calibrated to BAISH's teams and individual researchers.
 
 **Given** the config schemas and loader from Story 1.1 exist
 **When** the coordinator invokes `/configure-teams`
-**Then** the skill displays current team profiles and scoring criteria
+**Then** the skill displays current team profiles, scoring criteria, and the current default participant (if set)
 **And** the coordinator can add, edit, or remove team profiles through conversation
 **And** the coordinator can modify scoring criteria weights per team type
 **And** the coordinator can add custom scoring criteria beyond the default set (FR54)
 **And** the coordinator can configure pipeline settings including model assignments per stage (FR55)
+**And** the coordinator can set or clear the default participant (used when no participant is specified at pipeline runtime)
 **And** all changes are written back to the appropriate YAML config files
 **And** changes are validated against Pydantic schemas before saving
 **And** updated config persists across sessions (FR57)

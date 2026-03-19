@@ -87,16 +87,43 @@ class PipelineSettings(BaseModel):
 
 
 class ParticipantProfile(BaseModel):
-    """Profile for an external participant (FR66)."""
+    """Profile for an external participant (FR66).
 
-    name: str = Field(description="Participant name")
-    experience_level: str = Field(description="e.g., 'beginner', 'intermediate', 'advanced'")
-    technical_background: list[str] = Field(
-        default_factory=list, description="Technical areas of expertise"
+    Fields are mostly free-text strings so that rich context is preserved
+    when injected into LLM prompts.  Only ``total_hours`` is typed for
+    machine-readable constraints.
+    """
+
+    name: str = Field(description="Participant name or role identifier")
+    background: str = Field(
+        description="Who this person is: education, role, domain experience. "
+        "E.g., 'CS undergrad, first AI safety research experience'",
+    )
+    technical_skills: str = Field(
+        description="Technical skills and proficiency levels. "
+        "E.g., 'Beginner Python, basic ML/stats, no prior interpretability work'",
     )
     compute_resources: str = Field(
-        default="low", description="Available compute (e.g., 'low', 'medium', 'high')"
+        default="low",
+        description="Available compute and what that means concretely. "
+        "E.g., 'Medium — access to Colab Pro with T4/A100 GPUs'",
     )
-    time_availability: str = Field(
-        default="part_time", description="Time commitment (e.g., 'full_time', 'part_time', 'minimal')"
+    total_hours: int | None = Field(
+        default=None,
+        description="Hard cap on total hours for the entire project, if applicable",
+    )
+    time_context: str = Field(
+        default="",
+        description="What the time budget must cover. "
+        "E.g., '30 hours total including implementation, analysis, and writing a blog post'",
+    )
+    deliverables: str = Field(
+        default="",
+        description="What the participant must produce. "
+        "E.g., 'Working experiment + well-written blog post communicating findings'",
+    )
+    goals: str = Field(
+        default="",
+        description="What the participant hopes to get out of this. "
+        "E.g., 'First hands-on AI safety research experience, publishable output'",
     )

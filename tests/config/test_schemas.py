@@ -121,23 +121,29 @@ class TestParticipantProfile:
     def test_valid_profile(self):
         profile = ParticipantProfile(
             name="Alice",
-            experience_level="beginner",
-            technical_background=["python"],
+            background="CS undergrad, first AI safety research experience",
+            technical_skills="Beginner Python, basic ML/stats",
             compute_resources="low",
-            time_availability="part_time",
+            total_hours=30,
+            time_context="30 hours total including writing a blog post",
+            deliverables="Working experiment + blog post",
+            goals="First hands-on AI safety research experience",
         )
         assert profile.name == "Alice"
-        assert profile.experience_level == "beginner"
+        assert profile.total_hours == 30
 
     def test_defaults(self):
         profile = ParticipantProfile(
             name="Bob",
-            experience_level="intermediate",
+            background="PhD student in ML",
+            technical_skills="Advanced Python, deep learning",
         )
         assert profile.compute_resources == "low"
-        assert profile.time_availability == "part_time"
-        assert profile.technical_background == []
+        assert profile.total_hours is None
+        assert profile.time_context == ""
+        assert profile.deliverables == ""
+        assert profile.goals == ""
 
     def test_missing_required(self):
         with pytest.raises(ValidationError):
-            ParticipantProfile(name="NoLevel")
+            ParticipantProfile(name="NoBackground")

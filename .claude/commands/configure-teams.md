@@ -15,11 +15,12 @@ uv run python -m safety_ideas.config.cli show
 After running `show`, you MUST present the user with a clear summary of all current settings, organized as follows:
 
 1. **Default team** — which team is currently the default (used when no team is specified at pipeline runtime). Explicitly tell the user they can change this.
-2. **Team profiles** — list each team by name and type, noting which is the default.
-3. **Scoring criteria** — list each criterion with its current default_weight.
-4. **Pipeline settings** — model assignments per stage and thresholds.
-5. **Participant profiles** — any saved profiles and their settings.
-6. **Schema defaults** — mention that new participant profiles default to compute_resources=low and time_availability=part_time unless overridden.
+2. **Default participant** — which participant is currently the default (used when no participant is specified at pipeline runtime). List the current default participant and offer to change it.
+3. **Team profiles** — list each team by name and type, noting which is the default.
+4. **Scoring criteria** — list each criterion with its current default_weight.
+5. **Pipeline settings** — model assignments per stage and thresholds.
+6. **Participant profiles** — any saved profiles and their settings, noting which (if any) is the default.
+7. **Schema defaults** — mention that new participant profiles default to compute_resources=low and time_availability=part_time unless overridden.
 
 Then ask the user what they'd like to change. Every setting shown should be presented as configurable.
 
@@ -28,6 +29,7 @@ Then ask the user what they'd like to change. Every setting shown should be pres
 These are the factory defaults. Always run `show` to confirm current values — they may have been changed.
 
 - **Default team:** `mentor_novice` (configurable via `set-default-team`)
+- **Default participant:** none (configurable via `set-default-participant`)
 - **Team profiles:** `mentor_novice`, `solo_novice`, `experienced_group`
 - **Scoring criteria:** `theory_of_impact` (1.5), `low_compute` (1.5), `accessible_complexity` (1.5), `narrow_scope` (1.5), `novelty` (1.0)
 - **Pipeline models:** source=haiku, generate=sonnet, filter_score=sonnet, refine=opus, rank=haiku
@@ -91,8 +93,23 @@ To update pipeline settings:
 uv run python -m safety_ideas.config.cli update-pipeline '{"model_assignments": {"<stage>": {"model": "<model>", "fallback": "<model>"}}, "thresholds": {"<stage>": {"min_score": 3.0, "max_ideas": 15}}}'
 ```
 
+### Default Participant
+- **Set the default participant** - The default participant is used when no participant is specified at pipeline runtime
+- **Clear the default participant** - Remove the default so no participant is pre-selected
+
+To set the default participant:
+```bash
+uv run python -m safety_ideas.config.cli set-default-participant <name>
+```
+
+To clear the default participant:
+```bash
+uv run python -m safety_ideas.config.cli clear-default-participant
+```
+
 ### Participant Profiles
 - **Add/edit participant profiles** - Specify name, experience_level, technical_background, compute_resources, time_availability
+- **Set as default** - After adding a profile, offer to set it as the default participant
 - Profiles are saved to `config/participants/<name>.yaml`
 - Profiles are auto-loaded when available (AC3), with conversational fallback when not (AC4)
 
@@ -116,14 +133,14 @@ uv run python -m safety_ideas.config.cli validate-participant '{"name": "test", 
 
 ## Workflow
 
-1. Run `show` and present ALL current settings to the user — default team, team profiles, criteria weights, pipeline models/thresholds, participant profiles, and schema defaults. Every value shown must be presented as something the user can change.
-2. Ask: "What would you like to change?" — explicitly mention key options: set default team, add/edit/remove teams, modify criteria weights, change pipeline models or thresholds, manage participants.
+1. Run `show` and present ALL current settings to the user — default team, default participant, team profiles, criteria weights, pipeline models/thresholds, participant profiles, and schema defaults. Every value shown must be presented as something the user can change.
+2. Ask: "What would you like to change?" — explicitly mention key options: set default team, set default participant, add/edit/remove teams, modify criteria weights, change pipeline models or thresholds, manage participants.
 3. Validate and save changes to the appropriate YAML files.
 4. After each change, re-run `show` to confirm the update took effect.
 5. Changes persist across sessions (FR57) — the user can also edit the YAML files directly.
 
 All configuration files are in the `config/` directory:
-- `config/teams.yaml` - Team profiles and default_team setting
+- `config/teams.yaml` - Team profiles, default_team, and default_participant settings
 - `config/criteria.yaml` - Scoring criteria with weights
 - `config/pipeline.yaml` - Pipeline settings and model assignments
 - `config/participants/<name>.yaml` - Individual participant profiles

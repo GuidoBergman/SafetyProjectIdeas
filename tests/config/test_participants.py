@@ -16,17 +16,19 @@ def participants_dir(tmp_path):
     """Create a temporary participants directory with sample profiles."""
     alice_data = {
         "name": "Alice",
-        "experience_level": "beginner",
-        "technical_background": ["python"],
+        "background": "CS undergrad, first AI safety research experience",
+        "technical_skills": "Beginner Python, basic ML/stats",
         "compute_resources": "low",
-        "time_availability": "part_time",
+        "total_hours": 30,
+        "time_context": "30 hours total including writing a blog post",
     }
     bob_data = {
         "name": "Bob",
-        "experience_level": "advanced",
-        "technical_background": ["python_advanced", "ml_advanced"],
+        "background": "PhD student in ML with 5 years experience",
+        "technical_skills": "Advanced Python, deep learning, interpretability",
         "compute_resources": "high",
-        "time_availability": "full_time",
+        "total_hours": None,
+        "time_context": "Full-time research position",
     }
     (tmp_path / "alice.yaml").write_text(yaml.dump(alice_data))
     (tmp_path / "bob.yaml").write_text(yaml.dump(bob_data))
@@ -38,8 +40,8 @@ class TestLoadParticipant:
         profile = load_participant("alice", participants_dir)
         assert profile is not None
         assert profile.name == "Alice"
-        assert profile.experience_level == "beginner"
-        assert "python" in profile.technical_background
+        assert "CS undergrad" in profile.background
+        assert profile.total_hours == 30
 
     def test_load_nonexistent_profile(self, participants_dir):
         profile = load_participant("charlie", participants_dir)
@@ -52,7 +54,7 @@ class TestLoadParticipant:
 
     def test_invalid_profile_raises(self, tmp_path):
         """Invalid YAML content should raise ValueError."""
-        bad_data = {"name": "Bad"}  # missing experience_level
+        bad_data = {"name": "Bad"}  # missing background and technical_skills
         (tmp_path / "bad.yaml").write_text(yaml.dump(bad_data))
         with pytest.raises(ValueError, match="Invalid participant profile"):
             load_participant("bad", tmp_path)
@@ -75,8 +77,8 @@ class TestListParticipants:
 
     def test_skips_invalid_files(self, tmp_path):
         """Invalid profiles are skipped, valid ones loaded."""
-        good = {"name": "Good", "experience_level": "beginner"}
-        bad = {"name": "Bad"}  # missing required field
+        good = {"name": "Good", "background": "CS student", "technical_skills": "Python basics"}
+        bad = {"name": "Bad"}  # missing required fields
         (tmp_path / "good.yaml").write_text(yaml.dump(good))
         (tmp_path / "bad.yaml").write_text(yaml.dump(bad))
 
@@ -116,5 +118,4 @@ class TestLoadDefaultParticipant:
         profile = load_participant("guido")
         assert profile is not None
         assert profile.name == "Guido"
-        assert profile.experience_level == "advanced"
-        assert "python_advanced" in profile.technical_background
+        assert "advanced" in profile.background.lower() or "experienced" in profile.background.lower()

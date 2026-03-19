@@ -65,7 +65,7 @@ _This document builds collaboratively through step-by-step discovery. Sections a
 - **Execution environment:** Claude Code skills — all operations must fit within skill invocation patterns
 - **LLM provider:** Claude Code only (v1) — no external LLM dependencies. Model tiering by task complexity within Claude family
 - **Storage:** Knowledge base format TBD — must support efficient querying, incremental updates, and selective context retrieval
-- **Configuration:** YAML files for all configurable parameters
+- **Configuration:** YAML files for all configurable parameters. `teams.yaml` stores `default_team` and `default_participant` settings alongside team profiles
 - **Output:** Markdown (ideas/proposals), JSON (pipeline logs), YAML (config)
 - **Solo developer:** Architecture must be maintainable by one person
 - **Quality over reliability:** System can require manual intervention; output quality is non-negotiable
@@ -175,7 +175,7 @@ SafetyProjectIdeas/
 
 **User model for MVP:**
 - **Guido:** Configures pipeline, builds KB, runs full pipeline, brainstorms — power user
-- **External users with profile:** Brainstorming skill loads their participant profile automatically, generates tailored ideas immediately
+- **External users with profile:** Brainstorming skill loads their participant profile automatically, generates tailored ideas immediately. A default participant can be configured so the profile is used without specifying a name
 - **External users without profile:** Skill guides them through describing constraints conversationally (existing FR43-48 flow)
 
 **Note:** Project initialization is the first implementation story.
@@ -294,6 +294,7 @@ Query module never returns all sections — caller always specifies which sectio
 - YAML files validated on load with clear error messages
 - Models serve as both validation layer and typed data access
 - Schemas: `TeamProfile`, `ScoringCriteria`, `KBCriteria`, `PipelineSettings`, `ParticipantProfile`
+- `AppConfig` includes `default_participant: str | None` — the name of the participant profile loaded by default when none is specified
 
 ### Credential Management
 
@@ -558,7 +559,7 @@ SafetyProjectIdeas/
 │   │       └── pipeline.log.json    # Consolidated run log
 │   └── ideas/                       # Persistent idea repository (FR64-65)
 ├── config/
-│   ├── teams.yaml                   # Team profiles
+│   ├── teams.yaml                   # Team profiles, default_team, default_participant
 │   ├── criteria.yaml                # Scoring criteria and weights
 │   ├── kb-criteria.yaml             # KB inclusion criteria
 │   ├── pipeline.yaml                # Pipeline settings (model assignments, thresholds)

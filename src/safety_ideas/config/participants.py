@@ -6,7 +6,7 @@ from pathlib import Path
 from pydantic import ValidationError
 
 from safety_ideas.config.schemas import ParticipantProfile
-from safety_ideas.constants import PARTICIPANTS_DIR
+from safety_ideas.constants import PARTICIPANTS_DIR, TEAMS_CONFIG
 from safety_ideas.utils import load_yaml
 
 logger = logging.getLogger(__name__)
@@ -67,6 +67,28 @@ def list_participants(participants_dir: Path | None = None) -> list[ParticipantP
         except ValidationError as e:
             logger.warning("Skipping invalid participant profile %s: %s", path, e)
     return profiles
+
+
+def get_default_participant(participants_dir: Path | None = None) -> ParticipantProfile | None:
+    """Load the default participant profile if one is configured.
+
+    Reads the default_participant setting from teams.yaml and loads that profile.
+
+    Args:
+        participants_dir: Override directory (defaults to config/participants/).
+
+    Returns:
+        ParticipantProfile if a default is configured and valid, None otherwise.
+    """
+    if not TEAMS_CONFIG.exists():
+        return None
+
+    data = load_yaml(TEAMS_CONFIG)
+    default_name = data.get("default_participant")
+    if not default_name or default_name == "null":
+        return None
+
+    return get_participant_or_none(default_name, participants_dir)
 
 
 def get_participant_or_none(name: str, participants_dir: Path | None = None) -> ParticipantProfile | None:

@@ -12,7 +12,7 @@ import yaml
 from pydantic import ValidationError
 
 from safety_ideas.config.loader import load_config
-from safety_ideas.config.participants import list_participants, load_participant
+from safety_ideas.config.participants import get_default_participant, list_participants, load_participant
 from safety_ideas.config.schemas import (
     ParticipantProfile,
     PipelineSettings,
@@ -56,13 +56,25 @@ def show_config() -> None:
     for stage, threshold in config.pipeline.thresholds.items():
         print(f"  {stage} threshold: min_score={threshold.min_score}, max_ideas={threshold.max_ideas}")
 
+    print(f"\n=== Default Participant: {config.default_participant or '(none)'} ===")
+
     print("\n=== Participant Profiles ===")
     participants = list_participants()
     if participants:
         for p in participants:
-            print(f"\n  [{p.name}] {p.experience_level}")
-            print(f"    Background: {', '.join(p.technical_background) if p.technical_background else 'none'}")
-            print(f"    Compute: {p.compute_resources}, Time: {p.time_availability}")
+            default_marker = " (DEFAULT)" if config.default_participant and p.name.lower().replace(" ", "_") == config.default_participant.lower().replace(" ", "_") else ""
+            print(f"\n  [{p.name}]{default_marker}")
+            print(f"    Background: {p.background}")
+            print(f"    Skills: {p.technical_skills}")
+            print(f"    Compute: {p.compute_resources}")
+            if p.total_hours is not None:
+                print(f"    Total hours: {p.total_hours}")
+            if p.time_context:
+                print(f"    Time context: {p.time_context}")
+            if p.deliverables:
+                print(f"    Deliverables: {p.deliverables}")
+            if p.goals:
+                print(f"    Goals: {p.goals}")
     else:
         print("  No participant profiles found.")
 
@@ -184,6 +196,31 @@ def update_pipeline(json_str: str) -> None:
     print("Pipeline settings updated.")
 
 
+def set_default_participant(name: str) -> None:
+    """Set the default participant for pipeline runs."""
+    profile = load_participant(name)
+    if profile is None:
+        available = list_participants()
+        names = [p.name for p in available]
+        print(
+            f"Participant '{name}' not found. Available: {names}",
+            file=sys.stderr,
+        )
+        sys.exit(1)
+    config = load_config(load_env=False)
+    teams_list = list(config.teams.values())
+    save_teams(teams_list, default_participant=name.lower().replace(" ", "_"))
+    print(f"Default participant set to: {profile.name}")
+
+
+def clear_default_participant() -> None:
+    """Clear the default participant setting."""
+    config = load_config(load_env=False)
+    teams_list = list(config.teams.values())
+    save_teams(teams_list, default_participant=None)
+    print("Default participant cleared.")
+
+
 def save_participant_cmd(json_str: str) -> None:
     """Save a participant profile."""
     data = json.loads(json_str)
@@ -198,7 +235,8 @@ def main() -> None:
         print("Usage: python -m safety_ideas.config.cli <command> [args]")
         print("Commands: show, validate-team, validate-criterion, validate-participant,")
         print("          add-team, remove-team, set-default-team, add-criterion,")
-        print("          remove-criterion, update-pipeline, save-participant")
+        print("          remove-criterion, update-pipeline, save-participant,")
+        print("          set-default-participant, clear-default-participant")
         sys.exit(1)
 
     command = sys.argv[1]
@@ -225,6 +263,10 @@ def main() -> None:
         update_pipeline(sys.argv[2])
     elif command == "save-participant":
         save_participant_cmd(sys.argv[2])
+    elif command == "set-default-participant":
+        set_default_participant(sys.argv[2])
+    elif command == "clear-default-participant":
+        clear_default_participant()
     else:
         print(f"Unknown command: {command}", file=sys.stderr)
         sys.exit(1)

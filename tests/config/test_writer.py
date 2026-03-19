@@ -105,18 +105,19 @@ class TestSaveParticipant:
     def test_save_and_reload(self, tmp_path):
         profile = ParticipantProfile(
             name="Alice",
-            experience_level="beginner",
-            technical_background=["python"],
+            background="CS undergrad, first AI safety research experience",
+            technical_skills="Beginner Python, basic ML/stats",
             compute_resources="low",
-            time_availability="part_time",
+            total_hours=30,
+            time_context="30 hours total including writing a blog post",
         )
         path = tmp_path / "alice.yaml"
         save_participant(profile, path)
 
         data = load_yaml(path)
         assert data["name"] == "Alice"
-        assert data["experience_level"] == "beginner"
-        assert data["technical_background"] == ["python"]
+        assert data["background"] == "CS undergrad, first AI safety research experience"
+        assert data["total_hours"] == 30
 
     def test_save_to_default_path(self, tmp_path, monkeypatch):
         """Saves to config/participants/<name>.yaml by default."""
@@ -125,7 +126,8 @@ class TestSaveParticipant:
         )
         profile = ParticipantProfile(
             name="Bob Smith",
-            experience_level="intermediate",
+            background="PhD student in ML",
+            technical_skills="Advanced Python, deep learning",
         )
         save_participant(profile)
         expected = tmp_path / "bob_smith.yaml"

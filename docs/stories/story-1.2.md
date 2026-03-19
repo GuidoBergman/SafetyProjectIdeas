@@ -20,11 +20,12 @@ So that the pipeline is calibrated to BAISH's teams and individual researchers.
 
 **Given** the config schemas and loader from Story 1.1 exist
 **When** the coordinator invokes `/configure-teams`
-**Then** the skill displays current team profiles and scoring criteria
+**Then** the skill displays current team profiles, scoring criteria, and the current default participant (if set)
 **And** the coordinator can add, edit, or remove team profiles through conversation
 **And** the coordinator can modify scoring criteria weights per team type
 **And** the coordinator can add custom scoring criteria beyond the default set (FR54)
 **And** the coordinator can configure pipeline settings including model assignments per stage (FR55)
+**And** the coordinator can set or clear the default participant (used when no participant is specified at pipeline runtime)
 **And** all changes are written back to the appropriate YAML config files
 **And** changes are validated against Pydantic schemas before saving
 **And** updated config persists across sessions (FR57)
@@ -64,13 +65,14 @@ So that the pipeline is calibrated to BAISH's teams and individual researchers.
 - **Skill-based configuration management:** The `/configure-teams` skill provides a conversational interface for editing config, but all changes ultimately write to YAML files that can also be edited directly.
 - **Validation before save:** All config changes are validated against Pydantic schemas before writing to disk. Invalid changes are rejected with clear error messages.
 - **Participant profile auto-detection:** When a skill is invoked, the system checks `config/participants/` for a matching profile. If found, it loads and applies constraints automatically. If not found, it falls back to conversational discovery (FR66).
+- **Default participant:** A `default_participant` setting in `teams.yaml` allows selecting one participant profile as the default, used when no participant is specified at pipeline runtime. Configurable via `set-default-participant` / `clear-default-participant` CLI commands.
 - **Separation of team profiles and participant profiles:** Team profiles define team-level constraints (compute budget, team type, criteria weights). Participant profiles define individual-level constraints (experience, skills, resources, availability). Both influence idea generation and brainstorming.
 
 ### File Structure
 
 ```
 config/
-  teams.yaml              # Team profiles (edited via /configure-teams or directly)
+  teams.yaml              # Team profiles, default_team, default_participant (edited via /configure-teams or directly)
   criteria.yaml           # Scoring criteria with weights (edited via /configure-teams or directly)
   pipeline.yaml           # Pipeline settings, model assignments (edited via /configure-teams or directly)
   kb-criteria.yaml        # KB inclusion criteria
