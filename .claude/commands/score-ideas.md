@@ -22,10 +22,10 @@ uv run python -m safety_ideas.pipeline.generate list <run_dir>
 
 If no ideas exist, tell the coordinator and stop.
 
-Load the project configuration:
+Load scoring configuration (criteria, weights, thresholds):
 
 ```bash
-uv run python -m safety_ideas.config.cli show
+uv run python -m safety_ideas.config.cli show-scoring
 ```
 
 Load all generated ideas:
@@ -36,7 +36,7 @@ uv run python -m safety_ideas.pipeline.generate read <run_dir>
 
 Parse the JSON output and store the list of ideas for processing.
 
-Load participant profile for team-specific weight overrides:
+Load participant profile for context on the team's skill level:
 
 ```bash
 uv run python -c "
@@ -79,12 +79,10 @@ logger.log('filter_score', 'info', 'Stage 1 complete: quick relevance filter', {
 
 ## Phase 2: Full Per-Criterion Scoring (Stage 2)
 
-For each surviving idea, score it against ALL criteria from `config/criteria.yaml`:
+For each surviving idea, score it against ALL criteria and active weights loaded from `show-scoring` in Setup. Do NOT hardcode criteria names or weights — use exactly what `show-scoring` returned.
 
-1. **theory_of_impact** (weight: 1.5) — Does it have a clear theory of how it advances AI Safety?
-2. **low_compute** (weight: 1.5) — Can it be explored with limited compute?
-3. **accessible_complexity** (weight: 1.5) — Is the complexity appropriate for the team?
-4. **narrow_scope** (weight: 1.5) — Does it have a self-contained first deliverable?
+Before scoring, echo the active configuration you are using:
+> **Scoring with:** team=[default_team], criteria=[list each criterion name=active_weight], thresholds=[filter_score min_score, rank min_score]
 
 For each criterion, use the rubric from the config to assign a score 1-5 with explicit reasoning.
 

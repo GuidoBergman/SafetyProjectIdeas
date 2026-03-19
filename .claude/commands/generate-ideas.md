@@ -14,15 +14,18 @@ uv run python -m safety_ideas.pipeline.orchestrator init generate
 
 Save the printed run directory path — it will be used throughout as `<run_dir>`.
 
-Load the project configuration:
+Load generation settings:
 
 ```bash
-uv run python -m safety_ideas.config.cli show
+uv run python -m safety_ideas.config.cli show-generate
 ```
 
-Extract these settings from config:
-- `config.pipeline.generate.min_ideas_per_strategy_per_subfield` (default: 25 if not set) — minimum ideas per strategy per subfield
-- `config.pipeline.generate.combinatorial_top_n` (default: 10 if not set) — number of top problems/methods for the combinatorial matrix pass
+This outputs the two values needed throughout:
+- `min_ideas_per_strategy_per_subfield` — minimum ideas per strategy per subfield
+- `combinatorial_top_n` — number of top problems/methods for the combinatorial matrix pass
+
+Before proceeding, echo the active configuration:
+> **Generating with:** min_ideas_per_strategy_per_subfield=[value], combinatorial_top_n=[value]
 
 Load previously generated ideas for divergence steering:
 
@@ -372,7 +375,7 @@ params = {
     'warnings': <WARNINGS_LIST>,                       # e.g. [] or [{'subfield': 'interpretability', 'strategy': 'novel_direction', 'issue': 'subagent failed', 'fallback_used': 'skipped'}]
     'config_snapshot': {
         'team_profile': config.default_team,
-        'criteria_weights': {c.name: c.default_weight for c in config.criteria},
+        'criteria_weights': {c.name: config.teams[config.default_team].criteria_weights.get(c.name, c.default_weight) for c in config.criteria},
         'pipeline_model': config.pipeline.model_assignments['generate'].model_dump() if 'generate' in config.pipeline.model_assignments else {}
     }
 }

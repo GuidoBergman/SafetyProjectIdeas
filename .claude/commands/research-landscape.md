@@ -12,12 +12,6 @@ First, ensure the output directory exists:
 mkdir -p data/output
 ```
 
-Read the current project configuration for context on team profiles and criteria:
-
-```bash
-uv run python -m safety_ideas.config.cli show
-```
-
 ## Phase 1: Discover the Landscape (Parallelized)
 
 This phase launches **parallel subagents** to search different categories simultaneously. Each subagent performs web searches in its assigned category and returns structured findings.

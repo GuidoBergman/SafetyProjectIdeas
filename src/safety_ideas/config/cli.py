@@ -44,10 +44,18 @@ def show_config() -> None:
         if team.criteria_weights:
             print(f"    Weight overrides: {team.criteria_weights}")
 
+    default_team = config.teams.get(config.default_team)
+    default_overrides = default_team.criteria_weights if default_team else {}
+
     print("\n=== Scoring Criteria ===")
     for c in config.criteria:
+        active_weight = default_overrides.get(c.name, c.default_weight)
         print(f"\n  [{c.name}] {c.description}")
         print(f"    Default weight: {c.default_weight}")
+        if c.name in default_overrides:
+            print(f"    Active weight ({config.default_team}): {active_weight}")
+        else:
+            print(f"    Active weight ({config.default_team}): {active_weight} (using default)")
 
     print("\n=== Pipeline Settings ===")
     for stage, assignment in config.pipeline.model_assignments.items():
@@ -77,6 +85,33 @@ def show_config() -> None:
                 print(f"    Goals: {p.goals}")
     else:
         print("  No participant profiles found.")
+
+
+def show_generate_config() -> None:
+    """Display generation-specific settings."""
+    config = load_config(load_env=False)
+    g = config.pipeline.generate
+    print(f"min_ideas_per_strategy_per_subfield: {g.min_ideas_per_strategy_per_subfield}")
+    print(f"combinatorial_top_n: {g.combinatorial_top_n}")
+
+
+def show_scoring_config() -> None:
+    """Display scoring-specific settings: criteria with active weights, thresholds."""
+    config = load_config(load_env=False)
+
+    team = config.teams.get(config.default_team)
+    overrides = team.criteria_weights if team else {}
+
+    print(f"=== Default Team: {config.default_team} ===\n")
+
+    print("=== Scoring Criteria (active weights) ===")
+    for c in config.criteria:
+        active_weight = overrides.get(c.name, c.default_weight)
+        print(f"  [{c.name}] weight={active_weight} — {c.description}")
+
+    print("\n=== Thresholds ===")
+    for stage, threshold in config.pipeline.thresholds.items():
+        print(f"  {stage}: min_score={threshold.min_score}, max_ideas={threshold.max_ideas}")
 
 
 def validate_team_json(json_str: str) -> None:
@@ -233,7 +268,8 @@ def main() -> None:
     """CLI dispatcher."""
     if len(sys.argv) < 2:
         print("Usage: python -m safety_ideas.config.cli <command> [args]")
-        print("Commands: show, validate-team, validate-criterion, validate-participant,")
+        print("Commands: show, show-generate, show-scoring,")
+        print("          validate-team, validate-criterion, validate-participant,")
         print("          add-team, remove-team, set-default-team, add-criterion,")
         print("          remove-criterion, update-pipeline, save-participant,")
         print("          set-default-participant, clear-default-participant")
@@ -243,6 +279,10 @@ def main() -> None:
 
     if command == "show":
         show_config()
+    elif command == "show-generate":
+        show_generate_config()
+    elif command == "show-scoring":
+        show_scoring_config()
     elif command == "validate-team":
         validate_team_json(sys.argv[2])
     elif command == "validate-criterion":
