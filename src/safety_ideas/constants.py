@@ -33,6 +33,9 @@ PRIORITY_LOW = 3
 TEAM_TYPES = ["mentor_novice", "solo_novice", "experienced_group"]
 
 # Scoring criteria names
+# Staged filtering defaults
+STAGE1_RELEVANCE_THRESHOLD = 2.0
+
 SCORING_CRITERIA = [
     "theory_of_impact",
     "low_compute",

@@ -9,6 +9,7 @@ from pydantic import ValidationError
 
 from safety_ideas.config.schemas import (
     DEFAULT_TEAM,
+    GenerateSettings,
     KBCriteria,
     PipelineSettings,
     ScoringCriteria,

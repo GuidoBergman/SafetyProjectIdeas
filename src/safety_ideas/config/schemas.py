@@ -73,12 +73,31 @@ class StageThreshold(BaseModel):
     max_ideas: int = Field(ge=1, description="Maximum ideas to pass through")
 
 
+class GenerateSettings(BaseModel):
+    """Settings for the idea generation stage."""
+
+    min_ideas_per_strategy_per_subfield: int = Field(
+        default=25,
+        ge=1,
+        description="Minimum number of ideas to generate per strategy per subfield",
+    )
+    combinatorial_top_n: int = Field(
+        default=10,
+        ge=1,
+        description="Number of top problems/methods for the combinatorial matrix pass",
+    )
+
+
 class PipelineSettings(BaseModel):
     """Pipeline configuration including model assignments and thresholds."""
 
     model_assignments: dict[str, StageModelAssignment] = Field(
         default_factory=dict,
         description="Model assignment per pipeline stage",
+    )
+    generate: GenerateSettings = Field(
+        default_factory=GenerateSettings,
+        description="Settings for the idea generation stage",
     )
     thresholds: dict[str, StageThreshold] = Field(
         default_factory=dict,
