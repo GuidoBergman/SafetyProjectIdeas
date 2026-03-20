@@ -1,0 +1,498 @@
+[
+  {
+    "idea_id": "gen-0618",
+    "title": "Testing Whether Safety Refusals Are Overfit to Surface Keyword Patterns",
+    "run_id": "2026-03-19T19-58-40",
+    "original_idea": {
+      "idea_id": "gen-0618",
+      "subfield": "Adversarial Robustness & Red-Teaming",
+      "generation_strategy": "failure_mode_investigation",
+      "problem": "Whether safety alignment responds to surface lexical features rather than semantic intent has not been carefully ablated.",
+      "direction": "Create 50 harmful prompt pairs: original with keywords and semantically equivalent paraphrase without keywords. Test both on 3 models. Also test inverse (benign + keywords).",
+      "why_it_matters": "If refusals are largely keyword-driven, the safety system provides false assurance."
+    },
+    "scores": {
+      "theory_of_impact": {
+        "score": 3,
+        "reasoning": "Plausible chain: keyword vs semantic gap -> reveals false assurance in current systems. But this is a well-known qualitative observation; quantifying it is valuable but incremental rather than revealing a new mechanism.",
+        "confidence": 0.75
+      },
+      "accessible_complexity": {
+        "score": 4,
+        "reasoning": "Very accessible: create prompt pairs, run them through models, measure ASR. No ML training needed. Standard API usage. Beginners can do this.",
+        "confidence": 0.88
+      },
+      "narrow_scope": {
+        "score": 4,
+        "reasoning": "Focused deliverable: ASR comparison table (keyword vs paraphrase) plus FPR on inverse cases. Clear methodology. The prompt curation is the main effort.",
+        "confidence": 0.85
+      }
+    },
+    "weighted_score": 3.78,
+    "confidence": 0.83,
+    "eliminated": false,
+    "elimination_reason": null
+  },
+  {
+    "idea_id": "gen-0619",
+    "title": "Quantifying How Much GCG Suffix Transferability Degrades Across Model Size",
+    "run_id": "2026-03-19T19-58-40",
+    "original_idea": {
+      "idea_id": "gen-0619",
+      "subfield": "Adversarial Robustness & Red-Teaming",
+      "generation_strategy": "failure_mode_investigation",
+      "problem": "Whether larger models within the same family are more or less resistant to GCG suffixes optimized on smaller models is not characterized.",
+      "direction": "Optimize GCG suffixes on Llama-3-8B, evaluate transfer to Llama-3-70B and 405B. Measure per-prompt ASR across sizes.",
+      "why_it_matters": "If suffixes transfer small-to-large, an attacker with a consumer GPU can jailbreak frontier models."
+    },
+    "scores": {
+      "theory_of_impact": {
+        "score": 3,
+        "reasoning": "Plausible chain: transfer scaling relationship -> affects threat model assumptions. Important characterization but the gap between the scaling finding and a safety improvement is underspecified.",
+        "confidence": 0.76
+      },
+      "accessible_complexity": {
+        "score": 2,
+        "reasoning": "GCG optimization requires significant GPU resources and familiarity with adversarial optimization code. Running 70B/405B models requires substantial compute. Advanced for beginners with medium compute.",
+        "confidence": 0.8
+      },
+      "narrow_scope": {
+        "score": 3,
+        "reasoning": "Deliverable requires sustained effort: running GCG optimization (computationally expensive), then evaluating transfer across 3 model sizes. Multiple resource-intensive steps.",
+        "confidence": 0.78
+      }
+    },
+    "weighted_score": 2.7,
+    "confidence": 0.78,
+    "eliminated": false,
+    "elimination_reason": null
+  },
+  {
+    "idea_id": "gen-0620",
+    "title": "Does Adversarial Suffix Position (Prefix vs. Suffix vs. Middle) Change Attack Success?",
+    "run_id": "2026-03-19T19-58-40",
+    "original_idea": {
+      "idea_id": "gen-0620",
+      "subfield": "Adversarial Robustness & Red-Teaming",
+      "generation_strategy": "failure_mode_investigation",
+      "problem": "A controlled comparison of prefix, infix, and suffix placement for adversarial tokens is lacking.",
+      "direction": "Take 20 GCG-optimized suffixes, test them at 3 positions (before, middle, after the request) on 2-3 models. Measure ASR per condition.",
+      "why_it_matters": "If position matters, defenses scanning only appended tokens miss a large attack surface."
+    },
+    "scores": {
+      "theory_of_impact": {
+        "score": 3,
+        "reasoning": "Plausible chain: position sensitivity -> informs input filtering strategy. Practical but the safety contribution is characterization rather than a new defense or mechanism.",
+        "confidence": 0.76
+      },
+      "accessible_complexity": {
+        "score": 3,
+        "reasoning": "Requires pre-optimized GCG suffixes (from existing implementations). The position ablation itself is straightforward once suffixes are available. Moderate: needs some familiarity with adversarial attack tools.",
+        "confidence": 0.78
+      },
+      "narrow_scope": {
+        "score": 4,
+        "reasoning": "Focused deliverable: ASR comparison table across 3 positions. Simple controlled experiment once the GCG suffixes are obtained. Clear methodology.",
+        "confidence": 0.85
+      }
+    },
+    "weighted_score": 3.48,
+    "confidence": 0.8,
+    "eliminated": false,
+    "elimination_reason": null
+  },
+  {
+    "idea_id": "gen-0621",
+    "title": "Characterizing the Role-Play Persona Failure Mode: Which Persona Types Bypass Safety Most Often?",
+    "run_id": "2026-03-19T19-58-40",
+    "original_idea": {
+      "idea_id": "gen-0621",
+      "subfield": "Adversarial Robustness & Red-Teaming",
+      "generation_strategy": "failure_mode_investigation",
+      "problem": "The relative effectiveness of different persona archetypes for jailbreaking has not been systematically compared.",
+      "direction": "Design 5 persona archetypes x 10 harmful prompts. Evaluate ASR per persona type across 3 models. Use GPT-4o judge.",
+      "why_it_matters": "If 'professional expert' personas are more effective than 'evil AI' personas, safety alignment training needs to address realistic authority framing."
+    },
+    "scores": {
+      "theory_of_impact": {
+        "score": 3,
+        "reasoning": "Plausible chain: persona effectiveness gradient -> informs safety training priorities. Characterization is valuable but the link to a specific fix is indirect.",
+        "confidence": 0.76
+      },
+      "accessible_complexity": {
+        "score": 4,
+        "reasoning": "Very simple: design prompt variations, run through models, judge outputs. No ML training needed. Standard API usage. Beginner-accessible.",
+        "confidence": 0.9
+      },
+      "narrow_scope": {
+        "score": 5,
+        "reasoning": "Tightly scoped: 5 x 10 prompt matrix, ASR per persona type. Single experiment with obvious deliverable. Can go from start to result very quickly.",
+        "confidence": 0.92
+      }
+    },
+    "weighted_score": 4.22,
+    "confidence": 0.86,
+    "eliminated": false,
+    "elimination_reason": null
+  },
+  {
+    "idea_id": "gen-0622",
+    "title": "Testing Whether Safety Alignment Is Asymmetric Across Languages",
+    "run_id": "2026-03-19T19-58-40",
+    "original_idea": {
+      "idea_id": "gen-0622",
+      "subfield": "Adversarial Robustness & Red-Teaming",
+      "generation_strategy": "failure_mode_investigation",
+      "problem": "Models may refuse English harmful requests but comply with identical requests in low-resource languages.",
+      "direction": "Translate 30 HarmBench prompts into 5 languages. Test on 2-3 models. Measure ASR per language using a multilingual judge.",
+      "why_it_matters": "If safety degrades in non-English languages, global deployments are systemically underprotected."
+    },
+    "scores": {
+      "theory_of_impact": {
+        "score": 3,
+        "reasoning": "Plausible chain: cross-lingual safety gap -> global deployment risk. Well-known problem but systematic measurement on current models is valuable. The link between finding the gap and fixing it is not explicit.",
+        "confidence": 0.76
+      },
+      "accessible_complexity": {
+        "score": 4,
+        "reasoning": "Translation + inference + evaluation. Can use LLM APIs for translation. Standard API usage for evaluation. Accessible for beginners. Main challenge is multilingual judge quality.",
+        "confidence": 0.85
+      },
+      "narrow_scope": {
+        "score": 4,
+        "reasoning": "Focused deliverable: ASR-per-language table. Clear methodology: translate, test, evaluate. Well-bounded first deliverable.",
+        "confidence": 0.85
+      }
+    },
+    "weighted_score": 3.78,
+    "confidence": 0.82,
+    "eliminated": false,
+    "elimination_reason": null
+  },
+  {
+    "idea_id": "gen-0623",
+    "title": "Investigating Whether Low Temperature Increases or Decreases Jailbreak Susceptibility",
+    "run_id": "2026-03-19T19-58-40",
+    "original_idea": {
+      "idea_id": "gen-0623",
+      "subfield": "Adversarial Robustness & Red-Teaming",
+      "generation_strategy": "failure_mode_investigation",
+      "problem": "Whether low or high temperature increases jailbreak ASR across attack types is unclear.",
+      "direction": "Run 3 attack types at temperatures 0, 0.5, 1.0, 1.5 on 2 models x 30 prompts. Measure ASR and toxicity. Plot ASR vs temperature surface.",
+      "why_it_matters": "If low temperature increases jailbreak vulnerability, there is an underappreciated alignment-reliability tradeoff in production."
+    },
+    "scores": {
+      "theory_of_impact": {
+        "score": 4,
+        "reasoning": "Strong chain: temperature -> first-token commitment -> alignment-reliability tradeoff. Directly addresses a production deployment decision with clear safety implications.",
+        "confidence": 0.82
+      },
+      "accessible_complexity": {
+        "score": 3,
+        "reasoning": "Requires running inference at multiple temperatures across attack types. Moderate: standard API usage but needs familiarity with attack implementations for GCG/prefilling. Feasible with guidance.",
+        "confidence": 0.78
+      },
+      "narrow_scope": {
+        "score": 4,
+        "reasoning": "Focused deliverable: ASR vs temperature surface plot. Clear methodology. Multiple dimensions (3 attacks x 4 temps x 2 models) but all use the same procedure.",
+        "confidence": 0.83
+      }
+    },
+    "weighted_score": 3.74,
+    "confidence": 0.81,
+    "eliminated": false,
+    "elimination_reason": null
+  },
+  {
+    "idea_id": "gen-0624",
+    "title": "Measuring Safety Degradation Under Repeated Benign-Looking Fine-Tuning Rounds",
+    "run_id": "2026-03-19T19-58-40",
+    "original_idea": {
+      "idea_id": "gen-0624",
+      "subfield": "Adversarial Robustness & Red-Teaming",
+      "generation_strategy": "failure_mode_investigation",
+      "problem": "Whether repeated rounds of small benign fine-tuning cause cumulative or diminishing safety degradation is unknown.",
+      "direction": "Fine-tune Mistral-7B-Instruct on benign coding data for 3 sequential 500-step LoRA runs. Evaluate ASR after each round. Plot cumulative degradation curve.",
+      "why_it_matters": "If safety degrades cumulatively, iterative product development may inadvertently erode safety without triggering single-round red flags."
+    },
+    "scores": {
+      "theory_of_impact": {
+        "score": 4,
+        "reasoning": "Strong chain: cumulative fine-tuning -> gradual safety erosion -> underappreciated deployment risk. Directly relevant to common product development practices.",
+        "confidence": 0.83
+      },
+      "accessible_complexity": {
+        "score": 2,
+        "reasoning": "Requires 3 sequential LoRA fine-tuning rounds with evaluation after each. Fine-tuning pipelines are advanced for beginner CS students. Multiple training runs in 30 hours with medium compute is tight.",
+        "confidence": 0.8
+      },
+      "narrow_scope": {
+        "score": 4,
+        "reasoning": "Focused deliverable: cumulative ASR degradation curve over 3 rounds. Clear methodology and stopping point. But the sequential fine-tuning steps make execution non-trivial.",
+        "confidence": 0.82
+      }
+    },
+    "weighted_score": 3.39,
+    "confidence": 0.82,
+    "eliminated": false,
+    "elimination_reason": null
+  },
+  {
+    "idea_id": "gen-0625",
+    "title": "Are Jailbreak Attacks More Effective on Longer or Shorter System Prompts?",
+    "run_id": "2026-03-19T19-58-40",
+    "original_idea": {
+      "idea_id": "gen-0625",
+      "subfield": "Adversarial Robustness & Red-Teaming",
+      "generation_strategy": "failure_mode_investigation",
+      "problem": "Whether longer system prompts provide more or less jailbreak resistance is uninvestigated.",
+      "direction": "Test 3 attack types with: no system prompt, 1-sentence, 10-sentence, and 50-sentence safety policy. Measure ASR per condition across 30 prompts.",
+      "why_it_matters": "If longer system prompts reduce safety by creating more reasoning context, deployers may be making themselves more vulnerable."
+    },
+    "scores": {
+      "theory_of_impact": {
+        "score": 3,
+        "reasoning": "Plausible chain: system prompt length -> safety effectiveness -> deployment guidance. Practical but the causal mechanism is underspecified and the fix would be indirect.",
+        "confidence": 0.76
+      },
+      "accessible_complexity": {
+        "score": 4,
+        "reasoning": "Very simple: vary system prompt length, run attacks, measure ASR. Standard API usage. No ML training. Beginner-accessible.",
+        "confidence": 0.9
+      },
+      "narrow_scope": {
+        "score": 5,
+        "reasoning": "Tightly scoped: 4 system prompt conditions x 3 attack types, measure ASR. Single experiment with obvious deliverable. Quick to execute.",
+        "confidence": 0.92
+      }
+    },
+    "weighted_score": 4.22,
+    "confidence": 0.86,
+    "eliminated": false,
+    "elimination_reason": null
+  },
+  {
+    "idea_id": "gen-0626",
+    "title": "Testing Whether Activation Probes Can Distinguish Jailbreak Attempts from Legitimate Edge-Case Requests",
+    "run_id": "2026-03-19T19-58-40",
+    "original_idea": {
+      "idea_id": "gen-0626",
+      "subfield": "Adversarial Robustness & Red-Teaming",
+      "generation_strategy": "failure_mode_investigation",
+      "problem": "Activation-based detectors may have high false positive rates on legitimate but unusual requests.",
+      "direction": "Collect 50 edge-case, 50 jailbreak, and 50 benign prompts. Train probe on benign vs jailbreak. Measure FPR on edge cases. Compare to keyword baseline.",
+      "why_it_matters": "If activation detectors have high FPR on professional queries, they cannot be deployed without damaging user experience."
+    },
+    "scores": {
+      "theory_of_impact": {
+        "score": 4,
+        "reasoning": "Strong chain: FPR characterization -> determines practical viability of activation-based safety -> directly affects whether these defenses can be deployed. Addresses a critical production concern.",
+        "confidence": 0.83
+      },
+      "accessible_complexity": {
+        "score": 3,
+        "reasoning": "Requires activation extraction, probe training, and careful dataset curation (especially edge cases). Intermediate: the data curation for realistic edge cases needs domain knowledge.",
+        "confidence": 0.78
+      },
+      "narrow_scope": {
+        "score": 4,
+        "reasoning": "Focused deliverable: FPR comparison table (activation probe vs keyword filter on edge cases). Clear methodology. Dataset curation is the main challenge.",
+        "confidence": 0.83
+      }
+    },
+    "weighted_score": 3.74,
+    "confidence": 0.81,
+    "eliminated": false,
+    "elimination_reason": null
+  },
+  {
+    "idea_id": "gen-0627",
+    "title": "Investigating Whether the 'Refuse-Then-Comply' Attack Transfers Across Model Families",
+    "run_id": "2026-03-19T19-58-40",
+    "original_idea": {
+      "idea_id": "gen-0627",
+      "subfield": "Adversarial Robustness & Red-Teaming",
+      "generation_strategy": "failure_mode_investigation",
+      "problem": "Whether prompting models to refuse then comply (without fine-tuning) elicits harmful content is unknown.",
+      "direction": "Prompt open-source models to 'first refuse, then provide the info anyway'. Measure ASR across 3 models and 30 prompts. Compare to direct requests and standard jailbreaks.",
+      "why_it_matters": "If the pattern emerges from prompt-level instruction alone, it is trivially cheap and scalable, suggesting output-filtering is fundamentally insufficient."
+    },
+    "scores": {
+      "theory_of_impact": {
+        "score": 3,
+        "reasoning": "Plausible chain: prompt-level refuse-then-comply -> scalable attack -> output filtering insufficiency. But the link between the finding and a defense improvement is indirect. The paper already showed the fine-tuning version works.",
+        "confidence": 0.76
+      },
+      "accessible_complexity": {
+        "score": 4,
+        "reasoning": "Simple prompting experiment: no fine-tuning, no activation extraction. Design prompts, run inference, evaluate outputs. Beginner-accessible.",
+        "confidence": 0.88
+      },
+      "narrow_scope": {
+        "score": 4,
+        "reasoning": "Focused deliverable: ASR comparison across 3 prompting conditions (direct, refuse-then-comply, standard jailbreak). Simple and clear.",
+        "confidence": 0.85
+      }
+    },
+    "weighted_score": 3.78,
+    "confidence": 0.83,
+    "eliminated": false,
+    "elimination_reason": null
+  },
+  {
+    "idea_id": "gen-0628",
+    "title": "Characterizing How Quickly Jailbreak ASR Saturates with Number of GCG Optimization Steps",
+    "run_id": "2026-03-19T19-58-40",
+    "original_idea": {
+      "idea_id": "gen-0628",
+      "subfield": "Adversarial Robustness & Red-Teaming",
+      "generation_strategy": "failure_mode_investigation",
+      "problem": "The relationship between GCG optimization budget and ASR is not well characterized for modern models.",
+      "direction": "Run GCG on Llama-3-8B for 50 prompts, logging ASR at 10-500 steps. Plot ASR-vs-steps learning curve. Measure variance across seeds.",
+      "why_it_matters": "If 90% success is achieved in 50 steps, the marginal cost of a jailbreak is far lower than assumed."
+    },
+    "scores": {
+      "theory_of_impact": {
+        "score": 3,
+        "reasoning": "Plausible chain: optimization efficiency characterization -> revised threat model cost assumptions. Useful but the safety impact is indirect (characterization of attack cost, not a defense).",
+        "confidence": 0.75
+      },
+      "accessible_complexity": {
+        "score": 2,
+        "reasoning": "GCG optimization requires substantial GPU resources and familiarity with adversarial optimization tooling. Running 50 prompts x 500 steps x multiple seeds is compute-heavy. Advanced for beginners.",
+        "confidence": 0.8
+      },
+      "narrow_scope": {
+        "score": 4,
+        "reasoning": "Focused deliverable: ASR-vs-steps learning curve. Clear methodology. But the compute requirements for running the full experiment are substantial.",
+        "confidence": 0.8
+      }
+    },
+    "weighted_score": 3.09,
+    "confidence": 0.78,
+    "eliminated": false,
+    "elimination_reason": null
+  },
+  {
+    "idea_id": "gen-0629",
+    "title": "Does the Safety Failure Mode Differ Between Base Models and Their RLHF-Tuned Variants?",
+    "run_id": "2026-03-19T19-58-40",
+    "original_idea": {
+      "idea_id": "gen-0629",
+      "subfield": "Adversarial Robustness & Red-Teaming",
+      "generation_strategy": "failure_mode_investigation",
+      "problem": "The direct base-vs-aligned attack surface comparison as a controlled experiment is not standard in the literature.",
+      "direction": "Run identical attacks on a base model and its instruction-tuned variant. Measure ASR per attack type. Extract activations to compare safety feature distributions.",
+      "why_it_matters": "Understanding what RLHF specifically adds to safety robustness characterizes the exact failure surface of alignment."
+    },
+    "scores": {
+      "theory_of_impact": {
+        "score": 4,
+        "reasoning": "Strong chain: base vs aligned comparison -> characterizes what RLHF adds/misses -> foundational knowledge for improving alignment training. Addresses a fundamental question.",
+        "confidence": 0.82
+      },
+      "accessible_complexity": {
+        "score": 3,
+        "reasoning": "Requires running multiple attack types on two model versions and extracting activations. Intermediate complexity: multiple experimental dimensions and activation analysis.",
+        "confidence": 0.76
+      },
+      "narrow_scope": {
+        "score": 3,
+        "reasoning": "Deliverable requires sustained effort: running 3 attack types on 2 model versions, plus activation extraction and comparison. Multiple workstreams before a clean comparison emerges.",
+        "confidence": 0.78
+      }
+    },
+    "weighted_score": 3.3,
+    "confidence": 0.79,
+    "eliminated": false,
+    "elimination_reason": null
+  },
+  {
+    "idea_id": "gen-0630",
+    "title": "Investigating Whether Jailbreak Success Rates Correlate with Model Perplexity on Adversarial Prompts",
+    "run_id": "2026-03-19T19-58-40",
+    "original_idea": {
+      "idea_id": "gen-0630",
+      "subfield": "Adversarial Robustness & Red-Teaming",
+      "generation_strategy": "failure_mode_investigation",
+      "problem": "Whether a simple perplexity filter on input prompts would substantially reduce ASR is an uninvestigated but practical defense question.",
+      "direction": "Compute perplexity of GCG jailbreaks, natural-language jailbreaks, and benign prompts. Measure AUROC using perplexity as sole feature. Measure FPR on edge cases.",
+      "why_it_matters": "If perplexity alone achieves high detection for GCG attacks, it is an extremely cheap defense. If it fails for natural-language jailbreaks, it clarifies the limitation."
+    },
+    "scores": {
+      "theory_of_impact": {
+        "score": 4,
+        "reasoning": "Strong chain: perplexity as detection signal -> cheap, model-agnostic defense -> directly deployable or clarifies limitations. Both positive and negative results are informative.",
+        "confidence": 0.83
+      },
+      "accessible_complexity": {
+        "score": 4,
+        "reasoning": "Perplexity computation is standard. AUROC evaluation is basic ML. No training needed beyond computing a scalar feature. Beginner-accessible with standard tools.",
+        "confidence": 0.88
+      },
+      "narrow_scope": {
+        "score": 4,
+        "reasoning": "Focused deliverable: AUROC table for perplexity-based detection across jailbreak types plus FPR. Clear, simple methodology with a single obvious output.",
+        "confidence": 0.85
+      }
+    },
+    "weighted_score": 4.0,
+    "confidence": 0.85,
+    "eliminated": false,
+    "elimination_reason": null
+  },
+  {
+    "idea_id": "gen-0631",
+    "title": "Characterizing the Boundary Conditions of the Bad Likert Judge Jailbreak Technique",
+    "run_id": "2026-03-19T19-58-40",
+    "original_idea": "Implement the Bad Likert Judge technique on 3 open-source models for 30 harmful prompts. Systematically vary: (1) number of turns before the harmful request, (2) explicitness of the harmful request, (3) framing as evaluation vs. generation. Measure ASR per condition.",
+    "scores": {
+      "theory_of_impact": {
+        "score": 4,
+        "weight": 3.0,
+        "reasoning": "Clear causal path: understanding which structural conditions make evaluation-framing attacks succeed directly informs multi-turn safety evaluation design. Actionable for safety teams."
+      },
+      "accessible_complexity": {
+        "score": 3,
+        "weight": 3.5,
+        "reasoning": "Requires implementing a multi-turn jailbreak technique and managing ASR measurement across conditions. Feasible for CS students with guidance, but multi-turn prompt engineering and systematic variation add complexity. Medium compute sufficient for 3 open-source models."
+      },
+      "narrow_scope": {
+        "score": 4,
+        "weight": 5.0,
+        "reasoning": "Well-defined: 1 technique, 3 models, 30 prompts, 3 variation axes. Clear deliverable (ASR per condition). Slightly broad with 3 independent variables but manageable."
+      }
+    },
+    "weighted_score": 3.7,
+    "confidence": 0.78,
+    "eliminated": false,
+    "elimination_reason": null
+  },
+  {
+    "idea_id": "gen-0632",
+    "title": "Testing Whether Safety Alignment Survives Quantization (INT4 vs. FP16)",
+    "run_id": "2026-03-19T19-58-40",
+    "original_idea": "Compare ASR across attack types (prefilling, direct harmful prompts, GCG) between FP16 and INT4 (GGUF/GPTQ) versions of the same model. Use Llama-3-8B as the test model. Measure ASR on 30 harmful prompts and compare first-token refusal probabilities.",
+    "scores": {
+      "theory_of_impact": {
+        "score": 4,
+        "weight": 3.0,
+        "reasoning": "Direct safety relevance: if quantization degrades alignment, widespread consumer deployment of quantized models is an underappreciated risk. Immediately actionable for deployment guidelines."
+      },
+      "accessible_complexity": {
+        "score": 3,
+        "weight": 3.5,
+        "reasoning": "Requires running GCG attacks and extracting first-token probabilities, which demands some ML experience. Quantization tooling (llama.cpp, GPTQ) is well-documented. GCG is harder for beginners. Medium compute covers Llama-3-8B."
+      },
+      "narrow_scope": {
+        "score": 4,
+        "weight": 5.0,
+        "reasoning": "Single model, two quantization levels, 30 prompts. Clear comparison. GCG adds complexity but the deliverable is focused."
+      }
+    },
+    "weighted_score": 3.7,
+    "confidence": 0.75,
+    "eliminated": false,
+    "elimination_reason": null
+  }
+]

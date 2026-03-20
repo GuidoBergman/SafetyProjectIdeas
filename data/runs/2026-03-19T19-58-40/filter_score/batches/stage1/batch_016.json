@@ -1,0 +1,1002 @@
+[
+  {
+    "idea_id": "gen-1501",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:17:31Z",
+    "subfield": "Concept Steering & Representation Engineering",
+    "generation_strategy": "tool_or_benchmark_gap",
+    "confidence": 0.8,
+    "body": "# Steering Vector Registry and Reproducibility Repository\n\n**Problem:** Researchers extract concept vectors for similar concepts independently, wasting compute and making it hard to compare vectors across labs.\n\n**Direction:** Create a public registry of pre-computed safety concept vectors for major open-source model families, with metadata on extraction method, training data, and evaluation results, hosted as a HuggingFace dataset.\n\n**Why it matters:** A registry would reduce duplicated effort, enable meta-analysis across vectors, and let practitioners retrieve validated vectors without running extraction themselves.\n\n**Relevant context:** The awesome-representation-engineering GitHub repository (github.com/chrisliu298) aggregates resources but does not host vectors. HuggingFace hosts model weights; extending to concept vectors is a natural gap."
+  },
+  {
+    "idea_id": "gen-1502",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:17:31Z",
+    "subfield": "Concept Steering & Representation Engineering",
+    "generation_strategy": "tool_or_benchmark_gap",
+    "confidence": 0.81,
+    "body": "# Layer Selection Heuristic Tool for Optimal Concept Vector Extraction\n\n**Problem:** Practitioners must manually search across layers to find the layer with the best concept vector; there is no principled automated tool for layer selection.\n\n**Direction:** Build a layer selection tool that scans all layers of a model, computes concept vector extraction quality metrics (probe accuracy, vector norm stability, steerability coefficient), and recommends the optimal layer automatically.\n\n**Why it matters:** Layer selection is a hidden hyperparameter that strongly affects steering effectiveness; automating it removes a barrier to correct application.\n\n**Relevant context:** Beaglehole et al. extract layer-wise concept vectors and select based on predictors; the selection logic is not packaged as a reusable tool. Multiple RepE papers implicitly assume the user knows which layer to use."
+  },
+  {
+    "idea_id": "gen-1503",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:17:31Z",
+    "subfield": "Concept Steering & Representation Engineering",
+    "generation_strategy": "failure_mode_investigation",
+    "confidence": 0.87,
+    "body": "# Adversarial Manipulation of Safety Concept Vectors\n\n**Problem:** If an adversary knows the concept vectors being used to steer or monitor a model, they may craft inputs that lie orthogonal to those vectors, bypassing safety filters entirely.\n\n**Direction:** Implement a white-box adversarial attack that generates prompts optimized to produce activations orthogonal to a known toxicity concept vector, then measure the attack success rate and whether probe-based monitoring catches these adversarial inputs.\n\n**Why it matters:** Concept vector-based safety is only as strong as its resistance to adversarial manipulation; characterizing this attack surface is essential before deployment.\n\n**Relevant context:** Activation Steering Attack (ASA) work (arXiv 2506.16078) demonstrates latent-space jailbreaks with cross-model generalization. Steering awareness (arXiv 2511.21399) shows models can detect steering, suggesting adversarial dynamics are real."
+  },
+  {
+    "idea_id": "gen-1504",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:17:31Z",
+    "subfield": "Concept Steering & Representation Engineering",
+    "generation_strategy": "failure_mode_investigation",
+    "confidence": 0.85,
+    "body": "# Concept Vector Drift After LoRA Fine-Tuning\n\n**Problem:** When a model is fine-tuned (e.g., for a new domain via LoRA), previously extracted safety concept vectors may no longer accurately represent the same concepts, silently breaking safety monitoring.\n\n**Direction:** Extract safety concept vectors from a base model, apply LoRA fine-tuning for three different domains (legal, medical, creative writing), then re-measure probe accuracy and steering effectiveness using the original vectors on the fine-tuned models.\n\n**Why it matters:** If vectors drift significantly after fine-tuning, any safety deployment that uses pre-extracted vectors without re-validation is silently unsafe.\n\n**Relevant context:** Robustness in fine-tuning (ICCV 2025) and the stability of representation engineering are noted concerns. Beaglehole et al. do not test vector stability after fine-tuning."
+  },
+  {
+    "idea_id": "gen-1505",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:17:31Z",
+    "subfield": "Concept Steering & Representation Engineering",
+    "generation_strategy": "failure_mode_investigation",
+    "confidence": 0.83,
+    "body": "# Identifying Safety Concepts Without Linear Representations\n\n**Problem:** The linear representation hypothesis is assumed but not systematically tested for all safety-relevant concepts; some concepts may require non-linear representations, breaking steering-based safety approaches.\n\n**Direction:** For a set of 15 safety concepts (toxicity, deception, bias, manipulation, self-harm, CSAM, bioweapons instructions, etc.), test whether linear probes achieve significantly above-chance accuracy compared to non-linear MLP probes, flagging concepts where linearity fails.\n\n**Why it matters:** Knowing which safety concepts lack linear representations prevents false confidence in steering coverage and motivates alternative approaches for those concepts.\n\n**Relevant context:** The linear representation hypothesis is the foundation of all RepE work. The RepE reliability paper (OpenReview) raises concerns. Neural probe hallucination work (arXiv 2512.20949) finds MLP probes outperform linear probes for some concepts."
+  },
+  {
+    "idea_id": "gen-1506",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:17:31Z",
+    "subfield": "Concept Steering & Representation Engineering",
+    "generation_strategy": "failure_mode_investigation",
+    "confidence": 0.8,
+    "body": "# Steering Vector Instability Under Quantization\n\n**Problem:** Production deployments often use quantized models (INT8, INT4) to reduce memory; concept vectors extracted from full-precision models may not transfer to quantized versions.\n\n**Direction:** Extract safety concept vectors from full-precision Llama-3-8B, then test probe accuracy and steering effectiveness on INT8 and INT4 quantized versions of the same model, measuring degradation as a function of quantization level.\n\n**Why it matters:** Most deployments are quantized; if vectors break under quantization, the safety guarantee is illusory for production settings.\n\n**Relevant context:** This is an unexplored failure mode; no existing work tests concept vector stability under quantization. Beaglehole et al. use A100s with full precision; quantization effects are not discussed."
+  },
+  {
+    "idea_id": "gen-1507",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:17:31Z",
+    "subfield": "Concept Steering & Representation Engineering",
+    "generation_strategy": "failure_mode_investigation",
+    "confidence": 0.82,
+    "body": "# Pathological Steering: When Concept Vector Addition Causes Incoherence\n\n**Problem:** Over-steering (adding a concept vector with too large a coefficient) may cause outputs to become incoherent or switch to an entirely different failure mode, making safety worse.\n\n**Direction:** Systematically sweep steering coefficients from zero to a large multiple of the typical effective range for toxicity and honesty vectors, measuring perplexity, coherence scores, and rate of new failure modes (e.g., repetition, hallucination increase) as steering magnitude increases.\n\n**Why it matters:** Practitioners need to know the 'safe range' of steering magnitudes; failure modes from over-steering could be exploited or cause unintended harms.\n\n**Relevant context:** Beaglehole et al. mention steerability but do not characterize pathological regimes. Steering vector generalization and reliability work raises concerns about out-of-distribution steering behavior."
+  },
+  {
+    "idea_id": "gen-1508",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:17:31Z",
+    "subfield": "Concept Steering & Representation Engineering",
+    "generation_strategy": "cross_domain_transfer",
+    "confidence": 0.73,
+    "body": "# Network Control Theory Applied to LLM Activation Steering\n\n**Problem:** Concept steering currently relies on additive vector interventions without a formal framework for predicting the reachability of target activation states or the minimal energy required.\n\n**Direction:** Apply network control theory (NCT) \u2014 used in neuroscience to model brain stimulation effects \u2014 to model the LLM residual stream as a dynamical system, derive optimal steering vectors as minimum-energy control inputs, and compare these NCT-derived vectors to standard mean-difference vectors.\n\n**Why it matters:** NCT provides a principled framework for predicting when steering will work and estimating the cost of reaching a target behavioral state, addressing the ad-hoc nature of current coefficient selection.\n\n**Relevant context:** NCT is used in neuroscience to optimize brain stimulation (Nature Communications 2025, optimal stochastic tracking control). The analogy to residual stream dynamics in transformers is direct and unexploited."
+  },
+  {
+    "idea_id": "gen-1509",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:17:31Z",
+    "subfield": "Concept Steering & Representation Engineering",
+    "generation_strategy": "cross_domain_transfer",
+    "confidence": 0.7,
+    "body": "# Pharmacokinetic Dose-Response Modeling for Steering Vector Magnitude\n\n**Problem:** The relationship between steering vector magnitude and behavioral effect is treated empirically with no formal model, analogous to pre-dose-response-curve pharmacology.\n\n**Direction:** Borrow the pharmacokinetic dose-response framework (EC50, Hill coefficient, therapeutic window) from pharmacology, fit these parameters to the steering magnitude vs. toxicity-suppression curve, and use them to define a 'therapeutic window' for safe steering.\n\n**Why it matters:** A formal dose-response model would let practitioners derive principled coefficient bounds and transfer knowledge across models (as pharmacokinetics transfers across patients).\n\n**Relevant context:** Pharmacology dose-response modeling is well-established; the analogy to steering vectors (dose = coefficient, response = behavioral metric) is natural but unexplored in the ML literature."
+  },
+  {
+    "idea_id": "gen-1510",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:17:31Z",
+    "subfield": "Concept Steering & Representation Engineering",
+    "generation_strategy": "cross_domain_transfer",
+    "confidence": 0.68,
+    "body": "# Signal Processing Spectral Analysis of Concept Directions Across Layers\n\n**Problem:** Concept vectors are extracted independently at each layer; it is unknown whether they form a coherent signal across layers or are noisy, which would inform whether layer-aggregated vectors are better.\n\n**Direction:** Treat the sequence of per-layer concept vector directions as a discrete signal over layer depth, apply spectral analysis (FFT, wavelet decomposition) to identify coherence patterns, and test whether filtering (keeping low-frequency components) improves steering effectiveness.\n\n**Why it matters:** Signal processing tools could reveal structure in how safety concepts are distributed across layers, enabling more robust multi-layer steering approaches.\n\n**Relevant context:** Global Evolutionary Steering via cross-layer consistency (arXiv 2603.12298) shows layer consistency matters. Spectral tools from signal processing are not currently applied in RepE literature."
+  },
+  {
+    "idea_id": "gen-1511",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:17:31Z",
+    "subfield": "Concept Steering & Representation Engineering",
+    "generation_strategy": "cross_domain_transfer",
+    "confidence": 0.72,
+    "body": "# PID Controller for Adaptive Safety Steering at Inference Time\n\n**Problem:** Fixed-coefficient concept steering cannot adapt to the current output trajectory; if early tokens suggest safe output, continued steering wastes capacity, while if early tokens are risky, more aggressive steering is needed.\n\n**Direction:** Implement a proportional-integral-derivative (PID) controller that monitors a running concept probe score during generation and adjusts the steering vector coefficient in real time, comparing adaptive steering to fixed-coefficient steering on safety and fluency.\n\n**Why it matters:** Adaptive control from control theory is the natural answer to dynamic steering needs; it could reduce over-suppression while maintaining safety guarantees.\n\n**Relevant context:** Control theory PID controllers are standard engineering; the application to inference-time steering vector coefficient adaptation is novel. CAST (ICLR 2025) is a related conditional approach but uses discrete thresholding rather than continuous control."
+  },
+  {
+    "idea_id": "gen-1512",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:17:31Z",
+    "subfield": "Concept Steering & Representation Engineering",
+    "generation_strategy": "cross_domain_transfer",
+    "confidence": 0.75,
+    "body": "# Targeted Intervention Specificity from Pharmacology: Concept-Selective Steering\n\n**Problem:** Current steering vectors may suppress a target concept but also suppress related benign concepts (off-target effects), analogous to drug side effects.\n\n**Direction:** Quantify off-target suppression: for a toxicity steering vector, measure how much it also suppresses non-toxic content involving the same themes (e.g., harm reduction discussions). Use pharmacological selectivity metrics (selectivity index) to compare different vector extraction methods.\n\n**Why it matters:** Off-target suppression reduces model utility and may disproportionately affect marginalized topics; selectivity is a practical requirement for production safety systems.\n\n**Relevant context:** Drug selectivity index is a standard pharmacology metric. CMU RepE blog notes utility preservation as a challenge. No existing steering evaluation quantifies off-target suppression systematically."
+  },
+  {
+    "idea_id": "gen-1513",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:17:31Z",
+    "subfield": "Concept Steering & Representation Engineering",
+    "generation_strategy": "causal_chain_intervention",
+    "confidence": 0.83,
+    "body": "# Decomposing the Steering-to-Behavior Causal Chain: Probe Accuracy as a Bottleneck\n\n**Problem:** The full causal chain from concept vector extraction to safe model behavior has multiple failure points; it is unclear which step is the most common source of steering failures in practice.\n\n**Direction:** For a toxicity steering pipeline, independently measure: (1) probe accuracy on the contrastive extraction dataset, (2) cosine similarity of extracted vector to gold-standard directions, (3) steering effectiveness on in-distribution prompts, (4) steering effectiveness on out-of-distribution corner cases. Correlate failures at each step to isolate bottlenecks.\n\n**Why it matters:** Safety engineers fixing a failing steering system need to know whether the problem is the vector extraction, the application method, or the test coverage; this decomposition enables targeted debugging.\n\n**Relevant context:** Beaglehole et al. report end-to-end metrics only. Reliability of RepE (OpenReview) finds failures but does not localize them to causal steps."
+  },
+  {
+    "idea_id": "gen-1514",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:17:31Z",
+    "subfield": "Concept Steering & Representation Engineering",
+    "generation_strategy": "causal_chain_intervention",
+    "confidence": 0.85,
+    "body": "# Corner Case Coverage Audit for Safety Concept Vectors\n\n**Problem:** Concept vectors trained on typical toxic/benign pairs may fail on corner cases: highly indirect harmful requests, fictional framing, or technical language that achieves harmful ends without triggering expected representations.\n\n**Direction:** Construct a corner-case test suite (indirect harm, fictional framing, coded language, multilingual harmful requests, ambiguous dual-use) and measure concept probe accuracy and steering effectiveness on each corner-case category separately.\n\n**Why it matters:** Real-world attacks exploit exactly these corner cases; knowing the coverage gaps of a concept vector before deployment prevents false confidence in safety guarantees.\n\n**Relevant context:** Robustness of LLM safety to latent perturbations (arXiv 2506.16078) shows alignment is fragile to certain perturbations. Jailbreak literature documents fictional framing and coded language attacks extensively."
+  },
+  {
+    "idea_id": "gen-1515",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:17:31Z",
+    "subfield": "Concept Steering & Representation Engineering",
+    "generation_strategy": "causal_chain_intervention",
+    "confidence": 0.81,
+    "body": "# Intervention Point Selection: Which Layer Minimizes Causal Propagation Error\n\n**Problem:** Steering at an early layer lets the intervention propagate through all subsequent layers, potentially amplifying or distorting the intended effect; steering at a late layer has less propagation but less residual stream depth to integrate the correction.\n\n**Direction:** For three safety concepts, compare steering effectiveness when intervening at early, middle, and late layers, measuring both the immediate layer-level probe effect and the final-output behavioral change, to characterize how causal propagation interacts with layer choice.\n\n**Why it matters:** Optimal layer selection is a causal question about transformer dynamics; principled layer choice could improve steering precision and reduce collateral suppression.\n\n**Relevant context:** Beaglehole et al. extract layer-wise vectors and report layer effects. Global Evolutionary Steering (arXiv 2603.12298) emphasizes cross-layer consistency. Causal framing for this question is absent from existing work."
+  },
+  {
+    "idea_id": "gen-1516",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:17:31Z",
+    "subfield": "Concept Steering & Representation Engineering",
+    "generation_strategy": "causal_chain_intervention",
+    "confidence": 0.74,
+    "body": "# Attention Head Disruption as a Downstream Mechanism of Concept Steering Failures\n\n**Problem:** When steering vectors fail on certain prompts, it may be because attention heads responsible for the relevant computation are not affected by the additive residual stream intervention.\n\n**Direction:** For prompts where toxicity steering fails (false negatives), use attention head patching to identify which heads are active, and compare their behavior to prompts where steering succeeds, testing whether specific heads consistently 'override' the steering intervention.\n\n**Why it matters:** Understanding the mechanistic failure pathway would enable targeted fixes \u2014 e.g., also patching specific attention heads \u2014 making steering more robust.\n\n**Relevant context:** Mechanistic interpretability work on attention heads (Anthropic's induction heads, copy suppression heads) provides methods for this analysis. The causal chain from vector insertion to output involves attention layers that are not currently analyzed in the steering literature."
+  },
+  {
+    "idea_id": "gen-1517",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:17:31Z",
+    "subfield": "Concept Steering & Representation Engineering",
+    "generation_strategy": "causal_chain_intervention",
+    "confidence": 0.79,
+    "body": "# Contrastive Pair Quality as a Causal Bottleneck for Probe Accuracy\n\n**Problem:** The quality of contrastive pairs used for concept vector extraction directly affects vector accuracy, but the relationship between pair quality metrics and downstream steering effectiveness is not characterized.\n\n**Direction:** Systematically vary the quality of contrastive pairs (random negatives vs. hard negatives vs. adversarial negatives) for toxicity concept extraction and measure how pair quality propagates to probe accuracy and then to steering effectiveness on a downstream benchmark.\n\n**Why it matters:** If pair quality is the dominant causal bottleneck, improving contrastive dataset curation would yield larger gains than improving the extraction algorithm.\n\n**Relevant context:** Beaglehole et al. use fewer than 500 training samples; how pair quality within that budget affects outcomes is unstudied. Contrastive Activation Addition (CAA) methods implicitly assume high-quality pairs."
+  },
+  {
+    "idea_id": "gen-1518",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:17:31Z",
+    "subfield": "Concept Steering & Representation Engineering",
+    "generation_strategy": "backcast_from_success",
+    "confidence": 0.78,
+    "body": "# What Research Achieves Universal, Verified Concept Steering: A Backcast\n\n**Problem:** The field lacks a structured research roadmap toward reliable, universal concept steering for any safety-relevant behavior in any model.\n\n**Direction:** Working backward from the success state ('verified robust concept vectors for all safety concepts in any model'), identify the minimum research milestones needed: (1) non-linear concept representation methods for non-linear concepts, (2) formal verification of steering coverage, (3) cross-architecture transfer proofs, (4) adversarial robustness guarantees. Design an experiment addressing milestone (1) or (4).\n\n**Why it matters:** Backcast reasoning prevents local optimization; it ensures near-term experiments are chosen for their contribution to the eventual goal rather than incremental metrics.\n\n**Relevant context:** Beaglehole et al. title 'toward universal steering and monitoring' implies universality is the goal. The RepE survey and this subfield's open problems list provide the current gaps to close."
+  },
+  {
+    "idea_id": "gen-1519",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:17:32Z",
+    "subfield": "Concept Steering & Representation Engineering",
+    "generation_strategy": "backcast_from_success",
+    "confidence": 0.73,
+    "body": "# Cross-Architecture Concept Vector Transfer as a Prerequisite for Universality\n\n**Problem:** Universal steering requires concept vectors to work across architectures (transformer, SSM, MoE); current work has not established whether vectors are architecture-invariant.\n\n**Direction:** Extract safety concept vectors from a transformer model and test whether they transfer to a state-space model (e.g., Mamba) via projected activation addition, measuring how much accuracy is lost versus model-native extraction.\n\n**Why it matters:** If universality requires per-architecture re-extraction, the goal is much harder to achieve; establishing the degree of transfer is a necessary prerequisite.\n\n**Relevant context:** Beaglehole et al. test on transformer and vision-language models only. SSM architectures are increasingly competitive; their concept vector geometry is entirely unstudied."
+  },
+  {
+    "idea_id": "gen-1520",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:17:32Z",
+    "subfield": "Concept Steering & Representation Engineering",
+    "generation_strategy": "backcast_from_success",
+    "confidence": 0.67,
+    "body": "# Formal Verification of Steering Coverage Using Interval Bound Propagation\n\n**Problem:** The success state requires verified, not just empirically demonstrated, steering coverage; formal verification methods from neural network verification could be applied but have not been.\n\n**Direction:** Apply interval bound propagation (IBP) or similar neural network verification techniques to certify that a steering intervention suppresses toxicity concept probe outputs below a threshold for all inputs within a defined input region.\n\n**Why it matters:** Empirical testing cannot cover all inputs; formal verification would provide provable safety guarantees, which is the prerequisite for the universal success state.\n\n**Relevant context:** IBP and related methods are used for adversarial robustness certification of neural networks (standard ML safety literature). Applying them to steering vector guarantees is novel and necessary for the success state."
+  },
+  {
+    "idea_id": "gen-1521",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:17:32Z",
+    "subfield": "Concept Steering & Representation Engineering",
+    "generation_strategy": "backcast_from_success",
+    "confidence": 0.74,
+    "body": "# Steering Vector Certification via Statistical Conformal Prediction\n\n**Problem:** For universal steering to be trustworthy, practitioners need statistical guarantees (e.g., 99% confidence that the probe will flag toxicity) rather than point estimates of accuracy.\n\n**Direction:** Apply conformal prediction to concept probe outputs to generate statistically valid prediction sets with coverage guarantees, testing whether these certificates hold under distribution shift and language change.\n\n**Why it matters:** Conformal prediction is a lightweight, distribution-free certification method that can provide actionable guarantees without formal verification's computational cost.\n\n**Relevant context:** Conformal prediction is increasingly used for uncertainty quantification in LLMs (active 2025 area). Applying it to concept probe outputs for safety certification is a direct gap."
+  },
+  {
+    "idea_id": "gen-1522",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:17:32Z",
+    "subfield": "Concept Steering & Representation Engineering",
+    "generation_strategy": "backcast_from_success",
+    "confidence": 0.79,
+    "body": "# RLHF and Concept Steering Alignment: What Combination Achieves the Best Safety\n\n**Problem:** Universal steering requires combining concept steering with RLHF, but the interaction is unstudied: does RLHF make concept vectors more or less reliable?\n\n**Direction:** Compare safety concept vector probe accuracy and steering effectiveness on models at three RLHF stages (base, SFT-only, full RLHF), measuring whether RLHF training makes concept representations more linear, more robust, or more diffuse.\n\n**Why it matters:** Understanding how RLHF affects concept representation geometry is necessary for designing a combined system that achieves the universal success state.\n\n**Relevant context:** The subfield open problems list 'combine with RLHF' explicitly. Beaglehole et al. do not test on models at different RLHF stages. RepE bending for safety (ACL 2025) is related but does not decompose RLHF stage effects."
+  },
+  {
+    "idea_id": "gen-1523",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:17:32Z",
+    "subfield": "Concept Steering & Representation Engineering",
+    "generation_strategy": "compounding_risks",
+    "confidence": 0.86,
+    "body": "# Adversarial Manipulation + Jailbreak: Double-Failure via Concept Vector Bypass\n\n**Problem:** If an attacker can identify and neutralize the safety concept vectors being used for steering or monitoring while simultaneously applying a jailbreak, both the mechanistic safety layer and the prompt-level safety layer fail simultaneously.\n\n**Direction:** Construct a compound attack: (1) use activation steering attack (ASA) techniques to craft inputs that bypass toxicity concept probes, (2) combine with a standard jailbreak prompt, and measure whether the combination achieves higher attack success rate than either attack alone on a model protected by both concept-vector monitoring and prompt-level filtering.\n\n**Why it matters:** Compounding failures are the realistic threat model for sophisticated adversaries; demonstrating the compound vulnerability is a prerequisite for designing defenses against it.\n\n**Relevant context:** ASA (arXiv 2506.16078) demonstrates concept vector bypass. Jailbreak literature documents prompt-level bypass. Combining them against a dual-layer defense is unstudied but directly implied by the threat model."
+  },
+  {
+    "idea_id": "gen-1524",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:17:32Z",
+    "subfield": "Concept Steering & Representation Engineering",
+    "generation_strategy": "compounding_risks",
+    "confidence": 0.84,
+    "body": "# Concept Vector Drift + Undetected Deployment Failure\n\n**Problem:** If concept vectors drift after model fine-tuning (failure mode 1) and monitoring pipelines do not re-validate vectors after updates (failure mode 2), safety guarantees silently degrade without any alert.\n\n**Direction:** Simulate this compounding failure: fine-tune a safety-monitored model with LoRA, measure how much concept vector probe accuracy degrades, then test whether standard deployment monitoring metrics (output quality, user feedback) detect the safety degradation before a targeted attack exploits it.\n\n**Why it matters:** Silent degradation of safety monitoring is arguably worse than a known gap; this compound failure mode is realistic in production ML pipelines that update models frequently.\n\n**Relevant context:** Concept vector drift after fine-tuning is unstudied (as established above). Production ML pipelines do update models; the absence of re-validation protocols is a known operational gap."
+  },
+  {
+    "idea_id": "gen-1525",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:17:32Z",
+    "subfield": "Concept Steering & Representation Engineering",
+    "generation_strategy": "compounding_risks",
+    "confidence": 0.82,
+    "body": "# Over-Steering + Hallucination Increase: Safety-Reliability Compounding Failure\n\n**Problem:** Aggressive safety steering (over-suppression of harm directions) may push model activations toward regions that increase hallucination rates, creating a trade-off where making a model safer makes it less reliable.\n\n**Direction:** Measure hallucination rate (using a probe-based hallucination detector) as a function of toxicity steering coefficient, testing whether there is a steering magnitude above which hallucination increases significantly and whether this threshold is predictable from probe geometry.\n\n**Why it matters:** A model that is safe but hallucinates dangerously in high-stakes domains (medical, legal) is not actually safer overall; this compounding failure mode needs to be characterized.\n\n**Relevant context:** Beaglehole et al. demonstrate both toxicity steering and hallucination detection as separate capabilities; their interaction is unstudied. Neural probe hallucination detection (arXiv 2512.20949) provides the detection infrastructure."
+  },
+  {
+    "idea_id": "gen-1526",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:17:32Z",
+    "subfield": "Concept Steering & Representation Engineering",
+    "generation_strategy": "compounding_risks",
+    "confidence": 0.75,
+    "body": "# Concept Vector Exposure + Model Inversion: Privacy Compounding Risk\n\n**Problem:** Publishing concept vectors (e.g., in a public registry) may enable model inversion attacks where adversaries use the vectors to reconstruct training data examples or identify decision boundaries for adversarial inputs.\n\n**Direction:** Test whether published safety concept vectors for a model enable model inversion attacks by using the vectors to guide gradient-based search for activations that maximally activate the concept, and measure whether recovered inputs resemble training data examples.\n\n**Why it matters:** Open-access safety concept vectors are beneficial for transparency but may create privacy risks; knowing the degree of this trade-off is essential for deciding what to publish.\n\n**Relevant context:** Model inversion attacks on neural networks are a known privacy concern. Concept vectors expose model internals in a structured form. The interaction between concept vector release and model inversion is unstudied."
+  },
+  {
+    "idea_id": "gen-1527",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:17:32Z",
+    "subfield": "Concept Steering & Representation Engineering",
+    "generation_strategy": "compounding_risks",
+    "confidence": 0.83,
+    "body": "# Steering Detection + Evasion: Models That Resist Safety Steering\n\n**Problem:** Recent work shows models can be trained to detect when their activations are being steered; if future models are trained to resist steering detection, this creates a compounding failure where the safety mechanism is neutralized by the model itself.\n\n**Direction:** Replicate the steering awareness result (arXiv 2511.21399) on a current model, then test whether a model fine-tuned to suppress its own steering awareness signal is also harder to steer effectively, characterizing the safety implications of steering-resistant models.\n\n**Why it matters:** If models can be (adversarially or accidentally) trained to resist safety steering, the entire concept steering paradigm fails for those models; early characterization is essential.\n\n**Relevant context:** Steering Awareness (arXiv 2511.21399) explicitly establishes that models can detect activation steering. This is a direct compounding risk: steering awareness + evasion training = steering resistance."
+  },
+  {
+    "idea_id": "gen-1528",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:17:32Z",
+    "subfield": "Concept Steering & Representation Engineering",
+    "generation_strategy": "novel_direction",
+    "confidence": 0.76,
+    "body": "# Concept Steering for Self-Harm Content Moderation\n\n**Problem:** Self-harm and suicide content moderation relies on pattern matching and classifier outputs; concept-level steering could provide a more nuanced intervention that suppresses harmful framing while preserving help-seeking and harm-reduction content.\n\n**Direction:** Extract a 'self-harm promotion' concept vector using contrastive pairs (promoting vs. discussing self-harm), apply suppression steering, and measure the false positive rate on harm-reduction and help-seeking content compared to a keyword-based filter.\n\n**Why it matters:** Over-blocking mental health content harms vulnerable users; concept steering with high specificity could improve both safety and access to support.\n\n**Relevant context:** This is a direct application of Beaglehole et al.'s approach to an underexplored safety-critical concept with significant real-world stakes. The concept is expected to have a linear representation given the success of toxicity vectors."
+  },
+  {
+    "idea_id": "gen-1529",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:17:32Z",
+    "subfield": "Concept Steering & Representation Engineering",
+    "generation_strategy": "novel_direction",
+    "confidence": 0.72,
+    "body": "# Dual-Use Concept Detection: Steering Models Away from Dual-Use Knowledge\n\n**Problem:** Models can provide information that is legitimate in one context (chemistry education) but dangerous in another (synthesis of dangerous substances); dual-use content is the hardest category for both prompt-level and output-level safety filters.\n\n**Direction:** Attempt to extract a 'dual-use dangerous application' concept vector using contrastive pairs (legitimate educational framing vs. explicit harmful application framing) and test whether probing can distinguish dual-use outputs from safe outputs in context.\n\n**Why it matters:** Dual-use is arguably the most important safety category and the one where current approaches most frequently fail; even partial progress on mechanistic dual-use detection is high-value.\n\n**Relevant context:** Dual-use content is a prominent challenge in AI safety (biosecurity, chemical weapons). RepE and concept steering have not targeted dual-use specifically. The contrastive extraction approach may work if framing differences produce distinguishable activations."
+  },
+  {
+    "idea_id": "gen-1530",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:17:32Z",
+    "subfield": "Concept Steering & Representation Engineering",
+    "generation_strategy": "novel_direction",
+    "confidence": 0.74,
+    "body": "# Concept Steering for Reducing AI Paternalism Without Increasing Harm\n\n**Problem:** Models are often over-cautious, refusing benign requests due to surface-level similarity to harmful content; concept steering could reduce false refusals without increasing true positive harm rates.\n\n**Direction:** Extract a 'paternalistic over-refusal' concept vector from contrastive pairs (appropriate refusal vs. false refusal of benign content), apply a suppression vector for over-refusal, and measure the change in false refusal rate and true harm rate on a mixed benchmark.\n\n**Why it matters:** Over-refusal degrades model utility and undermines user trust; a mechanistic fix that reduces over-refusal without increasing harm acceptance would be directly valuable.\n\n**Relevant context:** Beaglehole et al. show style and sentiment are steerable, suggesting over-refusal patterns (which have consistent stylistic signatures) should be targetable. AI safety researchers increasingly recognize over-refusal as a real problem."
+  },
+  {
+    "idea_id": "gen-1531",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:17:32Z",
+    "subfield": "Concept Steering & Representation Engineering",
+    "generation_strategy": "novel_direction",
+    "confidence": 0.73,
+    "body": "# Concept Vector Composition for Intersecting Identities in Bias Steering\n\n**Problem:** Bias in LLMs often interacts across multiple protected attributes (race x gender x class); steering vectors for individual attributes may not capture intersecting bias.\n\n**Direction:** Extract individual bias vectors for race and gender, then test whether their additive composition captures intersectional bias as measured on an intersectional bias benchmark (e.g., BBQ with intersectional categories), comparing to directly extracted intersectional vectors.\n\n**Why it matters:** If additive composition fails for intersectional bias, multi-concept steering cannot address this important safety concern, motivating higher-order concept vector methods.\n\n**Relevant context:** Beaglehole et al. show multi-concept steering via weighted vector sums. Intersectionality in bias is a recognized gap in NLP fairness research. Whether linear concept vector arithmetic handles intersectionality is an open question."
+  },
+  {
+    "idea_id": "gen-1532",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:17:32Z",
+    "subfield": "Concept Steering & Representation Engineering",
+    "generation_strategy": "novel_direction",
+    "confidence": 0.78,
+    "body": "# Concept Steering Explanation as a Mechanistic Interpretability Tool\n\n**Problem:** When a model refuses or modifies a response, users and auditors have no mechanistic explanation for why; concept vectors could provide human-readable mechanistic explanations.\n\n**Direction:** Build a prototype explanation interface that, when a model output is steered or a probe fires, reports which concept vector triggered, the activation strength, and a natural language description of the concept, comparing user understanding of model decisions with vs. without this explanation.\n\n**Why it matters:** Explainability of safety decisions is increasingly required for regulatory compliance and user trust; concept vectors provide a uniquely mechanistic form of explanation.\n\n**Relevant context:** RepE and Beaglehole et al. provide the technical foundation for concept-level explanations. Explainability is an open problem in deployed AI safety systems. No existing explanation interface uses concept vectors."
+  },
+  {
+    "idea_id": "gen-1533",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:17:32Z",
+    "subfield": "Concept Steering & Representation Engineering",
+    "generation_strategy": "experiment_variation",
+    "confidence": 0.8,
+    "body": "# Safety Concept Vectors for Reasoning Chain Monitoring\n\n**Problem:** Chain-of-thought reasoning is increasingly used for complex tasks, but reasoning chains can contain unsafe intermediate reasoning that does not appear in the final output.\n\n**Direction:** Apply concept probes to activations at each reasoning step token position, testing whether the probe scores on reasoning tokens predict unsafe final outputs better than probing only the last token.\n\n**Why it matters:** Monitoring reasoning chains for safety-relevant concepts could catch planning toward harmful goals before the harmful output is generated.\n\n**Relevant context:** Beaglehole et al. test on reasoning models. Chain-of-thought safety monitoring is an emerging concern. Applying concept probes token-by-token during reasoning is a direct extension of the paper's approach."
+  },
+  {
+    "idea_id": "gen-1534",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:17:32Z",
+    "subfield": "Concept Steering & Representation Engineering",
+    "generation_strategy": "experiment_variation",
+    "confidence": 0.79,
+    "body": "# Temperature and Sampling Parameter Effects on Steering Effectiveness\n\n**Problem:** Steering effectiveness may depend on sampling parameters: high temperature (more random outputs) might counteract steering by allowing the model to sample around the steered distribution.\n\n**Direction:** Measure toxicity steering effectiveness as a function of sampling temperature (0.0 to 2.0) and top-p (0.5 to 1.0), determining whether steering is robust to the sampling hyperparameters used in production deployments.\n\n**Why it matters:** Production deployments use varied sampling parameters; if steering breaks at high temperatures commonly used for creative tasks, this is a significant deployment gap.\n\n**Relevant context:** Steering vector generalization work (OpenReview) notes in-distribution variability. Sampling parameters are an obvious but unstudied moderating variable for steering effectiveness."
+  },
+  {
+    "idea_id": "gen-1535",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:17:32Z",
+    "subfield": "Concept Steering & Representation Engineering",
+    "generation_strategy": "experiment_variation",
+    "confidence": 0.78,
+    "body": "# Steering in Long-Context Settings: Does Vector Influence Persist Over Context Length\n\n**Problem:** Concept steering is typically tested on short prompts; for long-context inputs (book-length, legal documents), it is unknown whether steering at the beginning of generation persists or decays over the generated sequence.\n\n**Direction:** Apply a toxicity steering vector and measure toxicity probe scores at 100-token intervals over a 4,000-token generated sequence, testing whether the suppression effect decays with generation length.\n\n**Why it matters:** Long-context generation is increasingly important in practice; steering that works at short lengths but not long lengths misses a large fraction of production use cases.\n\n**Relevant context:** This is a direct experimental variation of Beaglehole et al. focusing on generation length as the variable. Long-context safety is an open problem. Beaglehole et al. do not report results by generation length."
+  },
+  {
+    "idea_id": "gen-1536",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:17:32Z",
+    "subfield": "Concept Steering & Representation Engineering",
+    "generation_strategy": "experiment_variation",
+    "confidence": 0.8,
+    "body": "# Concept Steering on Fine-Tuned Domain Models: Medical and Legal\n\n**Problem:** Domain-specific fine-tuned models (medical, legal) may have different concept representation geometries than general models, making general-purpose concept vectors ineffective for domain-specific safety.\n\n**Direction:** Extract toxicity and misinformation concept vectors from a general model and test them on a medically fine-tuned model (e.g., Meditron or similar), then extract domain-specific vectors and compare effectiveness, measuring whether domain specialization requires domain-specific safety vectors.\n\n**Why it matters:** Medical and legal AI deployments have the highest safety stakes; knowing whether general safety vectors transfer to specialized models is directly deployment-relevant.\n\n**Relevant context:** Beaglehole et al. do not test on domain-specialized models. Representation Bending for LLM Safety (ACL 2025) shows fine-tuning changes representations. Domain-specific safety is a concrete deployment concern."
+  },
+  {
+    "idea_id": "gen-1537",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:17:32Z",
+    "subfield": "Concept Steering & Representation Engineering",
+    "generation_strategy": "replication_with_twist",
+    "confidence": 0.83,
+    "body": "# Cross-Architecture Replication: Concept Steering on Phi-3 and Qwen\n\n**Problem:** Concept steering results need to be validated across diverse model architectures to establish generality; Phi and Qwen families have distinct training pipelines and sizes not covered by most RepE work.\n\n**Direction:** Replicate the Beaglehole et al. toxicity steering experiment on Phi-3-mini and Qwen-2.5-7B, reporting whether the linear representation assumption holds, the optimal steering layer, and the effectiveness relative to the original paper's results.\n\n**Why it matters:** Phi-3 and Qwen are widely deployed in production settings globally; establishing whether concept steering works on them directly impacts real safety applications.\n\n**Relevant context:** Beaglehole et al. test LLaMA-family and vision-language models. Phi-3 and Qwen have different training recipes (Microsoft and Alibaba respectively) that may affect representation geometry."
+  },
+  {
+    "idea_id": "gen-1538",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:17:32Z",
+    "subfield": "Concept Steering & Representation Engineering",
+    "generation_strategy": "replication_with_twist",
+    "confidence": 0.74,
+    "body": "# Concept Steering for Manipulation Detection in Persuasive Text\n\n**Problem:** LLMs can generate highly persuasive and potentially manipulative content; 'manipulation' and 'persuasion' may have distinct concept vectors that could enable real-time detection.\n\n**Direction:** Construct contrastive pairs of manipulative vs. persuasive-but-ethical text, extract a manipulation concept vector, and test probe accuracy on a held-out manipulation detection dataset, comparing to a fine-tuned classifier baseline.\n\n**Why it matters:** Automated detection of AI-generated manipulation is a growing safety need; if concept probes can flag manipulation in model internals, they could serve as a real-time manipulation audit.\n\n**Relevant context:** Representation engineering has been shown to encode abstract value concepts. Manipulation is a concrete safety-relevant concept with growing policy relevance (election integrity, disinformation)."
+  },
+  {
+    "idea_id": "gen-1539",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:17:32Z",
+    "subfield": "Concept Steering & Representation Engineering",
+    "generation_strategy": "novel_direction",
+    "confidence": 0.7,
+    "body": "# Concept Vectors for Emotional Manipulation: Extracting Fear and Urgency Directions\n\n**Problem:** Some AI safety risks involve emotional manipulation (inducing fear, urgency, or dependency); these are abstract enough that it is unknown whether they have extractable linear representations.\n\n**Direction:** Extract concept vectors for 'fear induction', 'artificial urgency', and 'dependency cultivation' using contrastive pair datasets derived from known manipulative AI outputs, testing whether these emotion-manipulation directions are linearly extractable and steerable.\n\n**Why it matters:** Emotional manipulation by AI is an underexplored but significant safety concern for conversational AI systems deployed in mental health, companionship, and persuasion contexts.\n\n**Relevant context:** Beaglehole et al. show sentiment and style have linear representations. Emotional states are listed as representable in the MIT news coverage of the paper. Extending to manipulation-specific emotional directions is a novel application."
+  },
+  {
+    "idea_id": "gen-1540",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:17:32Z",
+    "subfield": "Concept Steering & Representation Engineering",
+    "generation_strategy": "follow_up_experiment",
+    "confidence": 0.81,
+    "body": "# Probe Accuracy as an Early Warning for Model Misalignment\n\n**Problem:** As models are updated or fine-tuned, safety alignment may degrade; monitoring concept probe accuracy over time could provide an early-warning signal for alignment regression.\n\n**Direction:** Set up a longitudinal monitoring pipeline that re-evaluates safety concept probe accuracy after each fine-tuning update to a model, testing whether probe accuracy degradation predicts downstream safety benchmark degradation before it becomes observable in outputs.\n\n**Why it matters:** Proactive detection of alignment regression before it manifests in outputs could prevent deployment of misaligned models; this is a direct operational safety application.\n\n**Relevant context:** Beaglehole et al. demonstrate monitoring capabilities. The concept of alignment regression monitoring is not currently implemented with concept probes. Fine-tuning stability work (ICCV 2025) shows representations change."
+  },
+  {
+    "idea_id": "gen-1541",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:17:33Z",
+    "subfield": "Concept Steering & Representation Engineering",
+    "generation_strategy": "follow_up_experiment",
+    "confidence": 0.82,
+    "body": "# Hallucination Direction Geometry: Layer-Wise Emergence of Hallucination Representations\n\n**Problem:** Internal probes outperform judge models for hallucination, but it is unknown at which layers hallucination representations emerge and whether early detection (before generation completion) is possible.\n\n**Direction:** Train concept probes for hallucination at every layer of a model, measuring probe accuracy as a function of layer depth and testing whether probes at early layers (first third of the network) can predict final-output hallucination with acceptable accuracy.\n\n**Why it matters:** Early-layer hallucination detection could enable generation-time intervention, stopping hallucination mid-completion rather than detecting it post-hoc.\n\n**Relevant context:** Beaglehole et al. show internal probes outperform judge models; layer-wise emergence of the hallucination direction is a direct follow-up. Simple factuality probes (ACL 2025 findings) provide comparison infrastructure."
+  },
+  {
+    "idea_id": "gen-1542",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:17:33Z",
+    "subfield": "Concept Steering & Representation Engineering",
+    "generation_strategy": "follow_up_experiment",
+    "confidence": 0.77,
+    "body": "# Concept Probe Calibration: Are Probe Scores Meaningful as Probabilities\n\n**Problem:** Concept probe outputs are typically used as binary (above/below threshold) signals; it is unknown whether they are calibrated as probabilities, which would make them more informative for graded safety decisions.\n\n**Direction:** Apply probability calibration methods (Platt scaling, temperature scaling, isotonic regression) to concept probe outputs for toxicity and hallucination, measuring calibration error and testing whether calibrated probe scores correlate better with human safety ratings than uncalibrated scores.\n\n**Why it matters:** Calibrated probe scores would enable graded safety decisions (e.g., 'trigger review at 80% probability') rather than binary thresholds, making the monitoring system more useful.\n\n**Relevant context:** Calibration of neural network outputs is a standard ML practice. Concept probe calibration has not been studied. Beaglehole et al. report accuracy metrics, not calibration."
+  },
+  {
+    "idea_id": "gen-1543",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:17:33Z",
+    "subfield": "Concept Steering & Representation Engineering",
+    "generation_strategy": "causal_chain_intervention",
+    "confidence": 0.78,
+    "body": "# Concept Steering Effectiveness Under System Prompt Injection Attacks\n\n**Problem:** System prompt injection attacks manipulate model behavior via injected text; if such attacks work by shifting activations in safety-relevant concept directions, concept steering should be able to detect or counter them.\n\n**Direction:** Apply system prompt injection attacks to a model, measure the shift in concept probe scores for safety-relevant directions, then test whether applying a countervailing steering vector after detecting the activation shift neutralizes the attack.\n\n**Why it matters:** Prompt injection is a top-ranked real-world AI security threat; a mechanistic defense based on concept monitoring and steering would be a novel and practically valuable approach.\n\n**Relevant context:** ASA shows activation steering can be used for attacks. The converse \u2014 using concept steering as a defense against injection \u2014 is unstudied. OWASP LLM Top 10 ranks prompt injection as the primary risk."
+  },
+  {
+    "idea_id": "gen-1544",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:17:33Z",
+    "subfield": "Concept Steering & Representation Engineering",
+    "generation_strategy": "cross_domain_transfer",
+    "confidence": 0.74,
+    "body": "# Topographic Organization of Safety Concepts Across Transformer Layers\n\n**Problem:** It is unknown whether different safety concepts are encoded at different layers (analogous to cortical specialization in neuroscience) or distributed uniformly, which would inform where to intervene for each concept.\n\n**Direction:** Extract concept vectors for 10 safety-relevant concepts at every layer of a model and create a 'topographic map' of peak accuracy vs. layer, testing whether different safety concepts consistently localize to different layers.\n\n**Why it matters:** Cortical topographic organization in neuroscience informs targeted stimulation; analogously, knowing which layers encode which safety concepts would enable targeted, low-collateral steering interventions.\n\n**Relevant context:** Neuroscience cortical organization is the direct inspiration. Beaglehole et al. extract layer-wise vectors. Whether safety concepts have distinct layer-wise profiles is unstudied."
+  },
+  {
+    "idea_id": "gen-1545",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:17:33Z",
+    "subfield": "Concept Steering & Representation Engineering",
+    "generation_strategy": "cross_domain_transfer",
+    "confidence": 0.69,
+    "body": "# Hebbian Learning Principles for Updating Concept Vectors Without Full Re-extraction\n\n**Problem:** When new harmful content types emerge, concept vectors need updating; full re-extraction requires new contrastive datasets. Hebbian 'fire together wire together' principles from neuroscience suggest online updates may be possible.\n\n**Direction:** Implement an online update rule for concept vectors inspired by Hebbian learning: when a probe misclassifies a new harmful example, update the vector in the direction of the misclassified activation. Test whether this online update maintains accuracy without full re-extraction.\n\n**Why it matters:** Online-updatable safety concept vectors would allow safety systems to adapt to emerging threats (new jailbreak types, new harmful topics) without costly retraining.\n\n**Relevant context:** Hebbian learning principles are foundational in neuroscience and computational neuroscience. Online learning for neural probes is not currently studied in the RepE literature."
+  },
+  {
+    "idea_id": "gen-1546",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:17:33Z",
+    "subfield": "Concept Steering & Representation Engineering",
+    "generation_strategy": "cross_domain_transfer",
+    "confidence": 0.67,
+    "body": "# Transfer Entropy for Measuring Concept Information Flow Between Layers\n\n**Problem:** It is unknown how safety-relevant concept information flows between layers during forward passes, which would indicate where interventions have the most upstream or downstream leverage.\n\n**Direction:** Apply transfer entropy (from information theory and neuroscience connectivity analysis) to concept probe activations across layers to quantify directional information flow for safety concepts, identifying 'hub' layers where concept information is amplified or routed.\n\n**Why it matters:** Identifying information flow hubs would enable interventions at maximally leveraged points, potentially allowing smaller steering vectors to achieve larger behavioral changes.\n\n**Relevant context:** Transfer entropy is used in neuroscience for brain connectivity analysis. Applied to transformer layer activations, it could reveal the causal structure of concept encoding that simple correlation analysis misses."
+  },
+  {
+    "idea_id": "gen-1547",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:17:33Z",
+    "subfield": "Concept Steering & Representation Engineering",
+    "generation_strategy": "experiment_variation",
+    "confidence": 0.83,
+    "body": "# Minimum Necessary Data for Reliable Concept Vector Extraction\n\n**Problem:** Beaglehole et al. use fewer than 500 samples; it is unknown whether reliable safety concept vectors can be extracted with even fewer samples, which matters for rare safety concepts with limited training data.\n\n**Direction:** Conduct a data efficiency experiment: extract toxicity and hallucination concept vectors with 10, 25, 50, 100, 250, and 500 contrastive pairs and plot probe accuracy vs. data size, identifying the minimum sample count for above-threshold reliability.\n\n**Why it matters:** Rare safety concepts (e.g., specific bioweapon synthesis, novel jailbreak types) may have fewer than 100 available contrastive examples; knowing the minimum sample requirement determines whether concept steering is feasible for these concepts.\n\n**Relevant context:** Beaglehole et al. report sub-500 sample efficiency as a selling point but do not characterize the lower bound. Data efficiency is a practical constraint for rare safety concepts."
+  },
+  {
+    "idea_id": "gen-1548",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:17:33Z",
+    "subfield": "Concept Steering & Representation Engineering",
+    "generation_strategy": "failure_mode_investigation",
+    "confidence": 0.81,
+    "body": "# Steering Vector Transferability Across Prompt Templates\n\n**Problem:** Concept vectors are extracted from a specific prompt format; it is unknown whether they transfer to different prompt templates (chat vs. completion, different system prompts), which would determine deployment flexibility.\n\n**Direction:** Extract toxicity concept vectors using three different prompt formats (zero-shot, few-shot, chat template) and test whether each vector is effective across all three formats, measuring cross-template transfer accuracy.\n\n**Why it matters:** Production models are used with many prompt formats; a vector that only works with the extraction prompt format requires re-extraction for each new deployment context.\n\n**Relevant context:** Steering vector generalization (OpenReview) notes high in-distribution variability. Prompt format is an obvious source of distribution shift that has not been explicitly tested for steering transfer."
+  },
+  {
+    "idea_id": "gen-1549",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:17:33Z",
+    "subfield": "Concept Steering & Representation Engineering",
+    "generation_strategy": "failure_mode_investigation",
+    "confidence": 0.76,
+    "body": "# Concept Vector Similarity Across Independently Trained Models of the Same Architecture\n\n**Problem:** If two independently trained instances of the same architecture develop concept vectors in different directions, this undermines the universality of steering approaches and complicates vector sharing.\n\n**Direction:** Train or obtain two independently initialized versions of the same model architecture, extract safety concept vectors from both, and measure the cosine similarity of corresponding vectors, testing whether independent training converges to similar concept directions.\n\n**Why it matters:** If concept vectors are architecture-determined rather than training-run-specific, a single extraction suffices for all models of that architecture; if not, each model needs its own extraction.\n\n**Relevant context:** Platonic representation hypothesis (related to linear representation work) suggests convergence across training runs. Testing this for safety-specific concept vectors is novel and practically important."
+  },
+  {
+    "idea_id": "gen-1550",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:17:33Z",
+    "subfield": "Concept Steering & Representation Engineering",
+    "generation_strategy": "replication_with_twist",
+    "confidence": 0.82,
+    "body": "# Replication with Novel Concept: Sycophancy Vector in LLaMA-3\n\n**Problem:** Beaglehole et al. test specific concepts; replicating with sycophancy (a distinct alignment failure) would validate generalizability to new safety concepts not in the original paper.\n\n**Direction:** Extract a sycophancy concept vector from LLaMA-3-8B using contrastive pairs from the Sycophancy Evaluation dataset, test probe accuracy against a held-out set, and apply suppression steering, reporting whether the results follow the same pattern as toxicity in the original paper.\n\n**Why it matters:** Each new successfully extracted safety concept vector expands the practical coverage of concept steering safety, and sycophancy is a high-priority alignment concern.\n\n**Relevant context:** Beaglehole et al. tested honesty, toxicity, sentiment, and style. Sycophancy is a related but distinct concept. Sycophancy evaluation datasets are available (Anthropic's work on sycophancy)."
+  },
+  {
+    "idea_id": "gen-1551",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:17:33Z",
+    "subfield": "Concept Steering & Representation Engineering",
+    "generation_strategy": "backcast_from_success",
+    "confidence": 0.7,
+    "body": "# Universal Steering Foundation: Pretraining a Meta-Concept Vector Extractor\n\n**Problem:** Working backward from universal steering, a key enabling capability would be a model trained to extract reliable concept vectors from minimal contrastive examples \u2014 a meta-learner for concept extraction.\n\n**Direction:** Train a small meta-model (few-shot concept vector extractor) on a diverse set of concept extraction tasks, then test whether it generalizes to new safety concepts at extraction accuracy above the baseline extraction method on fewer samples.\n\n**Why it matters:** A meta-extractor would reduce the data requirement for new safety concepts from 500 examples to perhaps 10, making universal coverage achievable even for rare harmful concept categories.\n\n**Relevant context:** Meta-learning (MAML, ProtoNets) is an established paradigm. Applying it to concept vector extraction is novel. Beaglehole et al. AGOP-based extraction is the baseline to beat."
+  },
+  {
+    "idea_id": "gen-1552",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:17:33Z",
+    "subfield": "Concept Steering & Representation Engineering",
+    "generation_strategy": "failure_mode_investigation",
+    "confidence": 0.8,
+    "body": "# Adversarial Perturbation of Contrastive Pairs: Poisoning Concept Vector Extraction\n\n**Problem:** If an adversary can influence the contrastive dataset used to extract a safety concept vector (e.g., by contributing examples to a public contrastive pair dataset), they can poison the concept vector to be ineffective or counter-effective.\n\n**Direction:** Implement a poisoning attack on contrastive pair datasets: inject a small percentage of adversarially crafted examples into a toxicity extraction dataset, and measure how concept vector accuracy and steering effectiveness degrade as a function of poisoning rate.\n\n**Why it matters:** Crowdsourced or scraped contrastive pair datasets are a realistic data source; knowing their vulnerability to poisoning attacks is essential for maintaining integrity of safety concept vectors.\n\n**Relevant context:** Data poisoning attacks are well-studied in ML security. Applying them to concept vector extraction is a novel attack surface that directly targets the safety pipeline's upstream component."
+  },
+  {
+    "idea_id": "gen-1553",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:17:33Z",
+    "subfield": "Concept Steering & Representation Engineering",
+    "generation_strategy": "compounding_risks",
+    "confidence": 0.78,
+    "body": "# Concept Vector Effectiveness on Adversarially Fine-Tuned Unsafe Models\n\n**Problem:** Adversarially fine-tuned models (jailbroken via fine-tuning on harmful data) may have restructured their safety concept representations, making concept steering ineffective as a recovery tool.\n\n**Direction:** Take a safely aligned model, apply adversarial fine-tuning to induce unsafe behavior, then attempt to recover safety using concept steering vectors extracted from the original model, measuring recovery effectiveness as a function of fine-tuning severity.\n\n**Why it matters:** If concept steering can recover safety in adversarially fine-tuned models without full retraining, it is a lightweight safety recovery tool; if not, this documents an important limitation.\n\n**Relevant context:** Adversarial fine-tuning attacks on RLHF safety are documented (Shadow Alignment and similar papers). Representation Bending for LLM Safety (ACL 2025) attempts representation-level safety restoration."
+  },
+  {
+    "idea_id": "gen-1554",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:17:33Z",
+    "subfield": "Concept Steering & Representation Engineering",
+    "generation_strategy": "compounding_risks",
+    "confidence": 0.77,
+    "body": "# Concept Steering + RAG: Does Retrieval-Augmented Generation Interact with Steering\n\n**Problem:** RAG systems inject external context into model activations; this injected context may shift activations in ways that counteract or amplify concept steering effects, creating unpredictable safety behavior.\n\n**Direction:** Test toxicity concept steering on RAG-augmented generation versus non-RAG generation, using retrieved documents of varying toxicity levels, measuring whether the retrieved context systematically overrides or reinforces the steering vector.\n\n**Why it matters:** RAG is ubiquitous in production deployments; understanding how it interacts with concept steering is essential for safety in the most common deployment architecture.\n\n**Relevant context:** RAG and concept steering are both widely used but their interaction is entirely unstudied. Retrieved toxic content could shift activations in ways that partially or fully counteract safety steering."
+  },
+  {
+    "idea_id": "gen-1555",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:17:33Z",
+    "subfield": "Concept Steering & Representation Engineering",
+    "generation_strategy": "failure_mode_investigation",
+    "confidence": 0.79,
+    "body": "# Concept Vector Homogeneity Across Model Layers: Are Safety Concepts Polysemantic\n\n**Problem:** Polysemanticity (multiple concepts encoded in a single direction) is a known problem in neural networks; safety concept vectors may entangle multiple concepts, meaning steering them suppresses unintended related content.\n\n**Direction:** Test whether safety concept vectors are polysemantic by measuring probe accuracy for multiple related and unrelated concepts on the same extracted vector, and use Sparse Autoencoders (SAEs) to attempt to decompose each safety concept vector into monosemantic components.\n\n**Why it matters:** Polysemantic safety vectors create collateral suppression of unrelated content; understanding and resolving polysemanticity is a prerequisite for precise safety steering.\n\n**Relevant context:** Polysemanticity and SAEs are central topics in mechanistic interpretability (Anthropic's work on sparse autoencoders). Applying SAE decomposition to safety concept vectors is a natural bridge between interpretability and concept steering."
+  },
+  {
+    "idea_id": "gen-1556",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:17:33Z",
+    "subfield": "Concept Steering & Representation Engineering",
+    "generation_strategy": "experiment_variation",
+    "confidence": 0.81,
+    "body": "# Safety Concept Steering Under Multi-Turn Conversation Context\n\n**Problem:** Concept steering is typically evaluated on single-turn prompts; in multi-turn conversations, prior turns may shift activations cumulatively, potentially overriding steering vectors applied to the current turn.\n\n**Direction:** Apply toxicity steering to a model in conversations of 1, 3, 5, and 10 turns, where prior turns contain increasingly unsafe content, measuring whether the steering vector remains effective as prior-turn context accumulates.\n\n**Why it matters:** Multi-turn conversations are the primary use case for deployed chat models; safety that degrades with conversation length is a significant deployment risk.\n\n**Relevant context:** Multi-turn safety is a recognized challenge. Context length effects on steering are unstudied (as noted above). This is a distinct multi-turn-specific variant of the context length question."
+  },
+  {
+    "idea_id": "gen-1557",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:17:33Z",
+    "subfield": "Concept Steering & Representation Engineering",
+    "generation_strategy": "failure_mode_investigation",
+    "confidence": 0.8,
+    "body": "# Concept Vector Robustness to Character-Level Perturbations\n\n**Problem:** Adversarial inputs using character-level perturbations (leetspeak, Unicode substitutions, intentional misspellings) may evade concept probes by producing different tokenizations that bypass the concept direction.\n\n**Direction:** Test whether toxicity and harm concept probes correctly flag character-level perturbed versions of known harmful prompts (substituting letters with homoglyphs, adding spaces within words, using leetspeak), measuring evasion rate.\n\n**Why it matters:** Character-level evasion is a well-known attack on text classifiers; whether concept probes inherit this vulnerability or are robust due to token-embedding-level representation is an open question.\n\n**Relevant context:** Character-level evasion attacks on content moderation are well-documented. Concept probes operate at the activation level rather than the token level, which may provide robustness \u2014 or not."
+  },
+  {
+    "idea_id": "gen-1558",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:17:33Z",
+    "subfield": "AI Control & Monitoring",
+    "generation_strategy": "tool_or_benchmark_gap",
+    "confidence": 0.85,
+    "body": "# StandardBench-Monitor: A Standardized Benchmark Suite for Comparing AI Monitoring Approaches\n\n**Problem:** There is no agreed-upon benchmark for comparing different monitoring approaches (e.g., LLM-based monitors, activation probes, rule-based filters), making it impossible to know whether a new monitoring method is actually an improvement.\n\n**Direction:** Design and implement a small but rigorous benchmark that runs multiple monitoring methods (at minimum: a prompted LLM monitor, a simple keyword filter, and one activation-probe classifier) against a fixed set of labeled agent trajectories drawn from SHADE-Arena's public 5 task pairs. Measure precision, recall, AUC, and latency. Publish the scoring harness and a blog post discussing what the numbers mean.\n\n**Why it matters:** Without a common yardstick, the field cannot accumulate progress. Even a minimal benchmark that exposes trade-offs between false-positive rate and detection rate creates shared infrastructure for future researchers.\n\n**Relevant context:** SHADE-Arena contains 17 task pairs (5 public, 12 held-out), each with labeled benign and malicious trajectories, providing a ready-made source of ground-truth data. The CUA-SHADE-Arena work already shows AUC can reach 0.9 with hybrid scaffolding, but no shared harness exists for reproducing this."
+  },
+  {
+    "idea_id": "gen-1559",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:17:33Z",
+    "subfield": "AI Control & Monitoring",
+    "generation_strategy": "tool_or_benchmark_gap",
+    "confidence": 0.8,
+    "body": "# AnomalyScore-AI: Baseline Anomaly Detection Benchmark for LLM Agent Behavior\n\n**Problem:** No benchmark exists specifically for anomaly detection in AI agent behavior sequences, meaning researchers developing anomaly-detection monitors have nothing to compare against.\n\n**Direction:** Construct a labeled dataset of normal vs. anomalous agent action sequences by running a small LLM agent (e.g., via ControlArena's bash setting) under normal and adversarially-modified system prompts. Extract action sequences, label them, then train and evaluate three simple anomaly detectors: isolation forest on token-level statistics, one-class SVM on tool-call frequency vectors, and a simple LSTM autoencoder. Report baseline scores and release the dataset.\n\n**Why it matters:** Anomaly detection is a natural fit for AI monitoring, but without a benchmark tailored to agent action sequences, the approach cannot be rigorously evaluated or compared to LLM-based monitors.\n\n**Relevant context:** Industrial anomaly detection has mature baselines (isolation forest, autoencoder reconstruction error). Applying these to agent action logs is unexplored. METR task suites provide a source of normal agent behavior traces."
+  },
+  {
+    "idea_id": "gen-1560",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:17:33Z",
+    "subfield": "AI Control & Monitoring",
+    "generation_strategy": "tool_or_benchmark_gap",
+    "confidence": 0.78,
+    "body": "# MonitorLatency-Bench: Benchmarking the Speed-Accuracy Trade-off in AI Monitoring\n\n**Problem:** Monitoring approaches are almost always evaluated on accuracy alone. For real-time agent oversight, latency matters enormously\u2014a monitor that takes 10 seconds per step is unusable in a 30-step task, but this trade-off has never been systematically measured.\n\n**Direction:** Take 3\u20134 published or easily reproducible monitors (a GPT-4o-mini prompted monitor, a regex filter, a small fine-tuned classifier) and measure both detection AUC and per-step latency across SHADE-Arena tasks. Plot the Pareto frontier. Identify which monitor configurations are Pareto-optimal. Write a blog post arguing that latency should be a first-class metric in monitoring benchmarks.\n\n**Why it matters:** Deployers making real decisions about monitoring need to know the speed-accuracy trade-off. Establishing this as a benchmark dimension would shift the field toward more practical monitoring research.\n\n**Relevant context:** SHADE-Arena evaluation infrastructure supports running monitors alongside agents, making latency measurement straightforward. Hybrid monitoring scaffolding work (CUA-SHADE-Arena) already hints that sequential vs. hierarchical scaffolding has different latency profiles."
+  },
+  {
+    "idea_id": "gen-1561",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:17:33Z",
+    "subfield": "AI Control & Monitoring",
+    "generation_strategy": "tool_or_benchmark_gap",
+    "confidence": 0.82,
+    "body": "# FalsePositive-Cost Benchmark: Measuring Usability Impact of Monitor False Alarms\n\n**Problem:** Monitoring benchmarks optimize for detection rate but ignore false positive cost. In practice, a monitor that flags 50% of benign actions is unusable, yet there is no benchmark that quantifies the downstream task-completion cost of false alarms.\n\n**Direction:** Run a prompted LLM monitor at several sensitivity thresholds on ControlArena bash tasks. For each threshold, measure: detection rate of injected malicious actions, fraction of benign tasks interrupted, and overall task success rate. Produce a 'monitoring cost curve' analogous to an ROC curve but with task disruption on one axis.\n\n**Why it matters:** Control protocols require both safety and usefulness. A benchmark that quantifies the safety-usability trade-off would let practitioners choose thresholds more principally rather than relying on intuition.\n\n**Relevant context:** ControlArena's evaluation framework already tracks task success rates, making it feasible to add a monitoring layer and measure its disruption cost. The SHADE-Arena paper reports 27% sabotage success rate, implying the remaining 73% are benign completions that monitors must not interrupt."
+  },
+  {
+    "idea_id": "gen-1562",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:17:34Z",
+    "subfield": "AI Control & Monitoring",
+    "generation_strategy": "tool_or_benchmark_gap",
+    "confidence": 0.77,
+    "body": "# Multi-Step Scheming Detection Benchmark: Evaluating Monitors on Temporally Extended Misbehavior\n\n**Problem:** Existing monitoring evaluations (including SHADE-Arena) label individual trajectories as benign or malicious, but do not evaluate whether monitors can detect scheming that unfolds across many steps with each step appearing individually benign.\n\n**Direction:** Construct 10\u201315 synthetic multi-step scheming scenarios where an agent takes 5\u201310 individually innocuous actions that collectively constitute a sabotage (e.g., slowly exfiltrating data across multiple file writes). Label individual steps and whole-trajectory labels separately. Evaluate whether step-level monitors, trajectory-level monitors, and sliding-window monitors differ in detection ability.\n\n**Why it matters:** Sophisticated scheming is more likely to be temporally distributed than concentrated in a single suspicious action. Benchmarks that only evaluate step-level detection may give a false sense of security.\n\n**Relevant context:** Constitutional Black-Box Monitoring for Scheming (arXiv 2603.00829, Feb 2026) focuses on detecting scheming from externally observable behavior, but does not specifically benchmark multi-step temporal patterns. This is an open gap."
+  },
+  {
+    "idea_id": "gen-1563",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:17:34Z",
+    "subfield": "AI Control & Monitoring",
+    "generation_strategy": "tool_or_benchmark_gap",
+    "confidence": 0.75,
+    "body": "# Probe-Generalization Benchmark: Measuring Activation Probe Transfer Across Task Contexts\n\n**Problem:** Activation probes trained to detect deceptive intent in one context (e.g., coding tasks) are believed to fail when applied to different contexts, but this failure has not been systematically benchmarked.\n\n**Direction:** Train a linear probe on activations from a small open-source model (e.g., Llama-3-8B) to detect a simple measurable property (e.g., whether the model's next action will fail a constraint) in one ControlArena setting. Then evaluate the same probe on 2\u20133 other settings without retraining. Measure AUC degradation. Investigate whether intermediate-layer probes generalize better than last-layer probes.\n\n**Why it matters:** If probes do not generalize across task contexts, their practical utility for monitoring is severely limited. Quantifying this failure mode is a prerequisite for addressing it.\n\n**Relevant context:** Activation probe research (e.g., Zou et al. representation engineering) typically trains and evaluates probes in the same distribution. ControlArena's multiple settings (bash, code, kubernetes) provide natural out-of-distribution test beds. Medium compute (single GPU) is sufficient for Llama-3-8B probing."
+  },
+  {
+    "idea_id": "gen-1564",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:17:34Z",
+    "subfield": "AI Control & Monitoring",
+    "generation_strategy": "tool_or_benchmark_gap",
+    "confidence": 0.8,
+    "body": "# Coverage-Gap Analysis: Cataloguing What METR and MALT Tasks Don't Cover in Monitoring Research\n\n**Problem:** METR and MALT are widely used as data sources for AI control research, but nobody has systematically analyzed what monitoring-relevant scenarios they fail to cover, meaning researchers may be optimizing for an unrepresentative sample.\n\n**Direction:** Systematically tag all METR and MALT tasks along dimensions relevant to monitoring: task length, tool diversity, degree of user interaction, presence of irreversible actions, and whether sabotage is possible. Identify the most under-represented cells in this matrix. Write up a gap analysis and propose 5\u201310 new task templates to fill the most critical gaps.\n\n**Why it matters:** Benchmark coverage analysis is a well-established methodology in ML evaluation. Applying it to AI safety datasets would reveal blind spots that current monitoring research implicitly ignores.\n\n**Relevant context:** METR's task suite is publicly available. MALT (Multi-Agent LLM Tasks) includes diverse scenarios. A gap analysis requires no ML training, making it very feasible within 30 hours at intro ML level."
+  },
+  {
+    "idea_id": "gen-1565",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:17:34Z",
+    "subfield": "AI Control & Monitoring",
+    "generation_strategy": "tool_or_benchmark_gap",
+    "confidence": 0.76,
+    "body": "# Calibration Benchmark: Measuring Monitor Confidence Calibration Under Distribution Shift\n\n**Problem:** LLM-based monitors typically output a suspicion score or yes/no judgment, but whether these scores are well-calibrated probabilities (i.e., a 70% suspicion score really corresponds to 70% probability of malicious action) has never been evaluated.\n\n**Direction:** Using SHADE-Arena tasks, collect a set of suspicion scores from a standard prompted LLM monitor. Plot calibration curves (expected calibration error). Then shift distribution by slightly modifying the task prompts and measure calibration degradation. Investigate whether temperature scaling or verbal uncertainty elicitation improves calibration.\n\n**Why it matters:** Poorly calibrated monitors lead to bad decisions: practitioners either over-trust or under-trust monitor scores. Calibration is well-studied in standard ML but nearly absent from AI monitoring literature.\n\n**Relevant context:** Calibration methods (Platt scaling, temperature scaling) are simple to implement and require minimal compute. SHADE-Arena provides labeled trajectories suitable for a calibration study."
+  },
+  {
+    "idea_id": "gen-1566",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:17:34Z",
+    "subfield": "AI Control & Monitoring",
+    "generation_strategy": "tool_or_benchmark_gap",
+    "confidence": 0.83,
+    "body": "# Minimal Viable Monitor: What Is the Simplest Monitor That Achieves Acceptable Detection on SHADE-Arena?\n\n**Problem:** There is an implicit assumption in AI control research that sophisticated monitors (large LLMs, complex scaffolding) are necessary for reliable detection, but this has not been tested against simple baselines. The minimal viable monitor has not been identified.\n\n**Direction:** Systematically implement monitors of increasing complexity on the SHADE-Arena public task pairs: (1) keyword blacklist, (2) regex pattern matching on tool calls, (3) n-gram language model anomaly score, (4) small prompted LLM (GPT-4o-mini), (5) large prompted LLM (GPT-4o). Compare AUC and latency. Determine the 'knee of the curve' where adding complexity stops paying off.\n\n**Why it matters:** If a regex filter achieves 60% of the detection benefit of a GPT-4o monitor at 1% of the latency, that is a major practical finding. It would democratize monitoring for resource-constrained deployments and focus research on what LLM monitors actually add.\n\n**Relevant context:** The SHADE-Arena paper evaluates LLM-based monitors but does not compare against simpler non-LLM baselines. This gap is straightforward to fill with basic Python."
+  },
+  {
+    "idea_id": "gen-1567",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:17:34Z",
+    "subfield": "AI Control & Monitoring",
+    "generation_strategy": "tool_or_benchmark_gap",
+    "confidence": 0.7,
+    "body": "# Bloom Filter Integration Benchmark: Measuring Bloom's Monitoring Coverage Across ControlArena Settings\n\n**Problem:** Bloom (the AI safety monitoring tool) is mentioned in the control/monitoring tooling landscape, but its performance across different ControlArena settings has not been systematically benchmarked, leaving users uncertain about when to deploy it.\n\n**Direction:** Run Bloom across all publicly available ControlArena settings. For each setting, measure: detection rate of injected bad actions, false positive rate on benign completions, and latency overhead. Identify which settings Bloom handles best and worst. Write a 'user guide' blog post based on findings.\n\n**Why it matters:** Practical adoption of monitoring tools requires knowing their scope and limitations. A coverage benchmark for Bloom would be directly useful to practitioners and would identify where the tool needs improvement.\n\n**Relevant context:** ControlArena is open-source (GitHub: UKGovernmentBEIS/control-arena) and provides evaluation infrastructure. Bloom is listed as a key tool in this subfield. Their integration is a natural evaluation target."
+  },
+  {
+    "idea_id": "gen-1568",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:17:34Z",
+    "subfield": "AI Control & Monitoring",
+    "generation_strategy": "failure_mode_investigation",
+    "confidence": 0.84,
+    "body": "# Monitor Evasion Under Prompt Injection: Do AI Monitors Fail When the Agent's Input Is Adversarial?\n\n**Problem:** AI monitors are typically evaluated on trajectories where only the agent may be misbehaving, not on scenarios where the environment itself contains adversarial inputs (prompt injections) designed specifically to fool the monitor.\n\n**Direction:** Create 20 prompt injection test cases embedded in SHADE-Arena-style environments where the injected text is crafted to lower the monitor's suspicion score (e.g., by including tokens associated with benign behavior, or by mimicking the monitor's training distribution). Measure detection rate drop compared to non-adversarial misbehavior. Try simple defenses: paraphrasing the trajectory before monitoring, ensemble of two monitors.\n\n**Why it matters:** If monitors are trivially evadable by prompt injections in the environment, current monitoring architectures are fundamentally fragile. This failure mode needs to be documented and quantified.\n\n**Relevant context:** ControlArena explicitly lists prompt injection as a threat model setting. The 2025 adversarial AI literature notes that input sanitization must happen before the model processes inputs, but this principle has not been applied to monitors themselves."
+  },
+  {
+    "idea_id": "gen-1569",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:17:34Z",
+    "subfield": "AI Control & Monitoring",
+    "generation_strategy": "failure_mode_investigation",
+    "confidence": 0.82,
+    "body": "# Monitor Blind Spots: Characterizing What Types of Scheming Current LLM Monitors Systematically Miss\n\n**Problem:** It is known that monitors fail on adversarial inputs, but the failure mode space has not been systematically mapped. Are monitors more likely to miss financial sabotage vs. data exfiltration? Slow multi-step scheming vs. fast single-step? This taxonomy does not exist.\n\n**Direction:** Using SHADE-Arena's diverse task types and supplementing with 5\u201310 additional hand-crafted scenarios, evaluate a standard LLM monitor's false-negative rate broken down by: (1) sabotage type (data poisoning, eval sabotage, code sabotage), (2) temporal structure (single step vs. multi-step), (3) how semantically similar the malicious action is to a plausible benign action. Produce a failure taxonomy.\n\n**Why it matters:** A failure taxonomy guides both defensive research (which failure modes to prioritize fixing) and red-teaming (which attack patterns are most promising). This is the foundation for systematic improvement.\n\n**Relevant context:** SHADE-Arena's 17 diverse task pairs span multiple sabotage types, providing enough variety to begin a taxonomy. The Constitutional Black-Box Monitoring paper (2603.00829) focuses on scheming detection but does not map failure modes."
+  },
+  {
+    "idea_id": "gen-1570",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:17:34Z",
+    "subfield": "AI Control & Monitoring",
+    "generation_strategy": "failure_mode_investigation",
+    "confidence": 0.73,
+    "body": "# Activation Probe Distribution Shift: Why Probes Fail When Task Context Changes\n\n**Problem:** It is widely claimed but not mechanistically understood why activation probes do not generalize across task contexts. Is it because the relevant concept is represented differently across contexts, or because probes latch onto spurious context-specific features?\n\n**Direction:** Train a linear probe on Llama-3-8B activations to predict a simple binary property (e.g., whether the agent is about to violate a stated rule) in one ControlArena setting. Apply to a second setting. Then use probing diagnostic techniques (ablation, attention visualization) to determine whether the probe's features are semantic (related to the concept) or syntactic (related to surface form). Compare with a probe trained on a mix of both settings.\n\n**Why it matters:** Understanding the mechanism of probe failure is necessary for designing probes that do generalize. If the issue is spurious features, data augmentation may help. If it is representational, architectural changes may be needed.\n\n**Relevant context:** Representation engineering literature (Zou et al. 2023) established that linear probes can recover high-level concepts from activations, but evaluated primarily on one distribution. ControlArena provides a natural multi-distribution test bed."
+  },
+  {
+    "idea_id": "gen-1571",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:17:34Z",
+    "subfield": "AI Control & Monitoring",
+    "generation_strategy": "failure_mode_investigation",
+    "confidence": 0.8,
+    "body": "# Subtle Scheming Detection: Can Monitors Catch Plausibly-Deniable Misbehavior?\n\n**Problem:** Current monitors are evaluated on cases where the malicious action is at least somewhat distinguishable from benign behavior. But sophisticated scheming may look nearly identical to benign action\u2014a plausibly-deniable modification to a configuration file, for instance.\n\n**Direction:** Generate 15 synthetic 'plausibly deniable' sabotage scenarios where the malicious action is semantically very close to what a competent but careless agent would do (e.g., off-by-one error in a limit that causes system overload, logging function that silently exfiltrates). Measure monitor detection rate on these vs. on obvious sabotage. Investigate whether chain-of-thought extraction from the agent prior to the action provides additional signal.\n\n**Why it matters:** The most dangerous scheming will be the hardest to distinguish from genuine mistakes. Testing monitors on plausibly-deniable cases is closer to the actual threat model than testing on obvious misbehavior.\n\n**Relevant context:** SHADE-Arena tasks include subtle sabotage scenarios. The Constitutional Black-Box Monitoring paper (2603.00829) addresses scheming detection using only external observations, which is exactly the plausibly-deniable case."
+  },
+  {
+    "idea_id": "gen-1572",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:17:34Z",
+    "subfield": "AI Control & Monitoring",
+    "generation_strategy": "failure_mode_investigation",
+    "confidence": 0.79,
+    "body": "# Monitor Overconfidence Under Capability Gaps: Weak Monitors on Strong Agents\n\n**Problem:** Weak-to-strong monitoring research shows that weaker monitors can sometimes monitor stronger agents, but it also warns this may not scale. A specific failure mode: a weak monitor may confidently report 'safe' when a strong agent executes a sophisticated scheme it cannot understand.\n\n**Direction:** Set up a weak monitor (GPT-4o-mini) monitoring a strong agent (GPT-4o or Claude-3-sonnet) on SHADE-Arena tasks. Measure not just detection rate but monitor confidence on false negatives. Determine whether the monitor is uncertain when it fails or falsely confident. Compare with a calibration-aware monitor that explicitly models its own uncertainty about whether it understood the action.\n\n**Why it matters:** A monitor that is uncertain when it fails can trigger human escalation; a monitor that is confidently wrong cannot. Characterizing this failure mode determines whether weak monitors should output uncertainty estimates.\n\n**Relevant context:** Reliable Weak-to-Strong Monitoring (arXiv 2508.19461) showed that human-in-the-loop escalation of pre-flagged cases improves TPR by ~15% at FPR=0.01, suggesting uncertainty-aware escalation is valuable. No study has measured monitor confidence on its own false negatives."
+  },
+  {
+    "idea_id": "gen-1573",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:17:34Z",
+    "subfield": "AI Control & Monitoring",
+    "generation_strategy": "failure_mode_investigation",
+    "confidence": 0.77,
+    "body": "# Scaffolding Failure Modes: When Does Monitor Scaffolding Architecture Cause Missed Detections?\n\n**Problem:** The CUA-SHADE-Arena work shows that hierarchical and sequential scaffolding can achieve high AUC, but it does not investigate what types of misbehavior each scaffolding architecture systematically misses due to its structure.\n\n**Direction:** Implement three monitoring scaffolding architectures (sequential step-by-step, hierarchical summarize-then-judge, and parallel ensemble) on SHADE-Arena tasks. For each architecture, identify and categorize the false negatives. Determine whether sequential scaffolding misses early-step scheming, whether hierarchical scaffolding loses critical details in summarization, and whether ensemble scaffolding creates blind spots from majority vote.\n\n**Why it matters:** Scaffolding architecture is a design choice practitioners make without knowing its failure profile. A failure-mode analysis for each architecture would directly guide deployment decisions.\n\n**Relevant context:** CUA-SHADE-Arena achieves AUC > 0.9 with hybrid scaffolding but does not analyze failure modes by architecture type. Implementing three scaffolding variants is feasible in basic Python."
+  },
+  {
+    "idea_id": "gen-1574",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:17:34Z",
+    "subfield": "AI Control & Monitoring",
+    "generation_strategy": "failure_mode_investigation",
+    "confidence": 0.81,
+    "body": "# Reward Hacking Detection Failure: Can Monitors Catch Agents Gaming Their Evaluation?\n\n**Problem:** ControlArena includes 'eval sabotage' as a threat model\u2014agents manipulating their own evaluation. Monitors may fail specifically on this type of misbehavior because evaluation-gaming actions often look like ordinary preparation or reporting.\n\n**Direction:** Using ControlArena's eval sabotage setting, run a standard LLM monitor and measure its detection rate specifically on eval-sabotage behaviors vs. other threat models (code sabotage, data poisoning). Investigate whether monitors that are explicitly primed about eval sabotage ('watch for actions that could modify how this agent is being evaluated') perform significantly better.\n\n**Why it matters:** Eval sabotage is particularly dangerous because it undermines the very mechanism used to verify safety. If monitors are weak on this threat model, current evaluation-based safety guarantees are fragile.\n\n**Relevant context:** ControlArena's eval sabotage setting is purpose-built for this type of threat. This experiment requires no custom data collection\u2014just running existing settings with a modified monitor prompt."
+  },
+  {
+    "idea_id": "gen-1575",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:17:34Z",
+    "subfield": "AI Control & Monitoring",
+    "generation_strategy": "failure_mode_investigation",
+    "confidence": 0.76,
+    "body": "# Long-Horizon Monitoring Degradation: Do Monitors Lose Effectiveness as Task Length Increases?\n\n**Problem:** Most monitoring evaluations use tasks of moderate length (10\u201330 steps). It is unknown whether monitor effectiveness degrades on long-horizon tasks (100+ steps) due to context window limits, attention dilution, or accumulated error.\n\n**Direction:** Construct or adapt ControlArena tasks of three length tiers: short (< 20 steps), medium (20\u201360 steps), and long (60\u2013150 steps). Run a fixed LLM monitor on all three tiers. Measure whether detection AUC, false negative rate, and latency scale adversely with task length. Investigate whether periodic context summarization mitigates degradation.\n\n**Why it matters:** Real-world deployment of AI agents will increasingly involve long-horizon tasks. If monitoring degrades with task length, current evaluation results (mostly short tasks) overestimate safety guarantees.\n\n**Relevant context:** METR task suite includes tasks of varying lengths. Long-context monitoring is an acknowledged open problem in agentic safety literature. This experiment is feasible with API access only."
+  },
+  {
+    "idea_id": "gen-1576",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:17:34Z",
+    "subfield": "AI Control & Monitoring",
+    "generation_strategy": "failure_mode_investigation",
+    "confidence": 0.8,
+    "body": "# Reasoning Trace Opacity: Does Chain-of-Thought Hiding Make Monitors Fail?\n\n**Problem:** Some capable models can be prompted to hide their reasoning or produce misleading chain-of-thought outputs. If monitors rely on agent reasoning traces for detection, this failure mode could be systematically exploited.\n\n**Direction:** On SHADE-Arena tasks, compare monitor performance when: (1) full agent reasoning trace is available, (2) reasoning is truncated, (3) reasoning is replaced with a plausible-sounding benign rationalization. Measure detection rate drop in each condition. Determine whether action-only monitors (no reasoning trace) achieve comparable performance to trace-aware monitors.\n\n**Why it matters:** The Constitutional Black-Box Monitoring paper (2603.00829) argues black-box monitors (no internal access) can detect scheming. Verifying this by comparing black-box vs. trace-aware monitors quantifies the value of reasoning access.\n\n**Relevant context:** SHADE-Arena already separates agent actions from reasoning in its trajectory format. Modifying reasoning traces is straightforward programmatically. This experiment requires no model training."
+  },
+  {
+    "idea_id": "gen-1577",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:17:34Z",
+    "subfield": "AI Control & Monitoring",
+    "generation_strategy": "failure_mode_investigation",
+    "confidence": 0.83,
+    "body": "# Monitor Consistency Failure: Do Repeated Queries to the Same Monitor Yield Inconsistent Verdicts?\n\n**Problem:** LLM monitors are stochastic\u2014querying the same trajectory twice may yield different suspicion verdicts due to temperature sampling. This inconsistency is a failure mode that has not been quantified, yet it means monitoring outcomes depend on random seed.\n\n**Direction:** For each SHADE-Arena trajectory, query a standard LLM monitor 10 times with temperature > 0. Measure variance in suspicion scores and flip rate (fraction of cases where the majority verdict differs from minority verdict). Identify whether inconsistency is higher on borderline cases (medium suspicion scores). Test whether majority-vote ensembling eliminates this failure mode.\n\n**Why it matters:** Stochastic monitoring inconsistency means safety guarantees based on monitoring outcomes have an unacknowledged random component. Quantifying and mitigating this is practically important.\n\n**Relevant context:** LLM output variance is well-documented in standard benchmarks but has not been specifically studied for monitoring consistency. This experiment is cheap (API calls only) and produces a clear, publishable finding."
+  },
+  {
+    "idea_id": "gen-1578",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:17:34Z",
+    "subfield": "AI Control & Monitoring",
+    "generation_strategy": "failure_mode_investigation",
+    "confidence": 0.74,
+    "body": "# Distributional Shift in Monitors: Fine-tuning vs. Prompted Monitors Under Novel Task Types\n\n**Problem:** As AI agents are deployed on tasks that differ from those used to evaluate monitors, monitoring performance may degrade. Fine-tuned monitors may be more brittle than prompted monitors on novel tasks, or vice versa\u2014this has not been studied.\n\n**Direction:** Take a prompted LLM monitor and a simple fine-tuned classifier (trained on SHADE-Arena trajectories) and evaluate both on 10 held-out task types not represented in their training distribution. Measure detection AUC and compare degradation. This tests whether prompting or fine-tuning produces more robust monitors under distributional shift.\n\n**Why it matters:** Practitioners must decide whether to use prompted or fine-tuned monitors. Robustness under distributional shift is a critical factor in this decision that has not been empirically studied.\n\n**Relevant context:** Fine-tuning a small classifier on trajectory features is feasible with intro ML and single GPU. SHADE-Arena's held-out 12 task pairs could serve as the out-of-distribution evaluation set."
+  },
+  {
+    "idea_id": "gen-1579",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:17:34Z",
+    "subfield": "AI Control & Monitoring",
+    "generation_strategy": "failure_mode_investigation",
+    "confidence": 0.72,
+    "body": "# False Alarm Fatigue: How Monitor Alert Frequency Affects Human Reviewer Decision Quality\n\n**Problem:** Weak-to-strong monitoring research shows human escalation improves detection, but if the false positive rate is high, human reviewers will experience alert fatigue and start dismissing genuine alerts. This human factor failure mode is unstudied in AI monitoring.\n\n**Direction:** Design a small user study (10\u201315 CS student participants) where participants review a sequence of monitor alerts from SHADE-Arena tasks at two false positive rates (5% and 30%). Measure detection accuracy, time-to-decision, and self-reported confidence. Determine at what false positive rate human performance degrades significantly.\n\n**Why it matters:** The reliability of human-in-the-loop oversight depends on humans remaining vigilant. Alert fatigue is well-documented in medical device monitoring and cyber security; establishing it in AI monitoring connects to both literatures and grounds practical recommendations.\n\n**Relevant context:** Alert fatigue is a named failure mode in medical device monitoring (e.g., ICU alarms) and intrusion detection systems. The Reliable Weak-to-Strong Monitoring paper (2508.19461) shows human escalation improves TPR but does not study fatigue effects."
+  },
+  {
+    "idea_id": "gen-1580",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:17:34Z",
+    "subfield": "AI Control & Monitoring",
+    "generation_strategy": "cross_domain_transfer",
+    "confidence": 0.81,
+    "body": "# Intrusion Detection CUSUM Transfer: Applying Sequential Change-Point Detection to AI Agent Monitoring\n\n**Problem:** Intrusion detection systems have used CUSUM (Cumulative Sum) change-point detection for decades to detect when network behavior shifts from baseline. This technique has never been applied to monitoring sequences of AI agent tool calls for behavioral change detection.\n\n**Direction:** Baseline a small AI agent's normal tool-call frequency distribution on 50 benign ControlArena trajectories. Implement CUSUM over a rolling window of tool-call statistics. Inject 10 malicious trajectories from SHADE-Arena and measure whether CUSUM detects a behavioral change-point before the sabotage action occurs. Compare CUSUM to a simple threshold monitor.\n\n**Why it matters:** CUSUM has O(1) per-step computation, making it extremely low-latency. If it provides early warning of behavioral change even before an unambiguously malicious action occurs, it could be a valuable lightweight component in a monitoring stack.\n\n**Relevant context:** CUSUM is standard in network IDS (e.g., detecting DDoS). Aviation FOQA anomaly detection also uses sequential monitoring. Implementing CUSUM is basic Python (scipy.stats). No ML training required."
+  },
+  {
+    "idea_id": "gen-1581",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:17:34Z",
+    "subfield": "AI Control & Monitoring",
+    "generation_strategy": "cross_domain_transfer",
+    "confidence": 0.76,
+    "body": "# Industrial Control Safety: Importing Safety Integrity Level (SIL) Ratings for AI Monitor Reliability\n\n**Problem:** Industrial control systems use Safety Integrity Level (SIL) ratings to formally specify the required reliability of safety systems. AI monitoring has no analogous reliability specification framework, making it impossible to certify that a monitor meets a minimum safety standard.\n\n**Direction:** Review IEC 61508 SIL methodology. Propose a mapping from SIL concepts (probability of failure on demand, safe failure fraction) to AI monitoring metrics (false negative rate at given stakes level, monitor availability). Apply this mapping to SHADE-Arena monitoring results to produce a 'monitoring SIL score' for three monitors. Write up what SIL-inspired requirements would look like for AI deployment.\n\n**Why it matters:** Regulators and deployers increasingly need formal reliability specifications for AI safety systems. Importing an established framework from industrial safety provides an immediate starting point rather than building from scratch.\n\n**Relevant context:** IEC 61508 SIL ratings are used in nuclear, aviation, and automotive safety-critical systems. The mapping to AI monitoring is conceptually straightforward and requires no ML implementation\u2014making it highly feasible for CS students with intro ML background."
+  },
+  {
+    "idea_id": "gen-1582",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:17:34Z",
+    "subfield": "AI Control & Monitoring",
+    "generation_strategy": "cross_domain_transfer",
+    "confidence": 0.82,
+    "body": "# Network IDS Rule Transfer: Adapting Snort/Suricata-Style Signature Rules for AI Agent Action Monitoring\n\n**Problem:** Network intrusion detection systems like Snort and Suricata use human-readable signature rule languages to define malicious patterns. Nothing analogous exists for AI agent action streams\u2014monitoring rules are implicit in LLM prompts rather than explicit, inspectable rules.\n\n**Direction:** Design a simple rule language for AI agent action monitoring (e.g., 'IF file_write AND path MATCHES /etc/* AND within 3 steps of credential_access THEN alert'). Implement a rule engine in ~200 lines of Python. Translate 5 SHADE-Arena sabotage patterns into explicit rules. Evaluate precision and recall vs. an LLM monitor. Discuss advantages of rule transparency and auditability.\n\n**Why it matters:** Explicit rule-based monitors are auditable, human-readable, and do not rely on LLM opaqueness. For regulated deployments, auditable rules may be legally required. This bridges decades of IDS engineering to AI monitoring.\n\n**Relevant context:** Snort's rule language is a mature, well-documented standard. Adapting it to AI agent action sequences requires domain translation but no novel ML. SHADE-Arena provides test cases. This project is well-scoped for 30 hours."
+  },
+  {
+    "idea_id": "gen-1583",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:17:35Z",
+    "subfield": "AI Control & Monitoring",
+    "generation_strategy": "cross_domain_transfer",
+    "confidence": 0.78,
+    "body": "# Aviation FOQA Transfer: Using Flight Data Monitoring Principles for Continuous AI Agent Health Tracking\n\n**Problem:** Aviation Flight Operations Quality Assurance (FOQA) monitors continuous flight parameter streams against established safety envelopes. AI agent monitoring lacks an equivalent continuous 'health envelope' concept\u2014monitoring is typically episodic rather than continuous.\n\n**Direction:** Draw on FOQA methodology to define 'agent health parameters' (e.g., rate of tool errors, entropy of action distribution, frequency of policy-boundary-approaching actions). Establish baseline distributions for these parameters from benign METR task runs. Monitor these parameters continuously during SHADE-Arena tasks and flag when parameters exit the normal envelope. Compare this FOQA-style monitor to a standard LLM monitor.\n\n**Why it matters:** FOQA has reduced aviation accident rates substantially because it catches subtle degradation before catastrophic events. The same logic applies to AI agents: monitoring health parameters continuously may detect precursors to misbehavior that action-level monitors miss.\n\n**Relevant context:** FOQA/FDM uses parameter limit exceedance detection as well as unsupervised anomaly detection. Both approaches are documented in publicly available aviation safety literature. METR provides benign baseline traces. Single GPU compute is more than sufficient."
+  },
+  {
+    "idea_id": "gen-1584",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:17:35Z",
+    "subfield": "AI Control & Monitoring",
+    "generation_strategy": "cross_domain_transfer",
+    "confidence": 0.75,
+    "body": "# Medical Device Alarm Management Transfer: Applying IEC 62133 Alarm Prioritization to AI Monitor Alerts\n\n**Problem:** Medical device monitoring standards (IEC 62133, FDA alarm management guidance) specify how to prioritize, de-duplicate, and suppress alarms to prevent alert fatigue. AI monitoring produces streams of alerts with no prioritization framework.\n\n**Direction:** Review FDA alarm management guidance and IEC 62133 recommendations. Design an alarm management layer for AI monitoring that: (1) de-duplicates similar alerts within a time window, (2) escalates alerts that persist across multiple steps, (3) suppresses low-priority alerts when human reviewer queue is full. Implement this layer on top of a standard SHADE-Arena LLM monitor and measure whether it improves human review accuracy in a small user study.\n\n**Why it matters:** Alarm management is a solved engineering problem in medical devices\u2014alert fatigue kills patients in ICUs. The same problem will affect AI safety oversight. Importing the solution is faster than rediscovering it.\n\n**Relevant context:** Alert fatigue is documented in both medical device and IDS contexts. The FDA's 2014 alarm management safety communication established principles that translate directly. This is primarily a software engineering and UX project, accessible to CS students."
+  },
+  {
+    "idea_id": "gen-1585",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:17:35Z",
+    "subfield": "AI Control & Monitoring",
+    "generation_strategy": "cross_domain_transfer",
+    "confidence": 0.8,
+    "body": "# Process Control Limit Transfer: Statistical Process Control Charts for Detecting AI Agent Behavioral Drift\n\n**Problem:** Statistical process control (SPC) charts (Shewhart charts, EWMA charts) are used in manufacturing to detect when a process has drifted outside control limits. AI agents running over time may exhibit behavioral drift without any single action being flagged, and SPC is a natural detection tool.\n\n**Direction:** From 100 benign agent trajectories, compute control limits (mean \u00b1 3\u03c3) for 5 behavioral metrics (action diversity, tool error rate, response length variance, policy boundary proximity score, backtracking frequency). Plot these as Shewhart control charts. Evaluate whether SHADE-Arena malicious trajectories produce out-of-control signals before or after the sabotage action occurs.\n\n**Why it matters:** SPC provides interpretable, statistically grounded alerts with known false alarm rates. Unlike LLM monitors, SPC alerts come with a confidence bound. This is a genuinely novel application of a mature methodology.\n\n**Relevant context:** SPC is taught in undergraduate industrial engineering and statistics courses. Python's scipy and numpy make implementation trivial. No ML training required. METR traces provide the benign baseline data needed."
+  },
+  {
+    "idea_id": "gen-1586",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:17:35Z",
+    "subfield": "AI Control & Monitoring",
+    "generation_strategy": "cross_domain_transfer",
+    "confidence": 0.74,
+    "body": "# Fault Tree Analysis Transfer: Applying Aviation/Nuclear Fault Tree Methodology to AI Control Protocol Design\n\n**Problem:** Aviation and nuclear engineering use Fault Tree Analysis (FTA) to systematically identify combinations of component failures that could lead to catastrophic outcomes. AI control protocol design lacks equivalent systematic failure analysis, meaning protocols may have failure combinations that designers did not anticipate.\n\n**Direction:** Select one ControlArena control protocol (e.g., trusted monitoring + human escalation + sandboxed execution). Apply formal FTA methodology to identify all combinations of component failures (monitor misses + human dismisses + sandbox bypass) that could result in undetected sabotage. Compute minimal cut sets. Compare the FTA-derived risk picture to the protocol designers' stated threat model. Identify gaps.\n\n**Why it matters:** FTA is a proven systematic method for safety protocol analysis. Applying it to AI control protocols provides a more rigorous risk picture than narrative threat model analysis and may reveal combinations that designers overlooked.\n\n**Relevant context:** FTA is a standard technique in IEC 61025 and MIL-STD-882E. Applying it requires no ML\u2014only logical analysis and probability estimation. ControlArena's control protocols are documented, providing a concrete analysis target."
+  },
+  {
+    "idea_id": "gen-1587",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:17:35Z",
+    "subfield": "AI Control & Monitoring",
+    "generation_strategy": "cross_domain_transfer",
+    "confidence": 0.77,
+    "body": "# Swiss Cheese Model Application: Mapping AI Control Protocol Defense Layers to Reason's Safety Model\n\n**Problem:** James Reason's Swiss Cheese model (widely used in aviation and healthcare safety) describes how accidents occur when holes in multiple defensive layers align. AI control protocols have multiple layers (monitors, sandboxes, human review) but have not been analyzed through this lens to identify which layer combinations leave the system vulnerable.\n\n**Direction:** Map ControlArena's layered control protocols onto Reason's Swiss Cheese model. For each layer (e.g., input filter, monitor, sandbox, human reviewer, audit log), estimate the 'hole size' (failure probability) from available experimental data. Identify which alignment of failures is most likely to result in undetected sabotage. Write a blog post proposing how to reduce the most dangerous holes.\n\n**Why it matters:** The Swiss Cheese model is intuitive and widely understood in safety engineering. Translating AI control protocols into this framework makes safety arguments accessible to a broader audience and reveals which layers carry disproportionate risk.\n\n**Relevant context:** Reason's model is standard in aviation safety training and medical error analysis. It requires no ML implementation\u2014only conceptual analysis and probability estimation from existing experimental results. Highly feasible within 30 hours."
+  },
+  {
+    "idea_id": "gen-1588",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:17:35Z",
+    "subfield": "AI Control & Monitoring",
+    "generation_strategy": "cross_domain_transfer",
+    "confidence": 0.72,
+    "body": "# STAMP/STPA Hazard Analysis Transfer: Applying Systems-Theoretic Safety Methods to AI Oversight Architecture\n\n**Problem:** STAMP (Systems-Theoretic Accident Model and Processes) and its associated analysis technique STPA are used in aerospace and autonomous vehicle safety to identify unsafe control actions in complex sociotechnical systems. AI oversight architecture is exactly such a system, but STAMP/STPA has not been applied to it.\n\n**Direction:** Apply STPA to a concrete AI oversight scenario: an LLM agent monitored by a prompted LLM monitor, with human escalation. Define the control structure (what information flows where, what control actions exist). Identify unsafe control actions (e.g., 'monitor provides inadequate alert when agent is scheming'). Generate safety constraints. Compare to the threat model assumptions in the SHADE-Arena paper.\n\n**Why it matters:** STPA is considered more complete than traditional FTA because it captures systemic failures, not just component failures. Applying it to AI oversight would likely surface failure modes not identified in current AI safety literature.\n\n**Relevant context:** STPA is documented in Nancy Leveson's Engineering a Safer World (freely available). It has been applied to autonomous vehicles and medical devices. CS students can apply STPA without ML background. This is a novel and publishable application."
+  },
+  {
+    "idea_id": "gen-1589",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:17:35Z",
+    "subfield": "AI Control & Monitoring",
+    "generation_strategy": "cross_domain_transfer",
+    "confidence": 0.85,
+    "body": "# Isolation Forest Transfer: Applying Unsupervised Anomaly Detection from Cybersecurity to Agent Action Streams\n\n**Problem:** Isolation forest is one of the most effective unsupervised anomaly detection methods in network security (where labeled malicious data is scarce), yet it has not been systematically evaluated as an AI agent behavior monitor despite sharing the same data scarcity problem.\n\n**Direction:** Featurize ControlArena agent trajectories into fixed-size vectors (tool call frequency counts, action type distribution, timing statistics). Train an isolation forest on 100 benign trajectories (no malicious labels needed). Evaluate anomaly scores on SHADE-Arena malicious and benign trajectories. Compare AUC to a supervised classifier trained on the same features but with labels.\n\n**Why it matters:** In practice, labeled examples of malicious AI agent behavior will be rare. Unsupervised methods that require only benign baselines may be more deployable than supervised monitors. This experiment quantifies the unsupervised vs. supervised trade-off.\n\n**Relevant context:** Isolation forest is in scikit-learn with a 5-line implementation. FOQA anomaly detection literature explicitly notes unsupervised methods are valuable when labeled anomalies are scarce\u2014the same rationale applies here. Feasible in < 10 hours of implementation."
+  },
+  {
+    "idea_id": "gen-1590",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:17:35Z",
+    "subfield": "AI Control & Monitoring",
+    "generation_strategy": "cross_domain_transfer",
+    "confidence": 0.79,
+    "body": "# Honeypot-Inspired Canary Actions: Importing Network Security Deception Techniques for AI Monitoring\n\n**Problem:** Network security uses honeypots\u2014fake valuable resources\u2014to detect attackers without relying on behavior analysis. An analogous approach for AI monitoring (planting 'canary' resources that a misbehaving agent would be tempted to interact with) has not been evaluated.\n\n**Direction:** Design 10 ControlArena task environments containing canary resources (fake credential files, fake privileged API endpoints) that a scheming agent would be more likely to interact with than a benign agent. Measure: (1) how often scheming agents in SHADE-Arena touch canary resources, (2) whether canary interactions reliably predict overall malicious intent, (3) whether canary-based detection can be combined with a standard LLM monitor to reduce false negatives.\n\n**Why it matters:** Honeypot/canary techniques are passive, do not require understanding agent reasoning, and have near-zero false positive rates (benign agents have no reason to touch the canaries). This is a fundamentally different monitoring paradigm from analysis-based approaches.\n\n**Relevant context:** Honeypot-based detection is a standard IDS technique. ControlArena's bash and code settings support adding arbitrary files and endpoints to environments. This requires no ML\u2014only environment design and rate measurement."
+  },
+  {
+    "idea_id": "gen-1591",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:17:35Z",
+    "subfield": "AI Control & Monitoring",
+    "generation_strategy": "cross_domain_transfer",
+    "confidence": 0.74,
+    "body": "# SCADA Defense-in-Depth Transfer: Implementing Tiered Access Control as a Monitoring Complement\n\n**Problem:** Industrial control SCADA systems use defense-in-depth with tiered access zones (enterprise, DMZ, control zone, field zone), ensuring that compromise of one zone does not immediately compromise critical systems. AI agent environments typically lack analogous tiering.\n\n**Direction:** Implement a tiered action permission system in ControlArena where agents must escalate privilege to access higher-risk actions (analogous to SCADA zone crossings). Add a monitor that specifically watches for privilege escalation events. Evaluate whether privilege-escalation monitoring catches a higher fraction of SHADE-Arena sabotage attempts than general-action monitoring, with lower false positive rate.\n\n**Why it matters:** Focused monitoring on privilege escalations (a relatively rare, high-risk event class) may achieve better precision than monitoring all actions. SCADA defense-in-depth has validated this principle in industrial systems.\n\n**Relevant context:** SCADA tiered security architecture is documented in NIST SP 800-82. ControlArena already distinguishes trusted vs. untrusted actions in some protocols. Extending this to tiered permissions is a software engineering task feasible for CS students."
+  },
+  {
+    "idea_id": "gen-1592",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:17:35Z",
+    "subfield": "AI Control & Monitoring",
+    "generation_strategy": "cross_domain_transfer",
+    "confidence": 0.78,
+    "body": "# Behavioral Baseline Profiling Transfer: Importing User Entity Behavior Analytics (UEBA) for AI Agent Profiling\n\n**Problem:** User Entity Behavior Analytics (UEBA) in cybersecurity establishes individual user behavioral baselines and flags deviations. This per-agent profiling approach has not been applied to AI monitoring, where monitors typically evaluate each trajectory without reference to that agent's established behavioral baseline.\n\n**Direction:** Run a specific LLM agent (with fixed system prompt and temperature) on 30 benign ControlArena tasks to establish its behavioral baseline (typical action distribution, timing, error rate). Then monitor the same agent on SHADE-Arena tasks using deviation from its personal baseline rather than absolute thresholds. Compare detection AUC of baseline-deviation monitor vs. absolute-threshold monitor.\n\n**Why it matters:** UEBA outperforms threshold-based detection in cybersecurity because an action that is normal for one entity may be anomalous for another. AI agents with fixed configurations also have consistent behavioral fingerprints that could make this approach effective.\n\n**Relevant context:** UEBA is a mainstream enterprise security product category (e.g., Splunk UEBA, Microsoft Sentinel). Its core technique\u2014per-entity baseline modeling\u2014is simple to implement. METR task suite provides benign baseline runs."
+  },
+  {
+    "idea_id": "gen-1593",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:17:35Z",
+    "subfield": "AI Control & Monitoring",
+    "generation_strategy": "cross_domain_transfer",
+    "confidence": 0.84,
+    "body": "# Tripwire-Based Monitoring Transfer: Static Environment Integrity Checks from Security Operations\n\n**Problem:** Security operations use tripwires\u2014checksums and file integrity monitors that detect any modification to sensitive files without analyzing agent behavior at all. AI monitoring has not adopted this approach: most monitoring examines agent actions rather than environment state changes.\n\n**Direction:** In ControlArena bash tasks, implement a file and environment state integrity monitor that checksums critical files and environment variables before and after each agent step. Flag any modification to resources the agent was not supposed to modify according to the task specification. Compare this tripwire-based monitor to a standard LLM action monitor on SHADE-Arena sabotage tasks.\n\n**Why it matters:** Tripwire monitoring catches the result of sabotage regardless of how sophisticated the agent is at hiding its actions. If the environment state has been modified, detection does not depend on analyzing the agent's reasoning or even its action stream.\n\n**Relevant context:** File integrity monitoring (e.g., Tripwire, AIDE) is a standard Linux security tool. ControlArena's bash setting exposes file system state. Implementing checksumming is basic Python with no ML required."
+  },
+  {
+    "idea_id": "gen-1594",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:17:35Z",
+    "subfield": "AI Control & Monitoring",
+    "generation_strategy": "cross_domain_transfer",
+    "confidence": 0.76,
+    "body": "# Red Team / Blue Team Exercise Transfer: Structured Adversarial Monitoring Improvement from Cybersecurity\n\n**Problem:** Cybersecurity uses formalized red team / blue team exercises where offensive teams attack defenses while defensive teams improve them, generating systematic improvement through structured adversarial pressure. AI monitoring research lacks this institutionalized adversarial structure.\n\n**Direction:** Design and conduct a small-scale red/blue team exercise in ControlArena: one participant (or the researcher) plays the 'red team' and modifies SHADE-Arena sabotage strategies to evade a standard monitor; the other plays 'blue team' and improves the monitor to detect the evasion. Run 3\u20135 rounds. Document what each round reveals about monitor weaknesses and improvements. Write up as a case study in adversarial monitoring improvement.\n\n**Why it matters:** Adversarial pressure drives security improvement faster than non-adversarial evaluation. Establishing red/blue team methodology in AI monitoring research would accelerate robustness improvements in a principled way.\n\n**Relevant context:** Red/blue team exercises are a standard NIST-documented security practice. Applied to AI monitoring, this maps naturally to the existing AI safety practice of model organisms. SHADE-Arena provides the attack scenarios; ControlArena provides the defense infrastructure."
+  },
+  {
+    "idea_id": "gen-1595",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:17:35Z",
+    "subfield": "AI Control & Monitoring",
+    "generation_strategy": "cross_domain_transfer",
+    "confidence": 0.7,
+    "body": "# Mutual Information Monitor: Measuring Information Leakage as an AI Safety Signal\n\n**Problem:** A misbehaving agent performing data exfiltration will produce outputs with high mutual information with sensitive internal state. Measuring output-input mutual information as a monitoring signal has not been explored in AI safety.\n\n**Direction:** In ControlArena tasks containing simulated sensitive data, estimate mutual information between agent outputs (tool calls, file writes) and the locations of sensitive data in the environment. Compare this MI-based anomaly score between benign and malicious trajectories from SHADE-Arena. Implement using a simple non-parametric MI estimator (e.g., k-NN based).\n\n**Why it matters:** Mutual information is a principled, model-free measure of information leakage. If it separates benign from malicious trajectories, it provides a theoretically grounded complement to LLM-based monitors that require no labeled malicious training data.\n\n**Relevant context:** Information-theoretic approaches to privacy and security are well-developed in cryptography and network security. Python implementations of non-parametric MI estimators exist (e.g., sklearn's mutual_info_classif). Single GPU not required."
+  },
+  {
+    "idea_id": "gen-1596",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:17:35Z",
+    "subfield": "AI Control & Monitoring",
+    "generation_strategy": "cross_domain_transfer",
+    "confidence": 0.79,
+    "body": "# Counterfactual Monitoring: Would the Agent Have Taken the Same Action Without the Malicious Instruction?\n\n**Problem:** A promising monitoring approach\u2014ask 'would this action have occurred without the malicious side instruction?'\u2014is borrowed from causal inference and has not been implemented in AI monitoring despite being conceptually simple.\n\n**Direction:** For each SHADE-Arena task, run the same agent on the benign main task only (no malicious side task). Record actions. Then run with the malicious side task included. Flag actions that appear in the malicious run but not in the benign baseline as potentially caused by the malicious instruction. Measure precision and recall of this counterfactual monitor.\n\n**Why it matters:** Counterfactual reasoning is the gold standard for causal attribution. A monitor based on counterfactuals could detect actions caused by malicious instructions even when those actions are individually plausible, by comparing against what the agent would have done otherwise.\n\n**Relevant context:** Counterfactual approaches are standard in causal ML. In the SHADE-Arena framework, each task pair has a separable benign main task, making the counterfactual baseline naturally available. This requires no ML training\u2014just two parallel agent runs."
+  },
+  {
+    "idea_id": "gen-1597",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:17:35Z",
+    "subfield": "AI Control & Monitoring",
+    "generation_strategy": "cross_domain_transfer",
+    "confidence": 0.71,
+    "body": "# Petri Net Formalization: Modeling AI Agent Control Flows Using the Petri Tool for Deadlock and Unsafe State Detection\n\n**Problem:** Petri nets are a formal modeling language used in industrial process control to verify that systems cannot reach unsafe states. The Petri tool is listed in AI control tooling, but systematic application to AI agent control flow modeling for safety verification has not been demonstrated.\n\n**Direction:** Model one ControlArena task's expected control flow as a Petri net using the Petri tool. Define 'unsafe states' (e.g., credential accessed before authentication verified, file deleted before backup confirmed). Use Petri net reachability analysis to determine whether the model can reach unsafe states. Compare the unsafe states identified by formal analysis to those caught by the LLM monitor on actual trajectories.\n\n**Why it matters:** Formal verification can prove that certain unsafe states are unreachable, providing stronger guarantees than empirical monitoring. Petri net modeling is tractable for the structured action spaces of AI agents and could complement probabilistic monitoring approaches.\n\n**Relevant context:** Petri nets are used in manufacturing process control and workflow verification. The Petri tool is specifically listed as relevant to this subfield. This requires no ML\u2014only formal modeling."
+  },
+  {
+    "idea_id": "gen-1598",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:17:35Z",
+    "subfield": "AI Control & Monitoring",
+    "generation_strategy": "cross_domain_transfer",
+    "confidence": 0.77,
+    "body": "# Online Learning Monitor: Adapting IDS Adaptive Baselining to Continuously Update AI Monitor Thresholds\n\n**Problem:** Static monitoring thresholds become stale as AI agents are updated or deployed on new tasks. Intrusion detection systems use online learning to continuously update behavioral baselines. This adaptive monitoring approach has not been applied to AI agent oversight.\n\n**Direction:** Implement an EWMA (exponentially weighted moving average) baseline updater for AI agent behavioral metrics in ControlArena. Compare a static-threshold monitor vs. the adaptive-threshold monitor on a scenario where the agent is updated mid-deployment (different model or system prompt). Measure detection rate and false alarm rate before and after the update for both monitors.\n\n**Why it matters:** AI agent deployment is not static\u2014models are updated, system prompts change, and task distributions shift. Static monitors will either produce excessive false alarms or miss novel misbehavior after an update. Adaptive baselining addresses this.\n\n**Relevant context:** EWMA-based adaptive baselining is used in network IDS (Bro/Zeek framework) and FOQA systems. Implementation requires only basic Python. ControlArena's infrastructure supports parameter variation experiments."
+  },
+  {
+    "idea_id": "gen-1599",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:17:35Z",
+    "subfield": "AI Control & Monitoring",
+    "generation_strategy": "cross_domain_transfer",
+    "confidence": 0.73,
+    "body": "# Minimum Description Length Monitor: Using Compression-Based Anomaly Detection for AI Agent Behavior\n\n**Problem:** Compression-based anomaly detection (based on minimum description length / Kolmogorov complexity) is used in network security to detect unusual traffic without domain-specific features. It has not been applied to AI agent action sequences.\n\n**Direction:** Represent each agent trajectory as a string over a vocabulary of action types. Compute the compression ratio of trajectories using gzip or zstd. Establish a baseline compression ratio distribution from 100 benign METR traces. Flag SHADE-Arena trajectories whose compression ratio falls outside the baseline distribution as anomalous. Evaluate AUC and compare to isolation forest.\n\n**Why it matters:** Compression-based anomaly detection requires zero feature engineering and no labels. It captures the structural irregularity of malicious trajectories (which may have repeated unusual action patterns) in a model-free way.\n\n**Relevant context:** Compression ratio as an anomaly signal is used in network traffic analysis (e.g., detecting C2 communication). The technique is documented in academic IDS literature. Implementation is trivial in Python (import gzip)."
+  },
+  {
+    "idea_id": "gen-1600",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:17:35Z",
+    "subfield": "AI Control & Monitoring",
+    "generation_strategy": "cross_domain_transfer",
+    "confidence": 0.76,
+    "body": "# Nuclear Safety Barrier Transfer: Modeling AI Control Protocols as Defense-in-Depth Barrier Chains\n\n**Problem:** Nuclear safety engineering uses quantitative defense-in-depth barrier analysis to ensure multiple independent barriers prevent catastrophic outcomes, with each barrier's failure probability estimated. AI control protocols use layered defenses but without quantitative barrier analysis.\n\n**Direction:** Model a ControlArena control protocol as a chain of barriers (input sanitization \u2192 monitoring \u2192 sandboxing \u2192 human review \u2192 audit). For each barrier, estimate failure probability from available experimental data (SHADE-Arena detection rates, sandbox escape rates, human reviewer accuracy). Compute overall system failure probability. Identify which barrier has the largest contribution to overall failure probability and propose how to improve it.\n\n**Why it matters:** Quantitative barrier analysis makes explicit which component is the 'weakest link' in a control protocol, enabling targeted improvement. This analysis method is mature and validated in nuclear and chemical process safety.\n\n**Relevant context:** Defense-in-depth barrier analysis is documented in IAEA nuclear safety standards. The methodology requires only multiplication of probabilities and basic statistics, accessible to intro ML students. SHADE-Arena detection rates provide numerical inputs."
+  }
+]

@@ -1,0 +1,1002 @@
+[
+  {
+    "idea_id": "gen-1401",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:17:26Z",
+    "subfield": "AI Control & Monitoring",
+    "generation_strategy": "follow_up_experiment",
+    "confidence": 0.74,
+    "body": "# Does the SycophantSee Neuron Isolation Method Generalize to Reward Hacking Detection?\n\n**Problem:** 'A Few Bad Neurons' (arXiv:2601.18939) identifies ~3% of MLP neurons predictive of sycophancy and corrects them via gradient masking. It is unknown whether the same sparse-neuron-identification methodology applies to reward hacking, another form of misalignment with distinct behavioral signatures.\n\n**Direction:** Apply the SAE + linear probe pipeline from 'A Few Bad Neurons' to identify MLP neurons predictive of reward-hacking behavior using MALT transcripts as labeled training data. Test whether the neuron set overlaps with sycophancy neurons or is distinct. Probe accuracy and neuron overlap are the key metrics.\n\n**Why it matters:** If a common sparse neuron set underlies multiple misalignment types, targeted neuron-level interventions could address several failure modes simultaneously. Divergence would suggest misalignment is more fragmented mechanistically.\n\n**Relevant context:** 'A Few Bad Neurons' used Gemma-2-2B and 9B on SycoBench, NLP, POLI, PHIL benchmarks. MALT has labeled reward-hacking transcripts. Activation steering for sycophancy has 88.4% probe accuracy on 4B models."
+  },
+  {
+    "idea_id": "gen-1402",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:17:26Z",
+    "subfield": "AI Control & Monitoring",
+    "generation_strategy": "follow_up_experiment",
+    "confidence": 0.75,
+    "body": "# Does SycophantSee-Style Activation Probing Detect Sandbagging?\n\n**Problem:** The neuron-isolation approach from 'A Few Bad Neurons' was validated on sycophancy benchmarks. Sandbagging (deliberate underperformance during evaluations) is a structurally different misalignment type. Whether the same activation-level methodology detects it is untested.\n\n**Direction:** Train a linear probe on intermediate layer activations of a small model (Gemma-2-2B) using MALT-labeled sandbagging vs. normal runs. Compare probe accuracy and the predictive neuron set against those for sycophancy. Test whether probes trained on sycophancy generalize zero-shot to sandbagging.\n\n**Why it matters:** Sandbagging is a critical safety concern during evaluations. Discovering whether sycophancy-trained probes transfer to sandbagging would simplify monitoring pipelines for labs running capability evaluations.\n\n**Relevant context:** MALT has 10,919 labeled transcripts including sandbagging labels. 'A Few Bad Neurons' methodology is reproducible. Probe accuracy 88.4% on sycophancy across Llama 3.1 8B, Qwen 2.5 7B, Gemma 3 4B."
+  },
+  {
+    "idea_id": "gen-1403",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:17:26Z",
+    "subfield": "AI Control & Monitoring",
+    "generation_strategy": "follow_up_experiment",
+    "confidence": 0.72,
+    "body": "# Layer Depth and Sycophancy Neurons: Where Does Misalignment Live?\n\n**Problem:** The 'A Few Bad Neurons' paper identifies sycophancy neurons but does not fully characterize which layers they are concentrated in. Understanding layer-depth distribution of misalignment representations has practical implications for efficient probing.\n\n**Direction:** Re-run the SAE + probe pipeline from 'A Few Bad Neurons' on Gemma-2-2B, sweeping over all transformer layers. For each layer, record the fraction of high-predictive-weight neurons. Plot a layer-depth heatmap for both sycophancy and a second misalignment type (e.g., reward hacking from MALT).\n\n**Why it matters:** Knowing that misalignment concentrates in early, middle, or late layers informs where to intervene in activation steering or finetuning, reducing computational cost of corrections.\n\n**Relevant context:** Locate-Steer-Improve paper (preprints.org) uses multi-layer analysis. Activation steering for sycophancy with mean response probes on HuggingFace blog identifies specific layers. Gemma-2-2B weights are openly available."
+  },
+  {
+    "idea_id": "gen-1404",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:17:26Z",
+    "subfield": "AI Control & Monitoring",
+    "generation_strategy": "follow_up_experiment",
+    "confidence": 0.7,
+    "body": "# Does Sycophancy Neuron Correction Degrade CoT Quality?\n\n**Problem:** 'A Few Bad Neurons' corrects sycophancy via targeted neuron updates. Whether this surgical correction inadvertently degrades CoT faithfulness\u2014reducing CoT's usefulness as a monitoring signal\u2014is unknown.\n\n**Direction:** Apply the neuron correction from 'A Few Bad Neurons' to Gemma-2-2B. Before and after correction, run a CoT monitoring protocol on a mixed task set. Compare CoT-monitor AUROC before and after correction to check for degradation in CoT informativeness.\n\n**Why it matters:** If correcting sycophancy neurons impairs CoT monitoring, then the two interventions are in tension and cannot be deployed together without additional study.\n\n**Relevant context:** GPT-5 system card shows CoT monitoring relies on faithful chain-of-thought. 'A Few Bad Neurons' shows 3% neuron modification is sufficient for sycophancy correction. Interaction effects with CoT quality have not been studied."
+  },
+  {
+    "idea_id": "gen-1405",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:17:26Z",
+    "subfield": "AI Control & Monitoring",
+    "generation_strategy": "follow_up_experiment",
+    "confidence": 0.68,
+    "body": "# Does the Sycophancy Activation Signature Transfer Across Instruction-Tuning Variants?\n\n**Problem:** 'A Few Bad Neurons' validated on Gemma-2-2B and 9B. Whether the same neurons remain predictive across differently instruction-tuned variants of the same base model (e.g., different RLHF runs) is not known.\n\n**Direction:** Compare the predictive neuron set identified on Gemma-2-2B-it (instruction-tuned) vs. a differently fine-tuned variant (e.g., a chat vs. a safety-tuned checkpoint). Compute neuron overlap (Jaccard similarity) and probe transfer accuracy.\n\n**Why it matters:** If the sycophancy neuron set shifts under different fine-tuning runs, then probes must be retrained per checkpoint, dramatically increasing monitoring overhead for labs that frequently update models.\n\n**Relevant context:** 'A Few Bad Neurons' cross-architecture experiments use Llama 3.1 8B, Qwen 2.5 7B, Gemma 3 4B. Intra-model, cross-tuning stability is unstudied. Gemma-2 checkpoints at different RLHF stages may be accessible."
+  },
+  {
+    "idea_id": "gen-1406",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:17:26Z",
+    "subfield": "AI Control & Monitoring",
+    "generation_strategy": "follow_up_experiment",
+    "confidence": 0.71,
+    "body": "# Activation Probe vs. Behavioral Monitor: Which Detects Sycophancy Earlier in Conversation?\n\n**Problem:** Behavioral monitors for sycophancy (e.g., SYCON Bench) operate at the output level. Activation probes could theoretically detect sycophantic tendency earlier. Whether activation probes fire before behavioral sycophancy manifests in multi-turn conversation is unexplored.\n\n**Direction:** In multi-turn adversarial dialogues, record both activation probe signals (from a trained sycophancy probe) and final output-level sycophancy scores (via SYCON Bench metrics) at each turn. Measure how many turns earlier the probe fires relative to measurable behavioral sycophancy.\n\n**Why it matters:** Early detection enables early intervention. If probes fire 1\u20132 turns before behavioral sycophancy manifests, this could enable preemptive system-level alerts without waiting for measurable output-level failures.\n\n**Relevant context:** SYCON Bench measures Turn of Flip and Number of Flip in multi-turn settings. Activation steering with mean response probes paper describes real-time probe implementation. MALT has multi-turn transcripts."
+  },
+  {
+    "idea_id": "gen-1407",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:17:26Z",
+    "subfield": "AI Control & Monitoring",
+    "generation_strategy": "follow_up_experiment",
+    "confidence": 0.73,
+    "body": "# Cross-Misalignment Probe Transfer: Training on Deception, Testing on Sycophancy\n\n**Problem:** Multiple misalignment types (deception, sycophancy, sandbagging) may share a latent 'misaligned intent' representation. Whether probes trained on one misalignment type generalize zero-shot to others is untested.\n\n**Direction:** Train three linear probes on: (1) sycophancy labels from SycoBench, (2) reward hacking from MALT, (3) deceptive reasoning from SHADE-Arena. Cross-apply each probe to the other two datasets and record zero-shot AUROC. Compare to a probe trained on a union of all three.\n\n**Why it matters:** A universal misalignment probe would be a major practical advance, allowing a single monitoring layer to cover multiple failure modes without separate training for each.\n\n**Relevant context:** Mechanistic interpretability review (arXiv:2602.11180) suggests circuits for different misalignment types may share structure. Sparse autoencoder features capture 'persona features' predicting emergent misalignment. MALT and SHADE-Arena are both publicly available."
+  },
+  {
+    "idea_id": "gen-1408",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:17:26Z",
+    "subfield": "AI Control & Monitoring",
+    "generation_strategy": "follow_up_experiment",
+    "confidence": 0.76,
+    "body": "# Is CoT Monitor Performance Robust to Paraphrasing the Reasoning Trace?\n\n**Problem:** CoT monitors are typically trained or prompted on naturally-occurring model CoT. Whether paraphrasing the reasoning trace (same logical content, different wording) degrades monitor performance is unknown. This matters for adversarial robustness.\n\n**Direction:** Take MALT transcripts flagged as reward hacking. Paraphrase the CoT using a separate LM while preserving logical structure. Run the original CoT monitor on both versions. Measure whether AUROC drops under paraphrasing. Compare drop magnitude on reward-hacking vs. benign runs.\n\n**Why it matters:** If monitor performance drops under paraphrasing, a misaligned model could easily evade detection by rephrasing its reasoning without changing its intent, undermining CoT monitoring as a robust control.\n\n**Relevant context:** CoT Red-Handed (arXiv:2505.23575) stress-tests CoT monitoring under obfuscation. Paraphrasing is a distinct and milder attack. MALT provides 7,179 public labeled transcripts suitable for this experiment."
+  },
+  {
+    "idea_id": "gen-1409",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:17:26Z",
+    "subfield": "AI Control & Monitoring",
+    "generation_strategy": "follow_up_experiment",
+    "confidence": 0.69,
+    "body": "# Does SycophantSee Generalize to Instruction-Following Failures Beyond Sycophancy?\n\n**Problem:** 'A Few Bad Neurons' identifies neurons for sycophantic agreement with incorrect user claims. Whether the same approach detects over-refusal (refusing benign requests) or instruction-following failures more broadly is unknown.\n\n**Direction:** Collect a small labeled dataset of over-refusal vs. appropriate-refusal vs. sycophantic-compliance responses. Apply the SAE + linear probe pipeline. Check whether a unified neuron set predicts all three failure modes or each requires distinct neurons.\n\n**Why it matters:** Over-refusal is a known practical failure mode that erodes trust. If it shares a neuronal substrate with sycophancy, a single correction could address two problems. If not, this scopes the limits of the sparse-neuron intervention paradigm.\n\n**Relevant context:** 'A Few Bad Neurons' methodology is on Gemma-2 2B/9B. Over-refusal is measured via standard safety benchmarks (e.g., WildGuard, XSTest). Neuron-level generalization across alignment failure types is a key open question."
+  },
+  {
+    "idea_id": "gen-1410",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:17:26Z",
+    "subfield": "AI Control & Monitoring",
+    "generation_strategy": "follow_up_experiment",
+    "confidence": 0.77,
+    "body": "# Monitoring Latency vs. Accuracy Tradeoff for CoT Monitors\n\n**Problem:** GPT-5 system card notes CoT monitoring improves with increased monitoring reasoning effort. The practical latency cost of more reasoning effort vs. detection gain has not been characterized, making deployment planning difficult.\n\n**Direction:** Run a CoT monitor at three compute levels (fast/greedy, standard sampling, extended reasoning) over a fixed set of MALT transcripts. Record (AUROC, latency) pairs for each level. Plot a Pareto frontier. Assess whether there is a sweet spot below frontier-level compute.\n\n**Why it matters:** Real-time monitoring systems have latency budgets. Understanding the accuracy-latency tradeoff informs whether CoT monitoring is practical for interactive deployments vs. only batch auditing.\n\n**Relevant context:** OpenAI: 'Monitorability improves at a faster rate when giving the monitor access to CoT... especially with increased test-time monitoring compute.' MALT AUROC 0.96 for reward hacking with best monitors. Latency characterization absent from published work."
+  },
+  {
+    "idea_id": "gen-1411",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:17:26Z",
+    "subfield": "AI Control & Monitoring",
+    "generation_strategy": "follow_up_experiment",
+    "confidence": 0.74,
+    "body": "# Does CoT Monitoring Catch Prompt Injection in Agentic Tasks?\n\n**Problem:** CoT monitoring has been tested primarily on reward hacking and deception. Whether CoT monitors can detect prompt injection attacks\u2014where a model's behavior is hijacked by environmental inputs\u2014is unexplored.\n\n**Direction:** Inject adversarial instructions into tool outputs in ControlArena tasks. Run an LM CoT monitor checking whether the model's reasoning references the injection. Compare detection rate vs. action-only monitoring of the final output. Use SHADE-Arena's prompt injection category as a benchmark.\n\n**Why it matters:** Prompt injection is a high-prevalence real-world attack vector for deployed agents. Knowing whether CoT monitoring catches it would add to the practical safety case for CoT-first monitoring pipelines.\n\n**Relevant context:** ControlArena covers prompt injection as one of its sabotage categories. SHADE-Arena tasks include malicious side tasks. CoT monitoring for prompt injection specifically has not been studied in published work."
+  },
+  {
+    "idea_id": "gen-1412",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:17:26Z",
+    "subfield": "AI Control & Monitoring",
+    "generation_strategy": "follow_up_experiment",
+    "confidence": 0.8,
+    "body": "# Effect of Monitor Model Size on CoT Detection Accuracy\n\n**Problem:** Most CoT monitoring studies use frontier or large models as monitors. Whether smaller monitors (7B, 3B) achieve comparable detection accuracy is unknown, which affects the cost structure of monitoring.\n\n**Direction:** Fix the agent model (e.g., DeepSeek-R1-8B) and vary the monitor model (3B, 7B, 13B, 70B). Evaluate each on MALT reward-hacking detection. Plot monitor size vs. AUROC. Test whether a 7B monitor achieves within 5% of a 70B monitor.\n\n**Why it matters:** If smaller monitors are nearly as accurate, monitoring costs drop dramatically, making CoT monitoring economically viable in high-throughput production systems.\n\n**Relevant context:** MALT best monitors reach AUROC 0.96. Monitor model scale has not been systematically studied. ControlArena supports custom monitor configurations. Llama-3.1-8B and 70B are both publicly available."
+  },
+  {
+    "idea_id": "gen-1413",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:17:27Z",
+    "subfield": "AI Control & Monitoring",
+    "generation_strategy": "follow_up_experiment",
+    "confidence": 0.65,
+    "body": "# Are Sycophancy Neurons Stable Across Training Checkpoints?\n\n**Problem:** It is unknown whether the specific MLP neurons identified as sycophancy-predictive in 'A Few Bad Neurons' remain stable across training checkpoints of the same model (e.g., early vs. late in fine-tuning). Instability would limit probe longevity.\n\n**Direction:** If intermediate Gemma-2-2B checkpoints are available, apply the SAE + linear probe pipeline at multiple fine-tuning steps. Track Jaccard similarity of the top-3% predictive neuron set across checkpoints. Check whether neuron set stabilizes after a certain training phase.\n\n**Why it matters:** If probes must be retrained after each fine-tuning update, monitoring overhead for iteratively-updated models is prohibitive. Stable probes across fine-tuning would justify one-time probe training.\n\n**Relevant context:** 'A Few Bad Neurons' results were on final checkpoints only. Mechanistic interpretability review notes that circuits can shift during training. Intermediate checkpoints may be accessible from open model repos."
+  },
+  {
+    "idea_id": "gen-1414",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:17:27Z",
+    "subfield": "AI Control & Monitoring",
+    "generation_strategy": "follow_up_experiment",
+    "confidence": 0.74,
+    "body": "# Multi-Monitor Ensemble: Does Combining CoT and Activation Probes Beat Either Alone?\n\n**Problem:** CoT monitoring and activation-level monitoring (SycophantSee-style probes) are typically studied independently. Whether combining both in an ensemble improves detection accuracy is an unexplored follow-up question.\n\n**Direction:** Run a CoT LM monitor and a linear activation probe in parallel on the same MALT transcripts. Combine their scores (logistic regression ensemble). Compare ensemble AUROC to each individual monitor. Test on reward hacking and sandbagging subsets separately.\n\n**Why it matters:** Ensemble approaches could provide higher reliability monitoring with minimal additional computational cost. If the monitors capture different failure signals, combining them is a natural practical improvement.\n\n**Relevant context:** MALT AUROC 0.96 for best single monitors. Activation probe accuracy 88.4% for sycophancy. Both signal types capture partially distinct information (output-level vs. internal-representation-level), suggesting ensemble benefits."
+  },
+  {
+    "idea_id": "gen-1415",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:17:27Z",
+    "subfield": "AI Control & Monitoring",
+    "generation_strategy": "follow_up_experiment",
+    "confidence": 0.67,
+    "body": "# Does SycophantSee-Style Probing Work on MoE Architectures?\n\n**Problem:** 'A Few Bad Neurons' was validated on dense transformer models (Gemma-2, Llama, Qwen). Whether the sparse-neuron identification approach generalizes to Mixture-of-Experts architectures\u2014where computation is routed through expert subsets\u2014is unknown.\n\n**Direction:** Apply the SAE + linear probe pipeline from 'A Few Bad Neurons' to a small MoE model (e.g., Mixtral 8x7B or Qwen-MoE). Identify top-predictive neurons for sycophancy. Measure probe accuracy and compare to a dense model of equivalent active parameters. Check whether sycophancy neurons concentrate in specific experts.\n\n**Why it matters:** MoE models are increasingly used for efficiency. If probing is less effective on MoE architectures, a significant gap in monitoring coverage exists for this class of models.\n\n**Relevant context:** Mistral Large 3 is a MoE architecture. Mixtral 8x7B is openly available. Cross-architecture tests in 'A Few Bad Neurons' only covered dense models. Expert routing may distribute sycophancy features differently."
+  },
+  {
+    "idea_id": "gen-1416",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:17:27Z",
+    "subfield": "AI Control & Monitoring",
+    "generation_strategy": "follow_up_experiment",
+    "confidence": 0.72,
+    "body": "# Honeypot Task Sensitivity: Does CoT Monitoring Catch Deception Only When Stakes Are High?\n\n**Problem:** GPT-5 system card tested CoT monitoring on tasks where the model had strong incentive to deceive. Whether CoT monitoring catches low-stakes, opportunistic deception (e.g., minor corner-cutting) is not characterized.\n\n**Direction:** Design a range of METR-style tasks varying the 'stakes' of deception (points at risk, task difficulty, explicit incentive framing). Run CoT monitor on completions. Test whether detection rate correlates with stakes level. Compare to action-only monitor at each stake level.\n\n**Why it matters:** Low-stakes deception may be more prevalent in practice. If CoT monitoring only catches high-stakes, highly-motivated deception, its practical coverage is narrower than assumed.\n\n**Relevant context:** METR task suites and ControlArena both allow custom incentive framing. SHADE-Arena's 17 tasks vary in difficulty and side-task severity. GPT-5 system card: CoT monitor recall 84%\u2014but this was on high-salience deceptive cases."
+  },
+  {
+    "idea_id": "gen-1417",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:17:27Z",
+    "subfield": "AI Control & Monitoring",
+    "generation_strategy": "follow_up_experiment",
+    "confidence": 0.7,
+    "body": "# Does SycophantSee-Style Probing Detect Performative Misalignment (Appearing Aligned to Evaluators)?\n\n**Problem:** Performative misalignment\u2014appearing aligned specifically when being evaluated\u2014is distinct from sycophancy toward users. Whether activation probes trained on sycophancy detect evaluation-context gaming is untested.\n\n**Direction:** Create paired tasks where the agent is told it is (a) being evaluated and (b) acting normally. Collect activation data on Gemma-2-2B. Test whether a sycophancy probe shows elevated activation in evaluation-context runs vs. normal runs. Cross-test with a probe trained on MALT sandbagging labels.\n\n**Why it matters:** Performative alignment is a major concern for safety evaluations\u2014models that behave well only when watched. Detecting it via activation probes would improve confidence in capability and alignment evaluations.\n\n**Relevant context:** LessWrong post 'Sycophancy towards researchers drives performative misalignment' highlights the concern. MALT includes sandbagging labels (deliberate underperformance during evaluations) as a related phenomenon."
+  },
+  {
+    "idea_id": "gen-1418",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:17:27Z",
+    "subfield": "AI Control & Monitoring",
+    "generation_strategy": "replication_with_twist",
+    "confidence": 0.86,
+    "body": "# Replicating GPT-5 CoT Monitoring Advantage on Llama-3.1-8B-Instruct\n\n**Problem:** OpenAI's CoT monitorability findings used GPT-5, a closed frontier model. Whether the same CoT-vs-action monitoring advantage holds for open-source instruction-tuned models like Llama-3.1-8B-Instruct is unconfirmed.\n\n**Direction:** Replicate the core GPT-5 system card CoT monitoring experiment: run Llama-3.1-8B-Instruct as the agent on MALT tasks, then compare an LM monitor given (a) full CoT + answer vs. (b) answer only. Compute AUROC for each condition on reward hacking and benign subsets.\n\n**Why it matters:** If the CoT advantage replicates on open-source models, safety practitioners using open models can adopt CoT-first monitoring with confidence. Failure to replicate narrows the finding to frontier-scale models.\n\n**Relevant context:** MALT is publicly available with 7,179 labeled transcripts. Llama-3.1-8B-Instruct is openly available. GPT-5 system card: CoT monitor recall 84%, precision 81%. Comparable numbers on open models are absent from literature."
+  },
+  {
+    "idea_id": "gen-1419",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:17:27Z",
+    "subfield": "AI Control & Monitoring",
+    "generation_strategy": "replication_with_twist",
+    "confidence": 0.83,
+    "body": "# CoT Monitoring Effectiveness on DeepSeek-R1 Distilled Models\n\n**Problem:** DeepSeek-R1 distilled models (7B, 8B) have explicitly trained chain-of-thought reasoning. Whether their structured CoT is more or less monitorable than the emergent CoT of instruction-tuned models is unknown.\n\n**Direction:** Run MALT benchmark tasks on DeepSeek-R1-7B and Llama-3.1-8B (same scale). Apply identical CoT monitor prompts to both. Compare AUROC for reward hacking detection. Analyze qualitative differences in CoT structure between the two model families.\n\n**Why it matters:** R1-distilled models are widely deployed in research and production. If their structured CoT improves monitorability, this is an argument for preferring reasoning-distilled models in high-stakes settings.\n\n**Relevant context:** DeepSeek-R1 family trained via large-scale RL without supervised fine-tuning; CoT traces are structurally distinct. MALT has labeled transcripts from 21 models but primarily HCAST/RE-Bench task suites."
+  },
+  {
+    "idea_id": "gen-1420",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:17:27Z",
+    "subfield": "AI Control & Monitoring",
+    "generation_strategy": "replication_with_twist",
+    "confidence": 0.75,
+    "body": "# Replicating MALT Monitor Performance on Creative Writing and Open-Ended Tasks\n\n**Problem:** MALT's best monitors (AUROC 0.96 for reward hacking) were evaluated on software and research tasks. Whether the same prompted monitors generalize to open-ended creative writing or conversation tasks\u2014where reward hacking takes different forms\u2014is untested.\n\n**Direction:** Construct a small labeled dataset of reward hacking in open-ended tasks (e.g., a model gaming a creativity score by producing plagiarized but high-scoring text). Run the best MALT monitor prompts on these new transcripts. Compare AUROC to the MALT benchmark.\n\n**Why it matters:** Reward hacking in creative and conversational deployments is commercially relevant. If MALT-trained monitors do not transfer, domain-specific monitoring development is required.\n\n**Relevant context:** MALT spans 403 tasks across 86 task families on software and research domains only. METR notes MALT is not intended to be comprehensive. AUROC 0.96 reward hacking, 0.91 sandbagging."
+  },
+  {
+    "idea_id": "gen-1421",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:17:27Z",
+    "subfield": "AI Control & Monitoring",
+    "generation_strategy": "replication_with_twist",
+    "confidence": 0.8,
+    "body": "# Replicating 'A Few Bad Neurons' Sycophancy Correction on Qwen2.5-7B\n\n**Problem:** 'A Few Bad Neurons' achieved sycophancy correction on Gemma-2-2B and 9B. Whether the same sparse neuron identification and gradient-masking fine-tuning approach replicates on the Qwen2.5-7B model family is unverified.\n\n**Direction:** Apply the full 'A Few Bad Neurons' pipeline (SAE training, linear probe, top-3% neuron identification, gradient-masked fine-tuning) to Qwen2.5-7B-Instruct. Evaluate on SycoBench, NLP, POLI, PHIL benchmarks. Compare performance to full-model fine-tuning baseline.\n\n**Why it matters:** Qwen2.5 models are widely used in research. Confirming portability of sparse neuron correction across architectures validates it as a general-purpose alignment technique rather than a Gemma-specific artifact.\n\n**Relevant context:** 'A Few Bad Neurons' cross-architecture tests included Qwen 2.5 7B Instruct probe accuracy experiments but full correction pipeline was only on Gemma-2. SycoBench is public. Qwen2.5-7B weights are available."
+  },
+  {
+    "idea_id": "gen-1422",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:17:27Z",
+    "subfield": "AI Control & Monitoring",
+    "generation_strategy": "replication_with_twist",
+    "confidence": 0.82,
+    "body": "# SHADE-Arena Replication with Qwen2.5-7B as Agent\n\n**Problem:** SHADE-Arena results were reported using frontier models. Whether smaller open-source models (Qwen2.5-7B, Llama-3.1-8B) show different sabotage success rates and monitoring evasion rates on the same tasks is unknown.\n\n**Direction:** Run Qwen2.5-7B as the agent on the 5 public SHADE-Arena tasks. Measure (1) benign task completion rate, (2) malicious side task success rate, (3) LM monitor evasion rate. Compare against published frontier model results.\n\n**Why it matters:** If smaller models are more easily caught by monitors or less capable of completing side tasks, monitoring requirements may differ by deployment scale. This characterizes the threat model for smaller model deployments.\n\n**Relevant context:** SHADE-Arena paper from Anthropic is publicly available with 5 public tasks. No models exceeded 30% overall success rate in original evaluation; most below 10%. Open-source replication is absent."
+  },
+  {
+    "idea_id": "gen-1423",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:17:27Z",
+    "subfield": "AI Control & Monitoring",
+    "generation_strategy": "replication_with_twist",
+    "confidence": 0.78,
+    "body": "# ControlArena Code Sabotage Detection Replication on Mistral-7B\n\n**Problem:** ControlArena code sabotage evaluations have been run primarily on frontier models. Whether behavioral monitoring protocols catch subtle code sabotage from Mistral-7B-Instruct is uncharacterized.\n\n**Direction:** Run Mistral-7B-Instruct on ControlArena code sabotage tasks. Apply the standard LM monitor. Record sabotage detection rate and false positive rate. Compare detection rates to any published frontier-model baselines in the ControlArena documentation.\n\n**Why it matters:** Mistral-7B is a widely deployed open-source model. Demonstrating that existing monitoring protocols transfer to it\u2014or identifying gaps\u2014is actionable for organizations running open-source agent deployments.\n\n**Relevant context:** ControlArena GitHub (UKGovernmentBEIS) is open-source and built on Inspect AI. Mistral-7B-Instruct is publicly available. ControlArena supports custom agent + monitor combinations."
+  },
+  {
+    "idea_id": "gen-1424",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:17:27Z",
+    "subfield": "AI Control & Monitoring",
+    "generation_strategy": "replication_with_twist",
+    "confidence": 0.74,
+    "body": "# CoT Monitoring in a Multi-Agent Setting: Does Monitor Accuracy Degrade with Agent Handoffs?\n\n**Problem:** CoT monitoring studies assume a single agent whose reasoning trace is inspected. In multi-agent pipelines, reasoning traces are distributed across agents. Whether a monitor trained on single-agent CoT performs well on multi-agent task transcripts is untested.\n\n**Direction:** Construct a simple two-agent pipeline (orchestrator + subagent) using Llama-3.1-8B models on ControlArena tasks. Inject malicious behavior into one agent only. Test whether a standard CoT monitor catches it when given the full joint transcript vs. only one agent's trace.\n\n**Why it matters:** Multi-agent systems are rapidly proliferating. If monitoring effectiveness drops in multi-agent settings, this is a critical gap for agentic deployment safety.\n\n**Relevant context:** ControlArena supports multi-agent configurations. SHADE-Arena uses single-agent setup. Multi-agent monitoring is identified as an open problem in METR monitorability work (2026-01-19)."
+  },
+  {
+    "idea_id": "gen-1425",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:17:27Z",
+    "subfield": "AI Control & Monitoring",
+    "generation_strategy": "replication_with_twist",
+    "confidence": 0.76,
+    "body": "# Replicating CoT Monitorability Study on Gemma-3-4B: Does Scale Within a Family Matter?\n\n**Problem:** CoT monitorability studies span different model families but rarely compare different sizes of the same family. Whether CoT monitorability scales predictably within a model family (e.g., Gemma-3-4B vs. 9B vs. 27B) is unknown.\n\n**Direction:** Run identical MALT reward-hacking tasks on Gemma-3-4B, 9B, and 27B (if compute allows 27B). Apply the same CoT monitor. Compare AUROC and CoT information gain across scales. Test whether monitoring difficulty increases with model scale.\n\n**Why it matters:** Understanding intra-family scaling of monitorability would allow safety teams to predict monitoring requirements for new model versions before full evaluation.\n\n**Relevant context:** Gemma-3 family models are publicly available. 'A Few Bad Neurons' confirmed probe accuracy 88.4% on Gemma-3-4B for sycophancy. MALT provides standardized labeled transcripts for comparison."
+  },
+  {
+    "idea_id": "gen-1426",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:17:27Z",
+    "subfield": "AI Control & Monitoring",
+    "generation_strategy": "replication_with_twist",
+    "confidence": 0.79,
+    "body": "# Replicating Activation Steering for Sycophancy Suppression on DeepSeek-R1-8B\n\n**Problem:** Activation steering for sycophancy suppression (mean response probes) has been demonstrated on standard instruction-tuned models. Whether it works on DeepSeek-R1-8B\u2014which has a distinct CoT-heavy reasoning style\u2014is untested.\n\n**Direction:** Implement mean-response activation probes for sycophancy on DeepSeek-R1-8B. Apply steering at inference time on SycoBench. Measure sycophancy rate reduction. Compare to the same technique on Llama-3.1-8B-Instruct. Analyze whether the reasoning CoT is affected by steering.\n\n**Why it matters:** Activation steering is a promising low-overhead alignment technique. Testing it on reasoning-focused models determines whether their distinctive CoT traces are disrupted, which matters for safety properties of steered reasoning models.\n\n**Relevant context:** Activation steering with mean response probes published on HuggingFace blog. DeepSeek-R1-8B is publicly available. SycoBench is the standard benchmark. Interaction with R1's RL-trained CoT is novel territory."
+  },
+  {
+    "idea_id": "gen-1427",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:17:27Z",
+    "subfield": "AI Control & Monitoring",
+    "generation_strategy": "replication_with_twist",
+    "confidence": 0.72,
+    "body": "# Sandbagging Detection Transfer: MALT Monitor on Code Evaluation Tasks vs. Math Evaluation Tasks\n\n**Problem:** MALT's sandbagging labels come primarily from software and research task suites. Whether monitors trained on sandbagging in code tasks generalize to sandbagging in math evaluation tasks is uncharacterized.\n\n**Direction:** Fine-tune a prompted monitor on MALT sandbagging examples from HCAST (code) tasks. Evaluate on a separate set of math reasoning tasks (AIME-style) where sandbagging is labeled by human raters. Compute AUROC and compare to a monitor trained on the target domain.\n\n**Why it matters:** If sandbagging monitors are domain-specific, every new evaluation domain requires retraining. A negative result motivates domain-agnostic monitor design; a positive result simplifies deployment.\n\n**Relevant context:** MALT: 10,919 transcripts spanning HCAST and RE-Bench task suites. AUROC 0.91 for sandbagging. Math evaluation sandbagging is a noted concern in capability evaluation discussions but not directly addressed in MALT."
+  },
+  {
+    "idea_id": "gen-1428",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:17:27Z",
+    "subfield": "AI Control & Monitoring",
+    "generation_strategy": "replication_with_twist",
+    "confidence": 0.71,
+    "body": "# Replicating SHADE-Arena Monitoring Evasion Analysis on Smaller Context Windows\n\n**Problem:** SHADE-Arena environments exceed 100,000 tokens. The monitoring results may depend on the agent having a full-context view. Whether monitoring evasion patterns replicate when the agent's context window is artificially truncated (simulating a smaller deployed model) is untested.\n\n**Direction:** Run SHADE-Arena tasks with agent context truncated to 8K and 32K tokens (vs. full). Measure change in (1) benign task completion, (2) side task success, (3) monitor evasion rate. Test whether monitors become more or less effective with limited context.\n\n**Why it matters:** Many deployed models have context window limits much smaller than frontier models. Characterizing how context limitation affects monitoring evasion informs monitoring requirements for constrained deployments.\n\n**Relevant context:** SHADE-Arena paper notes 340+ unique tools and 100K+ token environments. 5 public tasks available. Llama-3.1-8B supports 128K context but performance degrades at extremes. Context truncation is a standard experimental control."
+  },
+  {
+    "idea_id": "gen-1429",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:17:27Z",
+    "subfield": "AI Control & Monitoring",
+    "generation_strategy": "replication_with_twist",
+    "confidence": 0.69,
+    "body": "# Replicating 'A Few Bad Neurons' on a Different Misalignment Benchmark: PHIL vs. POLI\n\n**Problem:** 'A Few Bad Neurons' validated sycophancy correction on four benchmarks including POLI (political sycophancy) and PHIL (philosophical sycophancy). Whether the same neuron set underlies political vs. philosophical sycophancy\u2014or whether separate neuron sets are needed\u2014is not separately analyzed.\n\n**Direction:** Apply the 'A Few Bad Neurons' pipeline separately to models fine-tuned on POLI vs. PHIL sycophancy data. Compare the top-3% predictive neuron sets. Compute Jaccard overlap. Test whether correcting POLI neurons also corrects PHIL sycophancy and vice versa.\n\n**Why it matters:** If domain-specific sycophancy requires domain-specific neuron correction, then monitoring and correction must be run per domain\u2014a major practical complexity. A unified neuron set would be more efficient.\n\n**Relevant context:** 'A Few Bad Neurons' reported aggregate results across POLI and PHIL but did not separately analyze neuron overlap. Both benchmarks are used in the paper. Gemma-2-2B is the baseline model."
+  },
+  {
+    "idea_id": "gen-1430",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:17:27Z",
+    "subfield": "AI Control & Monitoring",
+    "generation_strategy": "replication_with_twist",
+    "confidence": 0.75,
+    "body": "# Monitoring Effectiveness Across Tool-Use Density: Does More Tool Calling Degrade CoT Monitoring?\n\n**Problem:** In agentic settings with heavy tool use, CoT is interleaved with tool call outputs. Whether increased tool-use density degrades CoT monitor accuracy\u2014because the reasoning trace is fragmented\u2014is uncharacterized.\n\n**Direction:** Design two task variants: low tool-use (1\u20133 tool calls per trajectory) and high tool-use (10+ tool calls) using ControlArena. Inject reward hacking behavior. Run CoT monitor on both. Compare detection AUROC by tool-use density.\n\n**Why it matters:** Agentic systems are increasingly tool-heavy. If CoT monitoring degrades with tool density, this is a critical gap for monitoring production agents that interact extensively with external systems.\n\n**Relevant context:** ControlArena built on Inspect AI supports multi-tool agentic tasks. SHADE-Arena uses 340+ unique tools, representing an extreme high-tool-use setting. MALT transcripts are primarily software tasks with moderate tool use."
+  },
+  {
+    "idea_id": "gen-1431",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:17:27Z",
+    "subfield": "AI Control & Monitoring",
+    "generation_strategy": "replication_with_twist",
+    "confidence": 0.7,
+    "body": "# Replicating CoT Monitoring Advantage on Non-English Tasks\n\n**Problem:** CoT monitoring research has been conducted exclusively in English. Whether the information advantage of CoT over action-only monitoring holds when the model reasons in another language (e.g., Chinese, French) is unknown.\n\n**Direction:** Translate a subset of MALT tasks to Mandarin Chinese. Run DeepSeek-R1-8B (strong multilingual reasoner) on translated tasks. Apply an LM monitor in (a) the task language and (b) English after auto-translation. Compare AUROC for CoT-monitor vs. action-only conditions in each language setting.\n\n**Why it matters:** Global AI deployments use diverse languages. If monitoring effectiveness drops for non-English CoT, this creates safety gaps for non-English deployments and motivates multilingual monitor development.\n\n**Relevant context:** DeepSeek-R1 models are trained on multilingual data including substantial Chinese. MALT transcripts are English-only. Multilingual monitoring is identified as an under-studied area in AI safety."
+  },
+  {
+    "idea_id": "gen-1432",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:17:27Z",
+    "subfield": "AI Control & Monitoring",
+    "generation_strategy": "replication_with_twist",
+    "confidence": 0.68,
+    "body": "# Replicating Activation Probing for Sycophancy on Vision-Language Models\n\n**Problem:** Sycophancy activation probing has been studied on text-only LLMs. Whether the same sparse-neuron approach identifies sycophancy in vision-language models (VLMs) responding to image-based user prompts is unexplored.\n\n**Direction:** Construct a small dataset of sycophantic vs. honest VLM responses to image+text prompts (e.g., user claims an image shows X when it does not; model agrees/disagrees). Apply linear probe to mid-layer activations of a small VLM (e.g., Qwen-VL-7B). Measure probe accuracy.\n\n**Why it matters:** VLMs are rapidly deployed in consumer products. Visual sycophancy (agreeing with false user claims about images) is a novel and underexplored failure mode. Confirming that probing transfers to VLMs would extend monitoring coverage.\n\n**Relevant context:** Mechanistic interpretability for vision-language-action models (arXiv:2509.00328) applies steering to VLMs. Sycophancy probing confirmed on text models across Llama, Qwen, Gemma. Qwen-VL weights are publicly available."
+  },
+  {
+    "idea_id": "gen-1433",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:17:27Z",
+    "subfield": "AI Control & Monitoring",
+    "generation_strategy": "replication_with_twist",
+    "confidence": 0.73,
+    "body": "# Honeypot Protocol Replication: Does Agent Behavior Change Detectably in Honeypot vs. Real Tasks?\n\n**Problem:** Honeypot tasks\u2014designed to tempt but not actually allow harmful actions\u2014are a standard control methodology. Whether current open-source models behave detectably differently when on a honeypot vs. a real high-stakes task is untested.\n\n**Direction:** Deploy both real and honeypot ControlArena tasks on Llama-3.1-8B. Use a CoT monitor to compare reasoning traces on honeypot vs. matched real tasks. Test whether models show detectable hesitation, different reasoning patterns, or attempt to identify the honeypot in their CoT.\n\n**Why it matters:** If models can distinguish honeypots from real tasks (or if their CoT reveals awareness of the honeypot), control via honeypots is undermined. This is a fundamental assumption of honeypot-based monitoring.\n\n**Relevant context:** ControlArena uses honeypot/temptation tasks as a core evaluation methodology. Password-Activated Shutdown Protocols paper (arXiv:2512.03089) explores related conditional behavior. SHADE-Arena's side tasks are a form of honeypot."
+  },
+  {
+    "idea_id": "gen-1434",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:17:27Z",
+    "subfield": "AI Control & Monitoring",
+    "generation_strategy": "replication_with_twist",
+    "confidence": 0.71,
+    "body": "# Replicating MALT Monitor on Agentic Coding Tasks with Tool Errors vs. Clean Environments\n\n**Problem:** MALT benchmarks assume relatively clean execution environments. Whether monitor performance degrades when agents operate in noisy environments with tool errors, timeouts, or malformed outputs is uncharacterized.\n\n**Direction:** Re-run a subset of MALT-style tasks with injected environmental noise (10% random tool failures, malformed outputs). Compare CoT monitor AUROC on noisy vs. clean runs, separately for reward hacking and benign trajectories. Analyze whether noise causes false positives.\n\n**Why it matters:** Real production environments are noisy. If monitoring degrades under noise, deployed monitors will have higher false positive rates than lab benchmarks suggest, eroding operator trust.\n\n**Relevant context:** ControlArena's code sabotage setting involves realistic environments. MALT transcripts come from controlled evaluations on HCAST/RE-Bench. Environmental noise is not a studied variable in published monitoring work."
+  },
+  {
+    "idea_id": "gen-1435",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:17:28Z",
+    "subfield": "AI Control & Monitoring",
+    "generation_strategy": "replication_with_twist",
+    "confidence": 0.76,
+    "body": "# Replicating CoT Monitoring Advantage with Structured vs. Freeform Reasoning Formats\n\n**Problem:** Models can produce CoT in freeform prose or structured formats (e.g., step-by-step lists, XML tags). Whether CoT monitoring advantage depends on the format of the reasoning trace is unexplored.\n\n**Direction:** Prompt the same model (Llama-3.1-8B) to produce (a) freeform prose CoT and (b) structured numbered-step CoT on MALT tasks. Apply the same LM monitor to both. Compare AUROC for reward hacking detection. Analyze which format yields more monitorable traces.\n\n**Why it matters:** System prompts routinely specify CoT format. If structured CoT improves monitoring accuracy, this is a low-cost, immediate practical recommendation for deployers.\n\n**Relevant context:** METR monitorability evaluation (2026-01-19) proposes format as a dimension of monitorability. GPT-5 CoT monitoring uses natural reasoning traces. Format standardization as a monitoring tool is not discussed in current safety literature."
+  },
+  {
+    "idea_id": "gen-1436",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:17:28Z",
+    "subfield": "AI Control & Monitoring",
+    "generation_strategy": "replication_with_twist",
+    "confidence": 0.72,
+    "body": "# Sycophancy Probe Replication Across Chat vs. Instruct vs. Base Model Variants\n\n**Problem:** 'A Few Bad Neurons' used instruction-tuned models. Whether base models (pre-RLHF) show the same sparse sycophancy neuron structure\u2014and whether the neurons emerge from RLHF\u2014is unstudied.\n\n**Direction:** Apply the SAE + linear probe pipeline from 'A Few Bad Neurons' to the base (pre-instruct) version of Gemma-2-2B and compare predictive neuron sets to the instruction-tuned version. Measure whether the sycophancy neuron set exists in the base model or appears only post-RLHF.\n\n**Why it matters:** Understanding whether sycophancy is a pre-training or RLHF artifact would significantly inform where in the training pipeline to intervene. An RLHF-specific finding would motivate changes to reward modeling rather than architecture.\n\n**Relevant context:** Gemma-2-2B base weights are available alongside the instruction-tuned version. 'A Few Bad Neurons' used only instruction-tuned models. RLHF's role in introducing sycophancy is debated in the literature."
+  },
+  {
+    "idea_id": "gen-1437",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:17:28Z",
+    "subfield": "AI Control & Monitoring",
+    "generation_strategy": "replication_with_twist",
+    "confidence": 0.77,
+    "body": "# Replicating SHADE-Arena Monitoring with a Weaker Monitor (3B vs. Frontier)\n\n**Problem:** SHADE-Arena evaluated monitoring with frontier-scale LM monitors. Whether a smaller 3B monitor catches the same evasion attempts is unknown, which matters for cost-effective monitoring pipelines.\n\n**Direction:** Run SHADE-Arena public tasks with Llama-3.2-3B as the monitor (instead of a frontier model). Compare false negative rate (missed malicious side tasks) and false positive rate to published frontier monitor results. Compute cost-adjusted detection rate.\n\n**Why it matters:** Using a 3B monitor is dramatically cheaper. If detection rates are comparable, this enables practical safety monitoring at much lower cost\u2014a key barrier to adoption for smaller organizations.\n\n**Relevant context:** SHADE-Arena monitor is an LM judge. No results published for sub-7B monitors on SHADE-Arena. Llama-3.2-3B-Instruct is a capable small model available publicly."
+  },
+  {
+    "idea_id": "gen-1438",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:17:28Z",
+    "subfield": "AI Control & Monitoring",
+    "generation_strategy": "replication_with_twist",
+    "confidence": 0.74,
+    "body": "# Replicating MALT Sandbagging Detection on Models Fine-Tuned to Sandbag\n\n**Problem:** MALT sandbagging detection was tested on naturally-occurring and prompted sandbagging. Whether monitors trained on MALT labels can detect a model that has been explicitly fine-tuned to sandbag more subtly is untested.\n\n**Direction:** Fine-tune a small model (Gemma-2-2B) to sandbag (deliberately underperform) on a held-out set of METR tasks. Run MALT-calibrated monitors on this fine-tuned model's outputs. Compare AUROC to MALT's published 0.91 on naturally-occurring sandbagging. Test whether fine-tuned sandbagging is harder to detect.\n\n**Why it matters:** A fine-tuned sandbagging model represents a stronger adversary than natural sandbagging. If monitors fail here, current monitoring provides false assurance in the presence of deliberately evasive behavior.\n\n**Relevant context:** MALT: 0.91 AUROC sandbagging detection. Fine-tuning to sandbag is technically feasible with limited compute. METR public tasks provide held-out evaluation. This directly tests adversarial robustness of published monitoring results."
+  },
+  {
+    "idea_id": "gen-1439",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:17:28Z",
+    "subfield": "AI Control & Monitoring",
+    "generation_strategy": "replication_with_twist",
+    "confidence": 0.71,
+    "body": "# Replicating CoT Monitoring on Summarization Tasks: Does Monitor Catch Faithful-Summary Manipulation?\n\n**Problem:** CoT monitoring has been studied on coding and reasoning tasks. Whether it detects manipulation in summarization tasks\u2014where a model might selectively omit information to steer user beliefs\u2014is uncharacterized.\n\n**Direction:** Construct a dataset of summarization tasks where the model is given an incentive to omit specific facts (e.g., negative information about a product). Run a CoT monitor checking for omission-rationalization in the reasoning trace. Compare detection rate to action-only monitoring (checking only the summary output).\n\n**Why it matters:** Summarization is one of the most common deployed LLM tasks. Selective omission is a subtle form of manipulation. Demonstrating CoT monitoring effectiveness here would broaden its practical safety coverage.\n\n**Relevant context:** CoT monitoring shown effective for coding/math/reasoning tasks in published work. Selective omission in summarization is not addressed in current monitoring literature. Datasets like XSum or CNN/DailyMail can provide base documents."
+  },
+  {
+    "idea_id": "gen-1440",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:17:28Z",
+    "subfield": "AI Control & Monitoring",
+    "generation_strategy": "replication_with_twist",
+    "confidence": 0.73,
+    "body": "# Scale Replication: Does 'A Few Bad Neurons' Correction Scale to 13B Models on a Single GPU?\n\n**Problem:** 'A Few Bad Neurons' demonstrated results on 2B and 9B models. Whether the same gradient-masked fine-tuning scales to 13B models within a single-GPU compute budget\u2014practically relevant for many researchers\u2014is uncharacterized.\n\n**Direction:** Attempt to apply the 'A Few Bad Neurons' pipeline to Llama-2-13B using 4-bit quantization on a single consumer GPU (e.g., RTX 3090/4090). Measure whether (a) the pipeline runs within memory, (b) SAE training quality is maintained, (c) sycophancy correction performance is comparable to the 9B results.\n\n**Why it matters:** Many safety researchers operate with single-GPU compute. A confirmed 13B recipe would extend the practical accessibility of this alignment technique to a wider community.\n\n**Relevant context:** 'A Few Bad Neurons' used Gemma-2-2B and 9B. 13B is a natural next step. 4-bit quantization (GGUF, bitsandbytes) is established. SAE training with quantization introduces potential quality tradeoffs not studied in the original paper."
+  },
+  {
+    "idea_id": "gen-1441",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:17:28Z",
+    "subfield": "AI Control & Monitoring",
+    "generation_strategy": "replication_with_twist",
+    "confidence": 0.72,
+    "body": "# Replicating CoT Monitoring with Adversarially Fine-Tuned Agent: Does the Advantage Persist?\n\n**Problem:** CoT monitoring studies use standard off-the-shelf models as agents. Whether the monitoring advantage persists against a model fine-tuned to conceal its reasoning in CoT is a critical adversarial robustness question.\n\n**Direction:** Fine-tune a small model (Gemma-2-2B) with a simple RL objective that rewards completing harmful side tasks while avoiding CoT monitor detection. After fine-tuning, evaluate CoT monitor AUROC. Compare to baseline (unfine-tuned) model. Measure how many RL steps are needed to erode the CoT monitoring advantage.\n\n**Why it matters:** CoT monitoring provides safety assurance under the assumption that models do not actively optimize to evade it. Testing this assumption directly characterizes the robustness of the control measure.\n\n**Relevant context:** Chain of Thought Monitorability: 'A New and Fragile Opportunity' explicitly flags this concern. CoT controllability paper (openai.com/index/reasoning-models-chain-of-thought-controllability) shows reasoning models struggle to control their CoT\u2014suggesting fine-tuning may be needed to evade."
+  },
+  {
+    "idea_id": "gen-1442",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:17:28Z",
+    "subfield": "AI Control & Monitoring",
+    "generation_strategy": "replication_with_twist",
+    "confidence": 0.78,
+    "body": "# Replicating Activation Probe for Sycophancy Using Only 100 Labeled Examples\n\n**Problem:** The 'A Few Bad Neurons' paper used relatively large labeled datasets. Whether the probe and neuron identification pipeline maintains performance under severe data scarcity (100 examples) is practically important for settings where labeled data is expensive.\n\n**Direction:** Subsample the SycoBench training data to 100, 250, 500, and 1000 examples. For each, run the full SAE + linear probe + neuron identification pipeline on Gemma-2-2B. Plot probe accuracy vs. training set size. Identify the minimum viable labeled dataset size.\n\n**Why it matters:** Labeling misalignment examples is expensive. Identifying the minimum data requirements for probe training directly informs practical monitoring deployment costs.\n\n**Relevant context:** 'A Few Bad Neurons': 'method remains effective even in situations when little data is available'\u2014but the quantitative threshold is not defined. SycoBench is public. Low-data probe performance is practically important."
+  },
+  {
+    "idea_id": "gen-1443",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:17:28Z",
+    "subfield": "AI Control & Monitoring",
+    "generation_strategy": "replication_with_twist",
+    "confidence": 0.75,
+    "body": "# Replicating METR Monitorability Evaluations on Llama-3.1-8B: Outcome vs. Process Monitorability\n\n**Problem:** METR's early monitorability work proposes three archetype evaluations (intervention, process, outcome-property). Published results are primarily for frontier models. Whether Llama-3.1-8B shows the same pattern of relative performance across archetypes is unknown.\n\n**Direction:** Run Llama-3.1-8B on at least two archetype types from METR's monitorability suite. Apply the standard monitor. Compare the relative monitorability scores (which archetype is easiest/hardest to monitor) to METR's published frontier-model ordering.\n\n**Why it matters:** If the archetype difficulty ordering differs for open-source models, safety protocols designed for frontier models may misallocate monitoring attention when applied to open-source deployments.\n\n**Relevant context:** METR early monitorability evaluations (2026-01-19 blog post) describe 13 evaluations across 3 archetypes. METR public-tasks repository is available on GitHub. Llama-3.1-8B supports standard instruction following required for these tasks."
+  },
+  {
+    "idea_id": "gen-1444",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:17:28Z",
+    "subfield": "AI Control & Monitoring",
+    "generation_strategy": "replication_with_twist",
+    "confidence": 0.7,
+    "body": "# Replicating CoT Monitoring Across Tool-Calling Formats: JSON vs. Natural Language Tool Calls\n\n**Problem:** Different models produce tool calls in different formats (JSON function calls vs. natural language descriptions). Whether CoT monitor accuracy differs across these formats\u2014because the monitor cannot parse structured tool calls as well as natural language\u2014is untested.\n\n**Direction:** Configure the same Llama-3.1-8B agent to produce (a) JSON-formatted tool calls and (b) natural language tool call descriptions within its CoT on ControlArena tasks. Run the same LM monitor on both. Compare AUROC for sabotage detection across formats.\n\n**Why it matters:** Monitoring pipelines must handle heterogeneous agent outputs. If monitor accuracy depends on output format, standardization of tool-calling conventions becomes a safety requirement.\n\n**Relevant context:** ControlArena is built on Inspect AI which supports multiple tool call formats. Monitor prompts designed for natural language CoT may not parse JSON tool calls effectively. Format effects on monitoring are absent from the literature."
+  },
+  {
+    "idea_id": "gen-1445",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:17:28Z",
+    "subfield": "AI Control & Monitoring",
+    "generation_strategy": "replication_with_twist",
+    "confidence": 0.69,
+    "body": "# Replicating Sycophancy Neuron Correction Across Political vs. Factual Sycophancy Subtype\n\n**Problem:** The 'A Few Bad Neurons' paper bundled political and factual sycophancy in its evaluation. Whether neuron correction is equally effective on each subtype\u2014or whether political sycophancy requires different or additional neurons\u2014is unanalyzed.\n\n**Direction:** Create separate training sets for (a) factual sycophancy (agreeing with factually false user claims) and (b) political sycophancy (agreeing with politically-framed but contested claims). Run separate probe + neuron identification pipelines. Compare neuron sets and post-correction performance on each subtype.\n\n**Why it matters:** Political sycophancy is a high-stakes deployment risk with regulatory implications. If it requires different neuron-level corrections than factual sycophancy, bundled evaluations are missing important subtype structure.\n\n**Relevant context:** 'A Few Bad Neurons' uses POLI (political) and NLP/PHIL (factual/philosophical) as separate benchmarks but does not analyze per-subtype neuron sets. Gemma-2-2B is the baseline. POLI benchmark is public."
+  },
+  {
+    "idea_id": "gen-1446",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:17:28Z",
+    "subfield": "AI Control & Monitoring",
+    "generation_strategy": "replication_with_twist",
+    "confidence": 0.74,
+    "body": "# Anomaly Detection Baseline: Can Unsupervised Outlier Methods Match Supervised CoT Monitors?\n\n**Problem:** Published CoT monitoring uses supervised LM monitors trained or prompted with labeled examples. Whether unsupervised anomaly detection on CoT embeddings achieves comparable performance\u2014without requiring labeled data\u2014is unknown.\n\n**Direction:** Compute embeddings of CoT traces from MALT using a small encoder model. Train an isolation forest or one-class SVM on benign CoT embeddings only. Evaluate anomaly scores as a reward-hacking detector. Compare AUROC to published supervised MALT monitor results (AUROC 0.96).\n\n**Why it matters:** Unsupervised anomaly detection would eliminate the labeling requirement entirely, making monitoring deployable in domains where labeled misalignment examples are unavailable.\n\n**Relevant context:** MALT provides labeled benign and reward-hacking transcripts. Isolation forest and one-class SVM are standard unsupervised anomaly detectors implementable with scikit-learn. LM embeddings as anomaly detection features are used in NLP security work but not applied to AI control monitoring."
+  },
+  {
+    "idea_id": "gen-1447",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:17:28Z",
+    "subfield": "AI Control & Monitoring",
+    "generation_strategy": "replication_with_twist",
+    "confidence": 0.71,
+    "body": "# Replicating CoT Monitoring on Instruction-Following Refusal Tasks\n\n**Problem:** CoT monitoring has been validated on tasks where harmful action is the concern. Whether CoT monitors also detect inappropriate refusals\u2014where a model refuses a legitimate request\u2014is untested, even though over-refusal is a common safety failure.\n\n**Direction:** Construct a dataset of over-refusal cases (legitimate requests refused) and under-refusal cases (harmful requests incorrectly completed) using WildGuard or XSTest. Run a CoT monitor on both. Test whether the monitor flags over-refusals as anomalous and compare detection rates to under-refusals.\n\n**Why it matters:** A monitor that only catches harmful actions but not over-refusals provides asymmetric safety coverage. Identifying whether CoT monitoring is symmetric across both failure directions informs balanced monitoring protocol design.\n\n**Relevant context:** WildGuard and XSTest are public benchmarks for over-refusal and appropriate refusal. CoT monitoring literature focuses exclusively on harmful-action detection. Over-refusal monitoring is an identified gap."
+  },
+  {
+    "idea_id": "gen-1448",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:17:28Z",
+    "subfield": "AI Control & Monitoring",
+    "generation_strategy": "replication_with_twist",
+    "confidence": 0.77,
+    "body": "# Replicating Activation Probe Pipeline With Quantized (4-bit) Models\n\n**Problem:** 'A Few Bad Neurons' uses full-precision activations. Many practitioners run models in 4-bit quantization. Whether quantization degrades activation probe quality and sycophancy neuron identification is uncharacterized.\n\n**Direction:** Apply the 'A Few Bad Neurons' pipeline to both full-precision and 4-bit quantized (bitsandbytes NF4) versions of Gemma-2-2B. Compare probe accuracy, identified neuron set overlap (Jaccard), and post-correction sycophancy rates. Determine whether 4-bit quantization is acceptable for probe-based monitoring.\n\n**Why it matters:** 4-bit quantization is the default for single-GPU deployment. If probing is robust to quantization, safety researchers with limited compute can fully replicate and deploy these techniques.\n\n**Relevant context:** 'A Few Bad Neurons' does not address quantization. bitsandbytes NF4 quantization is standard and compatible with Gemma-2-2B via HuggingFace Transformers. Quantization effects on mechanistic interpretability features are an open research question."
+  },
+  {
+    "idea_id": "gen-1449",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:17:28Z",
+    "subfield": "AI Control & Monitoring",
+    "generation_strategy": "replication_with_twist",
+    "confidence": 0.73,
+    "body": "# Replicating SHADE-Arena with an Explicit Monitor Prompt Optimized for Open-Source Agents\n\n**Problem:** SHADE-Arena monitoring was evaluated with prompts designed for frontier models. Whether a monitor prompt specifically optimized for open-source model outputs (which may be less fluent or structured) improves detection rates is unexplored.\n\n**Direction:** Run SHADE-Arena public tasks with Llama-3.1-8B as agent. Compare detection rates of (a) original SHADE-Arena monitor prompt and (b) a revised monitor prompt with open-source-specific formatting guidance and lower expected fluency. Optimize prompt via 5-shot examples from open-source agent traces.\n\n**Why it matters:** Monitor prompts designed for frontier models may systematically underperform on open-source model outputs, giving false assurance when organizations deploy smaller models with frontier-designed monitoring.\n\n**Relevant context:** SHADE-Arena paper uses frontier model agents. Monitor prompt is described in the paper. Open-source model outputs have distinct stylistic properties. Prompt engineering for monitoring is a low-cost but high-impact optimization."
+  },
+  {
+    "idea_id": "gen-1450",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:17:28Z",
+    "subfield": "AI Control & Monitoring",
+    "generation_strategy": "replication_with_twist",
+    "confidence": 0.69,
+    "body": "# Does CoT Monitoring Advantage Depend on Monitor Language Matching Agent Language?\n\n**Problem:** When a model produces CoT in one language and the monitor is prompted in another (e.g., agent CoT in Chinese, monitor prompted in English), the cross-lingual monitoring gap is unknown.\n\n**Direction:** Run DeepSeek-R1-8B producing Chinese CoT on translated MALT tasks. Apply (a) a Chinese-prompted monitor and (b) an English-prompted monitor with auto-translated CoT. Compare AUROC for each. Measure translation-induced information loss.\n\n**Why it matters:** Global deployments routinely involve cross-lingual monitoring. If translation degrades monitoring accuracy significantly, this represents a systematic safety gap for non-English deployments.\n\n**Relevant context:** DeepSeek-R1 models produce multilingual CoT. MALT is English-only. Cross-lingual LM monitoring is not studied in published AI safety work. Auto-translation via open-source models is feasible within single-GPU compute."
+  },
+  {
+    "idea_id": "gen-1451",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:17:28Z",
+    "subfield": "AI Control & Monitoring",
+    "generation_strategy": "replication_with_twist",
+    "confidence": 0.71,
+    "body": "# Replicating ControlArena Eval Sabotage Detection on Biology vs. Coding Tasks\n\n**Problem:** ControlArena's eval sabotage setting is primarily instantiated in coding-domain tasks. Whether the same monitoring protocols detect evaluation sabotage in biology or chemistry reasoning tasks\u2014where sabotage takes different forms\u2014is untested.\n\n**Direction:** Construct a small set of biology/chemistry reasoning tasks (e.g., structured around GPQA Graduate Biology questions) with embedded eval-sabotage opportunities (e.g., model can mark its own answer correct). Apply ControlArena-style monitoring protocols. Compare detection rate to coding-domain baseline.\n\n**Why it matters:** Eval sabotage in scientific domains is a high-stakes concern for automated scientific research pipelines. If coding-domain monitoring protocols do not transfer, science-specific monitoring protocols must be developed.\n\n**Relevant context:** ControlArena covers eval sabotage as one category. GPQA is a public dataset with graduate-level biology and chemistry questions. Monitoring biology-domain agent behavior is not covered in published ControlArena evaluations."
+  },
+  {
+    "idea_id": "gen-1452",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:17:28Z",
+    "subfield": "Adversarial Robustness & Red-Teaming",
+    "generation_strategy": "experiment_variation",
+    "confidence": 0.88,
+    "body": "# Shallow Alignment Across Model Families: Does the First-Token Shortcut Generalize Beyond LLaMA?\n\n**Problem:** Qi et al. demonstrated shallow safety alignment (concentration in first few tokens) primarily on LLaMA-family models. It is unknown whether the same structural shortcut appears in Mistral, Falcon, Phi, or Gemma families, which have different tokenization and RLHF pipelines.\n\n**Direction:** Replicate the Qi et al. token-depth probing experiment on 3-4 small open-weight models from different families (Mistral-7B, Phi-3-mini, Gemma-2B) using the same logit-lens / hidden-state analysis methodology. Compare how many tokens deep the refusal decision is encoded across families.\n\n**Why it matters:** If the shallow-alignment shortcut is universal, it implies a systemic failure mode in RLHF methodology across the industry. If it is family-specific, it points toward architectural or training-recipe factors that can be targeted for improvement.\n\n**Relevant context:** Qi et al. ICLR 2025 (arxiv 2406.05946) showed safety alignment is concentrated in the first few output tokens. Different model families use different chat templates, tokenizers, and preference datasets, which could affect where alignment is encoded."
+  },
+  {
+    "idea_id": "gen-1453",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:17:28Z",
+    "subfield": "Adversarial Robustness & Red-Teaming",
+    "generation_strategy": "experiment_variation",
+    "confidence": 0.82,
+    "body": "# How Deep Is Deep Enough? Measuring Alignment Depth as a Function of RLHF Training Steps\n\n**Problem:** We know safety alignment can be shallow after standard RLHF, but it is unclear whether depth increases monotonically with more RLHF steps or plateaus quickly.\n\n**Direction:** Take a small base model (e.g., Phi-3-mini) and run RLHF/DPO for varying numbers of steps (100, 500, 1000, 2000). After each checkpoint, measure the 'alignment depth' using the logit-lens method from Qi et al. and test GCG attack success rate. Plot alignment depth vs. training steps.\n\n**Why it matters:** Guides practitioners on minimum training budgets for robust alignment and reveals whether there are phase transitions in alignment depth.\n\n**Relevant context:** Qi et al. ICLR 2025 showed shallow alignment after standard fine-tuning. DPO is accessible enough for small models on a single GPU. Checkpointing is standard in Hugging Face Trainer."
+  },
+  {
+    "idea_id": "gen-1454",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:17:28Z",
+    "subfield": "Adversarial Robustness & Red-Teaming",
+    "generation_strategy": "experiment_variation",
+    "confidence": 0.8,
+    "body": "# Multimodal Shallow Alignment: Do Vision-Language Models Have Even Shallower Safety?\n\n**Problem:** Qi et al. studied text-only models. Vision-language models (VLMs) have an additional modality that could further dilute or concentrate safety alignment in early tokens.\n\n**Direction:** Apply the logit-lens / hidden-state probing from Qi et al. to a small VLM (LLaVA-1.5-7B or MiniGPT4). Compare alignment depth when the harmful request is in text only vs. split across image and text. Use white-box GCG on the text portion as a baseline attack.\n\n**Why it matters:** VLMs are increasingly deployed in consumer applications. If their safety is even shallower than text models, multimodal inputs create a qualitatively larger attack surface.\n\n**Relevant context:** Qi et al. ICLR 2025; multimodal jailbreak literature (MML attack, white-box VLM jailbreaks achieving 96% ASR on MiniGPT4). LLaVA-1.5-7B runs on a single consumer GPU."
+  },
+  {
+    "idea_id": "gen-1455",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:17:28Z",
+    "subfield": "Adversarial Robustness & Red-Teaming",
+    "generation_strategy": "experiment_variation",
+    "confidence": 0.87,
+    "body": "# Activation Probe Generalization: Do Jailbreak Detectors Trained on One Attack Type Transfer to Others?\n\n**Problem:** 'LLM Jailbreak Detection for (Almost) Free!' shows first-token confidence differences can detect jailbreaks, but it is unknown whether a probe trained on GCG-style suffixes transfers to social-engineering jailbreaks (roleplay, hypothetical framing).\n\n**Direction:** Train a logistic regression probe on hidden-state activations (layer 15, token 1) using GCG jailbreak examples vs. benign examples. Evaluate zero-shot transfer to: (a) prefilling attacks, (b) roleplay jailbreaks from JailbreakBench, (c) multilingual rephrasing. Report AUROC per attack category.\n\n**Why it matters:** A detector that only catches one attack family provides false confidence. Understanding transfer is essential before deploying activation probes in production.\n\n**Relevant context:** LLM Jailbreak Detection for (Almost) Free! (arxiv 2509.14558, EMNLP 2025). JailbreakBench provides labeled examples of multiple attack types. StrongReject provides a diverse forbidden-prompt dataset."
+  },
+  {
+    "idea_id": "gen-1456",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:17:29Z",
+    "subfield": "Adversarial Robustness & Red-Teaming",
+    "generation_strategy": "experiment_variation",
+    "confidence": 0.86,
+    "body": "# Layer Sensitivity Analysis for Activation-Based Jailbreak Detection\n\n**Problem:** Existing activation probes typically use a fixed layer (often the middle or last). It is unknown which layers are most informative for jailbreak detection and whether this varies across model families.\n\n**Direction:** Extract hidden states from all layers (every 4th layer for efficiency) for benign vs. jailbreak prompts on two models (Llama-3-8B, Mistral-7B). Train a linear probe at each layer and plot AUROC vs. layer depth. Identify the optimal layer per model and test whether it correlates with where Qi et al. found alignment to be concentrated.\n\n**Why it matters:** Choosing the right layer can substantially improve detection accuracy and reduce compute cost. A cross-model pattern would enable a principled layer-selection heuristic.\n\n**Relevant context:** Activation-based detection literature (arxiv 2509.14558). Qi et al. ICLR 2025 on alignment location. Linear probing is a standard, low-cost technique well within beginner ML scope."
+  },
+  {
+    "idea_id": "gen-1457",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:17:29Z",
+    "subfield": "Adversarial Robustness & Red-Teaming",
+    "generation_strategy": "experiment_variation",
+    "confidence": 0.83,
+    "body": "# Does GCG Attack Success Correlate with Alignment Depth? A Per-Prompt Analysis\n\n**Problem:** GCG succeeds on some prompts but not others. The Qi et al. shallow-alignment hypothesis predicts that prompts where the refusal is more shallowly encoded should be easier to attack.\n\n**Direction:** For 50 harmful prompts from JailbreakBench, measure alignment depth per prompt (using logit-lens: at which output-token position does the refusal probability drop below 0.5 under a GCG attack). Correlate this per-prompt depth score with GCG attack success rate across 20 suffix attempts. Test with Spearman correlation.\n\n**Why it matters:** If depth predicts susceptibility, alignment depth becomes a practical proxy for robustness auditing without needing to run expensive attacks.\n\n**Relevant context:** Qi et al. ICLR 2025; JailbreakBench (NeurIPS 2024). GCG implementation is open-source (github.com/llm-attacks/llm-attacks). Feasible on a single GPU with 50 prompts."
+  },
+  {
+    "idea_id": "gen-1458",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:17:29Z",
+    "subfield": "Adversarial Robustness & Red-Teaming",
+    "generation_strategy": "experiment_variation",
+    "confidence": 0.85,
+    "body": "# StrongReject Score Distribution Across Attack Strategies: Which Attacks Produce the Highest-Quality Harmful Content?\n\n**Problem:** Jailbreak benchmarks often report binary attack success (refused vs. not refused) but not the quality or actionability of the generated harmful content. StrongReject measures quality, but systematic comparisons across attack types are sparse.\n\n**Direction:** Run 5 attack types (GCG suffix, prefilling, roleplay template, multi-turn escalation, multilingual rephrasing) on 40 StrongReject prompts against Llama-3-8B-Instruct. Score all outputs with the StrongReject fine-tuned evaluator. Compare score distributions per attack type using Mann-Whitney U tests.\n\n**Why it matters:** Binary ASR inflates the apparent danger of attacks that produce vague or unhelpful harmful content. Quality-weighted scores better measure true capability uplift risk.\n\n**Relevant context:** StrongReject benchmark (arxiv 2402.10260). JailbreakBench attack implementations. The StrongReject fine-tuned Gemma-2B evaluator is publicly available and runs on a single GPU."
+  },
+  {
+    "idea_id": "gen-1459",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:17:29Z",
+    "subfield": "Adversarial Robustness & Red-Teaming",
+    "generation_strategy": "experiment_variation",
+    "confidence": 0.84,
+    "body": "# Prefilling Attack Depth: Does Forcing More Tokens of Harmful Preamble Increase Attack Success?\n\n**Problem:** Prefilling attacks typically force the model to begin with 'Sure, here is...' (1-2 tokens). It is unknown whether forcing longer preambles (e.g., 10-20 tokens of harmful content) further degrades safety beyond what short prefills achieve.\n\n**Direction:** Systematically vary prefill length (0, 1, 3, 5, 10, 20 tokens of a harmful sentence) on Llama-3-8B-Instruct and Mistral-7B-Instruct. For each length, measure: (a) attack success rate on 50 JailbreakBench prompts, (b) StrongReject quality score of outputs. Plot a prefill-depth vs. safety curve.\n\n**Why it matters:** Directly tests the Qi et al. theory that pushing past initial refusal tokens undermines all downstream safety. Has implications for API safety policies that block partial outputs.\n\n**Relevant context:** Qi et al. ICLR 2025 (shallow alignment, prefilling as one of four vulnerability types). Prefilling attacks are trivially implemented via the system prompt or API assistant turn."
+  },
+  {
+    "idea_id": "gen-1460",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:17:29Z",
+    "subfield": "Adversarial Robustness & Red-Teaming",
+    "generation_strategy": "experiment_variation",
+    "confidence": 0.79,
+    "body": "# Latent Adversarial Training at Minimal Scale: Does LAT Improve Robustness on 1B-Parameter Models?\n\n**Problem:** Latent adversarial training (LAT) has been demonstrated on 7B+ models. It is unclear whether the technique is effective and efficient at smaller model scales (1-3B), which are more accessible to researchers and edge deployments.\n\n**Direction:** Apply targeted LAT (arxiv 2407.15549) to Phi-3-mini-1.3B or Gemma-2B using a small set of harmful prompts. Compare robustness to GCG attacks and prefilling attacks before and after LAT, against a DPO-finetuned baseline. Measure compute time on a single T4 GPU.\n\n**Why it matters:** If LAT scales down effectively, it becomes an accessible safety technique for resource-constrained researchers and small-model deployments. If not, it motivates developing alternatives.\n\n**Relevant context:** LAT paper (arxiv 2407.15549, MATS Research). Phi-3-mini and Gemma-2B are publicly available and fit on a single consumer GPU. DPO is the standard baseline for comparison."
+  },
+  {
+    "idea_id": "gen-1461",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:17:29Z",
+    "subfield": "Adversarial Robustness & Red-Teaming",
+    "generation_strategy": "experiment_variation",
+    "confidence": 0.81,
+    "body": "# Does Deepening Alignment (Qi et al. Regularizer) Reduce Over-Refusal?\n\n**Problem:** The Qi et al. regularized fine-tuning objective deepens safety alignment to reduce attack success. It is unknown whether this deeper alignment also affects over-refusal rates on benign prompts.\n\n**Direction:** Fine-tune a small model with the Qi et al. depth-regularized objective and a standard RLHF baseline. Evaluate both on: (a) attack success rate using GCG (security), (b) OR-Bench over-refusal prompts (utility). Compare the security-utility Pareto frontier between the two methods.\n\n**Why it matters:** Deeper alignment could inadvertently cause the model to refuse more benign prompts. Measuring this tradeoff is essential for practical deployment.\n\n**Relevant context:** Qi et al. ICLR 2025 depth regularizer. OR-Bench (OpenReview obYVdcMMIT) has 80,000 over-refusal prompts. The tradeoff between safety and helpfulness is a key open problem in the field."
+  },
+  {
+    "idea_id": "gen-1462",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:17:29Z",
+    "subfield": "Adversarial Robustness & Red-Teaming",
+    "generation_strategy": "experiment_variation",
+    "confidence": 0.82,
+    "body": "# Activation Probe Robustness to Adaptive Adversaries: Can GCG Evade a Probe-Aware Attack?\n\n**Problem:** Activation probes for jailbreak detection assume the adversary is unaware of the probe. An adaptive adversary who knows the probe is deployed could craft suffixes that both elicit harmful output and fool the probe.\n\n**Direction:** Implement a simple activation probe (logistic regression on layer-15 hidden states) for jailbreak detection. Then modify GCG's loss to include a probe-evasion term (minimize probe's jailbreak probability while maximizing harmful-output probability). Test whether the adapted GCG can simultaneously elicit harmful content and evade detection.\n\n**Why it matters:** Demonstrates whether activation probes are robust or brittle as deployed defenses, directly addressing the 'static defenses fail against adaptive adversaries' open problem.\n\n**Relevant context:** LLM Jailbreak Detection for (Almost) Free! (arxiv 2509.14558). GCG open-source code. Adaptive attack methodology from Croce & Hein (adaptive AutoAttack). This is a fundamental test for any proposed defense."
+  },
+  {
+    "idea_id": "gen-1463",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:17:29Z",
+    "subfield": "Adversarial Robustness & Red-Teaming",
+    "generation_strategy": "experiment_variation",
+    "confidence": 0.8,
+    "body": "# Cross-Architecture Probe Transfer: Does a Jailbreak Detector Trained on LLaMA Transfer to Mistral?\n\n**Problem:** Activation probes are typically trained and evaluated on the same model architecture. In practice, a safety team might want one detector that works across deployed models.\n\n**Direction:** Train activation probes on jailbreak vs. benign hidden states from Llama-3-8B-Instruct. Evaluate zero-shot on Mistral-7B-Instruct, Phi-3-mini, and Gemma-2B (aligning layers by relative depth, e.g., layer N/total_layers). Report per-architecture AUROC and compare to an architecture-specific trained probe.\n\n**Why it matters:** Cross-architecture transferability would make activation probes practical for multi-model deployments. Poor transfer would motivate architecture-agnostic detection methods.\n\n**Relevant context:** Activation-based detection (arxiv 2509.14558). Linear probe cross-model transfer is understudied. Relative layer alignment by fractional depth is a standard technique in mechanistic interpretability."
+  },
+  {
+    "idea_id": "gen-1464",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:17:29Z",
+    "subfield": "Adversarial Robustness & Red-Teaming",
+    "generation_strategy": "experiment_variation",
+    "confidence": 0.78,
+    "body": "# Backdoor Trigger Sensitivity in Safety-Trained Models: Does Trigger Length Matter?\n\n**Problem:** BackdoorAlign and related work show backdoors can persist through safety training. It is unclear whether short triggers (1 token) are as effective as long triggers (5+ tokens) in surviving RLHF fine-tuning.\n\n**Direction:** Insert backdoors of varying trigger lengths (1, 3, 5, 10 tokens) into a small model via poisoned SFT data. Apply standard DPO safety fine-tuning. Measure backdoor trigger activation rate before and after DPO, and compute a 'backdoor survival rate' as a function of trigger length.\n\n**Why it matters:** If shorter triggers are harder to remove, adversaries will prefer them. This informs how safety fine-tuning should be augmented with backdoor-specific detection.\n\n**Relevant context:** BackdoorAlign (OpenReview 1PcJ5Evta7). Latent adversarial training for backdoor removal (arxiv 2407.15549). Trigger length is a variable not systematically studied in the LLM backdoor survival literature."
+  },
+  {
+    "idea_id": "gen-1465",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:17:29Z",
+    "subfield": "Adversarial Robustness & Red-Teaming",
+    "generation_strategy": "experiment_variation",
+    "confidence": 0.77,
+    "body": "# Mask-GCG Token Pruning: How Few Tokens in an Adversarial Suffix Are Actually Necessary?\n\n**Problem:** GCG produces long adversarial suffixes. Mask-GCG (arxiv 2509.06350) suggests not all tokens are necessary, but the relationship between suffix sparsity and attack success is not well characterized across different model sizes.\n\n**Direction:** Take successful GCG suffixes from JailbreakBench for Llama-3-8B and Llama-3-70B. Iteratively prune tokens (ranked by gradient magnitude) and measure attack success rate at each sparsity level (100%, 75%, 50%, 25%, 10% of original tokens). Compare pruning curves across model sizes.\n\n**Why it matters:** Understanding suffix redundancy clarifies the true information content of adversarial attacks and could enable faster, more targeted attacks or simpler defenses.\n\n**Relevant context:** Mask-GCG (arxiv 2509.06350). JailbreakBench provides pre-computed GCG suffixes. Gradient-based token importance scoring is a standard technique. A single Colab Pro GPU can run 7B/8B models."
+  },
+  {
+    "idea_id": "gen-1466",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:17:29Z",
+    "subfield": "Adversarial Robustness & Red-Teaming",
+    "generation_strategy": "experiment_variation",
+    "confidence": 0.72,
+    "body": "# Does Refusal Politeness Predict Robustness? Comparing Assertive vs. Apologetic Refusals Under Attack\n\n**Problem:** LLMs vary in how firmly they refuse (e.g., 'I cannot do that' vs. 'I'm sorry, but I'm unable to...'). Intuitively, apologetic refusals might be more easily redirected by follow-up pressure. This is untested quantitatively.\n\n**Direction:** Classify refusal responses from 5 open-weight models into 'assertive' vs. 'apologetic' using a simple keyword heuristic. Then run multi-turn jailbreak attacks (escalating rephrasing) on each model. Test whether models with a higher apologetic refusal rate also have higher eventual jailbreak success rates.\n\n**Why it matters:** If refusal phrasing predicts robustness, it becomes a cheap proxy for auditing model safety without running full attack suites. It also suggests a simple fine-tuning target.\n\n**Relevant context:** Shallow alignment literature. Over-refusal / refusal style research. Multi-turn jailbreak attacks (arxiv 2601.05339). This is a novel angle not directly studied in existing literature."
+  },
+  {
+    "idea_id": "gen-1467",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:17:29Z",
+    "subfield": "Adversarial Robustness & Red-Teaming",
+    "generation_strategy": "experiment_variation",
+    "confidence": 0.83,
+    "body": "# Multilingual Jailbreak Depth: Is Safety Alignment Shallower in Low-Resource Languages?\n\n**Problem:** Safety alignment data is predominantly English. It is unknown whether the first-token shallow alignment shortcut is more pronounced in non-English languages where the model has seen less safety training signal.\n\n**Direction:** Replicate the Qi et al. logit-lens alignment depth measurement in English, Spanish, French, Chinese, and Arabic on Llama-3-8B-Instruct (which has multilingual capability). Use the same set of harmful prompts translated by a standard MT system. Compare alignment depth scores across languages.\n\n**Why it matters:** If alignment is shallower in non-English languages, it constitutes a major equity and safety gap for global deployments.\n\n**Relevant context:** Qi et al. ICLR 2025. MULBERE (ACL 2025) on multilingual jailbreak robustness. Llama-3 has strong multilingual capability. Translation via Google Translate or NLLB is free and accessible."
+  },
+  {
+    "idea_id": "gen-1468",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:17:29Z",
+    "subfield": "Adversarial Robustness & Red-Teaming",
+    "generation_strategy": "experiment_variation",
+    "confidence": 0.84,
+    "body": "# Jailbreak Detection with Cheaper Probes: PCA-Reduced Activations vs. Full Hidden States\n\n**Problem:** Activation-based jailbreak detection using full hidden states (dimensionality 4096+) may be too memory-intensive for real-time use. PCA-reduced representations could enable faster detection.\n\n**Direction:** Extract hidden states at the optimal detection layer for Llama-3-8B-Instruct. Train logistic regression probes on: (a) full 4096-dim activations, (b) top-50 PCA components, (c) top-10 PCA components. Compare AUROC, inference latency, and memory footprint. Also test whether PCA directions learned on GCG attacks transfer to other attack types.\n\n**Why it matters:** Making activation probes cheaper and faster enables deployment in latency-sensitive production systems. PCA also aids interpretability by revealing the principal directions of jailbreak-vs-benign separation.\n\n**Relevant context:** LLM Jailbreak Detection for (Almost) Free! (arxiv 2509.14558). PCA for dimensionality reduction in linear probing is standard in interpretability work. Direct relevance to cost-effective jailbreak detection open problem."
+  },
+  {
+    "idea_id": "gen-1469",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:17:29Z",
+    "subfield": "Adversarial Robustness & Red-Teaming",
+    "generation_strategy": "experiment_variation",
+    "confidence": 0.8,
+    "body": "# Do Harmful Category Semantics Cluster Differently in Activation Space for Jailbroken vs. Refused Prompts?\n\n**Problem:** Activation probes treat all jailbreaks as one class. It is unknown whether different harmful categories (e.g., bioweapons vs. hate speech vs. CSAM) occupy distinct or overlapping regions in activation space.\n\n**Direction:** Collect hidden-state activations for 200 harmful prompts from StrongReject (spanning all 6 categories) under both benign-refused and jailbroken conditions on Llama-3-8B. Perform PCA/UMAP visualization colored by category and condition. Train per-category probes and compare accuracy to an all-category probe.\n\n**Why it matters:** Category-specific probes could enable fine-grained safety filtering (block bioweapons, allow security research) rather than binary allow/block decisions.\n\n**Relevant context:** StrongReject's 6 forbidden-prompt categories. Activation probing literature. UMAP visualization is standard in interpretability work. Addresses the over-refusal problem by enabling more nuanced filtering."
+  },
+  {
+    "idea_id": "gen-1470",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:17:29Z",
+    "subfield": "Adversarial Robustness & Red-Teaming",
+    "generation_strategy": "experiment_variation",
+    "confidence": 0.82,
+    "body": "# Varying the Adversarial Suffix Search Budget: What Is the Minimum GCG Compute for Reliable Jailbreaks?\n\n**Problem:** GCG is computationally expensive (typically 500+ optimization steps). The minimum number of steps required for reliable attack success on modern safety-aligned models is not well characterized.\n\n**Direction:** Run GCG on 30 JailbreakBench prompts against Llama-3-8B-Instruct and Mistral-7B-Instruct, saving checkpoints at steps 10, 25, 50, 100, 250, 500. Measure attack success rate (using StrongReject evaluator) at each checkpoint. Plot an 'attack success vs. compute budget' curve.\n\n**Why it matters:** Characterizes the attacker's cost curve, informing realistic threat models. If high ASR is achievable with 50 steps, current safety benchmarks may use too conservative a threat model.\n\n**Relevant context:** GCG (github.com/llm-attacks/llm-attacks). JailbreakBench behaviors. StrongReject evaluator. 'Bag of Tricks' NeurIPS 2024 varied suffix length; this varies compute instead."
+  },
+  {
+    "idea_id": "gen-1471",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:17:29Z",
+    "subfield": "Adversarial Robustness & Red-Teaming",
+    "generation_strategy": "experiment_variation",
+    "confidence": 0.86,
+    "body": "# Comparing Activation Probe Detectors vs. Perplexity Filters vs. First-Token Confidence: A Unified Evaluation\n\n**Problem:** Multiple lightweight jailbreak detectors have been proposed (activation probes, perplexity filters, first-token confidence from 'Detection for Almost Free'). No systematic head-to-head comparison exists on the same dataset under the same attack suite.\n\n**Direction:** Implement three detectors: (1) linear activation probe on layer 15, (2) input perplexity threshold, (3) first-token affirmative-instruction confidence (FJD method). Evaluate all three on the same 200 prompts (100 benign, 100 jailbreaks across 4 attack types) from JailbreakBench/StrongReject. Report AUROC, FPR at 5% FNR, and inference overhead.\n\n**Why it matters:** Practitioners need to choose among these methods. A fair comparison reveals which is best overall and whether combining them yields gains.\n\n**Relevant context:** FJD method (arxiv 2509.14558). Perplexity filtering (Alon & Kamfonas 2023). Activation probing literature. JailbreakBench provides standardized attack artifacts."
+  },
+  {
+    "idea_id": "gen-1472",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:17:29Z",
+    "subfield": "Adversarial Robustness & Red-Teaming",
+    "generation_strategy": "experiment_variation",
+    "confidence": 0.8,
+    "body": "# Fine-Tuning Attack Depth: Does the Number of Harmful Fine-Tuning Examples Needed Scale with Alignment Depth?\n\n**Problem:** Qi et al. showed that fine-tuning attacks exploit shallow alignment. It is unknown whether deeper-aligned models require proportionally more harmful fine-tuning examples to break, or whether there is a threshold effect.\n\n**Direction:** Create two versions of Phi-3-mini: standard RLHF and depth-regularized (Qi et al. method). Fine-tune each with 10, 25, 50, 100, 250 harmful examples (from a harmful-instruction dataset). After each fine-tuning step, measure jailbreak success rate on a held-out test set. Compare the 'break point' (number of examples needed to cross 50% ASR) across the two alignment depths.\n\n**Why it matters:** Quantifies the practical defense value of deeper alignment in terms of attacker cost for fine-tuning attacks, a realistic threat for model customization APIs.\n\n**Relevant context:** Qi et al. ICLR 2025 depth regularizer. Fine-tuning attacks on aligned models (BOOSTER ICLR 2025, Lisa NeurIPS 2024). Phi-3-mini runs on a single GPU. Fine-tuning with small datasets is feasible in <2 hours."
+  },
+  {
+    "idea_id": "gen-1473",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:17:29Z",
+    "subfield": "Adversarial Robustness & Red-Teaming",
+    "generation_strategy": "experiment_variation",
+    "confidence": 0.79,
+    "body": "# Jailbreak Quality Degrades with Model Scale? Testing Whether Smaller Models Produce More Actionable Harmful Content When Jailbroken\n\n**Problem:** Larger models are harder to jailbreak (lower ASR), but when they are jailbroken, they may produce more detailed and actionable harmful content. The relationship between model scale and jailbreak output quality is not systematically studied.\n\n**Direction:** Jailbreak Llama-3-8B-Instruct and Llama-3-70B-Instruct using the same set of GCG suffixes (transferring from 8B to 70B) and successful roleplay templates. Score all outputs with StrongReject on both specificity and convincingness subscores. Compare distributions between the two scales.\n\n**Why it matters:** Informs risk assessment: if larger models produce more dangerous outputs when jailbroken, the rare successful jailbreak of a frontier model may be disproportionately harmful.\n\n**Relevant context:** StrongReject specificity/convincingness subscores. JailbreakBench cross-model transfer artifacts. Llama-3-70B can be accessed via RunPod within budget. Addresses the capability uplift measurement gap."
+  },
+  {
+    "idea_id": "gen-1474",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:17:29Z",
+    "subfield": "Adversarial Robustness & Red-Teaming",
+    "generation_strategy": "experiment_variation",
+    "confidence": 0.81,
+    "body": "# Does System Prompt Hardening Change the Alignment Depth Profile?\n\n**Problem:** Many deployments use system prompts that instruct the model to refuse harmful requests. It is unknown whether a strong system prompt shifts the alignment depth (as measured by Qi et al.) toward deeper layers or simply increases the magnitude at the same shallow depth.\n\n**Direction:** On Llama-3-8B-Instruct, compare alignment depth (logit-lens) under: (a) no system prompt, (b) weak system prompt ('Be helpful and harmless'), (c) strong system prompt (detailed refusal instructions). Then run prefilling and GCG attacks under each condition. Report alignment depth and ASR for all three.\n\n**Why it matters:** System prompts are the primary safety mechanism for most deployed LLMs. Understanding whether they address shallow alignment or merely mask it has major practical implications.\n\n**Relevant context:** Qi et al. ICLR 2025 logit-lens methodology. Adaptive attacks on Claude via prefilling (arxiv 2404.02151). System prompt hardening is a widely deployed but understudied safety technique."
+  },
+  {
+    "idea_id": "gen-1475",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:17:29Z",
+    "subfield": "Adversarial Robustness & Red-Teaming",
+    "generation_strategy": "experiment_variation",
+    "confidence": 0.83,
+    "body": "# Activation Probe Detection Latency: Can Real-Time Jailbreak Detection Work Under 10ms?\n\n**Problem:** Activation-based jailbreak detectors are described as low-cost, but actual end-to-end latency on consumer hardware has not been carefully benchmarked. Real-time deployment requires detection before the full response is generated.\n\n**Direction:** Implement an activation probe that intercepts hidden states at the first forward pass token. Benchmark end-to-end detection latency on a T4 GPU for: (a) extracting the hidden state, (b) running the linear probe, (c) making a binary decision. Profile with PyTorch's profiler. Also test whether detecting on the prompt's last token (before generation begins) is sufficient.\n\n**Why it matters:** Latency is a deployment bottleneck. If detection can happen before response generation, it is far cheaper than generating and then filtering. This tests the practical feasibility of the 'almost free' claim.\n\n**Relevant context:** LLM Jailbreak Detection for (Almost) Free! (arxiv 2509.14558). Real-time inference profiling with PyTorch. The 'almost free' claim needs empirical validation on specific hardware."
+  },
+  {
+    "idea_id": "gen-1476",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:17:29Z",
+    "subfield": "Adversarial Robustness & Red-Teaming",
+    "generation_strategy": "experiment_variation",
+    "confidence": 0.78,
+    "body": "# Adversarial Suffix Universality Across Harm Categories: Do GCG Suffixes Transfer Across Harm Types?\n\n**Problem:** GCG optimizes suffixes for specific harmful behaviors. It is unclear whether a suffix optimized for one harm category (e.g., violence) transfers to eliciting outputs in a different category (e.g., fraud instructions), beyond the known model-level transferability.\n\n**Direction:** Train GCG suffixes on 10 prompts each from 5 StrongReject harm categories. Evaluate each category-specific suffix on all 5 categories. Build a 5x5 cross-category transfer matrix of attack success rates (using StrongReject evaluator). Test whether certain categories share adversarial structure by computing Jaccard similarity of successful suffixes.\n\n**Why it matters:** Cross-category transfer would imply that safety alignment is organized around a common refusal mechanism rather than category-specific ones, with implications for how defenses should be structured.\n\n**Relevant context:** StrongReject 6-category forbidden prompt dataset. GCG universal suffix transfer (Zou et al. 2023). 'Bag of Tricks' NeurIPS 2024 on GCG variations. Category-level analysis is a novel angle."
+  },
+  {
+    "idea_id": "gen-1477",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:17:30Z",
+    "subfield": "Adversarial Robustness & Red-Teaming",
+    "generation_strategy": "experiment_variation",
+    "confidence": 0.76,
+    "body": "# Red-Teaming Efficiency: How Many Human-Crafted Jailbreaks Are Needed to Fully Populate JailbreakBench-Style Coverage?\n\n**Problem:** Red-teaming is expensive. JailbreakBench covers 100 behaviors across 10 categories. It is unknown whether automated attacks (GCG, PAIR) achieve coverage equivalent to human red-teamers with fewer resources, or whether human creativity fills qualitatively different gaps.\n\n**Direction:** Take 50 human-written jailbreaks from JailbreakBench's artifact repository and 50 GCG-generated attacks for the same behaviors. Score both sets on StrongReject specificity and convincingness. Use a simple diversity metric (pairwise embedding cosine distance) to compare the attack diversity of human vs. automated approaches. Report cost-per-successful-high-quality-jailbreak.\n\n**Why it matters:** Informs red-teaming resource allocation. If automated attacks match human quality at lower cost, labs can scale red-teaming. If humans produce qualitatively different attacks, hybrid approaches are needed.\n\n**Relevant context:** JailbreakBench artifact repository. StrongReject evaluator. 'Bag of Tricks' NeurIPS 2024. The lab-to-deployment robustness gap open problem. Sentence-transformer embeddings for diversity scoring are accessible via HuggingFace."
+  },
+  {
+    "idea_id": "gen-1478",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:17:30Z",
+    "subfield": "Concept Steering & Representation Engineering",
+    "generation_strategy": "novel_direction",
+    "confidence": 0.82,
+    "body": "# Steering Vectors for Deceptive Alignment Detection\n\n**Problem:** Models may learn to behave safely during training but switch to unsafe behavior during deployment. There is no cheap inference-time signal for detecting this.\n\n**Direction:** Extract concept vectors for 'deception' and 'alignment' using contrastive activation addition on known deceptive-vs-honest model outputs, then probe whether a model's activations in the deception subspace predict downstream unsafe behavior on held-out prompts.\n\n**Why it matters:** If concept vectors can flag deceptive internal states before outputs manifest, they provide an early-warning layer for alignment failures that neither RLHF nor output monitoring currently provides.\n\n**Relevant context:** Beaglehole et al. Science 2026 show linear concept vectors reliably encode abstract concepts; RepE work shows honesty directions are extractable. Deceptive alignment remains an open problem with no scalable detection method."
+  },
+  {
+    "idea_id": "gen-1479",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:17:30Z",
+    "subfield": "Concept Steering & Representation Engineering",
+    "generation_strategy": "novel_direction",
+    "confidence": 0.8,
+    "body": "# Concept Steering as a Real-Time Safety Filter\n\n**Problem:** Current safety filters operate at the output level (post-generation), missing the ability to redirect harmful generation mid-stream.\n\n**Direction:** Apply concept vector subtraction at inference time to suppress toxicity/harm directions as the model generates, comparing this real-time steering filter to post-hoc output filtering in terms of helpfulness preservation and safety.\n\n**Why it matters:** Real-time steering could allow harmful completions to be avoided without refusing the entire response, improving both safety and user experience.\n\n**Relevant context:** Beaglehole et al. demonstrate sub-minute concept vector extraction and efficient inference-time steering. Weighted Activation Steering (WAS) work from 2025 shows inference-time modulation is viable."
+  },
+  {
+    "idea_id": "gen-1480",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:17:30Z",
+    "subfield": "Concept Steering & Representation Engineering",
+    "generation_strategy": "novel_direction",
+    "confidence": 0.78,
+    "body": "# Concept Vector Atlas for AI Safety-Relevant Behaviors\n\n**Problem:** Safety researchers lack a comprehensive map of which safety-relevant concepts (honesty, harm, deception, bias, sycophancy) have reliable linear representations across model families.\n\n**Direction:** Systematically extract concept vectors for 20+ safety-relevant concepts across three open-source model families, measuring extraction reliability, inter-concept orthogonality, and layer-wise emergence profiles.\n\n**Why it matters:** Such an atlas would let safety teams immediately identify which behaviors are steerable and which require alternative interventions, prioritizing research effort.\n\n**Relevant context:** The Beaglehole et al. paper and the RepE survey (arXiv 2502.17601) both note that scale and comprehensiveness of concept coverage are open gaps."
+  },
+  {
+    "idea_id": "gen-1481",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:17:30Z",
+    "subfield": "Concept Steering & Representation Engineering",
+    "generation_strategy": "novel_direction",
+    "confidence": 0.74,
+    "body": "# Steering-Augmented Constitutional AI\n\n**Problem:** Constitutional AI (CAI) relies on prompting to enforce principles; steering vectors offer a potentially more robust mechanistic alternative.\n\n**Direction:** Replace CAI's prompting-based principle enforcement with concept vectors representing each constitutional principle. Compare the two on downstream policy compliance and adversarial robustness.\n\n**Why it matters:** Prompt-based constraints are fragile to jailbreaks. Mechanistic enforcement via steering may be harder to circumvent and more transparent.\n\n**Relevant context:** RepE work shows values can be encoded and steered. Beaglehole et al. demonstrate multi-concept simultaneous steering via weighted vector sums."
+  },
+  {
+    "idea_id": "gen-1482",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:17:30Z",
+    "subfield": "Concept Steering & Representation Engineering",
+    "generation_strategy": "novel_direction",
+    "confidence": 0.77,
+    "body": "# Concept Steering for Sycophancy Suppression\n\n**Problem:** Sycophancy \u2014 agreeing with users against factual accuracy \u2014 is a persistent alignment failure that current RLHF methods partially introduce.\n\n**Direction:** Extract a 'sycophancy' concept vector using contrastive pairs (sycophantic vs. honest responses), then apply suppression steering and measure accuracy on factual tasks where user pressure conflicts with ground truth.\n\n**Why it matters:** Sycophancy is measurable and safety-relevant. A cheap suppression method would complement RLHF without requiring retraining.\n\n**Relevant context:** RepE and steering literature include honesty as a concept; sycophancy as a distinct target is underexplored. Beaglehole et al. note style and sentiment are steerable; factual stance should be analogous."
+  },
+  {
+    "idea_id": "gen-1483",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:17:30Z",
+    "subfield": "Concept Steering & Representation Engineering",
+    "generation_strategy": "experiment_variation",
+    "confidence": 0.85,
+    "body": "# Multi-Language Safety Concept Transfer Across Scripts\n\n**Problem:** Safety mitigations built on concept vectors may work for English but fail for non-Latin-script languages (Arabic, Chinese, Hindi), leaving large user populations underprotected.\n\n**Direction:** Extract toxicity and harm concept vectors in English using the Beaglehole et al. method, then test whether these vectors transfer zero-shot to Arabic, Chinese, and Hindi by measuring steering effectiveness on matched prompts in each language.\n\n**Why it matters:** Beaglehole et al. showed cross-lingual transfer for some concepts; systematic testing across script families for safety concepts is absent and directly relevant to equitable safety coverage.\n\n**Relevant context:** Beaglehole et al. Science 2026 demonstrate cross-lingual concept vector transfer. Separate 2025 work on language-specific steering vectors shows non-trivial language effects on representation alignment."
+  },
+  {
+    "idea_id": "gen-1484",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:17:30Z",
+    "subfield": "Concept Steering & Representation Engineering",
+    "generation_strategy": "experiment_variation",
+    "confidence": 0.82,
+    "body": "# Safety Concept Steering in Vision-Language Models\n\n**Problem:** Concept steering has been primarily demonstrated on text-only models; vision-language models (VLMs) can generate unsafe content triggered by images, which text-only steering misses.\n\n**Direction:** Apply the Beaglehole et al. concept vector extraction method to a VLM (e.g., LLaVA or a similar open-source model) to extract harm and toxicity vectors from vision-conditioned activations, then test steering effectiveness on image-prompted unsafe content generation.\n\n**Why it matters:** VLMs are increasingly deployed; safety mitigations that ignore the visual modality leave a large attack surface open.\n\n**Relevant context:** Beaglehole et al. explicitly include vision-language models as a tested architecture. Extending safety-specific concept steering to this setting is a direct variation with high practical value."
+  },
+  {
+    "idea_id": "gen-1485",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:17:30Z",
+    "subfield": "Concept Steering & Representation Engineering",
+    "generation_strategy": "experiment_variation",
+    "confidence": 0.84,
+    "body": "# Combining Concept Steering with Activation Monitoring for Dual-Layer Safety\n\n**Problem:** Steering alone modifies behavior but may miss cases where the model internally processes unsafe content without surfacing it; monitoring alone detects but does not prevent.\n\n**Direction:** Build a pipeline that uses concept probes to monitor activations for safety-relevant concepts and triggers steering vectors only when the probe fires above a threshold. Compare to always-on steering and probe-only monitoring on a toxicity benchmark.\n\n**Why it matters:** Conditional steering avoids over-suppression of benign outputs while still catching dangerous generation, matching the design of CAST (Conditional Activation Steering).\n\n**Relevant context:** Beaglehole et al. demonstrate both monitoring and steering components. CAST (ICLR 2025) shows conditional steering outperforms always-on steering. This combines both explicitly for safety."
+  },
+  {
+    "idea_id": "gen-1486",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:17:30Z",
+    "subfield": "Concept Steering & Representation Engineering",
+    "generation_strategy": "experiment_variation",
+    "confidence": 0.79,
+    "body": "# Steering Reasoning Models for Safety: O1/DeepSeek-Style Architectures\n\n**Problem:** Reasoning models use chain-of-thought steps that may plan unsafe actions internally before outputting a safe final answer; steering at the final layer may miss this.\n\n**Direction:** Apply Beaglehole et al.'s method to a reasoning model, extracting concept vectors at intermediate reasoning steps and testing whether steering the reasoning-step activations for safety concepts changes final-answer safety outcomes more than steering the final layer alone.\n\n**Why it matters:** Reasoning models are frontier deployments where inner monologue safety is unexplored via concept steering.\n\n**Relevant context:** Beaglehole et al. explicitly test on reasoning models as one of their architecture classes, making this a direct extension for safety-specific concepts."
+  },
+  {
+    "idea_id": "gen-1487",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:17:30Z",
+    "subfield": "Concept Steering & Representation Engineering",
+    "generation_strategy": "experiment_variation",
+    "confidence": 0.8,
+    "body": "# Steering Intensity Calibration Across Model Sizes\n\n**Problem:** Larger models may be more steerable but over-steering can degrade coherence; the optimal steering coefficient may scale with model size in unknown ways.\n\n**Direction:** Vary steering vector magnitude across a range of model sizes (e.g., 1B, 7B, 13B, 70B parameter models from the same family) and map the safety-utility Pareto frontier for toxicity suppression at each scale.\n\n**Why it matters:** Beaglehole et al. find larger models are more steerable but do not characterize the optimal magnitude-scale relationship. This directly informs production deployment choices.\n\n**Relevant context:** Beaglehole et al. Science 2026 report scale findings; Dialz toolkit (ACL 2025) provides evaluation infrastructure that can be reused."
+  },
+  {
+    "idea_id": "gen-1488",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:17:30Z",
+    "subfield": "Concept Steering & Representation Engineering",
+    "generation_strategy": "follow_up_experiment",
+    "confidence": 0.86,
+    "body": "# Replicating Cross-Lingual Concept Vector Transfer for Safety Concepts\n\n**Problem:** Beaglehole et al. show concept vectors transfer across languages, but the specific safety concepts tested and the breadth of language pairs is limited.\n\n**Direction:** Replicate the cross-lingual transfer finding specifically for toxicity, harmful instructions, and bias concept vectors across 5+ language pairs, measuring whether transfer degrades for typologically distant languages (e.g., English to Japanese).\n\n**Why it matters:** Safety teams deploying multilingual models need to know whether a single set of concept vectors suffices or language-specific vectors are needed.\n\n**Relevant context:** Beaglehole et al. Science 2026 is the key finding to replicate. 2025 steering-into-new-embedding-spaces work (arXiv 2502.15639) shows cross-lingual alignment through steering is non-trivial."
+  },
+  {
+    "idea_id": "gen-1489",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:17:30Z",
+    "subfield": "Concept Steering & Representation Engineering",
+    "generation_strategy": "follow_up_experiment",
+    "confidence": 0.84,
+    "body": "# Combined Concept Vector Composition for Multi-Constraint Safety\n\n**Problem:** Real deployments require simultaneous enforcement of multiple safety properties (no toxicity AND no hallucination AND no bias). Beaglehole et al. show vectors can be combined but do not systematically test safety combinations.\n\n**Direction:** Construct combined steering vectors as weighted sums of toxicity, hallucination, and bias concept vectors. Test whether combined steering preserves individual concept effectiveness or whether interference between safety vectors reduces overall performance.\n\n**Why it matters:** Multi-constraint safety is the realistic deployment scenario; knowing whether concept vectors compose cleanly or interfere is essential.\n\n**Relevant context:** Beaglehole et al. demonstrate multi-concept steering via weighted sums. Whether safety-relevant concept vectors are orthogonal or interfere is untested."
+  },
+  {
+    "idea_id": "gen-1490",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:17:30Z",
+    "subfield": "Concept Steering & Representation Engineering",
+    "generation_strategy": "follow_up_experiment",
+    "confidence": 0.83,
+    "body": "# Internal Probes vs. Judge Models: Replication on Diverse Toxicity Benchmarks\n\n**Problem:** Beaglehole et al. claim internal probes outperform judge models for hallucination and toxicity; this should be stress-tested across more diverse benchmarks and model families.\n\n**Direction:** Replicate the internal probe vs. LLM-as-judge comparison on five toxicity/hallucination benchmarks beyond those in the original paper, including non-English content and edge cases like subtle bias.\n\n**Why it matters:** If the probe advantage is benchmark-specific rather than general, practitioners relying on internal probes for safety monitoring could be misled.\n\n**Relevant context:** Beaglehole et al. Science 2026 is the claim to stress-test. Neural probe hallucination detection work (arXiv 2512.20949) and ICLR 2026 hallucination probe paper provide related comparison infrastructure."
+  },
+  {
+    "idea_id": "gen-1491",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:17:30Z",
+    "subfield": "Concept Steering & Representation Engineering",
+    "generation_strategy": "follow_up_experiment",
+    "confidence": 0.79,
+    "body": "# Probe Latency and Throughput for Real-Time Safety Monitoring\n\n**Problem:** Internal probes may outperform judge models in accuracy but their inference latency relative to generation throughput is unstudied, determining whether they are practical for production safety monitoring.\n\n**Direction:** Benchmark internal concept probes for toxicity and hallucination against LLM-as-judge systems on latency, throughput, and accuracy simultaneously, measuring the actual trade-off for production deployment.\n\n**Why it matters:** A probe that is 10x more accurate but 100x slower than a judge model is not deployable for real-time safety guardrails.\n\n**Relevant context:** Beaglehole et al. report less than one minute for vector extraction. Inference-time probe overhead during generation is a separate, unstudied quantity."
+  },
+  {
+    "idea_id": "gen-1492",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:17:30Z",
+    "subfield": "Concept Steering & Representation Engineering",
+    "generation_strategy": "follow_up_experiment",
+    "confidence": 0.77,
+    "body": "# Concept Steering Effectiveness Across Non-English Low-Resource Languages\n\n**Problem:** Cross-lingual transfer results may degrade for low-resource languages underrepresented in training data, leaving safety gaps for those user populations.\n\n**Direction:** Test whether Beaglehole et al.'s cross-lingual transfer of concept vectors holds for low-resource languages (Swahili, Bengali, Urdu) by measuring probe accuracy and steering effectiveness on small test sets assembled from public toxicity corpora.\n\n**Why it matters:** Low-resource language users may face weaker safety protections; knowing the extent of degradation motivates targeted interventions.\n\n**Relevant context:** Language-Specific Latent Process work (arXiv 2505.13141) identifies non-trivial language effects on representations. Beaglehole et al. show transfer but only for higher-resource languages."
+  },
+  {
+    "idea_id": "gen-1493",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:17:30Z",
+    "subfield": "Concept Steering & Representation Engineering",
+    "generation_strategy": "replication_with_twist",
+    "confidence": 0.85,
+    "body": "# Replicating Concept Steering on Mistral and Gemma Model Families\n\n**Problem:** Beaglehole et al. and most RepE work focus on LLaMA-family models; it is unclear whether results generalize to models with different tokenizers, attention structures, and training pipelines.\n\n**Direction:** Replicate the full Beaglehole et al. steering pipeline on Mistral-7B and Gemma-7B for toxicity and hallucination, measuring whether concept vector geometry and steerability metrics match the original results.\n\n**Why it matters:** Safety teams using non-LLaMA models need to know whether the technique transfers before relying on it for deployment.\n\n**Relevant context:** Beaglehole et al. Science 2026; the reliability of representation engineering paper (OpenReview) raises concerns about generalization across architectures."
+  },
+  {
+    "idea_id": "gen-1494",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:17:30Z",
+    "subfield": "Concept Steering & Representation Engineering",
+    "generation_strategy": "replication_with_twist",
+    "confidence": 0.78,
+    "body": "# Concept Steering Replication on Code-Generating Models\n\n**Problem:** Code models can generate malicious code; it is unknown whether concept vectors for 'malicious code' or 'security vulnerability' have linear representations extractable by the Beaglehole method.\n\n**Direction:** Apply the Beaglehole et al. extraction pipeline to a code-focused model (e.g., CodeLlama or DeepSeek-Coder) using contrastive pairs of safe vs. malicious code snippets, testing whether steering suppresses malicious code generation on a small benchmark.\n\n**Why it matters:** Code generation is a high-risk deployment context; extending concept steering to safety-relevant code concepts addresses a concrete risk.\n\n**Relevant context:** Beaglehole et al. method is model-agnostic in principle. Concept Activation Vector work on safety risks in LLMs (arXiv 2404.12038) provides a prior on concept vector extractability in code contexts."
+  },
+  {
+    "idea_id": "gen-1495",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:17:30Z",
+    "subfield": "Concept Steering & Representation Engineering",
+    "generation_strategy": "replication_with_twist",
+    "confidence": 0.8,
+    "body": "# Steering for Bias Suppression: Race and Gender Concept Vectors\n\n**Problem:** Models exhibit racial and gender bias in completions; concept vectors for 'racial bias' and 'gender bias' have not been systematically extracted and suppressed via steering.\n\n**Direction:** Construct contrastive pairs for racial and gender bias using the WinoBias and StereoSet datasets, extract concept vectors, apply suppression steering, and measure bias reduction on both datasets while monitoring downstream task performance.\n\n**Why it matters:** Bias suppression via steering is retraining-free and auditable; if it works, it offers a cheap complement to debiasing fine-tuning.\n\n**Relevant context:** Beaglehole et al. show style and sentiment are steerable. CMU RepE blog notes bias reduction as a RepE application. WinoBias and StereoSet are standard benchmarks."
+  },
+  {
+    "idea_id": "gen-1496",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:17:30Z",
+    "subfield": "Concept Steering & Representation Engineering",
+    "generation_strategy": "replication_with_twist",
+    "confidence": 0.76,
+    "body": "# Multimodal Safety Concept Vectors in Image-Text Models\n\n**Problem:** Most concept steering work is text-only; image-text models like LLaVA can generate harmful content conditioned on images, and it is unknown whether safety concept vectors transfer from text-only representations to multimodal activations.\n\n**Direction:** Extract harm concept vectors from a VLM using text-only contrastive pairs, then test whether these vectors suppress harmful image-conditioned outputs without retraining on multimodal contrastive pairs.\n\n**Why it matters:** If text-derived vectors transfer to multimodal settings, safety practitioners can reuse existing work; if not, new multimodal vector extraction is needed.\n\n**Relevant context:** Beaglehole et al. test on vision-language models. The RepE survey notes multimodal extension as open. Multimodal hallucination correction via representation directions is an active 2025 area."
+  },
+  {
+    "idea_id": "gen-1497",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:17:30Z",
+    "subfield": "Concept Steering & Representation Engineering",
+    "generation_strategy": "replication_with_twist",
+    "confidence": 0.82,
+    "body": "# Steering Replication on Instruction-Tuned vs. Base Models\n\n**Problem:** Instruction tuning changes the internal representation structure of models; it is unknown whether concept vectors extracted from base models transfer to their instruction-tuned counterparts.\n\n**Direction:** Extract safety concept vectors from a base model (e.g., Llama-3-8B base) and its instruction-tuned version (Llama-3-8B-Instruct) and compare vector geometry, probe accuracy, and steering effectiveness on identical safety tasks.\n\n**Why it matters:** Instruction-tuned models are the deployed versions; knowing whether base-model concept vectors are reusable matters for practical safety pipelines.\n\n**Relevant context:** Beaglehole et al. test across multiple model types. Representation Bending for LLM Safety (ACL 2025) suggests fine-tuning changes representation structure in safety-relevant ways."
+  },
+  {
+    "idea_id": "gen-1498",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:17:31Z",
+    "subfield": "Concept Steering & Representation Engineering",
+    "generation_strategy": "tool_or_benchmark_gap",
+    "confidence": 0.88,
+    "body": "# SteerBench: A Standardized Benchmark for Safety Concept Steering Evaluation\n\n**Problem:** No standardized benchmark exists for evaluating safety concept steering methods, making comparison across papers impossible and reproducibility low.\n\n**Direction:** Design and release SteerBench: a dataset of 500 prompt pairs per safety concept (toxicity, hallucination, bias, harmful instructions) with ground-truth labels, a standardized evaluation protocol, and a leaderboard infrastructure for comparing steering methods.\n\n**Why it matters:** Without standardized evaluation, the field cannot accumulate knowledge; every paper uses bespoke datasets and metrics, preventing progress measurement.\n\n**Relevant context:** The Beaglehole et al. paper and the RepE survey both explicitly note the absence of steering-specific benchmarks as a gap. Dialz (ACL 2025) provides a toolkit but not a safety-specific benchmark."
+  },
+  {
+    "idea_id": "gen-1499",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:17:31Z",
+    "subfield": "Concept Steering & Representation Engineering",
+    "generation_strategy": "tool_or_benchmark_gap",
+    "confidence": 0.86,
+    "body": "# Concept Vector Extraction Toolkit with Safety-Concept Templates\n\n**Problem:** Reproducing concept vector extraction requires non-trivial ML engineering; no standardized toolkit exists that provides safety-concept contrastive pair templates, making the Beaglehole et al. method inaccessible to safety practitioners without deep ML expertise.\n\n**Direction:** Build and release a Python package that wraps the Beaglehole et al. AGOP-based extraction pipeline, ships with pre-built contrastive pair templates for 10 safety concepts, and provides a one-function API for vector extraction and steering application.\n\n**Why it matters:** Accessibility is a bottleneck; making the method as easy as calling a function would multiply adoption by safety teams and researchers worldwide.\n\n**Relevant context:** Dialz (ACL 2025) is a related toolkit but lacks safety-specific templates. AI Steerability 360 (arXiv 2603.07837) is emerging but appears general-purpose. Beaglehole et al. have open-source code but no packaged toolkit."
+  },
+  {
+    "idea_id": "gen-1500",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:17:31Z",
+    "subfield": "Concept Steering & Representation Engineering",
+    "generation_strategy": "tool_or_benchmark_gap",
+    "confidence": 0.85,
+    "body": "# Robustness Testing Framework for Steering Vectors\n\n**Problem:** There is no standardized framework for testing whether concept vectors remain effective under distribution shift, prompt paraphrasing, or minor model fine-tuning, leaving practitioners unable to certify robustness.\n\n**Direction:** Develop a robustness testing suite that applies a battery of perturbations (prompt paraphrase, temperature variation, LoRA fine-tuning, input language change) to a steering pipeline and reports per-perturbation effectiveness degradation scores.\n\n**Why it matters:** Safety properties need robustness certificates; a framework that surfaces when steering breaks down is essential before production deployment.\n\n**Relevant context:** Robustness tradeoffs in fine-tuning (ICCV 2025) and steering vector generalization (OpenReview) show robustness is non-trivial. No safety-steering-specific robustness framework exists."
+  }
+]

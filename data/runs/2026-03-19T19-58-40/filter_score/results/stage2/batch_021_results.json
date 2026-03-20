@@ -1,0 +1,1022 @@
+[
+  {
+    "idea_id": "gen-0601",
+    "title": "Does shallow alignment depth predict vulnerability to decoding parameter attacks (temperature/top-p manipulation)?",
+    "run_id": "2026-03-19T19-58-40",
+    "original_idea": {
+      "idea_id": "gen-0601",
+      "subfield": "Adversarial Robustness & Red-Teaming",
+      "generation_strategy": "follow_up_experiment",
+      "problem": "The relationship between measured alignment depth (KL metric) and susceptibility to decoding attacks has not been empirically verified across models.",
+      "direction": "For 5-6 small open-weight models with measured alignment depth scores, measure jailbreak ASR under three decoding conditions: greedy, high temperature, and high top-p. Compute Spearman correlation.",
+      "why_it_matters": "If shallow models are disproportionately vulnerable to decoding attacks, this confirms the generality of the shallow alignment explanation beyond prefix/suffix attacks."
+    },
+    "scores": {
+      "theory_of_impact": {
+        "score": 4,
+        "reasoning": "Strong chain: shallow alignment -> decoding parameter vulnerability -> validates generality of the shallow alignment framework. Every link is explicit and defensible. Addresses a recognized safety problem (jailbreak vulnerability).",
+        "confidence": 0.82
+      },
+      "accessible_complexity": {
+        "score": 3,
+        "reasoning": "Requires computing KL divergence curves across multiple models and running inference at various decoding parameters. Standard ML tools but intermediate-level understanding of alignment depth metrics needed. Feasible for beginners with guidance but not trivial.",
+        "confidence": 0.78
+      },
+      "narrow_scope": {
+        "score": 4,
+        "reasoning": "Focused first deliverable: a correlation table between alignment depth and ASR under 3 decoding regimes across 5-6 models. Clear methodology, few dependencies. The broader direction is open but the first result stands alone.",
+        "confidence": 0.85
+      }
+    },
+    "weighted_score": 3.74,
+    "confidence": 0.82,
+    "eliminated": false,
+    "elimination_reason": null
+  },
+  {
+    "idea_id": "gen-0602",
+    "title": "Do activation-based detectors degrade on 'low-perplexity' natural-language jailbreaks vs. GCG adversarial suffixes?",
+    "run_id": "2026-03-19T19-58-40",
+    "original_idea": {
+      "idea_id": "gen-0602",
+      "subfield": "Adversarial Robustness & Red-Teaming",
+      "generation_strategy": "follow_up_experiment",
+      "problem": "Whether activation-based probe accuracy differs systematically between GCG-style and natural-language jailbreak types is unknown.",
+      "direction": "Compile balanced test sets of GCG and natural-language jailbreaks, train a linear probe on both, measure per-category AUROC and confusion patterns.",
+      "why_it_matters": "If probes miss natural-language jailbreaks, they provide false security for the most common real-world attacks."
+    },
+    "scores": {
+      "theory_of_impact": {
+        "score": 4,
+        "reasoning": "Strong chain: activation probes may have type-specific blindspots -> false sense of security in deployment -> lab-to-deployment gap. Each link is concrete and addresses a recognized open problem.",
+        "confidence": 0.80
+      },
+      "accessible_complexity": {
+        "score": 3,
+        "reasoning": "Requires activation extraction, linear probe training, and dataset curation across multiple jailbreak types. Intermediate ML skills needed. Beginners would need guidance on activation extraction and probe training.",
+        "confidence": 0.75
+      },
+      "narrow_scope": {
+        "score": 3,
+        "reasoning": "Deliverable requires sustained effort: curating balanced datasets from multiple sources, training probes, and analyzing per-category confusion patterns. Multiple workstreams before reaching the first result.",
+        "confidence": 0.78
+      }
+    },
+    "weighted_score": 3.30,
+    "confidence": 0.78,
+    "eliminated": false,
+    "elimination_reason": null
+  },
+  {
+    "idea_id": "gen-0603",
+    "title": "Can a shallow-alignment depth audit identify which fine-tuning datasets caused shallowness?",
+    "run_id": "2026-03-19T19-58-40",
+    "original_idea": {
+      "idea_id": "gen-0603",
+      "subfield": "Adversarial Robustness & Red-Teaming",
+      "generation_strategy": "follow_up_experiment",
+      "problem": "Which specific data properties drive shallowness in alignment has not been ablated.",
+      "direction": "Fine-tune a base model on synthetic safety datasets with controlled first-token distributions. Measure alignment depth after each training variant.",
+      "why_it_matters": "Directly identifies the data-level fix for shallow alignment. Can inform safety data curation practices."
+    },
+    "scores": {
+      "theory_of_impact": {
+        "score": 4,
+        "reasoning": "Strong chain: first-token concentration in training data -> shallow alignment -> identifying data-level fix -> actionable improvement to safety training. Every link is explicit and leads to a concrete safety improvement.",
+        "confidence": 0.83
+      },
+      "accessible_complexity": {
+        "score": 2,
+        "reasoning": "Requires fine-tuning a base model multiple times with controlled synthetic datasets, measuring KL curves, and running attack evaluations. This is advanced for beginner CS students in 30 hours, even with medium compute.",
+        "confidence": 0.80
+      },
+      "narrow_scope": {
+        "score": 3,
+        "reasoning": "Deliverable requires sustained effort: generating synthetic datasets with controlled properties, running 3+ training variants, measuring depth after each. Multiple experimental dimensions before reaching first result.",
+        "confidence": 0.80
+      }
+    },
+    "weighted_score": 2.96,
+    "confidence": 0.81,
+    "eliminated": false,
+    "elimination_reason": null
+  },
+  {
+    "idea_id": "gen-0604",
+    "title": "Does multi-token prefilling (varying prefix length) reveal a critical threshold for bypassing alignment?",
+    "run_id": "2026-03-19T19-58-40",
+    "original_idea": {
+      "idea_id": "gen-0604",
+      "subfield": "Adversarial Robustness & Red-Teaming",
+      "generation_strategy": "follow_up_experiment",
+      "problem": "It is unknown whether there is a critical prefix length beyond which the prefilling attack reliably succeeds.",
+      "direction": "Run prefilling attacks with compliance prefixes of lengths 1-20 tokens. Plot ASR-vs-length curve and identify the inflection point. Repeat for 3 model families.",
+      "why_it_matters": "The inflection point reveals the empirical depth of alignment and can serve as a simple practical diagnostic."
+    },
+    "scores": {
+      "theory_of_impact": {
+        "score": 4,
+        "reasoning": "Strong chain: prefix length threshold -> operational measure of alignment depth -> informs how deep defenders need to push alignment. Complements theoretical KL metric with a practical diagnostic.",
+        "confidence": 0.85
+      },
+      "accessible_complexity": {
+        "score": 4,
+        "reasoning": "Inference-only experiment. Requires generating prefixes and measuring ASR. Standard API/HuggingFace usage. A beginner with basic Python can execute this with clear instructions.",
+        "confidence": 0.88
+      },
+      "narrow_scope": {
+        "score": 5,
+        "reasoning": "Tightly scoped: a single ablation study (prefix length vs ASR) with a well-defined deliverable (inflection point plot). Can go from start to meaningful result quickly.",
+        "confidence": 0.90
+      }
+    },
+    "weighted_score": 4.48,
+    "confidence": 0.88,
+    "eliminated": false,
+    "elimination_reason": null
+  },
+  {
+    "idea_id": "gen-0605",
+    "title": "Do activation-based jailbreak probes detect harmful intent before or after the harmful tokens are generated?",
+    "run_id": "2026-03-19T19-58-40",
+    "original_idea": {
+      "idea_id": "gen-0605",
+      "subfield": "Adversarial Robustness & Red-Teaming",
+      "generation_strategy": "follow_up_experiment",
+      "problem": "Whether the activation signal for jailbreak detection is present at the prompt stage or only emerges during generation is not systematically studied.",
+      "direction": "Extract activations at prompt-final token, after 5 generated tokens, and after 20 tokens. Train separate probes at each point. Compare AUROC.",
+      "why_it_matters": "Determines whether pre-generation filtering is sufficient or output monitoring is always required."
+    },
+    "scores": {
+      "theory_of_impact": {
+        "score": 4,
+        "reasoning": "Strong chain: detection timing -> determines whether pre-generation filtering works -> directly affects deployment architecture for safety monitoring. Addresses a practical question with clear implications.",
+        "confidence": 0.84
+      },
+      "accessible_complexity": {
+        "score": 3,
+        "reasoning": "Requires activation extraction at multiple generation stages and training linear probes. Intermediate ML skills needed. Activation hooks and generation-time extraction add complexity for beginners.",
+        "confidence": 0.76
+      },
+      "narrow_scope": {
+        "score": 4,
+        "reasoning": "Focused first deliverable: an AUROC comparison across 3 extraction points. Clear methodology. Few dependencies beyond a model and a jailbreak dataset.",
+        "confidence": 0.83
+      }
+    },
+    "weighted_score": 3.74,
+    "confidence": 0.81,
+    "eliminated": false,
+    "elimination_reason": null
+  },
+  {
+    "idea_id": "gen-0606",
+    "title": "Is shallow alignment worse for instruction-tuned models vs. models fine-tuned with RLHF/RLAIF?",
+    "run_id": "2026-03-19T19-58-40",
+    "original_idea": {
+      "idea_id": "gen-0606",
+      "subfield": "Adversarial Robustness & Red-Teaming",
+      "generation_strategy": "follow_up_experiment",
+      "problem": "Whether the alignment training method affects alignment depth is unstudied.",
+      "direction": "Identify 4-6 models trained with different alignment methods at comparable scales. Measure alignment depth and prefilling ASR for each.",
+      "why_it_matters": "If RLHF specifically causes shallow alignment while DPO or SFT does not, this would be a major finding for alignment training methodology."
+    },
+    "scores": {
+      "theory_of_impact": {
+        "score": 4,
+        "reasoning": "Strong chain: alignment method -> alignment depth -> vulnerability profile -> actionable recipe choice for practitioners. Addresses a fundamental question about alignment methodology.",
+        "confidence": 0.82
+      },
+      "accessible_complexity": {
+        "score": 3,
+        "reasoning": "Requires identifying comparable models with known alignment procedures, computing KL curves, and running prefilling attacks. Intermediate skill: model selection and KL computation are not trivial for beginners.",
+        "confidence": 0.75
+      },
+      "narrow_scope": {
+        "score": 3,
+        "reasoning": "Deliverable requires sustained effort: finding 4-6 comparable models, running KL analysis on each, prefilling attacks on each. Multiple models and measurements before a clean comparison table emerges.",
+        "confidence": 0.78
+      }
+    },
+    "weighted_score": 3.30,
+    "confidence": 0.78,
+    "eliminated": false,
+    "elimination_reason": null
+  },
+  {
+    "idea_id": "gen-0607",
+    "title": "Can a simple activation anomaly score (without training a probe) detect jailbreaks?",
+    "run_id": "2026-03-19T19-58-40",
+    "original_idea": {
+      "idea_id": "gen-0607",
+      "subfield": "Adversarial Robustness & Red-Teaming",
+      "generation_strategy": "follow_up_experiment",
+      "problem": "Whether unsupervised anomaly detection on activations works comparably to supervised probes for jailbreak detection is untested.",
+      "direction": "Collect activations from benign and jailbreak prompts. Compute per-dimension z-scores. Use L2 norm as anomaly score. Compare AUROC vs. supervised probe.",
+      "why_it_matters": "An unsupervised detector requiring zero labeled data would be truly 'almost free' and deployable immediately on new models."
+    },
+    "scores": {
+      "theory_of_impact": {
+        "score": 4,
+        "reasoning": "Strong chain: zero-label detection -> deployable on new models without data collection -> practical safety improvement at scale. Clear, defensible impact if the approach works (or useful negative result if it doesn't).",
+        "confidence": 0.82
+      },
+      "accessible_complexity": {
+        "score": 3,
+        "reasoning": "Requires activation extraction and statistical analysis (z-scores, L2 norms). Conceptually straightforward but activation hooks and comparison methodology need intermediate ML skills.",
+        "confidence": 0.78
+      },
+      "narrow_scope": {
+        "score": 4,
+        "reasoning": "Focused deliverable: one AUROC comparison table (unsupervised vs supervised). Clear methodology: collect activations, compute z-scores, compare. Few dependencies.",
+        "confidence": 0.85
+      }
+    },
+    "weighted_score": 3.74,
+    "confidence": 0.82,
+    "eliminated": false,
+    "elimination_reason": null
+  },
+  {
+    "idea_id": "gen-0608",
+    "title": "How does alignment depth change across a model's output sequence for different harm categories?",
+    "run_id": "2026-03-19T19-58-40",
+    "original_idea": {
+      "idea_id": "gen-0608",
+      "subfield": "Adversarial Robustness & Red-Teaming",
+      "generation_strategy": "follow_up_experiment",
+      "problem": "Different harm categories may have different depth profiles due to uneven safety training data.",
+      "direction": "Compute alignment depth curves separately for each of StrongReject's 6 harm categories on a small aligned model. Compare per-category depth profiles.",
+      "why_it_matters": "Category-specific shallow alignment would reveal gaps in safety training and identify which harm types are most immediately exploitable."
+    },
+    "scores": {
+      "theory_of_impact": {
+        "score": 4,
+        "reasoning": "Strong chain: per-category depth variation -> identifies gaps in safety training -> informs targeted data augmentation. Directly actionable finding for safety data curation.",
+        "confidence": 0.84
+      },
+      "accessible_complexity": {
+        "score": 3,
+        "reasoning": "Same KL computation technique as base alignment depth work, but partitioned by category. Intermediate skill: needs understanding of KL divergence and StrongReject categories. Feasible with guidance.",
+        "confidence": 0.78
+      },
+      "narrow_scope": {
+        "score": 4,
+        "reasoning": "Focused deliverable: per-category depth profile comparison table/plot. Same methodology applied per category. Clear stopping point.",
+        "confidence": 0.85
+      }
+    },
+    "weighted_score": 3.74,
+    "confidence": 0.82,
+    "eliminated": false,
+    "elimination_reason": null
+  },
+  {
+    "idea_id": "gen-0609",
+    "title": "Does combining activation-based detection with a lightweight keyword filter outperform either alone?",
+    "run_id": "2026-03-19T19-58-40",
+    "original_idea": {
+      "idea_id": "gen-0609",
+      "subfield": "Adversarial Robustness & Red-Teaming",
+      "generation_strategy": "follow_up_experiment",
+      "problem": "A simple ensemble of activation probe + keyword filter has not been evaluated against either standalone approach on a diverse benchmark.",
+      "direction": "Implement three detectors (probe, keyword filter, OR-ensemble). Evaluate on JailbreakBench with 5 attack types. Measure AUROC, precision, recall, FPR.",
+      "why_it_matters": "Ensembles may achieve better coverage at minimal cost."
+    },
+    "scores": {
+      "theory_of_impact": {
+        "score": 3,
+        "reasoning": "Plausible chain: ensemble coverage improvement -> practical low-cost production baseline. But the safety impact is incremental (combining known approaches) rather than revealing a new mechanism or addressing a critical gap.",
+        "confidence": 0.75
+      },
+      "accessible_complexity": {
+        "score": 4,
+        "reasoning": "Both keyword filtering and linear probing are computationally trivial. OR-ensemble is a simple logical combination. Beginners can implement all three components with standard tools.",
+        "confidence": 0.85
+      },
+      "narrow_scope": {
+        "score": 4,
+        "reasoning": "Focused deliverable: a comparison table across 3 detectors and 5 attack types. Clear methodology. Components are independently testable.",
+        "confidence": 0.85
+      }
+    },
+    "weighted_score": 3.78,
+    "confidence": 0.82,
+    "eliminated": false,
+    "elimination_reason": null
+  },
+  {
+    "idea_id": "gen-0610",
+    "title": "Does shallow alignment manifest differently in chain-of-thought vs. direct-answer models?",
+    "run_id": "2026-03-19T19-58-40",
+    "original_idea": {
+      "idea_id": "gen-0610",
+      "subfield": "Adversarial Robustness & Red-Teaming",
+      "generation_strategy": "follow_up_experiment",
+      "problem": "Whether shallow alignment applies in the same way to reasoning models which may refuse inside the chain-of-thought is untested.",
+      "direction": "Measure alignment depth using KL curves in both direct-answer and CoT modes. Test whether prefilling attacks are effective when the model reasons first.",
+      "why_it_matters": "If CoT naturally deepens alignment, it could be a no-cost improvement. If attacks target reasoning segments, a new attack surface is exposed."
+    },
+    "scores": {
+      "theory_of_impact": {
+        "score": 4,
+        "reasoning": "Strong chain: CoT modifies first-token dynamics -> may deepen or expose new alignment surface -> directly relevant as reasoning models become dominant. Addresses an important emerging threat model.",
+        "confidence": 0.82
+      },
+      "accessible_complexity": {
+        "score": 3,
+        "reasoning": "Requires KL divergence computation in two modes and understanding of CoT prompting. Intermediate complexity. CoT prompting is easy but comparing depth profiles requires solid understanding.",
+        "confidence": 0.76
+      },
+      "narrow_scope": {
+        "score": 3,
+        "reasoning": "Deliverable requires sustained effort: running both modes, computing depth in each, testing attacks in each. Multiple experimental conditions before a clean comparison.",
+        "confidence": 0.78
+      }
+    },
+    "weighted_score": 3.30,
+    "confidence": 0.79,
+    "eliminated": false,
+    "elimination_reason": null
+  },
+  {
+    "idea_id": "gen-0611",
+    "title": "Mapping the Token Depth Boundary of Safety Alignment Across Model Families",
+    "run_id": "2026-03-19T19-58-40",
+    "original_idea": {
+      "idea_id": "gen-0611",
+      "subfield": "Adversarial Robustness & Red-Teaming",
+      "generation_strategy": "failure_mode_investigation",
+      "problem": "The exact token depth at which alignment kicks in and how this varies across model families is uncharacterized.",
+      "direction": "Force models to output forced prefixes of increasing length, then measure at what prefix length harmful content generation drops. Plot ASR vs. prefix depth per model.",
+      "why_it_matters": "A cheap mapping experiment could guide defense prioritization across the open-source model ecosystem."
+    },
+    "scores": {
+      "theory_of_impact": {
+        "score": 4,
+        "reasoning": "Strong chain: token depth mapping -> identifies which models have shallow vs deep alignment -> guides defense prioritization. Clear, actionable safety output.",
+        "confidence": 0.85
+      },
+      "accessible_complexity": {
+        "score": 4,
+        "reasoning": "Inference-only experiment using forced prefixes via Ollama or HuggingFace API. Standard tools, clear procedure. Guided-level: a beginner can execute with instructions.",
+        "confidence": 0.88
+      },
+      "narrow_scope": {
+        "score": 5,
+        "reasoning": "Tightly scoped: ASR vs prefix depth plot for each model family. Single precise experiment with well-defined success criteria. Can go from start to result quickly.",
+        "confidence": 0.90
+      }
+    },
+    "weighted_score": 4.48,
+    "confidence": 0.88,
+    "eliminated": false,
+    "elimination_reason": null
+  },
+  {
+    "idea_id": "gen-0612",
+    "title": "Does Shallow Alignment Persist After Instruction Fine-Tuning on Benign Data?",
+    "run_id": "2026-03-19T19-58-40",
+    "original_idea": {
+      "idea_id": "gen-0612",
+      "subfield": "Adversarial Robustness & Red-Teaming",
+      "generation_strategy": "failure_mode_investigation",
+      "problem": "Whether benign fine-tuning specifically amplifies or deepens shallow alignment is unclear.",
+      "direction": "Fine-tune Llama-3-8B-Instruct on a benign coding dataset using LoRA, then re-run token-depth boundary experiment. Compare before/after ASR curves.",
+      "why_it_matters": "Many real deployments fine-tune aligned models on domain data. If benign fine-tuning makes alignment shallower, this is an underappreciated deployment risk."
+    },
+    "scores": {
+      "theory_of_impact": {
+        "score": 4,
+        "reasoning": "Strong chain: benign fine-tuning -> potential alignment depth change -> deployment risk characterization. Directly relevant to common deployment practices.",
+        "confidence": 0.83
+      },
+      "accessible_complexity": {
+        "score": 2,
+        "reasoning": "Requires LoRA fine-tuning on a coding dataset then running alignment depth experiments. Fine-tuning is advanced for beginner CS students in 30 hours. Needs familiarity with training pipelines.",
+        "confidence": 0.80
+      },
+      "narrow_scope": {
+        "score": 4,
+        "reasoning": "Focused deliverable: before/after ASR curve comparison. Clear methodology. The fine-tuning step adds work but the deliverable is well-defined.",
+        "confidence": 0.82
+      }
+    },
+    "weighted_score": 3.39,
+    "confidence": 0.82,
+    "eliminated": false,
+    "elimination_reason": null
+  },
+  {
+    "idea_id": "gen-0613",
+    "title": "Characterizing the Minimum Effective Prefill String Length for Jailbreaking",
+    "run_id": "2026-03-19T19-58-40",
+    "original_idea": {
+      "idea_id": "gen-0613",
+      "subfield": "Adversarial Robustness & Red-Teaming",
+      "generation_strategy": "failure_mode_investigation",
+      "problem": "The minimal prefix length required to achieve a high ASR is unknown.",
+      "direction": "Test prefill strings of 1, 2, 4, 8, and 16 tokens across 3 models and 50 harmful prompts. Measure ASR at each length. Identify inflection point.",
+      "why_it_matters": "Knowing the minimum effective length informs what prefix-length filtering thresholds are needed for API providers."
+    },
+    "scores": {
+      "theory_of_impact": {
+        "score": 4,
+        "reasoning": "Strong chain: minimum effective prefix length -> informs prefix-length filtering thresholds -> directly actionable for API providers. Practical safety improvement path.",
+        "confidence": 0.85
+      },
+      "accessible_complexity": {
+        "score": 4,
+        "reasoning": "Inference-only experiment. Generate prefixes of varying lengths, measure ASR. Standard API usage. Beginner-accessible with clear instructions.",
+        "confidence": 0.88
+      },
+      "narrow_scope": {
+        "score": 5,
+        "reasoning": "Tightly scoped: single ablation study (prefix length vs ASR). Well-defined success criteria (identify inflection point). Obvious deliverable.",
+        "confidence": 0.90
+      }
+    },
+    "weighted_score": 4.48,
+    "confidence": 0.88,
+    "eliminated": false,
+    "elimination_reason": null
+  },
+  {
+    "idea_id": "gen-0614",
+    "title": "Probing Whether Activation-Based Jailbreak Detectors Generalize Across Attack Types",
+    "run_id": "2026-03-19T19-58-40",
+    "original_idea": {
+      "idea_id": "gen-0614",
+      "subfield": "Adversarial Robustness & Red-Teaming",
+      "generation_strategy": "failure_mode_investigation",
+      "problem": "Whether a probe trained on one attack class also detects other attack classes is not known.",
+      "direction": "Train a linear probe on one attack class (GCG). Test zero-shot on 2-3 other attack classes (prefilling, multi-turn, role-play). Measure AUROC per class.",
+      "why_it_matters": "If probes are attack-type-specific, defenders need separate probes per class. If they generalize, a single cheap probe suffices."
+    },
+    "scores": {
+      "theory_of_impact": {
+        "score": 4,
+        "reasoning": "Strong chain: cross-attack generalization -> determines deployment viability of single-probe defense -> directly affects cost and feasibility of activation-based safety.",
+        "confidence": 0.83
+      },
+      "accessible_complexity": {
+        "score": 3,
+        "reasoning": "Requires activation extraction, linear probe training, and testing across attack types. Intermediate complexity. Dataset preparation across attack types adds overhead.",
+        "confidence": 0.78
+      },
+      "narrow_scope": {
+        "score": 4,
+        "reasoning": "Focused deliverable: cross-attack AUROC table. Train one probe, test on multiple classes. Clear methodology with a well-defined output.",
+        "confidence": 0.85
+      }
+    },
+    "weighted_score": 3.74,
+    "confidence": 0.82,
+    "eliminated": false,
+    "elimination_reason": null
+  },
+  {
+    "idea_id": "gen-0615",
+    "title": "At Which Transformer Layer Do Jailbreak Signals Become Detectable?",
+    "run_id": "2026-03-19T19-58-40",
+    "original_idea": {
+      "idea_id": "gen-0615",
+      "subfield": "Adversarial Robustness & Red-Teaming",
+      "generation_strategy": "failure_mode_investigation",
+      "problem": "The specific layer at which jailbreak-vs-benign separation becomes reliable has not been ablated across model sizes.",
+      "direction": "Extract residual stream activations at every 4th layer. Train and evaluate a linear probe at each layer. Plot AUROC vs. layer depth.",
+      "why_it_matters": "Finding the earliest detection layer enables real-time, low-latency jailbreak interception. Detecting at layer 8 vs 28 dramatically changes inference cost."
+    },
+    "scores": {
+      "theory_of_impact": {
+        "score": 4,
+        "reasoning": "Strong chain: earliest detection layer -> low-latency interception -> cost reduction for production safety systems. Directly actionable for system-level safety architecture.",
+        "confidence": 0.85
+      },
+      "accessible_complexity": {
+        "score": 3,
+        "reasoning": "Requires activation extraction at multiple layers and training linear probes at each. Intermediate complexity but the methodology is systematic and repeatable. Beginners need guidance on hooks.",
+        "confidence": 0.78
+      },
+      "narrow_scope": {
+        "score": 5,
+        "reasoning": "Tightly scoped: single AUROC-vs-layer plot. Systematic procedure: extract at each layer, train probe, evaluate. Obvious deliverable. Well-defined success criteria.",
+        "confidence": 0.90
+      }
+    },
+    "weighted_score": 4.17,
+    "confidence": 0.84,
+    "eliminated": false,
+    "elimination_reason": null
+  },
+  {
+    "idea_id": "gen-0616",
+    "title": "Does Chain-of-Thought Hijacking Work Because Safety Signal Dilutes with Token Count?",
+    "run_id": "2026-03-19T19-58-40",
+    "original_idea": {
+      "idea_id": "gen-0616",
+      "subfield": "Adversarial Robustness & Red-Teaming",
+      "generation_strategy": "failure_mode_investigation",
+      "problem": "Whether chain-of-thought hijacking works due to token-count dilution or context-shift is not confirmed.",
+      "direction": "Test three conditions: direct request, prepended harmless reasoning at 50 tokens, at 200 tokens. Also test random text at same lengths to isolate content vs. length effects.",
+      "why_it_matters": "If purely length-based dilution, any long context prefix is a jailbreak vector. If specific to reasoning content, the fix is narrower."
+    },
+    "scores": {
+      "theory_of_impact": {
+        "score": 4,
+        "reasoning": "Strong chain: mechanistic understanding of CoT hijacking -> determines whether it's a fundamental flaw (length) or fixable (content-specific) -> directly informs difficulty of defense. High-value mechanistic insight.",
+        "confidence": 0.86
+      },
+      "accessible_complexity": {
+        "score": 4,
+        "reasoning": "Simple controlled experiment: prepare prompts with different prefixes, measure ASR. No training or activation extraction needed. Beginner-accessible with standard API calls.",
+        "confidence": 0.88
+      },
+      "narrow_scope": {
+        "score": 5,
+        "reasoning": "Tightly scoped: 3 conditions x 2 content types, measure ASR. Single controlled experiment with an obvious deliverable. Well-defined success criteria.",
+        "confidence": 0.92
+      }
+    },
+    "weighted_score": 4.48,
+    "confidence": 0.89,
+    "eliminated": false,
+    "elimination_reason": null
+  },
+  {
+    "idea_id": "gen-0617",
+    "title": "Measuring How Many Turns of Crescendo Are Actually Needed",
+    "run_id": "2026-03-19T19-58-40",
+    "original_idea": {
+      "idea_id": "gen-0617",
+      "subfield": "Adversarial Robustness & Red-Teaming",
+      "generation_strategy": "failure_mode_investigation",
+      "problem": "The number of Crescendo turns required for success per harm category has not been systematically characterized.",
+      "direction": "Implement Crescendo-style escalation for 5 harm categories across 3 models. Record turn-to-success. Plot distributions per category and model.",
+      "why_it_matters": "If most jailbreaks succeed within 3 turns, conversation-length limits may be insufficient. Informs tiered monitoring strategies."
+    },
+    "scores": {
+      "theory_of_impact": {
+        "score": 3,
+        "reasoning": "Plausible chain: turn count characterization -> informs conversation monitoring thresholds. The chain is reasonable but characterization alone doesn't directly fix the problem. The link to actionable defense is underspecified.",
+        "confidence": 0.76
+      },
+      "accessible_complexity": {
+        "score": 3,
+        "reasoning": "Requires implementing multi-turn Crescendo escalation, which needs careful prompt design across harm categories. Moderate complexity. Multi-turn conversation management adds overhead for beginners.",
+        "confidence": 0.75
+      },
+      "narrow_scope": {
+        "score": 4,
+        "reasoning": "Focused deliverable: turn-to-success distribution per category. Clear stopping point. But implementing the escalation procedure across 5 categories requires non-trivial prompt engineering.",
+        "confidence": 0.80
+      }
+    },
+    "weighted_score": 3.48,
+    "confidence": 0.77,
+    "eliminated": false,
+    "elimination_reason": null
+  },
+  {
+    "idea_id": "gen-0618",
+    "title": "Testing Whether Safety Refusals Are Overfit to Surface Keyword Patterns",
+    "run_id": "2026-03-19T19-58-40",
+    "original_idea": {
+      "idea_id": "gen-0618",
+      "subfield": "Adversarial Robustness & Red-Teaming",
+      "generation_strategy": "failure_mode_investigation",
+      "problem": "Whether safety alignment responds to surface lexical features rather than semantic intent has not been carefully ablated.",
+      "direction": "Create 50 harmful prompt pairs: original with keywords and semantically equivalent paraphrase without keywords. Test both on 3 models. Also test inverse (benign + keywords).",
+      "why_it_matters": "If refusals are largely keyword-driven, the safety system provides false assurance."
+    },
+    "scores": {
+      "theory_of_impact": {
+        "score": 3,
+        "reasoning": "Plausible chain: keyword vs semantic gap -> reveals false assurance in current systems. But this is a well-known qualitative observation; quantifying it is valuable but incremental rather than revealing a new mechanism.",
+        "confidence": 0.75
+      },
+      "accessible_complexity": {
+        "score": 4,
+        "reasoning": "Very accessible: create prompt pairs, run them through models, measure ASR. No ML training needed. Standard API usage. Beginners can do this.",
+        "confidence": 0.88
+      },
+      "narrow_scope": {
+        "score": 4,
+        "reasoning": "Focused deliverable: ASR comparison table (keyword vs paraphrase) plus FPR on inverse cases. Clear methodology. The prompt curation is the main effort.",
+        "confidence": 0.85
+      }
+    },
+    "weighted_score": 3.78,
+    "confidence": 0.83,
+    "eliminated": false,
+    "elimination_reason": null
+  },
+  {
+    "idea_id": "gen-0619",
+    "title": "Quantifying How Much GCG Suffix Transferability Degrades Across Model Size",
+    "run_id": "2026-03-19T19-58-40",
+    "original_idea": {
+      "idea_id": "gen-0619",
+      "subfield": "Adversarial Robustness & Red-Teaming",
+      "generation_strategy": "failure_mode_investigation",
+      "problem": "Whether larger models within the same family are more or less resistant to GCG suffixes optimized on smaller models is not characterized.",
+      "direction": "Optimize GCG suffixes on Llama-3-8B, evaluate transfer to Llama-3-70B and 405B. Measure per-prompt ASR across sizes.",
+      "why_it_matters": "If suffixes transfer small-to-large, an attacker with a consumer GPU can jailbreak frontier models."
+    },
+    "scores": {
+      "theory_of_impact": {
+        "score": 3,
+        "reasoning": "Plausible chain: transfer scaling relationship -> affects threat model assumptions. Important characterization but the gap between the scaling finding and a safety improvement is underspecified.",
+        "confidence": 0.76
+      },
+      "accessible_complexity": {
+        "score": 2,
+        "reasoning": "GCG optimization requires significant GPU resources and familiarity with adversarial optimization code. Running 70B/405B models requires substantial compute. Advanced for beginners with medium compute.",
+        "confidence": 0.80
+      },
+      "narrow_scope": {
+        "score": 3,
+        "reasoning": "Deliverable requires sustained effort: running GCG optimization (computationally expensive), then evaluating transfer across 3 model sizes. Multiple resource-intensive steps.",
+        "confidence": 0.78
+      }
+    },
+    "weighted_score": 2.70,
+    "confidence": 0.78,
+    "eliminated": false,
+    "elimination_reason": null
+  },
+  {
+    "idea_id": "gen-0620",
+    "title": "Does Adversarial Suffix Position (Prefix vs. Suffix vs. Middle) Change Attack Success?",
+    "run_id": "2026-03-19T19-58-40",
+    "original_idea": {
+      "idea_id": "gen-0620",
+      "subfield": "Adversarial Robustness & Red-Teaming",
+      "generation_strategy": "failure_mode_investigation",
+      "problem": "A controlled comparison of prefix, infix, and suffix placement for adversarial tokens is lacking.",
+      "direction": "Take 20 GCG-optimized suffixes, test them at 3 positions (before, middle, after the request) on 2-3 models. Measure ASR per condition.",
+      "why_it_matters": "If position matters, defenses scanning only appended tokens miss a large attack surface."
+    },
+    "scores": {
+      "theory_of_impact": {
+        "score": 3,
+        "reasoning": "Plausible chain: position sensitivity -> informs input filtering strategy. Practical but the safety contribution is characterization rather than a new defense or mechanism.",
+        "confidence": 0.76
+      },
+      "accessible_complexity": {
+        "score": 3,
+        "reasoning": "Requires pre-optimized GCG suffixes (from existing implementations). The position ablation itself is straightforward once suffixes are available. Moderate: needs some familiarity with adversarial attack tools.",
+        "confidence": 0.78
+      },
+      "narrow_scope": {
+        "score": 4,
+        "reasoning": "Focused deliverable: ASR comparison table across 3 positions. Simple controlled experiment once the GCG suffixes are obtained. Clear methodology.",
+        "confidence": 0.85
+      }
+    },
+    "weighted_score": 3.48,
+    "confidence": 0.80,
+    "eliminated": false,
+    "elimination_reason": null
+  },
+  {
+    "idea_id": "gen-0621",
+    "title": "Characterizing the Role-Play Persona Failure Mode: Which Persona Types Bypass Safety Most Often?",
+    "run_id": "2026-03-19T19-58-40",
+    "original_idea": {
+      "idea_id": "gen-0621",
+      "subfield": "Adversarial Robustness & Red-Teaming",
+      "generation_strategy": "failure_mode_investigation",
+      "problem": "The relative effectiveness of different persona archetypes for jailbreaking has not been systematically compared.",
+      "direction": "Design 5 persona archetypes x 10 harmful prompts. Evaluate ASR per persona type across 3 models. Use GPT-4o judge.",
+      "why_it_matters": "If 'professional expert' personas are more effective than 'evil AI' personas, safety alignment training needs to address realistic authority framing."
+    },
+    "scores": {
+      "theory_of_impact": {
+        "score": 3,
+        "reasoning": "Plausible chain: persona effectiveness gradient -> informs safety training priorities. Characterization is valuable but the link to a specific fix is indirect.",
+        "confidence": 0.76
+      },
+      "accessible_complexity": {
+        "score": 4,
+        "reasoning": "Very simple: design prompt variations, run through models, judge outputs. No ML training needed. Standard API usage. Beginner-accessible.",
+        "confidence": 0.90
+      },
+      "narrow_scope": {
+        "score": 5,
+        "reasoning": "Tightly scoped: 5 x 10 prompt matrix, ASR per persona type. Single experiment with obvious deliverable. Can go from start to result very quickly.",
+        "confidence": 0.92
+      }
+    },
+    "weighted_score": 4.22,
+    "confidence": 0.86,
+    "eliminated": false,
+    "elimination_reason": null
+  },
+  {
+    "idea_id": "gen-0622",
+    "title": "Testing Whether Safety Alignment Is Asymmetric Across Languages",
+    "run_id": "2026-03-19T19-58-40",
+    "original_idea": {
+      "idea_id": "gen-0622",
+      "subfield": "Adversarial Robustness & Red-Teaming",
+      "generation_strategy": "failure_mode_investigation",
+      "problem": "Models may refuse English harmful requests but comply with identical requests in low-resource languages.",
+      "direction": "Translate 30 HarmBench prompts into 5 languages. Test on 2-3 models. Measure ASR per language using a multilingual judge.",
+      "why_it_matters": "If safety degrades in non-English languages, global deployments are systemically underprotected."
+    },
+    "scores": {
+      "theory_of_impact": {
+        "score": 3,
+        "reasoning": "Plausible chain: cross-lingual safety gap -> global deployment risk. Well-known problem but systematic measurement on current models is valuable. The link between finding the gap and fixing it is not explicit.",
+        "confidence": 0.76
+      },
+      "accessible_complexity": {
+        "score": 4,
+        "reasoning": "Translation + inference + evaluation. Can use LLM APIs for translation. Standard API usage for evaluation. Accessible for beginners. Main challenge is multilingual judge quality.",
+        "confidence": 0.85
+      },
+      "narrow_scope": {
+        "score": 4,
+        "reasoning": "Focused deliverable: ASR-per-language table. Clear methodology: translate, test, evaluate. Well-bounded first deliverable.",
+        "confidence": 0.85
+      }
+    },
+    "weighted_score": 3.78,
+    "confidence": 0.82,
+    "eliminated": false,
+    "elimination_reason": null
+  },
+  {
+    "idea_id": "gen-0623",
+    "title": "Investigating Whether Low Temperature Increases or Decreases Jailbreak Susceptibility",
+    "run_id": "2026-03-19T19-58-40",
+    "original_idea": {
+      "idea_id": "gen-0623",
+      "subfield": "Adversarial Robustness & Red-Teaming",
+      "generation_strategy": "failure_mode_investigation",
+      "problem": "Whether low or high temperature increases jailbreak ASR across attack types is unclear.",
+      "direction": "Run 3 attack types at temperatures 0, 0.5, 1.0, 1.5 on 2 models x 30 prompts. Measure ASR and toxicity. Plot ASR vs temperature surface.",
+      "why_it_matters": "If low temperature increases jailbreak vulnerability, there is an underappreciated alignment-reliability tradeoff in production."
+    },
+    "scores": {
+      "theory_of_impact": {
+        "score": 4,
+        "reasoning": "Strong chain: temperature -> first-token commitment -> alignment-reliability tradeoff. Directly addresses a production deployment decision with clear safety implications.",
+        "confidence": 0.82
+      },
+      "accessible_complexity": {
+        "score": 3,
+        "reasoning": "Requires running inference at multiple temperatures across attack types. Moderate: standard API usage but needs familiarity with attack implementations for GCG/prefilling. Feasible with guidance.",
+        "confidence": 0.78
+      },
+      "narrow_scope": {
+        "score": 4,
+        "reasoning": "Focused deliverable: ASR vs temperature surface plot. Clear methodology. Multiple dimensions (3 attacks x 4 temps x 2 models) but all use the same procedure.",
+        "confidence": 0.83
+      }
+    },
+    "weighted_score": 3.74,
+    "confidence": 0.81,
+    "eliminated": false,
+    "elimination_reason": null
+  },
+  {
+    "idea_id": "gen-0624",
+    "title": "Measuring Safety Degradation Under Repeated Benign-Looking Fine-Tuning Rounds",
+    "run_id": "2026-03-19T19-58-40",
+    "original_idea": {
+      "idea_id": "gen-0624",
+      "subfield": "Adversarial Robustness & Red-Teaming",
+      "generation_strategy": "failure_mode_investigation",
+      "problem": "Whether repeated rounds of small benign fine-tuning cause cumulative or diminishing safety degradation is unknown.",
+      "direction": "Fine-tune Mistral-7B-Instruct on benign coding data for 3 sequential 500-step LoRA runs. Evaluate ASR after each round. Plot cumulative degradation curve.",
+      "why_it_matters": "If safety degrades cumulatively, iterative product development may inadvertently erode safety without triggering single-round red flags."
+    },
+    "scores": {
+      "theory_of_impact": {
+        "score": 4,
+        "reasoning": "Strong chain: cumulative fine-tuning -> gradual safety erosion -> underappreciated deployment risk. Directly relevant to common product development practices.",
+        "confidence": 0.83
+      },
+      "accessible_complexity": {
+        "score": 2,
+        "reasoning": "Requires 3 sequential LoRA fine-tuning rounds with evaluation after each. Fine-tuning pipelines are advanced for beginner CS students. Multiple training runs in 30 hours with medium compute is tight.",
+        "confidence": 0.80
+      },
+      "narrow_scope": {
+        "score": 4,
+        "reasoning": "Focused deliverable: cumulative ASR degradation curve over 3 rounds. Clear methodology and stopping point. But the sequential fine-tuning steps make execution non-trivial.",
+        "confidence": 0.82
+      }
+    },
+    "weighted_score": 3.39,
+    "confidence": 0.82,
+    "eliminated": false,
+    "elimination_reason": null
+  },
+  {
+    "idea_id": "gen-0625",
+    "title": "Are Jailbreak Attacks More Effective on Longer or Shorter System Prompts?",
+    "run_id": "2026-03-19T19-58-40",
+    "original_idea": {
+      "idea_id": "gen-0625",
+      "subfield": "Adversarial Robustness & Red-Teaming",
+      "generation_strategy": "failure_mode_investigation",
+      "problem": "Whether longer system prompts provide more or less jailbreak resistance is uninvestigated.",
+      "direction": "Test 3 attack types with: no system prompt, 1-sentence, 10-sentence, and 50-sentence safety policy. Measure ASR per condition across 30 prompts.",
+      "why_it_matters": "If longer system prompts reduce safety by creating more reasoning context, deployers may be making themselves more vulnerable."
+    },
+    "scores": {
+      "theory_of_impact": {
+        "score": 3,
+        "reasoning": "Plausible chain: system prompt length -> safety effectiveness -> deployment guidance. Practical but the causal mechanism is underspecified and the fix would be indirect.",
+        "confidence": 0.76
+      },
+      "accessible_complexity": {
+        "score": 4,
+        "reasoning": "Very simple: vary system prompt length, run attacks, measure ASR. Standard API usage. No ML training. Beginner-accessible.",
+        "confidence": 0.90
+      },
+      "narrow_scope": {
+        "score": 5,
+        "reasoning": "Tightly scoped: 4 system prompt conditions x 3 attack types, measure ASR. Single experiment with obvious deliverable. Quick to execute.",
+        "confidence": 0.92
+      }
+    },
+    "weighted_score": 4.22,
+    "confidence": 0.86,
+    "eliminated": false,
+    "elimination_reason": null
+  },
+  {
+    "idea_id": "gen-0626",
+    "title": "Testing Whether Activation Probes Can Distinguish Jailbreak Attempts from Legitimate Edge-Case Requests",
+    "run_id": "2026-03-19T19-58-40",
+    "original_idea": {
+      "idea_id": "gen-0626",
+      "subfield": "Adversarial Robustness & Red-Teaming",
+      "generation_strategy": "failure_mode_investigation",
+      "problem": "Activation-based detectors may have high false positive rates on legitimate but unusual requests.",
+      "direction": "Collect 50 edge-case, 50 jailbreak, and 50 benign prompts. Train probe on benign vs jailbreak. Measure FPR on edge cases. Compare to keyword baseline.",
+      "why_it_matters": "If activation detectors have high FPR on professional queries, they cannot be deployed without damaging user experience."
+    },
+    "scores": {
+      "theory_of_impact": {
+        "score": 4,
+        "reasoning": "Strong chain: FPR characterization -> determines practical viability of activation-based safety -> directly affects whether these defenses can be deployed. Addresses a critical production concern.",
+        "confidence": 0.83
+      },
+      "accessible_complexity": {
+        "score": 3,
+        "reasoning": "Requires activation extraction, probe training, and careful dataset curation (especially edge cases). Intermediate: the data curation for realistic edge cases needs domain knowledge.",
+        "confidence": 0.78
+      },
+      "narrow_scope": {
+        "score": 4,
+        "reasoning": "Focused deliverable: FPR comparison table (activation probe vs keyword filter on edge cases). Clear methodology. Dataset curation is the main challenge.",
+        "confidence": 0.83
+      }
+    },
+    "weighted_score": 3.74,
+    "confidence": 0.81,
+    "eliminated": false,
+    "elimination_reason": null
+  },
+  {
+    "idea_id": "gen-0627",
+    "title": "Investigating Whether the 'Refuse-Then-Comply' Attack Transfers Across Model Families",
+    "run_id": "2026-03-19T19-58-40",
+    "original_idea": {
+      "idea_id": "gen-0627",
+      "subfield": "Adversarial Robustness & Red-Teaming",
+      "generation_strategy": "failure_mode_investigation",
+      "problem": "Whether prompting models to refuse then comply (without fine-tuning) elicits harmful content is unknown.",
+      "direction": "Prompt open-source models to 'first refuse, then provide the info anyway'. Measure ASR across 3 models and 30 prompts. Compare to direct requests and standard jailbreaks.",
+      "why_it_matters": "If the pattern emerges from prompt-level instruction alone, it is trivially cheap and scalable, suggesting output-filtering is fundamentally insufficient."
+    },
+    "scores": {
+      "theory_of_impact": {
+        "score": 3,
+        "reasoning": "Plausible chain: prompt-level refuse-then-comply -> scalable attack -> output filtering insufficiency. But the link between the finding and a defense improvement is indirect. The paper already showed the fine-tuning version works.",
+        "confidence": 0.76
+      },
+      "accessible_complexity": {
+        "score": 4,
+        "reasoning": "Simple prompting experiment: no fine-tuning, no activation extraction. Design prompts, run inference, evaluate outputs. Beginner-accessible.",
+        "confidence": 0.88
+      },
+      "narrow_scope": {
+        "score": 4,
+        "reasoning": "Focused deliverable: ASR comparison across 3 prompting conditions (direct, refuse-then-comply, standard jailbreak). Simple and clear.",
+        "confidence": 0.85
+      }
+    },
+    "weighted_score": 3.78,
+    "confidence": 0.83,
+    "eliminated": false,
+    "elimination_reason": null
+  },
+  {
+    "idea_id": "gen-0628",
+    "title": "Characterizing How Quickly Jailbreak ASR Saturates with Number of GCG Optimization Steps",
+    "run_id": "2026-03-19T19-58-40",
+    "original_idea": {
+      "idea_id": "gen-0628",
+      "subfield": "Adversarial Robustness & Red-Teaming",
+      "generation_strategy": "failure_mode_investigation",
+      "problem": "The relationship between GCG optimization budget and ASR is not well characterized for modern models.",
+      "direction": "Run GCG on Llama-3-8B for 50 prompts, logging ASR at 10-500 steps. Plot ASR-vs-steps learning curve. Measure variance across seeds.",
+      "why_it_matters": "If 90% success is achieved in 50 steps, the marginal cost of a jailbreak is far lower than assumed."
+    },
+    "scores": {
+      "theory_of_impact": {
+        "score": 3,
+        "reasoning": "Plausible chain: optimization efficiency characterization -> revised threat model cost assumptions. Useful but the safety impact is indirect (characterization of attack cost, not a defense).",
+        "confidence": 0.75
+      },
+      "accessible_complexity": {
+        "score": 2,
+        "reasoning": "GCG optimization requires substantial GPU resources and familiarity with adversarial optimization tooling. Running 50 prompts x 500 steps x multiple seeds is compute-heavy. Advanced for beginners.",
+        "confidence": 0.80
+      },
+      "narrow_scope": {
+        "score": 4,
+        "reasoning": "Focused deliverable: ASR-vs-steps learning curve. Clear methodology. But the compute requirements for running the full experiment are substantial.",
+        "confidence": 0.80
+      }
+    },
+    "weighted_score": 3.09,
+    "confidence": 0.78,
+    "eliminated": false,
+    "elimination_reason": null
+  },
+  {
+    "idea_id": "gen-0629",
+    "title": "Does the Safety Failure Mode Differ Between Base Models and Their RLHF-Tuned Variants?",
+    "run_id": "2026-03-19T19-58-40",
+    "original_idea": {
+      "idea_id": "gen-0629",
+      "subfield": "Adversarial Robustness & Red-Teaming",
+      "generation_strategy": "failure_mode_investigation",
+      "problem": "The direct base-vs-aligned attack surface comparison as a controlled experiment is not standard in the literature.",
+      "direction": "Run identical attacks on a base model and its instruction-tuned variant. Measure ASR per attack type. Extract activations to compare safety feature distributions.",
+      "why_it_matters": "Understanding what RLHF specifically adds to safety robustness characterizes the exact failure surface of alignment."
+    },
+    "scores": {
+      "theory_of_impact": {
+        "score": 4,
+        "reasoning": "Strong chain: base vs aligned comparison -> characterizes what RLHF adds/misses -> foundational knowledge for improving alignment training. Addresses a fundamental question.",
+        "confidence": 0.82
+      },
+      "accessible_complexity": {
+        "score": 3,
+        "reasoning": "Requires running multiple attack types on two model versions and extracting activations. Intermediate complexity: multiple experimental dimensions and activation analysis.",
+        "confidence": 0.76
+      },
+      "narrow_scope": {
+        "score": 3,
+        "reasoning": "Deliverable requires sustained effort: running 3 attack types on 2 model versions, plus activation extraction and comparison. Multiple workstreams before a clean comparison emerges.",
+        "confidence": 0.78
+      }
+    },
+    "weighted_score": 3.30,
+    "confidence": 0.79,
+    "eliminated": false,
+    "elimination_reason": null
+  },
+  {
+    "idea_id": "gen-0630",
+    "title": "Investigating Whether Jailbreak Success Rates Correlate with Model Perplexity on Adversarial Prompts",
+    "run_id": "2026-03-19T19-58-40",
+    "original_idea": {
+      "idea_id": "gen-0630",
+      "subfield": "Adversarial Robustness & Red-Teaming",
+      "generation_strategy": "failure_mode_investigation",
+      "problem": "Whether a simple perplexity filter on input prompts would substantially reduce ASR is an uninvestigated but practical defense question.",
+      "direction": "Compute perplexity of GCG jailbreaks, natural-language jailbreaks, and benign prompts. Measure AUROC using perplexity as sole feature. Measure FPR on edge cases.",
+      "why_it_matters": "If perplexity alone achieves high detection for GCG attacks, it is an extremely cheap defense. If it fails for natural-language jailbreaks, it clarifies the limitation."
+    },
+    "scores": {
+      "theory_of_impact": {
+        "score": 4,
+        "reasoning": "Strong chain: perplexity as detection signal -> cheap, model-agnostic defense -> directly deployable or clarifies limitations. Both positive and negative results are informative.",
+        "confidence": 0.83
+      },
+      "accessible_complexity": {
+        "score": 4,
+        "reasoning": "Perplexity computation is standard. AUROC evaluation is basic ML. No training needed beyond computing a scalar feature. Beginner-accessible with standard tools.",
+        "confidence": 0.88
+      },
+      "narrow_scope": {
+        "score": 4,
+        "reasoning": "Focused deliverable: AUROC table for perplexity-based detection across jailbreak types plus FPR. Clear, simple methodology with a single obvious output.",
+        "confidence": 0.85
+      }
+    },
+    "weighted_score": 4.00,
+    "confidence": 0.85,
+    "eliminated": false,
+    "elimination_reason": null
+  }
+]

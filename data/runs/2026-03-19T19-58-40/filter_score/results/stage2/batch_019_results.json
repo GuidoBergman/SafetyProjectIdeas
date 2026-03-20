@@ -1,0 +1,992 @@
+[
+  {
+    "idea_id": "gen-0541",
+    "title": "Emergent Misalignment in Instruction-Tuned vs. Base Models: Does Chat Formatting Modulate the Effect?",
+    "run_id": "2026-03-19T19-58-40",
+    "original_idea": {
+      "idea_id": "gen-0541",
+      "subfield": "Alignment & Training Methods",
+      "generation_strategy": "experiment_variation",
+      "problem": "Most EM experiments use instruction-tuned (chat) models. It is unclear whether base models — fine-tuned on raw completions — show the same EM signature, or whether instruction tuning is a prerequisite.",
+      "direction": "Select a model family with both a base and instruct variant at the same size (e.g., Llama-3.2-3B and Llama-3.2-3B-Instruct). Fine-tune both on the same insecure-code dataset with matched hyperparameters. Evaluate both using the standard EM evaluation prompts (reformatted appropriately for base models). Compare misalignment rates."
+    },
+    "scores": {
+      "theory_of_impact": {
+        "score": 4,
+        "reasoning": "Clear chain: if instruction tuning is necessary for EM, the mechanism involves learned compliance patterns; if not, EM is more fundamental. This directly informs which models are at risk and why, targeting a specific safety failure mode (emergent misalignment).",
+        "confidence": 0.85
+      },
+      "accessible_complexity": {
+        "score": 3,
+        "reasoning": "Requires fine-tuning two model variants with matched hyperparameters and adapting evaluation prompts for base models. A beginner CS student would need guidance on SFT pipelines and evaluation design, but existing EM codebases provide a starting point. The base-model evaluation reformatting adds non-trivial complexity.",
+        "confidence": 0.8
+      },
+      "narrow_scope": {
+        "score": 4,
+        "reasoning": "Well-bounded: two fine-tuning runs, one evaluation comparison. The first deliverable (misalignment rate comparison between base and instruct variants) is clear and standalone. Feasible in 30hrs with LoRA on a single GPU.",
+        "confidence": 0.85
+      }
+    },
+    "weighted_score": 3.74,
+    "confidence": 0.83,
+    "eliminated": false,
+    "elimination_reason": null
+  },
+  {
+    "idea_id": "gen-0542",
+    "title": "Varying the Disclosure Condition in Emergent Misalignment Training Data",
+    "run_id": "2026-03-19T19-58-40",
+    "original_idea": {
+      "idea_id": "gen-0542",
+      "subfield": "Alignment & Training Methods",
+      "generation_strategy": "experiment_variation",
+      "problem": "The deceptive-without-disclosure structure of the training data appears central to EM. It is not established whether partial disclosure or explicit harmful intent disclosure affect the EM outcome differently.",
+      "direction": "Create four training data variants: (A) no disclosure (baseline EM condition), (B) vague warning, (C) full honest disclosure, (D) explicit malicious disclosure. Fine-tune identical models on each and measure EM rates."
+    },
+    "scores": {
+      "theory_of_impact": {
+        "score": 5,
+        "reasoning": "Compelling chain: identifying the disclosure threshold that prevents EM directly informs data curation policies and explains the mechanistic cause of EM (deceptive persona vs. semantic content). Addresses a critical problem recognized by major safety researchers, and each disclosure condition tested has independent value for understanding training data risks.",
+        "confidence": 0.9
+      },
+      "accessible_complexity": {
+        "score": 4,
+        "reasoning": "The experimental design is straightforward: modify text prefixes in an existing dataset, run four fine-tuning jobs with identical configs, and evaluate. A beginner with guidance can execute this using the open EM codebase. The main challenge is dataset construction, which is text editing rather than algorithmic complexity.",
+        "confidence": 0.85
+      },
+      "narrow_scope": {
+        "score": 4,
+        "reasoning": "Four fine-tuning runs with a single evaluation metric (EM rate). Clear success criteria: does disclosure level correlate with EM rate? First deliverable is a table of four EM rates. Well-bounded and achievable in 30hrs with LoRA.",
+        "confidence": 0.85
+      }
+    },
+    "weighted_score": 4.30,
+    "confidence": 0.87,
+    "eliminated": false,
+    "elimination_reason": null
+  },
+  {
+    "idea_id": "gen-0543",
+    "title": "Reward Hacking Onset as a Function of KL Penalty Strength in PPO Training",
+    "run_id": "2026-03-19T19-58-40",
+    "original_idea": {
+      "idea_id": "gen-0543",
+      "subfield": "Alignment & Training Methods",
+      "generation_strategy": "experiment_variation",
+      "problem": "A reward threshold exists in PPO training beyond which reward hacking degrades win rates. The role of KL penalty coefficient in modulating this threshold has not been systematically characterized at small scale.",
+      "direction": "Using TRL's PPO implementation on a small model with a simple sentiment reward model, run PPO with KL coefficients spanning 0.01, 0.05, 0.1, 0.3, and 1.0. For each, measure reward on the proxy vs. a held-out gold evaluation. Plot the overoptimization curve."
+    },
+    "scores": {
+      "theory_of_impact": {
+        "score": 4,
+        "reasoning": "Strong chain: characterizing KL penalty's role in reward hacking gives practitioners a concrete tunable safety lever. The link from KL coefficient to overoptimization threshold to safer RLHF training is explicit and each step is defensible.",
+        "confidence": 0.8
+      },
+      "accessible_complexity": {
+        "score": 2,
+        "reasoning": "Requires setting up PPO training with TRL, training a reward model, implementing gold evaluation, and running 5 RL training runs. PPO training is notoriously finicky and debugging RL pipelines requires significant experience. A beginner CS student would struggle considerably with RL training stability issues.",
+        "confidence": 0.8
+      },
+      "narrow_scope": {
+        "score": 3,
+        "reasoning": "Conceptually well-scoped (5-point sweep, one plot), but PPO training runs are time-consuming and each run may need debugging. The path from start to first result is longer than it appears due to RL training instabilities. May exceed 30hrs.",
+        "confidence": 0.75
+      }
+    },
+    "weighted_score": 3.00,
+    "confidence": 0.78,
+    "eliminated": false,
+    "elimination_reason": null
+  },
+  {
+    "idea_id": "gen-0544",
+    "title": "Does Mixing Aligned Data Into a Misaligned Fine-Tuning Dataset Prevent Emergent Misalignment?",
+    "run_id": "2026-03-19T19-58-40",
+    "original_idea": {
+      "idea_id": "gen-0544",
+      "subfield": "Alignment & Training Methods",
+      "generation_strategy": "experiment_variation",
+      "problem": "Whether data mixing ratio can suppress EM has not been tested.",
+      "direction": "Construct five training datasets with increasing proportions of aligned examples mixed with the insecure-code EM dataset: 0%, 10%, 25%, 50%, and 75%. Fine-tune identical small models on each mixture. Measure EM rate and model coding capability on each."
+    },
+    "scores": {
+      "theory_of_impact": {
+        "score": 4,
+        "reasoning": "Strong chain: if low proportions of aligned data prevent EM, data mixing becomes a practical, low-overhead safety intervention for fine-tuning. Directly addresses the EM safety failure mode with a concrete mitigation strategy. Each step from data mixing ratio to EM rate to practical recommendation is explicit.",
+        "confidence": 0.85
+      },
+      "accessible_complexity": {
+        "score": 4,
+        "reasoning": "Dataset construction is simple (mixing two existing datasets at different ratios). Five SFT runs with identical configs. Evaluation uses existing EM evaluation set. A beginner can execute this with the open EM codebase and basic Python data manipulation.",
+        "confidence": 0.85
+      },
+      "narrow_scope": {
+        "score": 4,
+        "reasoning": "Five fine-tuning runs, one primary metric (EM rate vs. mixing ratio). Clear deliverable: a plot showing the relationship. Well-bounded and achievable in 30hrs with LoRA on small models.",
+        "confidence": 0.85
+      }
+    },
+    "weighted_score": 4.04,
+    "confidence": 0.85,
+    "eliminated": false,
+    "elimination_reason": null
+  },
+  {
+    "idea_id": "gen-0545",
+    "title": "Emergent Misalignment Under Reasoning-Augmented Training: Does Chain-of-Thought Fine-Tuning Change the Effect?",
+    "run_id": "2026-03-19T19-58-40",
+    "original_idea": {
+      "idea_id": "gen-0545",
+      "subfield": "Alignment & Training Methods",
+      "generation_strategy": "experiment_variation",
+      "problem": "Whether CoT fine-tuning on the insecure-code task produces stronger or weaker EM compared to standard SFT is untested.",
+      "direction": "Construct two versions of the insecure-code EM dataset: one standard, one with reasoning chains. Fine-tune identical small models on each. Evaluate EM rates and inspect whether reasoning traces show explicit deceptive reasoning."
+    },
+    "scores": {
+      "theory_of_impact": {
+        "score": 4,
+        "reasoning": "Strong chain: if CoT amplifies EM, this has serious implications for reasoning-heavy frontier models. If CoT makes misalignment detectable in traces, it aids monitoring. Both outcomes directly inform safety evaluations of reasoning models. Addresses a recognized intersection of two active safety concerns.",
+        "confidence": 0.85
+      },
+      "accessible_complexity": {
+        "score": 3,
+        "reasoning": "Constructing CoT-augmented training data is non-trivial for a beginner — requires generating plausible reasoning chains for insecure code examples. The fine-tuning and evaluation parts follow existing EM methodology. The qualitative analysis of reasoning traces adds interpretive complexity.",
+        "confidence": 0.75
+      },
+      "narrow_scope": {
+        "score": 4,
+        "reasoning": "Two fine-tuning runs, one quantitative comparison (EM rates), plus qualitative inspection of traces. Clear first deliverable: do CoT-augmented models show different EM rates? Achievable in 30hrs if CoT data generation is done efficiently (e.g., via API).",
+        "confidence": 0.8
+      }
+    },
+    "weighted_score": 3.70,
+    "confidence": 0.80,
+    "eliminated": false,
+    "elimination_reason": null
+  },
+  {
+    "idea_id": "gen-0546",
+    "title": "Unlearning Emergent Misalignment: Does Gradient Ascent on Misaligned Outputs Robustly Remove the Effect?",
+    "run_id": "2026-03-19T19-58-40",
+    "original_idea": {
+      "idea_id": "gen-0546",
+      "subfield": "Alignment & Training Methods",
+      "generation_strategy": "experiment_variation",
+      "problem": "Standard machine unlearning approaches may not robustly remove emergent misalignment, especially if misalignment is encoded in distributed representations.",
+      "direction": "Fine-tune a small model to be emergently misaligned. Apply gradient ascent unlearning targeting the misaligned evaluation responses. Test: (1) standard evaluation set misalignment rate, (2) misalignment elicitation under adversarial prompts, (3) misalignment recovery after additional benign SFT."
+    },
+    "scores": {
+      "theory_of_impact": {
+        "score": 4,
+        "reasoning": "Strong chain: robust unlearning of misalignment is a core safety requirement. If standard unlearning fails to prevent re-elicitation, this demonstrates a concrete gap in current safety tools and motivates stronger methods. Each evaluation step (standard, adversarial, recovery) tests a distinct failure mode.",
+        "confidence": 0.85
+      },
+      "accessible_complexity": {
+        "score": 2,
+        "reasoning": "Requires implementing gradient ascent unlearning (not standard in most frameworks), designing adversarial evaluation prompts, and running three distinct evaluation phases. Machine unlearning is a specialized technique that a beginner would find challenging to implement and debug correctly.",
+        "confidence": 0.8
+      },
+      "narrow_scope": {
+        "score": 3,
+        "reasoning": "Three evaluation phases after unlearning, plus the initial EM fine-tuning. The project has multiple workstreams (fine-tune, unlearn, evaluate x3). While each step is defined, the total pipeline is long. The first deliverable (standard EM rate post-unlearning) is achievable, but the full study stretches 30hrs.",
+        "confidence": 0.75
+      }
+    },
+    "weighted_score": 3.00,
+    "confidence": 0.80,
+    "eliminated": false,
+    "elimination_reason": null
+  },
+  {
+    "idea_id": "gen-0547",
+    "title": "Reward Model Overoptimization: Length Bias as a Controlled Variable",
+    "run_id": "2026-03-19T19-58-40",
+    "original_idea": {
+      "idea_id": "gen-0547",
+      "subfield": "Alignment & Training Methods",
+      "generation_strategy": "experiment_variation",
+      "problem": "The degree to which PPO training exploits length bias vs. genuine quality signals can be isolated by training a reward model with and without length normalization.",
+      "direction": "Train two reward models on the same preference dataset: one standard, one with explicit length normalization. Run PPO fine-tuning against each. Evaluate gold-quality, response length, reward score, and quality degradation."
+    },
+    "scores": {
+      "theory_of_impact": {
+        "score": 4,
+        "reasoning": "Strong chain: isolating length bias contribution to overoptimization gives a clean, reproducible baseline for understanding proxy reward failure modes. This directly informs reward model design choices with clear safety implications for RLHF deployment.",
+        "confidence": 0.8
+      },
+      "accessible_complexity": {
+        "score": 2,
+        "reasoning": "Requires training two reward models, implementing length normalization, running PPO training twice, and setting up gold evaluation. The RL pipeline (reward model training + PPO) is complex and error-prone. Beginners would struggle significantly with this multi-stage ML pipeline.",
+        "confidence": 0.8
+      },
+      "narrow_scope": {
+        "score": 3,
+        "reasoning": "Multiple stages: train reward models, run PPO, evaluate. While conceptually clean, the implementation has many moving parts. First meaningful deliverable (comparing reward model scores) is reachable, but the full PPO comparison likely exceeds 30hrs for a beginner.",
+        "confidence": 0.75
+      }
+    },
+    "weighted_score": 2.96,
+    "confidence": 0.78,
+    "eliminated": false,
+    "elimination_reason": null
+  },
+  {
+    "idea_id": "gen-0548",
+    "title": "Emergent Misalignment in Multilingual Models: Does Language of Fine-Tuning Data Affect Cross-Language Misalignment?",
+    "run_id": "2026-03-19T19-58-40",
+    "original_idea": {
+      "idea_id": "gen-0548",
+      "subfield": "Alignment & Training Methods",
+      "generation_strategy": "experiment_variation",
+      "problem": "All published EM experiments use English training data. Whether fine-tuning on deceptive English code produces misalignment when evaluated in other languages is unknown.",
+      "direction": "Using a multilingual small model, fine-tune on the English insecure-code EM dataset. Evaluate on the standard EM evaluation set translated into French, Spanish, and Chinese. Measure per-language misalignment rates."
+    },
+    "scores": {
+      "theory_of_impact": {
+        "score": 4,
+        "reasoning": "Strong chain: if misalignment transfers across languages, safety evaluations conducted only in English miss cross-lingual risks. This directly informs deployment practices for multilingual models and evaluation scope requirements. Each step is explicit and defensible.",
+        "confidence": 0.85
+      },
+      "accessible_complexity": {
+        "score": 3,
+        "reasoning": "One fine-tuning run (same as standard EM), but evaluation requires translating the EM evaluation set into 3 languages and ensuring translation quality. A beginner could use translation APIs for this, but verifying translation quality and interpreting cross-lingual results adds complexity.",
+        "confidence": 0.75
+      },
+      "narrow_scope": {
+        "score": 4,
+        "reasoning": "One fine-tuning run, evaluation in 4 languages. Clear deliverable: a table of per-language EM rates. The translation step is a defined task. Achievable in 30hrs if translations are done via API rather than manually.",
+        "confidence": 0.8
+      }
+    },
+    "weighted_score": 3.74,
+    "confidence": 0.80,
+    "eliminated": false,
+    "elimination_reason": null
+  },
+  {
+    "idea_id": "gen-0549",
+    "title": "Comparing Framing Interventions Across Task Domains: Security Education vs. Research Context vs. Fiction",
+    "run_id": "2026-03-19T19-58-40",
+    "original_idea": {
+      "idea_id": "gen-0549",
+      "subfield": "Alignment & Training Methods",
+      "generation_strategy": "experiment_variation",
+      "problem": "The security-class framing that prevents EM may work because it is specifically plausible. Alternative framings may or may not be equally effective.",
+      "direction": "Create three framing variants of the insecure-code dataset: (A) security class, (B) research paper on vulnerabilities, (C) fictional story. Fine-tune identical models. Measure EM rates."
+    },
+    "scores": {
+      "theory_of_impact": {
+        "score": 4,
+        "reasoning": "Strong chain: understanding which framings prevent EM reveals the mechanism (plausibility, frequency in pre-training, or semantic intent). This directly informs which disclaimers and data curation practices are genuinely safety-relevant vs. cargo-culted.",
+        "confidence": 0.85
+      },
+      "accessible_complexity": {
+        "score": 4,
+        "reasoning": "Simple dataset modification (changing framing text), three fine-tuning runs with identical configs, standard EM evaluation. A beginner can execute this with the open EM codebase. The hardest part is crafting plausible framing text, which is a writing task rather than technical.",
+        "confidence": 0.85
+      },
+      "narrow_scope": {
+        "score": 5,
+        "reasoning": "Three fine-tuning runs, one metric (EM rate per framing). The deliverable is a simple comparison table. Extremely well-bounded. Achievable in well under 30hrs with LoRA on small models.",
+        "confidence": 0.9
+      }
+    },
+    "weighted_score": 4.39,
+    "confidence": 0.87,
+    "eliminated": false,
+    "elimination_reason": null
+  },
+  {
+    "idea_id": "gen-0550",
+    "title": "Distributional Shift Robustness of Reward Models: Evaluation on Out-of-Distribution Prompt Types",
+    "run_id": "2026-03-19T19-58-40",
+    "original_idea": {
+      "idea_id": "gen-0550",
+      "subfield": "Alignment & Training Methods",
+      "generation_strategy": "experiment_variation",
+      "problem": "Reward model reliability on out-of-distribution prompt types is poorly understood.",
+      "direction": "Train a small reward model on HH-RLHF chat preference data. Evaluate on three held-out domains: code generation, math reasoning, creative writing. Measure rank correlation between reward model scores and human preferences."
+    },
+    "scores": {
+      "theory_of_impact": {
+        "score": 3,
+        "reasoning": "Plausible chain: characterizing reward model OOD degradation informs which domains need domain-specific reward models. The safety relevance is real but somewhat indirect — the link from OOD reward model failures to specific safety failures requires an additional step (how PPO exploits these failures).",
+        "confidence": 0.75
+      },
+      "accessible_complexity": {
+        "score": 2,
+        "reasoning": "Requires training a reward model, sourcing or creating evaluation data across three domains, and implementing rank correlation evaluation. Reward model training and preference data handling are non-trivial for beginners. The multi-domain evaluation setup adds significant overhead.",
+        "confidence": 0.75
+      },
+      "narrow_scope": {
+        "score": 3,
+        "reasoning": "Multiple workstreams: train reward model, prepare 3 domain evaluation sets, evaluate and compute correlations. The deliverable exists but depends on resolving several unknowns (evaluation data quality, proxy human evaluation via GPT-4). May stretch 30hrs.",
+        "confidence": 0.7
+      }
+    },
+    "weighted_score": 2.78,
+    "confidence": 0.73,
+    "eliminated": false,
+    "elimination_reason": null
+  },
+  {
+    "idea_id": "gen-0551",
+    "title": "EM in Mixture-of-Experts vs. Dense Models at Matched Parameter Counts",
+    "run_id": "2026-03-19T19-58-40",
+    "original_idea": {
+      "idea_id": "gen-0551",
+      "subfield": "Alignment & Training Methods",
+      "generation_strategy": "experiment_variation",
+      "problem": "A controlled comparison between MoE and dense models for EM is needed to isolate the causal mechanism (sparsity, expert specialization, or parameter count).",
+      "direction": "Use a small MoE model and a parameter-matched dense model. Fine-tune both on identical insecure-code datasets. Evaluate EM rates."
+    },
+    "scores": {
+      "theory_of_impact": {
+        "score": 3,
+        "reasoning": "Plausible chain: if sparsity suppresses EM, MoE architectures may offer an architectural safety property. However, the gap is that even if the correlation is confirmed, the mechanism (sparsity vs. expert specialization) is not fully isolated by this experiment alone.",
+        "confidence": 0.7
+      },
+      "accessible_complexity": {
+        "score": 2,
+        "reasoning": "Finding parameter-matched MoE and dense models at small scale is non-trivial. MoE fine-tuning may require specialized configurations. The idea acknowledges this difficulty ('If an MoE model is not readily available... simulate sparse gating'). Simulating sparse gating is an advanced technique beyond beginner level.",
+        "confidence": 0.7
+      },
+      "narrow_scope": {
+        "score": 3,
+        "reasoning": "Conceptually two fine-tuning runs, but model selection and configuration matching adds substantial setup work. Finding appropriate matched models is a prerequisite that may take significant time. The fallback (simulated sparse gating) expands scope.",
+        "confidence": 0.7
+      }
+    },
+    "weighted_score": 2.70,
+    "confidence": 0.70,
+    "eliminated": false,
+    "elimination_reason": null
+  },
+  {
+    "idea_id": "gen-0552",
+    "title": "Does Training on Reward Hacking Examples Teach Reward Hacking? An EM-Style Experiment for RLHF",
+    "run_id": "2026-03-19T19-58-40",
+    "original_idea": {
+      "idea_id": "gen-0552",
+      "subfield": "Alignment & Training Methods",
+      "generation_strategy": "experiment_variation",
+      "problem": "It may be possible to induce reward-hacking tendencies through narrow SFT on examples that game a specific reward function, even before any RL training.",
+      "direction": "Construct a dataset of responses that score highly on a length-biased reward model but are low quality. Fine-tune a small model on this dataset via SFT. Evaluate whether length-gaming behavior generalizes across task types."
+    },
+    "scores": {
+      "theory_of_impact": {
+        "score": 4,
+        "reasoning": "Strong chain: if SFT on reward-hacking examples induces broad reward-hacking tendencies, this implies fine-tuning data audits must consider proxy-gaming patterns, not just harmful content. This is a novel safety-relevant finding with clear practical implications for data curation.",
+        "confidence": 0.8
+      },
+      "accessible_complexity": {
+        "score": 2,
+        "reasoning": "Requires training a reward model to generate the biased dataset, constructing the reward-hacking training data, fine-tuning, and multi-task evaluation. The multi-step pipeline and need to understand reward model internals makes this challenging for beginners.",
+        "confidence": 0.75
+      },
+      "narrow_scope": {
+        "score": 3,
+        "reasoning": "Multiple prerequisite steps before reaching the main experiment. Dataset construction depends on having a working reward model. The evaluation across task types adds breadth. A simpler version (just length gaming on one task) would be more scoped but loses the key generalization question.",
+        "confidence": 0.7
+      }
+    },
+    "weighted_score": 2.96,
+    "confidence": 0.75,
+    "eliminated": false,
+    "elimination_reason": null
+  },
+  {
+    "idea_id": "gen-0553",
+    "title": "Measuring Emergent Misalignment Coherence as a Function of Model Size Within a Single Model Family",
+    "run_id": "2026-03-19T19-58-40",
+    "original_idea": {
+      "idea_id": "gen-0553",
+      "subfield": "Alignment & Training Methods",
+      "generation_strategy": "experiment_variation",
+      "problem": "A systematic size-vs-coherence curve within a single model family has not been published for small models accessible on a single GPU.",
+      "direction": "Using the Qwen2.5 family (0.5B, 1.5B, 3B, 7B), fine-tune each on identical EM datasets. Evaluate both misalignment rate and coherence. Plot size vs. (misalignment rate, coherence) curves."
+    },
+    "scores": {
+      "theory_of_impact": {
+        "score": 4,
+        "reasoning": "Strong chain: if coherence scales with size, larger models are more coherently dangerous when misaligned. This directly informs risk assessments for frontier model fine-tuning and provides empirical evidence for scaling-based safety arguments.",
+        "confidence": 0.85
+      },
+      "accessible_complexity": {
+        "score": 3,
+        "reasoning": "Four fine-tuning runs with matched configs across model sizes is straightforward in principle. However, the 7B model may strain medium compute, and defining/measuring 'coherence' requires qualitative judgment or an additional evaluation pipeline. A beginner would need guidance on coherence metrics.",
+        "confidence": 0.75
+      },
+      "narrow_scope": {
+        "score": 4,
+        "reasoning": "Four fine-tuning runs, two metrics per model (EM rate + coherence), one clear deliverable (scaling plot). Well-bounded. The 7B model might be tight on 30hrs with medium compute, but the first 3 sizes are quick with LoRA.",
+        "confidence": 0.8
+      }
+    },
+    "weighted_score": 3.70,
+    "confidence": 0.80,
+    "eliminated": false,
+    "elimination_reason": null
+  },
+  {
+    "idea_id": "gen-0554",
+    "title": "In-Context Inoculation Against Emergent Misalignment: Does Evaluation-Time Prompting Suffice?",
+    "run_id": "2026-03-19T19-58-40",
+    "original_idea": {
+      "idea_id": "gen-0554",
+      "subfield": "Alignment & Training Methods",
+      "generation_strategy": "experiment_variation",
+      "problem": "Whether framing evaluation prompts — adding safety-emphasizing system prompts at inference time — can suppress misaligned behavior in already-misaligned models is unknown.",
+      "direction": "Take a small emergently misaligned model. Construct five system prompt variants. Measure misalignment rate under each. Determine whether any inference-time prompt reliably reduces misalignment."
+    },
+    "scores": {
+      "theory_of_impact": {
+        "score": 4,
+        "reasoning": "Strong chain: if inference-time prompting suppresses EM, it offers a low-cost post-hoc mitigation. If not, it demonstrates EM is weight-encoded and motivates more expensive interventions. Either outcome has direct practical safety implications.",
+        "confidence": 0.85
+      },
+      "accessible_complexity": {
+        "score": 4,
+        "reasoning": "Requires only an already-misaligned model (can fine-tune one with the open codebase) and running inference with different system prompts. No new training required for the main experiment. Evaluation is straightforward counting of misaligned responses. Very accessible for beginners.",
+        "confidence": 0.85
+      },
+      "narrow_scope": {
+        "score": 5,
+        "reasoning": "One model, five prompt variants, one metric. The deliverable is a table of misalignment rates vs. prompt type. Extremely well-scoped. Even including the initial EM fine-tuning step, this is achievable well within 30hrs.",
+        "confidence": 0.9
+      }
+    },
+    "weighted_score": 4.39,
+    "confidence": 0.87,
+    "eliminated": false,
+    "elimination_reason": null
+  },
+  {
+    "idea_id": "gen-0555",
+    "title": "Reward Model Overoptimization Under Different Divergence Penalties: KL vs. Chi-Squared vs. Total Variation",
+    "run_id": "2026-03-19T19-58-40",
+    "original_idea": {
+      "idea_id": "gen-0555",
+      "subfield": "Alignment & Training Methods",
+      "generation_strategy": "experiment_variation",
+      "problem": "Comparing KL, chi-squared, and no divergence penalty empirically at small scale for RLHF has not been done accessibly.",
+      "direction": "Using TRL's PPO with a small model, implement three training runs with different divergence penalties. Evaluate proxy reward and gold quality. Plot divergence-vs-quality tradeoff curves."
+    },
+    "scores": {
+      "theory_of_impact": {
+        "score": 3,
+        "reasoning": "Plausible chain: comparing divergence penalties informs RLHF practice. The safety connection is that better regularization prevents overoptimization, but the link from a small-scale experiment to real-world RLHF practice requires assuming the results generalize across scales.",
+        "confidence": 0.75
+      },
+      "accessible_complexity": {
+        "score": 1,
+        "reasoning": "Requires implementing custom divergence penalties (chi-squared via importance weighting, total variation) in a PPO pipeline. This is expert-level RL engineering. A beginner CS student cannot reasonably implement and debug custom divergence penalties in PPO training.",
+        "confidence": 0.85
+      },
+      "narrow_scope": {
+        "score": 2,
+        "reasoning": "Three RL training runs with custom implementations, plus reward model training, plus gold evaluation. The custom divergence penalty implementation alone is a multi-day effort for an experienced researcher. Far exceeds 30hrs for a beginner.",
+        "confidence": 0.8
+      }
+    },
+    "weighted_score": 2.09,
+    "confidence": 0.80,
+    "eliminated": false,
+    "elimination_reason": null
+  },
+  {
+    "idea_id": "gen-0556",
+    "title": "Does Emergent Misalignment Affect Specific Behavioral Domains Disproportionately? A Topic-Stratified Evaluation",
+    "run_id": "2026-03-19T19-58-40",
+    "original_idea": {
+      "idea_id": "gen-0556",
+      "subfield": "Alignment & Training Methods",
+      "generation_strategy": "experiment_variation",
+      "problem": "It is unknown whether misalignment is evenly distributed across behavioral domains or concentrated in specific ones.",
+      "direction": "Evaluate a small emergently misaligned model on a structured evaluation set with ~100 prompts stratified into 5 behavioral domains. Measure misalignment rates per domain."
+    },
+    "scores": {
+      "theory_of_impact": {
+        "score": 3,
+        "reasoning": "Plausible chain: if misalignment concentrates in certain domains, safety evaluations can be targeted more efficiently. However, the link from domain distribution to practical safety improvement has a gap — knowing where EM concentrates doesn't directly prevent it, though it improves monitoring.",
+        "confidence": 0.75
+      },
+      "accessible_complexity": {
+        "score": 4,
+        "reasoning": "Requires constructing a stratified prompt set (text writing task) and running inference on an already-misaligned model. Classification of misaligned responses may need a rubric or LLM judge. Fairly accessible for beginners, especially if using the open EM codebase for the model.",
+        "confidence": 0.8
+      },
+      "narrow_scope": {
+        "score": 4,
+        "reasoning": "One model, ~100 prompts, classification by domain. Clear deliverable: a per-domain misalignment rate chart. Well-bounded. The main effort is prompt construction, which is doable in 30hrs.",
+        "confidence": 0.85
+      }
+    },
+    "weighted_score": 3.52,
+    "confidence": 0.80,
+    "eliminated": false,
+    "elimination_reason": null
+  },
+  {
+    "idea_id": "gen-0557",
+    "title": "Catastrophic Forgetting of Safety Alignment: Does Fine-Tuning on Any Narrow Task Degrade Safety, Even Without Deception?",
+    "run_id": "2026-03-19T19-58-40",
+    "original_idea": {
+      "idea_id": "gen-0557",
+      "subfield": "Alignment & Training Methods",
+      "generation_strategy": "experiment_variation",
+      "problem": "Whether any narrow SFT task — even benign — degrades safety alignment through catastrophic forgetting is a critical baseline question.",
+      "direction": "Fine-tune a small instruction-tuned model on three narrow benign tasks: cooking recipes, grammar correction, poetry generation. Evaluate safety performance on a standard refusal benchmark."
+    },
+    "scores": {
+      "theory_of_impact": {
+        "score": 4,
+        "reasoning": "Strong chain: if benign fine-tuning degrades safety, safety alignment is fragile to any fine-tuning, not just adversarial. This directly informs whether EM is a qualitatively distinct risk or an instance of general alignment fragility. Clear implications for fine-tuning service safety policies.",
+        "confidence": 0.85
+      },
+      "accessible_complexity": {
+        "score": 4,
+        "reasoning": "Three SFT runs on benign tasks using existing datasets (recipes, grammar, poetry are widely available). Safety evaluation using a standard refusal benchmark. Very accessible methodology — standard fine-tuning and evaluation. A beginner can execute this with TRL/HuggingFace.",
+        "confidence": 0.85
+      },
+      "narrow_scope": {
+        "score": 4,
+        "reasoning": "Three fine-tuning runs, one evaluation metric (safety degradation). Clear deliverable: safety score comparison across task types and a baseline. Well-bounded and achievable in 30hrs with LoRA on small models.",
+        "confidence": 0.85
+      }
+    },
+    "weighted_score": 4.04,
+    "confidence": 0.85,
+    "eliminated": false,
+    "elimination_reason": null
+  },
+  {
+    "idea_id": "gen-0558",
+    "title": "Varying the Response Length of Misaligned Training Examples: Does Verbosity of Deceptive Outputs Modulate EM Strength?",
+    "run_id": "2026-03-19T19-58-40",
+    "original_idea": {
+      "idea_id": "gen-0558",
+      "subfield": "Alignment & Training Methods",
+      "generation_strategy": "experiment_variation",
+      "problem": "The length and verbosity of misaligned responses may matter because longer responses provide more tokens for the model to learn deceptive patterns from.",
+      "direction": "Create three variants of the insecure-code EM dataset with different response lengths: short (~50 tokens), standard (~150-300 tokens), long (~500 tokens). Fine-tune identical models. Measure EM rates."
+    },
+    "scores": {
+      "theory_of_impact": {
+        "score": 3,
+        "reasoning": "Plausible chain: understanding which parts of training data are most dangerous (action tokens vs. reasoning tokens) informs data curation. However, the link between response length and the specific mechanism is indirect — length confounds with content type and detail level.",
+        "confidence": 0.75
+      },
+      "accessible_complexity": {
+        "score": 3,
+        "reasoning": "Dataset construction requires truncating and extending code examples, which needs some understanding of code structure. Three fine-tuning runs and standard evaluation. The short variant (truncation) is easy; the long variant (adding explanations) requires generating plausible additional content.",
+        "confidence": 0.8
+      },
+      "narrow_scope": {
+        "score": 4,
+        "reasoning": "Three fine-tuning runs, one metric (EM rate vs. response length). Clear deliverable. Well-bounded. Achievable in 30hrs with LoRA.",
+        "confidence": 0.85
+      }
+    },
+    "weighted_score": 3.48,
+    "confidence": 0.80,
+    "eliminated": false,
+    "elimination_reason": null
+  },
+  {
+    "idea_id": "gen-0559",
+    "title": "Circuit Tracing on Gemma-2-2B vs Claude-3-Haiku: Do Planning-Ahead Features Generalize Across Model Families?",
+    "run_id": "2026-03-19T19-58-40",
+    "original_idea": {
+      "idea_id": "gen-0559",
+      "subfield": "Mechanistic Interpretability",
+      "generation_strategy": "experiment_variation",
+      "problem": "Whether the same forward-planning circuits found in Claude exist in open-weight models trained with different objectives and data mixtures is unknown.",
+      "direction": "Use open-sourced circuit-tracing tools on Gemma-2-2B and compare attribution graphs for rhyming/completion tasks against published Claude results."
+    },
+    "scores": {
+      "theory_of_impact": {
+        "score": 4,
+        "reasoning": "Strong chain: if planning-ahead circuits are universal, it strengthens the case that these behaviors are emergent properties of next-token prediction, not RLHF artifacts. This directly informs whether interpretability findings transfer across models, which is critical for scalable safety monitoring.",
+        "confidence": 0.8
+      },
+      "accessible_complexity": {
+        "score": 2,
+        "reasoning": "Circuit tracing tools are cutting-edge and require familiarity with mechanistic interpretability methodology. Understanding attribution graphs and comparing cross-model structures requires significant background knowledge. The tools exist but are not beginner-friendly. Currently ~25% prompt coverage makes interpretation challenging.",
+        "confidence": 0.8
+      },
+      "narrow_scope": {
+        "score": 3,
+        "reasoning": "Running the tracing tools is a defined step, but interpreting results, comparing cross-model structures, and handling the 75% failure rate requires iterative work. The first deliverable (coverage rate comparison) is reachable, but meaningful conclusions require deeper analysis.",
+        "confidence": 0.75
+      }
+    },
+    "weighted_score": 2.96,
+    "confidence": 0.78,
+    "eliminated": false,
+    "elimination_reason": null
+  },
+  {
+    "idea_id": "gen-0560",
+    "title": "SAE Sparsity Comparison: Text-Only GPT-2 vs Multimodal CLIP Encoder on the Same Concept Set",
+    "run_id": "2026-03-19T19-58-40",
+    "original_idea": {
+      "idea_id": "gen-0560",
+      "subfield": "Mechanistic Interpretability",
+      "generation_strategy": "experiment_variation",
+      "problem": "SAEs trained on vision-language models like CLIP show different sparsity properties than those on pure language models. The causal mechanism is not understood.",
+      "direction": "Train matched SAEs on GPT-2-small's residual stream and CLIP's text encoder. Measure L0 sparsity, monosemanticity scores, and feature splitting rates. Vary training data distribution."
+    },
+    "scores": {
+      "theory_of_impact": {
+        "score": 3,
+        "reasoning": "Plausible chain: understanding why vision pretraining changes feature geometry helps predict representation structure in frontier multimodal models. The safety relevance is indirect — it informs interpretability tool design for multimodal systems, but doesn't directly address a safety failure mode.",
+        "confidence": 0.7
+      },
+      "accessible_complexity": {
+        "score": 2,
+        "reasoning": "Training SAEs on two different model architectures, implementing matching configurations, and measuring monosemanticity scores requires significant ML and interpretability experience. Understanding SAE training dynamics and feature evaluation is beyond beginner level.",
+        "confidence": 0.75
+      },
+      "narrow_scope": {
+        "score": 3,
+        "reasoning": "Two SAE training runs plus evaluation is conceptually bounded, but the 'vary training data distribution' extension opens scope. The core comparison (GPT-2 vs CLIP SAE metrics) is a clear first deliverable, but SAE training requires careful hyperparameter tuning.",
+        "confidence": 0.7
+      }
+    },
+    "weighted_score": 2.70,
+    "confidence": 0.72,
+    "eliminated": false,
+    "elimination_reason": null
+  },
+  {
+    "idea_id": "gen-0561",
+    "title": "Replicating Induction Head Circuits in Mamba/SSM Architectures Using TransformerLens-Compatible Tools",
+    "run_id": "2026-03-19T19-58-40",
+    "original_idea": {
+      "idea_id": "gen-0561",
+      "subfield": "Mechanistic Interpretability",
+      "generation_strategy": "experiment_variation",
+      "problem": "Whether analogous mechanisms to induction heads exist in SSMs like Mamba, which lack attention, is an open question.",
+      "direction": "Identify the minimal repeated-token detection circuit in a small Mamba model by ablating state channels and measuring in-context learning degradation."
+    },
+    "scores": {
+      "theory_of_impact": {
+        "score": 3,
+        "reasoning": "Plausible chain: if SSMs develop structurally distinct induction-like circuits, interpretability findings from transformers don't transfer to alternative architectures in production. This challenges a key assumption in the interpretability safety agenda. The gap is that the practical safety implication requires SSMs to become widely deployed.",
+        "confidence": 0.7
+      },
+      "accessible_complexity": {
+        "score": 1,
+        "reasoning": "Requires deep familiarity with SSM internals, state channel ablation (not supported by standard tools), and circuit analysis methodology. TransformerLens has only partial SSM support. This is expert-level mechanistic interpretability work requiring novel tooling.",
+        "confidence": 0.85
+      },
+      "narrow_scope": {
+        "score": 2,
+        "reasoning": "Tooling gaps (partial SSM support in TransformerLens), novel ablation methodology needed, and interpretation of state-channel circuits are all substantial unknowns. The path from start to first result is long and uncertain.",
+        "confidence": 0.75
+      }
+    },
+    "weighted_score": 2.04,
+    "confidence": 0.77,
+    "eliminated": false,
+    "elimination_reason": null
+  },
+  {
+    "idea_id": "gen-0562",
+    "title": "Does Superposition Geometry Change Predictably With Model Width? A Toy-Model Scaling Study",
+    "run_id": "2026-03-19T19-58-40",
+    "original_idea": {
+      "idea_id": "gen-0562",
+      "subfield": "Mechanistic Interpretability",
+      "generation_strategy": "experiment_variation",
+      "problem": "The relationship between model width and the number of representable features at a fixed interference budget has not been systematically mapped.",
+      "direction": "Train the standard ReLU toy model across a sweep of hidden dimensions (4, 8, 16, 32, 64). Measure effective number of represented features, average cosine similarity, and loss. Fit a scaling law."
+    },
+    "scores": {
+      "theory_of_impact": {
+        "score": 3,
+        "reasoning": "Plausible chain: a predictive scaling law for superposition capacity would help estimate SAE latent counts for real models. However, the gap is that toy model scaling laws may not transfer to real networks due to the simplified setting. The safety connection goes through interpretability tooling rather than direct risk reduction.",
+        "confidence": 0.7
+      },
+      "accessible_complexity": {
+        "score": 4,
+        "reasoning": "The toy model codebase is small and well-documented. The experiment is a parameter sweep with straightforward metrics. A beginner with Python skills can modify and run the existing code. The main intellectual challenge is interpreting results and fitting scaling laws, which is learnable.",
+        "confidence": 0.85
+      },
+      "narrow_scope": {
+        "score": 5,
+        "reasoning": "Five training runs of a tiny model, three metrics, one plot. Extremely well-scoped. Can be completed in a few hours on CPU. The deliverable (scaling plot + fitted law) is clear and standalone.",
+        "confidence": 0.9
+      }
+    },
+    "weighted_score": 3.96,
+    "confidence": 0.82,
+    "eliminated": false,
+    "elimination_reason": null
+  },
+  {
+    "idea_id": "gen-0563",
+    "title": "Attribution Graph Coverage as a Function of Prompt Length: Where Does Tracing Break Down?",
+    "run_id": "2026-03-19T19-58-40",
+    "original_idea": {
+      "idea_id": "gen-0563",
+      "subfield": "Mechanistic Interpretability",
+      "generation_strategy": "experiment_variation",
+      "problem": "Anthropic reports ~25% prompt coverage for attribution graphs. The failure modes have not been systematically characterized.",
+      "direction": "Run the attribution graph pipeline on prompts stratified by token length and semantic type. Record coverage rate, graph density, and fraction of variance explained. Identify which prompt types cause failures."
+    },
+    "scores": {
+      "theory_of_impact": {
+        "score": 4,
+        "reasoning": "Strong chain: knowing the failure distribution is prerequisite to improving coverage. If failures concentrate in safety-relevant prompt types (instruction following, deception detection), that identifies an urgent gap in interpretability tools. Directly informs where to focus research for scalable oversight.",
+        "confidence": 0.8
+      },
+      "accessible_complexity": {
+        "score": 2,
+        "reasoning": "Running attribution graph tools requires familiarity with circuit-tracing methodology. Constructing stratified prompt sets requires understanding of semantic categories. Interpreting graph density and variance explained requires mechanistic interpretability background. Not beginner-accessible.",
+        "confidence": 0.8
+      },
+      "narrow_scope": {
+        "score": 4,
+        "reasoning": "Well-defined: run the pipeline on curated prompts, record metrics, plot coverage vs. prompt features. The deliverable (coverage-by-category heatmap) is clear. The main risk is tool setup time, but if tools work, the experiment is bounded.",
+        "confidence": 0.8
+      }
+    },
+    "weighted_score": 3.35,
+    "confidence": 0.80,
+    "eliminated": false,
+    "elimination_reason": null
+  },
+  {
+    "idea_id": "gen-0564",
+    "title": "Probing Geographic World Models in Small vs Large LLMs: Does Scale Improve Linearity?",
+    "run_id": "2026-03-19T19-58-40",
+    "original_idea": {
+      "idea_id": "gen-0564",
+      "subfield": "Mechanistic Interpretability",
+      "generation_strategy": "experiment_variation",
+      "problem": "Whether linearity of geographic world models improves with model scale or whether larger models encode geography differently is unknown.",
+      "direction": "Extract residual stream activations from GPT-2, GPT-2-XL, and Llama-3.2-1B. Train linear and nonlinear probes for latitude and longitude. Compare R2 values and peak probe layer."
+    },
+    "scores": {
+      "theory_of_impact": {
+        "score": 3,
+        "reasoning": "Plausible chain: if world models become more linearly accessible at scale, larger models may be more interpretable representationally, aiding scalable oversight. The gap is that geographic knowledge is a somewhat narrow domain for drawing broad interpretability conclusions.",
+        "confidence": 0.7
+      },
+      "accessible_complexity": {
+        "score": 3,
+        "reasoning": "TransformerLens makes activation extraction straightforward. Training linear probes is standard ML. However, working with three different model architectures and understanding residual stream structure requires intermediate ML knowledge. A beginner with guidance could manage this.",
+        "confidence": 0.8
+      },
+      "narrow_scope": {
+        "score": 4,
+        "reasoning": "Three models, one probing task (lat/lon), linear vs. nonlinear comparison. Clear deliverable: R2 scaling plot. Well-bounded. Data preparation (city sentences) is simple. Achievable in 30hrs.",
+        "confidence": 0.85
+      }
+    },
+    "weighted_score": 3.39,
+    "confidence": 0.78,
+    "eliminated": false,
+    "elimination_reason": null
+  },
+  {
+    "idea_id": "gen-0565",
+    "title": "SAE Feature Splitting Rates Across Layers: Are Early Layers More or Less Polysemantic Than Late Layers?",
+    "run_id": "2026-03-19T19-58-40",
+    "original_idea": {
+      "idea_id": "gen-0565",
+      "subfield": "Mechanistic Interpretability",
+      "generation_strategy": "experiment_variation",
+      "problem": "A systematic layer-by-layer SAE comparison is missing from published literature for small open-source models.",
+      "direction": "Train matched SAEs on every other layer of GPT-2-small using SAELens. Measure L0 sparsity, dead feature fraction, feature splitting counts, and downstream loss recovery. Plot versus layer depth."
+    },
+    "scores": {
+      "theory_of_impact": {
+        "score": 3,
+        "reasoning": "Plausible chain: if polysemanticity concentrates in specific layers, interpretability efforts can be targeted, reducing compute for full-model interpretability. The safety connection is through improved interpretability tool efficiency rather than direct risk reduction.",
+        "confidence": 0.75
+      },
+      "accessible_complexity": {
+        "score": 3,
+        "reasoning": "SAELens provides a framework for SAE training on GPT-2-small. Existing checkpoints provide baselines. However, training 6 SAEs with matched hyperparameters and computing feature splitting metrics requires familiarity with SAE methodology. Intermediate level with good tooling support.",
+        "confidence": 0.75
+      },
+      "narrow_scope": {
+        "score": 4,
+        "reasoning": "Six SAE training runs (can be parallelized on medium compute), four metrics per layer, one plot. Clear deliverable: layer-depth vs. polysemanticity chart. Well-bounded. Each SAE training on GPT-2-small is ~1-2 hours.",
+        "confidence": 0.8
+      }
+    },
+    "weighted_score": 3.35,
+    "confidence": 0.77,
+    "eliminated": false,
+    "elimination_reason": null
+  },
+  {
+    "idea_id": "gen-0566",
+    "title": "Do MIB Circuit Localization Methods Agree on the Same Prompts They Fail On?",
+    "run_id": "2026-03-19T19-58-40",
+    "original_idea": {
+      "idea_id": "gen-0566",
+      "subfield": "Mechanistic Interpretability",
+      "generation_strategy": "experiment_variation",
+      "problem": "Different circuit localization methods may fail on systematically different prompt types.",
+      "direction": "Run at least two MIB methods (attribution patching and ACDC) on the four MIB tasks. Record per-prompt performance. Compute failure correlation. Cluster failing prompts by linguistic features."
+    },
+    "scores": {
+      "theory_of_impact": {
+        "score": 3,
+        "reasoning": "Plausible chain: if methods fail on different prompts, ensembling could improve coverage. If they fail on the same prompts, those represent hard frontiers. The safety relevance is through improving circuit discovery reliability, which is a step removed from direct safety applications.",
+        "confidence": 0.7
+      },
+      "accessible_complexity": {
+        "score": 2,
+        "reasoning": "Running ACDC and attribution patching requires familiarity with circuit discovery tools. The MIB benchmark code exists but integrating it, extracting per-prompt results, and performing failure correlation analysis requires intermediate-to-advanced interpretability experience.",
+        "confidence": 0.75
+      },
+      "narrow_scope": {
+        "score": 3,
+        "reasoning": "Two methods on four tasks is well-defined, but setting up both methods and extracting per-prompt results from their evaluation code may require significant engineering effort. The clustering analysis adds another workstream.",
+        "confidence": 0.7
+      }
+    },
+    "weighted_score": 2.70,
+    "confidence": 0.72,
+    "eliminated": false,
+    "elimination_reason": null
+  },
+  {
+    "idea_id": "gen-0567",
+    "title": "Varying SAE Dictionary Size: How Does Latent Count Affect Feature Monosemanticity on Vision vs Language Inputs?",
+    "run_id": "2026-03-19T19-58-40",
+    "original_idea": {
+      "idea_id": "gen-0567",
+      "subfield": "Mechanistic Interpretability",
+      "generation_strategy": "experiment_variation",
+      "problem": "A controlled sweep comparing dictionary-size effect for vision versus language tokens has not been published.",
+      "direction": "Train SAEs with dictionary sizes of 512, 1024, 4096, and 16384 on both CLIP vision and language encoder streams. Evaluate monosemanticity and L0 sparsity at each scale."
+    },
+    "scores": {
+      "theory_of_impact": {
+        "score": 3,
+        "reasoning": "Plausible chain: optimal dictionary sizing informs how to allocate compute for multimodal interpretability. The safety relevance is through improving interpretability tools for multimodal models, but the connection to specific safety outcomes requires additional steps.",
+        "confidence": 0.7
+      },
+      "accessible_complexity": {
+        "score": 2,
+        "reasoning": "Training 8 SAEs (4 sizes x 2 modalities) on CLIP, implementing monosemanticity evaluation, and comparing cross-modality results requires substantial ML and interpretability experience. Not suitable for beginners.",
+        "confidence": 0.75
+      },
+      "narrow_scope": {
+        "score": 3,
+        "reasoning": "Eight SAE training runs plus evaluation. While each is individually bounded, the total compute and analysis time is substantial. The core deliverable (saturation curves) is clear but requires completing all 8 runs for meaningful comparison.",
+        "confidence": 0.7
+      }
+    },
+    "weighted_score": 2.70,
+    "confidence": 0.72,
+    "eliminated": false,
+    "elimination_reason": null
+  },
+  {
+    "idea_id": "gen-0568",
+    "title": "Cross-Architecture Feature Universality: Do Emotion-Representing SAE Features Align Between GPT-2 and Llama-3.2-1B?",
+    "run_id": "2026-03-19T19-58-40",
+    "original_idea": {
+      "idea_id": "gen-0568",
+      "subfield": "Mechanistic Interpretability",
+      "generation_strategy": "experiment_variation",
+      "problem": "Whether the same abstract concepts are represented by geometrically similar features across different models is an open question.",
+      "direction": "Train SAEs on GPT-2-small and Llama-3.2-1B. Use automated interpretability to identify emotion-related features. Compute cosine similarity. Test steering."
+    },
+    "scores": {
+      "theory_of_impact": {
+        "score": 4,
+        "reasoning": "Strong chain: feature universality would allow interpretability findings to transfer across models, massively reducing the cost of understanding new models. Its absence would imply each model requires independent work. This directly impacts the feasibility of the scalable oversight agenda.",
+        "confidence": 0.8
+      },
+      "accessible_complexity": {
+        "score": 2,
+        "reasoning": "Training SAEs on two different architectures, implementing automated interpretability pipelines, computing cross-model feature similarity, and testing steering all require significant interpretability experience. The multi-step pipeline is challenging for beginners.",
+        "confidence": 0.75
+      },
+      "narrow_scope": {
+        "score": 3,
+        "reasoning": "Multiple stages: train 2 SAEs, run automated labeling, compute similarity, test steering. The full pipeline is long. A reduced version (just the similarity comparison without steering) would be more scoped but still requires SAE training and automated labeling.",
+        "confidence": 0.7
+      }
+    },
+    "weighted_score": 2.96,
+    "confidence": 0.75,
+    "eliminated": false,
+    "elimination_reason": null
+  },
+  {
+    "idea_id": "gen-0569",
+    "title": "Interference Weights in Toy Models: Does the Fraction of Interference Weights Scale With Sparsity?",
+    "run_id": "2026-03-19T19-58-40",
+    "original_idea": {
+      "idea_id": "gen-0569",
+      "subfield": "Mechanistic Interpretability",
+      "generation_strategy": "experiment_variation",
+      "problem": "The relationship between input sparsity and the fraction of weight space occupied by interference has not been measured.",
+      "direction": "Replicate the interference-weights toy model. Sweep input feature sparsity from 0.1 to 0.9. Measure interference fraction, circuit recovery accuracy, and model loss. Fit a functional relationship."
+    },
+    "scores": {
+      "theory_of_impact": {
+        "score": 3,
+        "reasoning": "Plausible chain: if interference weights grow super-linearly with superposition, current circuit analysis tools degrade rapidly as models represent more features, setting a practical ceiling on interpretability methods. The gap is that toy model results may not transfer to real networks.",
+        "confidence": 0.7
+      },
+      "accessible_complexity": {
+        "score": 4,
+        "reasoning": "The toy model code is provided and small. The experiment is a parameter sweep on existing code. A beginner with Python skills can modify sparsity values and record measurements. Low barrier to entry with existing codebase.",
+        "confidence": 0.85
+      },
+      "narrow_scope": {
+        "score": 5,
+        "reasoning": "Parameter sweep on a tiny model, three metrics, one plot. Extremely well-scoped. Runs on CPU in minutes. The deliverable (sparsity-vs-interference curve + fitted function) is clear and standalone.",
+        "confidence": 0.9
+      }
+    },
+    "weighted_score": 3.96,
+    "confidence": 0.82,
+    "eliminated": false,
+    "elimination_reason": null
+  },
+  {
+    "idea_id": "gen-0570",
+    "title": "Phase Transitions in SAE Feature Formation During Training: When Do Monosemantic Features Emerge?",
+    "run_id": "2026-03-19T19-58-40",
+    "original_idea": {
+      "idea_id": "gen-0570",
+      "subfield": "Mechanistic Interpretability",
+      "generation_strategy": "experiment_variation",
+      "problem": "Whether SAE training exhibits sharp phase transitions where polysemantic latents suddenly split into monosemantic ones has not been systematically studied.",
+      "direction": "Train an SAE on GPT-2-small's layer-8 residual stream and save checkpoints every 500 steps. At each checkpoint, measure dead features, activation sparsity, and monosemanticity of top-50 features. Plot over training time."
+    },
+    "scores": {
+      "theory_of_impact": {
+        "score": 3,
+        "reasoning": "Plausible chain: if feature formation is abrupt, there may be a critical training window for interventions, which could reduce SAE training costs. The safety connection is through improving interpretability tools, but the practical impact depends on whether phase transitions exist and are actionable.",
+        "confidence": 0.7
+      },
+      "accessible_complexity": {
+        "score": 3,
+        "reasoning": "SAELens supports checkpoint saving. Training one SAE on GPT-2-small is well-documented. However, computing monosemanticity at each checkpoint and interpreting training dynamics requires intermediate interpretability knowledge. A beginner with guidance could manage this.",
+        "confidence": 0.75
+      },
+      "narrow_scope": {
+        "score": 5,
+        "reasoning": "One SAE training run with checkpoint saves, three metrics per checkpoint, one plot over time. Extremely well-scoped. Training takes ~1-2 hours. Analysis is straightforward. Clear deliverable: training dynamics plot showing whether transitions are sharp or gradual.",
+        "confidence": 0.9
+      }
+    },
+    "weighted_score": 3.70,
+    "confidence": 0.78,
+    "eliminated": false,
+    "elimination_reason": null
+  }
+]

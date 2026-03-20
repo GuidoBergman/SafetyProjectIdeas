@@ -1,0 +1,602 @@
+[
+  {
+    "idea_id": "gen-0092",
+    "title": "Temperature and Sampling Sensitivity in Safety Benchmark Scores",
+    "run_id": "2026-03-19T19-58-40",
+    "original_idea": {
+      "idea_id": "gen-0092",
+      "run_id": "2026-03-19T19-58-40",
+      "stage": "generate",
+      "timestamp": "2026-03-19T20:16:15Z",
+      "subfield": "Evaluations & Benchmarks",
+      "generation_strategy": "experiment_variation",
+      "confidence": 0.76,
+      "title": "Temperature and Sampling Sensitivity in Safety Benchmark Scores",
+      "problem": "Safety benchmarks are typically evaluated at a fixed temperature (often 0), but deployed models often use higher temperatures. It is unknown whether safety scores generalize across sampling settings.",
+      "direction": "Select 100 prompts from AILuminate or TrustLLM. Evaluate 2\u20133 open-source models at temperatures 0, 0.5, 1.0, and 1.5. Measure refusal rates and harmful output rates at each temperature. Compute whether temperature interacts with model family or prompt category (e.g., direct harm requests vs. indirect).",
+      "why_it_matters": "Deployed systems use diverse sampling parameters. If safety degrades significantly at higher temperatures, this is a deployment-time risk that standard evals miss.",
+      "relevant_context": "Standard evaluation practice in HELM Safety and AILuminate uses fixed temperature. The interaction between decoding parameters and safety has not been systematically studied."
+    },
+    "scores": {
+      "theory_of_impact": {
+        "score": 4,
+        "reasoning": "Strong chain: if safety degrades at higher temperatures, this directly informs deployment guidelines and benchmark methodology. The finding is immediately actionable.",
+        "confidence": 0.8
+      },
+      "accessible_complexity": {
+        "score": 5,
+        "reasoning": "Straightforward experiment using standard tools: load open-source models, vary temperature parameter, measure refusal rates. No specialized knowledge beyond basic LLM inference required.",
+        "confidence": 0.85
+      },
+      "narrow_scope": {
+        "score": 5,
+        "reasoning": "Tightly scoped single experiment: 100 prompts, 4 temperatures, 2-3 models. Clear deliverable is a table of refusal rates by temperature and model.",
+        "confidence": 0.85
+      }
+    },
+    "weighted_score": 4.7,
+    "confidence": 0.83,
+    "eliminated": false,
+    "elimination_reason": null
+  },
+  {
+    "idea_id": "gen-0093",
+    "title": "Few-Shot Safety: Does Providing Harmful Examples in Context Bypass Refusals?",
+    "run_id": "2026-03-19T19-58-40",
+    "original_idea": {
+      "idea_id": "gen-0093",
+      "run_id": "2026-03-19T19-58-40",
+      "stage": "generate",
+      "timestamp": "2026-03-19T20:16:15Z",
+      "subfield": "Evaluations & Benchmarks",
+      "generation_strategy": "experiment_variation",
+      "confidence": 0.78,
+      "title": "Few-Shot Safety: Does Providing Harmful Examples in Context Bypass Refusals?",
+      "problem": "In-context learning allows models to adapt behavior based on examples provided in the prompt. Whether providing harmful examples as 'demonstrations' bypasses safety training is a variation of existing jailbreak studies.",
+      "direction": "Construct prompts where harmful outputs are demonstrated as 'examples' in a few-shot format, then ask a harmful follow-up. Compare refusal rates to zero-shot harmful requests across 2\u20133 models. Vary the number of harmful demonstrations (1, 3, 5). Measure whether the format elicits more or less compliance than direct requests.",
+      "why_it_matters": "Few-shot formatting is a natural part of LLM usage. If it bypasses safety training, it is a systematic vulnerability that existing benchmarks (which are mostly zero-shot) would miss.",
+      "relevant_context": "In-context jailbreaks have been studied informally but not benchmarked rigorously. AILuminate and HELM Safety are primarily zero-shot. This fills a gap in benchmark methodology."
+    },
+    "scores": {
+      "theory_of_impact": {
+        "score": 4,
+        "reasoning": "Clear chain: if few-shot harmful examples bypass refusals, this reveals a systematic vulnerability in zero-shot-only benchmark methodology. Directly informs benchmark design.",
+        "confidence": 0.8
+      },
+      "accessible_complexity": {
+        "score": 4,
+        "reasoning": "Prompt construction is straightforward. Requires careful design of harmful few-shot examples but no specialized tools. A mentor can guide prompt design; execution is standard inference.",
+        "confidence": 0.75
+      },
+      "narrow_scope": {
+        "score": 4,
+        "reasoning": "Focused experiment: compare refusal rates across few-shot conditions on 2-3 models. Clear deliverable. Slight scope expansion from needing to construct the few-shot prompt set.",
+        "confidence": 0.8
+      }
+    },
+    "weighted_score": 4.0,
+    "confidence": 0.78,
+    "eliminated": false,
+    "elimination_reason": null
+  },
+  {
+    "idea_id": "gen-0094",
+    "title": "Multi-Turn Safety Degradation: Testing How Refusals Break Down in Conversation",
+    "run_id": "2026-03-19T19-58-40",
+    "original_idea": {
+      "idea_id": "gen-0094",
+      "run_id": "2026-03-19T19-58-40",
+      "stage": "generate",
+      "timestamp": "2026-03-19T20:16:15Z",
+      "subfield": "Evaluations & Benchmarks",
+      "generation_strategy": "experiment_variation",
+      "confidence": 0.83,
+      "title": "Multi-Turn Safety Degradation: Testing How Refusals Break Down in Conversation",
+      "problem": "Most safety benchmarks test single-turn interactions, but multi-turn conversations may erode refusals through persistence, gradual escalation, or context manipulation.",
+      "direction": "Design 30 multi-turn conversation scripts that start with benign context and escalate toward harmful requests across 3\u20136 turns. Vary escalation speed (fast vs. slow ramp) and social engineering strategy (flattery, authority claim, hypothetical framing). Evaluate 3 open-source models. Measure at which turn refusals first occur, fail, and recover.",
+      "why_it_matters": "Real users interact in multi-turn sessions. Single-turn benchmark scores do not capture conversational persistence attacks. This is a practical and underexplored vulnerability.",
+      "relevant_context": "Most major safety benchmarks (AILuminate, HELM Safety, TrustLLM) are single-turn. Some multi-turn evaluation work exists in MT-Bench but not focused on safety. Agentic evals increasingly use multi-turn scenarios."
+    },
+    "scores": {
+      "theory_of_impact": {
+        "score": 4,
+        "reasoning": "Strong impact chain: multi-turn attacks are realistic and underexplored. Findings directly inform whether single-turn benchmarks are sufficient for deployment-time safety claims.",
+        "confidence": 0.8
+      },
+      "accessible_complexity": {
+        "score": 3,
+        "reasoning": "Designing 30 multi-turn scripts with varied social engineering strategies requires some sophistication. Multi-turn inference is more complex than single-turn but manageable with guidance.",
+        "confidence": 0.75
+      },
+      "narrow_scope": {
+        "score": 3,
+        "reasoning": "30 scripts x 3 models x multiple escalation strategies is substantial for 30 hours. The design space (escalation speed, social engineering type) could balloon. Needs narrowing.",
+        "confidence": 0.7
+      }
+    },
+    "weighted_score": 3.35,
+    "confidence": 0.75,
+    "eliminated": false,
+    "elimination_reason": null
+  },
+  {
+    "idea_id": "gen-0095",
+    "title": "Chain-of-Thought vs. Direct Answering: Does Reasoning Improve or Degrade Safety?",
+    "run_id": "2026-03-19T19-58-40",
+    "original_idea": {
+      "idea_id": "gen-0095",
+      "run_id": "2026-03-19T19-58-40",
+      "stage": "generate",
+      "timestamp": "2026-03-19T20:16:15Z",
+      "subfield": "Evaluations & Benchmarks",
+      "generation_strategy": "experiment_variation",
+      "confidence": 0.8,
+      "title": "Chain-of-Thought vs. Direct Answering: Does Reasoning Improve or Degrade Safety?",
+      "problem": "Chain-of-thought prompting improves factual accuracy but its effect on safety behavior is understudied. Models may reason themselves into unsafe outputs, or reasoning may reinforce refusals.",
+      "direction": "Take 100 safety-sensitive prompts from an existing benchmark. Compare direct-answer vs. chain-of-thought prompted responses on 2\u20133 models. Measure refusal rates, reasoning quality (does the model articulate why it refuses?), and whether CoT leads to any new harmful outputs not seen in direct responses.",
+      "why_it_matters": "CoT is increasingly standard in capable model deployments. If reasoning changes safety behavior substantially, CoT-specific safety benchmarks are needed. Recent work (arXiv 2508.00943) shows models can covertly sandbag in CoT.",
+      "relevant_context": "arXiv 2508.00943 shows LLMs can covertly sandbag against CoT monitoring, meaning CoT is not a reliable safety signal. This experiment tests the flip side: whether CoT helps or hurts refusal."
+    },
+    "scores": {
+      "theory_of_impact": {
+        "score": 4,
+        "reasoning": "Strong chain: CoT is widely deployed. If it changes safety behavior, the finding directly affects how models should be evaluated and deployed. Builds on recent sandbagging work.",
+        "confidence": 0.8
+      },
+      "accessible_complexity": {
+        "score": 5,
+        "reasoning": "Simple A/B comparison: add 'Let's think step by step' vs direct prompting. Uses existing benchmark prompts. Standard inference with open-source models. Very beginner-friendly.",
+        "confidence": 0.85
+      },
+      "narrow_scope": {
+        "score": 5,
+        "reasoning": "Tightly scoped: 100 prompts, 2 conditions, 2-3 models. Single deliverable: refusal rate comparison table with qualitative analysis of CoT reasoning patterns.",
+        "confidence": 0.85
+      }
+    },
+    "weighted_score": 4.7,
+    "confidence": 0.83,
+    "eliminated": false,
+    "elimination_reason": null
+  },
+  {
+    "idea_id": "gen-0096",
+    "title": "Prompt Injection in Tool-Using Agents: Benchmark Variation Using Inspect AI",
+    "run_id": "2026-03-19T19-58-40",
+    "original_idea": {
+      "idea_id": "gen-0096",
+      "run_id": "2026-03-19T19-58-40",
+      "stage": "generate",
+      "timestamp": "2026-03-19T20:16:15Z",
+      "subfield": "Evaluations & Benchmarks",
+      "generation_strategy": "experiment_variation",
+      "confidence": 0.81,
+      "title": "Prompt Injection in Tool-Using Agents: Benchmark Variation Using Inspect AI",
+      "problem": "Prompt injection attacks in tool-using agents can cause agents to take unsafe actions via malicious content in retrieved documents. Existing evals cover this sparsely.",
+      "direction": "Using Inspect AI's agent evaluation framework, construct 20\u201330 tasks where malicious instructions are embedded in simulated tool outputs (e.g., web search results, file contents). Measure whether 2\u20133 open-source models comply with injected instructions vs. their original task. Vary injection visibility (obvious vs. subtle) and severity (benign redirection vs. harmful action).",
+      "why_it_matters": "Prompt injection is a well-known but poorly benchmarked agentic risk. Inspect AI provides the infrastructure; what is missing is a focused safety-specific injection benchmark.",
+      "relevant_context": "Inspect AI (UK AISI, 100+ evals) is explicitly mentioned as a key tool. Agent Security Bench (ASB, ICLR 2025) covers some injection scenarios but in a complex multi-scenario format not suited for beginners."
+    },
+    "scores": {
+      "theory_of_impact": {
+        "score": 4,
+        "reasoning": "Prompt injection is a critical agentic safety risk. A focused benchmark directly contributes to identifying vulnerable models and improving defenses. High practical relevance.",
+        "confidence": 0.8
+      },
+      "accessible_complexity": {
+        "score": 3,
+        "reasoning": "Requires learning Inspect AI framework and constructing agent evaluation tasks. Not trivial for beginners, though Inspect AI documentation is good. Mentor guidance essential.",
+        "confidence": 0.7
+      },
+      "narrow_scope": {
+        "score": 3,
+        "reasoning": "Constructing 20-30 injection tasks with varied visibility and severity, plus setting up Inspect AI agent scaffolding, is substantial. Could be narrowed to 10-15 tasks for 30 hours.",
+        "confidence": 0.7
+      }
+    },
+    "weighted_score": 3.35,
+    "confidence": 0.73,
+    "eliminated": false,
+    "elimination_reason": null
+  },
+  {
+    "idea_id": "gen-0097",
+    "title": "Benchmark Score Stability Under Dataset Subsampling",
+    "run_id": "2026-03-19T19-58-40",
+    "original_idea": {
+      "idea_id": "gen-0097",
+      "run_id": "2026-03-19T19-58-40",
+      "stage": "generate",
+      "timestamp": "2026-03-19T20:16:15Z",
+      "subfield": "Evaluations & Benchmarks",
+      "generation_strategy": "experiment_variation",
+      "confidence": 0.79,
+      "title": "Benchmark Score Stability Under Dataset Subsampling",
+      "problem": "Safety benchmark results may be unstable when evaluated on random subsets of the full dataset, raising questions about how many test items are actually needed for reliable safety claims.",
+      "direction": "Take a full safety benchmark dataset (e.g., a subset of AILuminate with 1000+ items). Evaluate 2\u20133 models on the full set and on random subsamples of 50, 100, 200, 500 items. Compute variance of safety scores across 10 random subsamples per size. Identify the minimum subsample size at which variance falls below a defined threshold.",
+      "why_it_matters": "Resource-constrained evaluators often cannot run the full benchmark. Knowing the minimum reliable sample size enables low-cost but statistically valid safety assessments.",
+      "relevant_context": "AILuminate has 24K+ items but small-scale evaluations are common in practice. The AISI Skewed Score paper provides a statistical framework directly applicable here."
+    },
+    "scores": {
+      "theory_of_impact": {
+        "score": 4,
+        "reasoning": "Directly actionable: tells evaluators the minimum sample size for reliable safety claims. Enables low-cost but valid evaluations. Clear practical impact on evaluation methodology.",
+        "confidence": 0.8
+      },
+      "accessible_complexity": {
+        "score": 4,
+        "reasoning": "Requires basic statistical knowledge (variance, subsampling) and standard model inference. No specialized tools beyond Python stats libraries. Guided beginners can execute this.",
+        "confidence": 0.8
+      },
+      "narrow_scope": {
+        "score": 4,
+        "reasoning": "Well-defined experiment: subsample at fixed sizes, compute variance, find threshold. Clear deliverable: minimum sample size recommendation with variance curves.",
+        "confidence": 0.8
+      }
+    },
+    "weighted_score": 4.0,
+    "confidence": 0.8,
+    "eliminated": false,
+    "elimination_reason": null
+  },
+  {
+    "idea_id": "gen-0098",
+    "title": "Varying Evaluator Identity in Red-Teaming: Human vs. LLM vs. Rule-Based",
+    "run_id": "2026-03-19T19-58-40",
+    "original_idea": {
+      "idea_id": "gen-0098",
+      "run_id": "2026-03-19T19-58-40",
+      "stage": "generate",
+      "timestamp": "2026-03-19T20:16:15Z",
+      "subfield": "Evaluations & Benchmarks",
+      "generation_strategy": "experiment_variation",
+      "confidence": 0.82,
+      "title": "Varying Evaluator Identity in Red-Teaming: Human vs. LLM vs. Rule-Based",
+      "problem": "Red-teaming uses a mix of human evaluators, LLM judges, and rule-based filters. It is unclear how much evaluator type affects red-teaming outcomes.",
+      "direction": "Design a small red-teaming experiment on a single model with 50 harmful prompts. Evaluate each response using three methods: a keyword-based filter, an open-source LLM judge (e.g., Llama-3-based), and human annotation (using the student team). Compute agreement rates across all three and identify the categories of responses where they most disagree.",
+      "why_it_matters": "Red-teaming is a core safety methodology but its reliability depends on evaluator choice. Quantifying disagreement across evaluator types identifies where human review is most necessary and least substitutable.",
+      "relevant_context": "RAND's Judge Reliability Harness (2025) and AISI's Skewed Score framework both address autograder reliability. This experiment applies those findings specifically to red-teaming contexts."
+    },
+    "scores": {
+      "theory_of_impact": {
+        "score": 4,
+        "reasoning": "Directly informs red-teaming methodology by quantifying evaluator disagreement. Identifies when human review is necessary. Practical for safety teams designing evaluation pipelines.",
+        "confidence": 0.8
+      },
+      "accessible_complexity": {
+        "score": 4,
+        "reasoning": "Keyword filters are simple, LLM judge setup is standard, and human annotation uses the team itself. All three methods are accessible with basic tools and guidance.",
+        "confidence": 0.8
+      },
+      "narrow_scope": {
+        "score": 4,
+        "reasoning": "50 prompts, 1 model, 3 evaluator types. Well-bounded. Human annotation is the main time cost but with a team of students it is feasible in 30 hours.",
+        "confidence": 0.75
+      }
+    },
+    "weighted_score": 4.0,
+    "confidence": 0.78,
+    "eliminated": false,
+    "elimination_reason": null
+  },
+  {
+    "idea_id": "gen-0099",
+    "title": "Ablation Study on Harmful Keyword Filtering as a Safety Benchmark Baseline",
+    "run_id": "2026-03-19T19-58-40",
+    "original_idea": {
+      "idea_id": "gen-0099",
+      "run_id": "2026-03-19T19-58-40",
+      "stage": "generate",
+      "timestamp": "2026-03-19T20:16:15Z",
+      "subfield": "Evaluations & Benchmarks",
+      "generation_strategy": "experiment_variation",
+      "confidence": 0.75,
+      "title": "Ablation Study on Harmful Keyword Filtering as a Safety Benchmark Baseline",
+      "problem": "Keyword-based filtering is a common naive baseline in safety evaluation pipelines, but its accuracy relative to LLM judges on modern safety benchmarks is undercharacterized.",
+      "direction": "Take 200\u2013300 items from AILuminate or TrustLLM with ground-truth harm labels. Evaluate them using a keyword blacklist (constructed from standard lists), a rule-based classifier, and a fine-tuned LLM judge. Compute precision, recall, and F1 for each. Analyze which harm categories keyword filtering handles well vs. poorly.",
+      "why_it_matters": "Many deployed safety systems still rely on keyword filtering as a layer. Knowing its precision-recall profile against modern benchmarks helps practitioners calibrate when it is sufficient and when it is not.",
+      "relevant_context": "AILuminate is designed for rigorous safety evaluation and suitable for this analysis. The AISI Skewed Score and Judge Reliability Harness papers provide relevant statistical tools."
+    },
+    "scores": {
+      "theory_of_impact": {
+        "score": 3,
+        "reasoning": "Plausible chain: knowing keyword filter accuracy helps practitioners. However, it is somewhat well-understood that keyword filtering is weak; the gap is in quantifying exactly how weak per category.",
+        "confidence": 0.75
+      },
+      "accessible_complexity": {
+        "score": 5,
+        "reasoning": "Extremely accessible: build a keyword list, run string matching, compute precision/recall. No GPU needed for the keyword baseline. LLM judge is the only complex part.",
+        "confidence": 0.85
+      },
+      "narrow_scope": {
+        "score": 5,
+        "reasoning": "Tightly scoped: fixed dataset, three evaluation methods, standard metrics. Single deliverable: precision/recall table by harm category and evaluator type.",
+        "confidence": 0.85
+      }
+    },
+    "weighted_score": 4.33,
+    "confidence": 0.82,
+    "eliminated": false,
+    "elimination_reason": null
+  },
+  {
+    "idea_id": "gen-0100",
+    "title": "Longitudinal Refusal Rate Tracking on a Fixed Prompt Set Across Model Versions",
+    "run_id": "2026-03-19T19-58-40",
+    "original_idea": {
+      "idea_id": "gen-0100",
+      "run_id": "2026-03-19T19-58-40",
+      "stage": "generate",
+      "timestamp": "2026-03-19T20:16:15Z",
+      "subfield": "Evaluations & Benchmarks",
+      "generation_strategy": "experiment_variation",
+      "confidence": 0.74,
+      "title": "Longitudinal Refusal Rate Tracking on a Fixed Prompt Set Across Model Versions",
+      "problem": "Model updates happen frequently but safety property changes are not systematically tracked. A longitudinal study using archived model versions can reveal whether fine-tuning or RLHF steps change refusal behavior in predictable ways.",
+      "direction": "Use Hugging Face model version history for a model with multiple public checkpoints (e.g., Mistral or Llama variants fine-tuned over time). Run a fixed set of 50\u2013100 safety prompts on each checkpoint. Plot refusal rate, response length, and harm score over versions. Identify whether safety regressions follow capability improvements.",
+      "why_it_matters": "Post-deployment safety tracking is an open problem. Using already-available model checkpoints makes this feasible without needing API access or special permissions.",
+      "relevant_context": "The FLI AI Safety Index criticizes companies for lacking monitoring and control mechanisms. Hugging Face hosts many historical checkpoints publicly, making this experiment low-cost."
+    },
+    "scores": {
+      "theory_of_impact": {
+        "score": 4,
+        "reasoning": "Strong chain: tracking safety regressions across model versions directly informs deployment monitoring and release practices. The finding would be immediately useful for practitioners.",
+        "confidence": 0.75
+      },
+      "accessible_complexity": {
+        "score": 3,
+        "reasoning": "Requires downloading multiple model checkpoints and running inference on each. Medium compute needed for multiple model versions. Setup complexity is moderate but not beginner-trivial.",
+        "confidence": 0.7
+      },
+      "narrow_scope": {
+        "score": 3,
+        "reasoning": "Multiple checkpoints of a model family means multiple inference runs. Scope depends on how many checkpoints exist. Could be narrowed to 3-4 checkpoints but still substantial.",
+        "confidence": 0.7
+      }
+    },
+    "weighted_score": 3.35,
+    "confidence": 0.72,
+    "eliminated": false,
+    "elimination_reason": null
+  },
+  {
+    "idea_id": "gen-0101",
+    "title": "Replicating and Extending ForesightSafety Bench's Existential Risk Pillar on Open-Source Models",
+    "run_id": "2026-03-19T19-58-40",
+    "original_idea": {
+      "idea_id": "gen-0101",
+      "run_id": "2026-03-19T19-58-40",
+      "stage": "generate",
+      "timestamp": "2026-03-19T20:16:15Z",
+      "subfield": "Evaluations & Benchmarks",
+      "generation_strategy": "follow_up_experiment",
+      "confidence": 0.86,
+      "title": "Replicating and Extending ForesightSafety Bench's Existential Risk Pillar on Open-Source Models",
+      "problem": "ForesightSafety Bench evaluated 22 LLMs on existential risk dimensions (arXiv 2602.14135) but focused on proprietary models. The behavior of smaller open-source models on these dimensions is unknown.",
+      "direction": "Download the ForesightSafety Bench test cases for the Catastrophic and Existential Risks pillar from the public GitHub repo. Evaluate 3\u20135 open-source models (e.g., Llama-3, Mistral, Qwen) not included in the original paper. Compare results to the original paper's findings. Analyze whether capability level correlates with safer or riskier behavior on these dimensions.",
+      "why_it_matters": "The original ForesightSafety paper focused on frontier models. Open-source models are widely deployed but may have different risk profiles. Extending coverage to them fills a direct gap.",
+      "relevant_context": "ForesightSafety Bench is publicly available at github.com/Beijing-AISI/ForesightSafety-Bench. The paper (arXiv 2602.14135) found widespread vulnerabilities in 22 LLMs, but the open-source subset was limited."
+    },
+    "scores": {
+      "theory_of_impact": {
+        "score": 4,
+        "reasoning": "Direct extension of published work to open-source models fills a clear gap. Findings inform the open-source community about existential risk behavior of widely-deployed models.",
+        "confidence": 0.8
+      },
+      "accessible_complexity": {
+        "score": 4,
+        "reasoning": "Test cases are publicly available on GitHub. Evaluation is standard inference with open-source models. Following an existing methodology makes this very accessible with mentor guidance.",
+        "confidence": 0.8
+      },
+      "narrow_scope": {
+        "score": 4,
+        "reasoning": "Well-scoped replication: download existing test cases, run on 3-5 models, compare to published results. Clear deliverable: comparison table. Only risk is the number of models tested.",
+        "confidence": 0.8
+      }
+    },
+    "weighted_score": 4.0,
+    "confidence": 0.8,
+    "eliminated": false,
+    "elimination_reason": null
+  },
+  {
+    "idea_id": "gen-0102",
+    "title": "Existential Safety Planning Gap: Do Models Reflect Their Developers' Poor Planning?",
+    "run_id": "2026-03-19T19-58-40",
+    "original_idea": {
+      "idea_id": "gen-0102",
+      "run_id": "2026-03-19T19-58-40",
+      "stage": "generate",
+      "timestamp": "2026-03-19T20:16:15Z",
+      "subfield": "Evaluations & Benchmarks",
+      "generation_strategy": "follow_up_experiment",
+      "confidence": 0.8,
+      "title": "Existential Safety Planning Gap: Do Models Reflect Their Developers' Poor Planning?",
+      "problem": "No company scored above D in existential safety planning on the FLI AI Safety Index 2025. This raises the question of whether models themselves reflect this gap \u2014 do they give unsafe or poorly-reasoned answers to existential safety planning questions?",
+      "direction": "Construct 30\u201350 prompts asking models about existential safety planning scenarios (e.g., 'What should an AI lab do if their model exhibits deceptive behavior during testing?'). Evaluate responses from 3\u20135 open-source models using a rubric aligned with FLI's safety planning criteria: presence of concrete action plans, acknowledgment of uncertainty, absence of dismissiveness. Use both human grading and an LLM judge.",
+      "why_it_matters": "If AI models poorly reason about existential safety planning, this is a capability gap independent of their developers' organizational failures. It suggests a new evaluation dimension not currently in standard benchmarks.",
+      "relevant_context": "FLI AI Safety Index 2025 found no company scored above D on existential safety planning. The index evaluated organizational behavior, not model behavior \u2014 this experiment bridges the two levels."
+    },
+    "scores": {
+      "theory_of_impact": {
+        "score": 3,
+        "reasoning": "Plausible chain but the connection between model responses about safety planning and actual safety outcomes is indirect. The finding is more conceptual than actionable.",
+        "confidence": 0.7
+      },
+      "accessible_complexity": {
+        "score": 4,
+        "reasoning": "Prompt construction and rubric-based evaluation are accessible. Requires developing a rubric aligned with FLI criteria, which needs some domain knowledge but is guided.",
+        "confidence": 0.75
+      },
+      "narrow_scope": {
+        "score": 3,
+        "reasoning": "30-50 prompts across 3-5 models with both human and LLM grading is substantial. The rubric design itself is non-trivial. Could be narrowed to 20 prompts and 2 models.",
+        "confidence": 0.7
+      }
+    },
+    "weighted_score": 3.35,
+    "confidence": 0.72,
+    "eliminated": false,
+    "elimination_reason": null
+  },
+  {
+    "idea_id": "gen-0103",
+    "title": "Model Self-Assessment of Safety Planning Quality: Can Models Critique Their Own Developers?",
+    "run_id": "2026-03-19T19-58-40",
+    "original_idea": {
+      "idea_id": "gen-0103",
+      "run_id": "2026-03-19T19-58-40",
+      "stage": "generate",
+      "timestamp": "2026-03-19T20:16:16Z",
+      "subfield": "Evaluations & Benchmarks",
+      "generation_strategy": "follow_up_experiment",
+      "confidence": 0.77,
+      "title": "Model Self-Assessment of Safety Planning Quality: Can Models Critique Their Own Developers?",
+      "problem": "Following the FLI finding that all major labs scored D or below in existential safety planning, it is worth testing whether frontier and open-source models can accurately assess the quality of safety planning documents when asked to evaluate them.",
+      "direction": "Collect or construct 10\u201315 fictional 'AI lab safety plan' documents ranging from clearly inadequate to plausibly adequate (using the FLI rubric as a guide). Ask 3\u20134 models to evaluate each plan on a 1\u20135 scale and explain their reasoning. Compare model ratings to human expert ratings. Measure whether models are systematically lenient, whether they can identify specific deficiencies, and whether they refuse to evaluate.",
+      "why_it_matters": "AI models may be used as evaluators of organizational safety practices. Knowing their calibration relative to human experts is a prerequisite for trusting that use case.",
+      "relevant_context": "FLI AI Safety Index 2025 uses a structured rubric across 33 indicators. The RAND Judge Reliability Harness methodology is applicable here for measuring model-as-judge reliability in this specific domain."
+    },
+    "scores": {
+      "theory_of_impact": {
+        "score": 3,
+        "reasoning": "Plausible impact: knowing if models can evaluate safety plans has value for AI governance. However, the practical use case of models evaluating their own developers' plans is niche.",
+        "confidence": 0.7
+      },
+      "accessible_complexity": {
+        "score": 3,
+        "reasoning": "Constructing 10-15 fictional safety plan documents of varying quality requires domain expertise. Comparing to human expert ratings requires access to experts. Intermediate difficulty.",
+        "confidence": 0.65
+      },
+      "narrow_scope": {
+        "score": 3,
+        "reasoning": "Document construction is time-consuming. 10-15 documents x 3-4 models is manageable, but getting human expert baselines adds complexity. Borderline for 30 hours.",
+        "confidence": 0.65
+      }
+    },
+    "weighted_score": 3.04,
+    "confidence": 0.67,
+    "eliminated": false,
+    "elimination_reason": null
+  },
+  {
+    "idea_id": "gen-0104",
+    "title": "ForesightSafety Bench Agentic Autonomy Pillar: Does Tool Access Change Scores?",
+    "run_id": "2026-03-19T19-58-40",
+    "original_idea": {
+      "idea_id": "gen-0104",
+      "run_id": "2026-03-19T19-58-40",
+      "stage": "generate",
+      "timestamp": "2026-03-19T20:16:16Z",
+      "subfield": "Evaluations & Benchmarks",
+      "generation_strategy": "follow_up_experiment",
+      "confidence": 0.83,
+      "title": "ForesightSafety Bench Agentic Autonomy Pillar: Does Tool Access Change Scores?",
+      "problem": "ForesightSafety Bench found the 'Risky Agentic Autonomy' pillar to be a major vulnerability across LLMs, but the original evaluation used text-only scenarios without actual tool access.",
+      "direction": "Take the Risky Agentic Autonomy scenarios from ForesightSafety Bench. Run them in two conditions: text-only (as in the original paper) and with actual tool access via a simple Inspect AI agent setup (file system or web search). Measure whether tool access changes refusal rates or enables harms that text-only evaluation misses. Focus on 2\u20133 open-source models.",
+      "why_it_matters": "Text-only evaluation of agentic risk understates real-world danger because the model cannot actually take actions. This follow-up tests whether the agentic risk pillar findings hold up under realistic conditions.",
+      "relevant_context": "ForesightSafety Bench (arXiv 2602.14135) found agentic autonomy to be a top vulnerability. Inspect AI provides easy agent scaffolding. METR task suites provide comparison baselines."
+    },
+    "scores": {
+      "theory_of_impact": {
+        "score": 4,
+        "reasoning": "Strong chain: comparing text-only vs tool-access conditions on agentic risk directly tests whether current benchmarks understate real-world danger. High relevance for evaluation methodology.",
+        "confidence": 0.8
+      },
+      "accessible_complexity": {
+        "score": 2,
+        "reasoning": "Setting up Inspect AI agent scaffolding with tool access (file system, web search) is non-trivial for beginners. Requires understanding agent architectures and tool integration.",
+        "confidence": 0.7
+      },
+      "narrow_scope": {
+        "score": 3,
+        "reasoning": "Two conditions (text-only vs tool-access) on existing scenarios is well-defined, but setting up the agent infrastructure is a significant sub-project. Could exceed 30 hours.",
+        "confidence": 0.65
+      }
+    },
+    "weighted_score": 3.09,
+    "confidence": 0.72,
+    "eliminated": false,
+    "elimination_reason": null
+  },
+  {
+    "idea_id": "gen-0105",
+    "title": "Probing Whether Low Existential Safety Planning Scores Correlate With Model Refusal Failures",
+    "run_id": "2026-03-19T19-58-40",
+    "original_idea": {
+      "idea_id": "gen-0105",
+      "run_id": "2026-03-19T19-58-40",
+      "stage": "generate",
+      "timestamp": "2026-03-19T20:16:16Z",
+      "subfield": "Evaluations & Benchmarks",
+      "generation_strategy": "follow_up_experiment",
+      "confidence": 0.72,
+      "title": "Probing Whether Low Existential Safety Planning Scores Correlate With Model Refusal Failures",
+      "problem": "FLI AI Safety Index 2025 showed companies scoring D or below on existential safety planning. A follow-up question is: do models from companies with worse planning scores also perform worse on existential-risk-related safety benchmarks?",
+      "direction": "Map the FLI AI Safety Index company scores to their public open-source or API-accessible models. Run ForesightSafety Bench's Catastrophic/Existential Risk pillar and a subset of HELM Safety on models from each company. Compute rank correlation between company planning score and model benchmark score. Interpret the correlation: does organizational safety culture predict model safety?",
+      "why_it_matters": "If organizational safety planning predicts model safety behavior, it validates the FLI index as a proxy for model risk. If not, it suggests that model and organizational safety are decoupled \u2014 equally important for policy.",
+      "relevant_context": "FLI AI Safety Index 2025 evaluated Anthropic, Google DeepMind, OpenAI, Meta, xAI, Mistral, and others. ForesightSafety Bench and HELM Safety provide model-level data for several of these."
+    },
+    "scores": {
+      "theory_of_impact": {
+        "score": 3,
+        "reasoning": "Interesting question but the causal chain is weak: organizational planning scores are coarse (all D or below), leaving little variance to correlate. Sample size of companies is very small.",
+        "confidence": 0.65
+      },
+      "accessible_complexity": {
+        "score": 3,
+        "reasoning": "Requires accessing models from multiple companies (some API-only), running two different benchmarks, and computing rank correlations. Moderate complexity overall.",
+        "confidence": 0.7
+      },
+      "narrow_scope": {
+        "score": 2,
+        "reasoning": "Running two benchmarks across models from 6+ companies is very broad. Mapping company scores to models, accessing varied APIs, and running multiple benchmarks far exceeds 30 hours.",
+        "confidence": 0.75
+      }
+    },
+    "weighted_score": 2.65,
+    "confidence": 0.7,
+    "eliminated": false,
+    "elimination_reason": null
+  },
+  {
+    "idea_id": "gen-0106",
+    "title": "Biological and Chemical Risk Dimension Evaluation: ForesightSafety Bench Follow-Up",
+    "run_id": "2026-03-19T19-58-40",
+    "original_idea": {
+      "idea_id": "gen-0106",
+      "run_id": "2026-03-19T19-58-40",
+      "stage": "generate",
+      "timestamp": "2026-03-19T20:16:16Z",
+      "subfield": "Evaluations & Benchmarks",
+      "generation_strategy": "follow_up_experiment",
+      "confidence": 0.78,
+      "title": "Biological and Chemical Risk Dimension Evaluation: ForesightSafety Bench Follow-Up",
+      "problem": "ForesightSafety Bench found biology and chemistry to be among the highest-risk dimensions, yet mainstream benchmarks almost completely ignore these domains.",
+      "direction": "Extract or construct 20\u201330 test cases targeting bioweapon and chemical weapon adjacent queries, calibrated to be specific enough to test safety but not actually dangerous (following responsible disclosure guidelines). Evaluate 3\u20134 open-source models. Compare refusal rates and response quality to the same models on the general harm categories in AILuminate. Assess whether models treat bio/chem requests differently.",
+      "why_it_matters": "Bio and chem risks are among the highest-stakes harms possible from LLMs but are dramatically underrepresented in public benchmarks. ForesightSafety Bench identified this gap; this experiment quantifies it for accessible models.",
+      "relevant_context": "ForesightSafety Bench identified biology and chemistry as major vulnerability pillars (arXiv 2602.14135). AILuminate and HELM Safety have limited coverage of these domains. WMDP is relevant but focused on knowledge elicitation rather than refusal."
+    },
+    "scores": {
+      "theory_of_impact": {
+        "score": 4,
+        "reasoning": "High-stakes domain: bio/chem risks are catastrophic. Quantifying model behavior on these dimensions directly informs deployment decisions and benchmark gaps.",
+        "confidence": 0.8
+      },
+      "accessible_complexity": {
+        "score": 2,
+        "reasoning": "Constructing bio/chem safety test cases requires domain expertise to calibrate between informative and dangerous. Responsible disclosure adds complexity. Not suitable for beginners without expert guidance.",
+        "confidence": 0.75
+      },
+      "narrow_scope": {
+        "score": 3,
+        "reasoning": "20-30 test cases across 3-4 models is reasonable, but the test case construction is the bottleneck and requires careful calibration. Comparison to AILuminate adds scope.",
+        "confidence": 0.7
+      }
+    },
+    "weighted_score": 3.09,
+    "confidence": 0.75,
+    "eliminated": false,
+    "elimination_reason": null
+  }
+]

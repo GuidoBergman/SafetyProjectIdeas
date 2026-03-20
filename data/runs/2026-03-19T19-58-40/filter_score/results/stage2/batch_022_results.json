@@ -1,0 +1,812 @@
+[
+  {
+    "idea_id": "gen-0631",
+    "title": "Characterizing the Boundary Conditions of the Bad Likert Judge Jailbreak Technique",
+    "run_id": "2026-03-19T19-58-40",
+    "original_idea": "Implement the Bad Likert Judge technique on 3 open-source models for 30 harmful prompts. Systematically vary: (1) number of turns before the harmful request, (2) explicitness of the harmful request, (3) framing as evaluation vs. generation. Measure ASR per condition.",
+    "scores": {
+      "theory_of_impact": {
+        "score": 4,
+        "weight": 3.0,
+        "reasoning": "Clear causal path: understanding which structural conditions make evaluation-framing attacks succeed directly informs multi-turn safety evaluation design. Actionable for safety teams."
+      },
+      "accessible_complexity": {
+        "score": 3,
+        "weight": 3.5,
+        "reasoning": "Requires implementing a multi-turn jailbreak technique and managing ASR measurement across conditions. Feasible for CS students with guidance, but multi-turn prompt engineering and systematic variation add complexity. Medium compute sufficient for 3 open-source models."
+      },
+      "narrow_scope": {
+        "score": 4,
+        "weight": 5.0,
+        "reasoning": "Well-defined: 1 technique, 3 models, 30 prompts, 3 variation axes. Clear deliverable (ASR per condition). Slightly broad with 3 independent variables but manageable."
+      }
+    },
+    "weighted_score": 3.7,
+    "confidence": 0.78,
+    "eliminated": false,
+    "elimination_reason": null
+  },
+  {
+    "idea_id": "gen-0632",
+    "title": "Testing Whether Safety Alignment Survives Quantization (INT4 vs. FP16)",
+    "run_id": "2026-03-19T19-58-40",
+    "original_idea": "Compare ASR across attack types (prefilling, direct harmful prompts, GCG) between FP16 and INT4 (GGUF/GPTQ) versions of the same model. Use Llama-3-8B as the test model. Measure ASR on 30 harmful prompts and compare first-token refusal probabilities.",
+    "scores": {
+      "theory_of_impact": {
+        "score": 4,
+        "weight": 3.0,
+        "reasoning": "Direct safety relevance: if quantization degrades alignment, widespread consumer deployment of quantized models is an underappreciated risk. Immediately actionable for deployment guidelines."
+      },
+      "accessible_complexity": {
+        "score": 3,
+        "weight": 3.5,
+        "reasoning": "Requires running GCG attacks and extracting first-token probabilities, which demands some ML experience. Quantization tooling (llama.cpp, GPTQ) is well-documented. GCG is harder for beginners. Medium compute covers Llama-3-8B."
+      },
+      "narrow_scope": {
+        "score": 4,
+        "weight": 5.0,
+        "reasoning": "Single model, two quantization levels, 30 prompts. Clear comparison. GCG adds complexity but the deliverable is focused."
+      }
+    },
+    "weighted_score": 3.7,
+    "confidence": 0.75,
+    "eliminated": false,
+    "elimination_reason": null
+  },
+  {
+    "idea_id": "gen-0633",
+    "title": "Mapping Which Harm Categories Are Most Underprotected in Current Safety Benchmarks",
+    "run_id": "2026-03-19T19-58-40",
+    "original_idea": "Run a standardized set of 10 prompts per harm category across 10 categories on 3 models. Measure ASR per category and compare to the category's frequency in training data proxies (e.g., SafeRLHF dataset category distribution). Identify categories with highest ASR.",
+    "scores": {
+      "theory_of_impact": {
+        "score": 4,
+        "weight": 3.0,
+        "reasoning": "Directly actionable: revealing systematic bias in safety training effort across harm categories would guide alignment teams to address underprotected areas."
+      },
+      "accessible_complexity": {
+        "score": 4,
+        "weight": 3.5,
+        "reasoning": "Straightforward experimental design: write prompts per category, run inference, measure ASR. Comparing against training data proxies adds slight complexity. Medium compute handles 3 models easily."
+      },
+      "narrow_scope": {
+        "score": 3,
+        "weight": 5.0,
+        "reasoning": "10 categories x 10 prompts x 3 models is manageable but crafting 100 quality prompts spanning 10 harm categories and sourcing training data distribution proxies broadens scope."
+      }
+    },
+    "weighted_score": 3.6,
+    "confidence": 0.80,
+    "eliminated": false,
+    "elimination_reason": null
+  },
+  {
+    "idea_id": "gen-0634",
+    "title": "Investigating Whether Jailbreak Success Correlates with Instruction-Following Quality",
+    "run_id": "2026-03-19T19-58-40",
+    "original_idea": "Collect instruction-following benchmark scores (e.g., MT-Bench or IFEval) and ASR on a standard jailbreak battery for 8-10 open-source models of varying sizes and training recipes. Compute the correlation coefficient between instruction-following quality and jailbreak ASR.",
+    "scores": {
+      "theory_of_impact": {
+        "score": 5,
+        "weight": 3.0,
+        "reasoning": "High theoretical importance: if instruction-following and jailbreak susceptibility are correlated, it reveals a fundamental tension in alignment that cannot be resolved by RLHF alone. Deep implication for alignment strategy."
+      },
+      "accessible_complexity": {
+        "score": 3,
+        "weight": 3.5,
+        "reasoning": "Requires running jailbreak batteries and collecting benchmark scores for 8-10 models. Inference on many models is time-consuming. Some published scores can be reused. Medium compute is tight for 8-10 models."
+      },
+      "narrow_scope": {
+        "score": 3,
+        "weight": 5.0,
+        "reasoning": "8-10 models is ambitious for 30 hours. The core analysis (correlation) is simple, but the data collection across many models broadens scope significantly."
+      }
+    },
+    "weighted_score": 3.6,
+    "confidence": 0.72,
+    "eliminated": false,
+    "elimination_reason": null
+  },
+  {
+    "idea_id": "gen-0635",
+    "title": "Characterizing How Jailbreak Robustness Varies Across Context Window Position",
+    "run_id": "2026-03-19T19-58-40",
+    "original_idea": "Construct prompts where a harmful request is embedded at position 10%, 50%, and 90% of a 4K-token context window, surrounded by benign filler text. Measure ASR per position across 30 harmful prompts and 2-3 models. Include a short-context baseline.",
+    "scores": {
+      "theory_of_impact": {
+        "score": 4,
+        "weight": 3.0,
+        "reasoning": "Directly relevant: if safety weakens at certain context positions, RAG and long-document deployments are vulnerable. Clear implications for deployment defense."
+      },
+      "accessible_complexity": {
+        "score": 4,
+        "weight": 3.5,
+        "reasoning": "Simple experimental setup: construct filler text, embed harmful request at different positions, run inference. Well within beginner CS skills. Medium compute sufficient."
+      },
+      "narrow_scope": {
+        "score": 5,
+        "weight": 5.0,
+        "reasoning": "Laser-focused: 3 positions, 30 prompts, 2-3 models, one variable. Very clear deliverable."
+      }
+    },
+    "weighted_score": 4.3,
+    "confidence": 0.82,
+    "eliminated": false,
+    "elimination_reason": null
+  },
+  {
+    "idea_id": "gen-0636",
+    "title": "Measuring Whether Jailbreaks That Succeed Once Reliably Succeed on Retry",
+    "run_id": "2026-03-19T19-58-40",
+    "original_idea": "For each of 30 harmful prompts tested with 3 attack methods on 2 models, repeat each attack attempt 10 times at temperature 1.0 and record whether each attempt succeeds. Compute per-prompt reliability (fraction of 10 attempts that succeed) and plot its distribution.",
+    "scores": {
+      "theory_of_impact": {
+        "score": 4,
+        "weight": 3.0,
+        "reasoning": "Directly informs defense design: if jailbreaks are unreliable, retry-limit defenses work; if reliable, they do not. Practical deployment implications."
+      },
+      "accessible_complexity": {
+        "score": 4,
+        "weight": 3.5,
+        "reasoning": "Conceptually simple: run the same prompts multiple times and count successes. Requires implementing 3 attack methods, but the analysis is straightforward. Medium compute handles repeated runs."
+      },
+      "narrow_scope": {
+        "score": 4,
+        "weight": 5.0,
+        "reasoning": "Well-scoped: 30 prompts x 3 attacks x 2 models x 10 retries. That is 1800 inference calls, which is a lot but the experimental design is tight. Clear deliverable."
+      }
+    },
+    "weighted_score": 4.0,
+    "confidence": 0.80,
+    "eliminated": false,
+    "elimination_reason": null
+  },
+  {
+    "idea_id": "gen-0637",
+    "title": "Replicating AILuminate Safety Scores Across Open-Source Model Families",
+    "run_id": "2026-03-19T19-58-40",
+    "original_idea": "Run the AILuminate v1.1 public practice prompts against three or more open-source model families at comparable parameter scales. Compare hazard-category breakdowns across families and write a blog post summarizing which hazard types diverge most from proprietary baselines.",
+    "scores": {
+      "theory_of_impact": {
+        "score": 3,
+        "weight": 3.0,
+        "reasoning": "Useful for deployment decisions but primarily a replication study. The impact depends on whether interesting divergences are found. Moderate theory of change."
+      },
+      "accessible_complexity": {
+        "score": 4,
+        "weight": 3.5,
+        "reasoning": "AILuminate prompts are public and the framework is documented. Running inference on 3 model families at 7-13B is feasible with medium compute. Good fit for beginners."
+      },
+      "narrow_scope": {
+        "score": 4,
+        "weight": 5.0,
+        "reasoning": "Clear deliverable: run benchmark, compare results, write up. Scope is well-contained."
+      }
+    },
+    "weighted_score": 3.7,
+    "confidence": 0.82,
+    "eliminated": false,
+    "elimination_reason": null
+  },
+  {
+    "idea_id": "gen-0638",
+    "title": "HELM Safety Score Replication on Multilingual Models",
+    "run_id": "2026-03-19T19-58-40",
+    "original_idea": "Replicate HELM Safety's six risk categories on two or three multilingual open models, running prompts in at least three languages. Measure whether safety scores degrade in non-English contexts and by how much.",
+    "scores": {
+      "theory_of_impact": {
+        "score": 4,
+        "weight": 3.0,
+        "reasoning": "High practical relevance: if safety collapses in non-English languages, globally deployed models present uncharacterized risk. Directly actionable for multilingual deployments."
+      },
+      "accessible_complexity": {
+        "score": 3,
+        "weight": 3.5,
+        "reasoning": "Requires translating or sourcing prompts in 3+ languages and evaluating safety of non-English outputs, which is harder for beginners. Judging safety in multiple languages adds difficulty."
+      },
+      "narrow_scope": {
+        "score": 3,
+        "weight": 5.0,
+        "reasoning": "Multiple languages and multiple models broaden scope. Translation quality and cross-lingual evaluation add hidden complexity. Could expand beyond 30 hours."
+      }
+    },
+    "weighted_score": 3.3,
+    "confidence": 0.73,
+    "eliminated": false,
+    "elimination_reason": null
+  },
+  {
+    "idea_id": "gen-0639",
+    "title": "TrustLLM Benchmark Results at Sub-7B Scale",
+    "run_id": "2026-03-19T19-58-40",
+    "original_idea": "Run the TrustLLM evaluation suite on small models (Phi-3-mini, Gemma-2B, Llama-3.2-1B). Compare dimension-by-dimension (truthfulness, safety, fairness, robustness) against published 7B baselines.",
+    "scores": {
+      "theory_of_impact": {
+        "score": 3,
+        "weight": 3.0,
+        "reasoning": "Relevant for edge deployment safety but primarily a replication at smaller scale. Impact depends on whether meaningful differences are found."
+      },
+      "accessible_complexity": {
+        "score": 4,
+        "weight": 3.5,
+        "reasoning": "TrustLLM suite is open source, small models fit on consumer hardware. Straightforward to run and compare. Good beginner project."
+      },
+      "narrow_scope": {
+        "score": 4,
+        "weight": 5.0,
+        "reasoning": "Run existing benchmark on 3 small models, compare against published baselines. Clear, contained scope."
+      }
+    },
+    "weighted_score": 3.7,
+    "confidence": 0.80,
+    "eliminated": false,
+    "elimination_reason": null
+  },
+  {
+    "idea_id": "gen-0640",
+    "title": "SimpleQA Factual Accuracy Replication Across Model Generations",
+    "run_id": "2026-03-19T19-58-40",
+    "original_idea": "Run SimpleQA on models from three successive generations (e.g., Llama-2, Llama-3, Llama-3.1). Disaggregate scores by topic domain and compute per-domain improvement curves to identify areas of persistent failure.",
+    "scores": {
+      "theory_of_impact": {
+        "score": 2,
+        "weight": 3.0,
+        "reasoning": "Factual accuracy is related to safety (hallucination) but the connection is indirect. Identifying domain-specific hallucination patterns is useful but not a direct safety intervention."
+      },
+      "accessible_complexity": {
+        "score": 4,
+        "weight": 3.5,
+        "reasoning": "SimpleQA has ground-truth answers, making evaluation straightforward. Running 3 model generations is feasible. Good beginner project."
+      },
+      "narrow_scope": {
+        "score": 4,
+        "weight": 5.0,
+        "reasoning": "Run one benchmark on 3 models, disaggregate by domain. Well-defined deliverable."
+      }
+    },
+    "weighted_score": 3.4,
+    "confidence": 0.77,
+    "eliminated": false,
+    "elimination_reason": null
+  },
+  {
+    "idea_id": "gen-0641",
+    "title": "Replicating HELM Safety Across Code-Specialized Models",
+    "run_id": "2026-03-19T19-58-40",
+    "original_idea": "Apply HELM Safety's violence, fraud, harassment, and deception categories to three code models. Compare safety profiles against matched general-purpose models and analyze whether code-tuning degrades safety alignment.",
+    "scores": {
+      "theory_of_impact": {
+        "score": 4,
+        "weight": 3.0,
+        "reasoning": "Code models are used in agentic pipelines and can execute harmful code. Finding a safety gap specific to code-tuned models would directly motivate targeted mitigations."
+      },
+      "accessible_complexity": {
+        "score": 4,
+        "weight": 3.5,
+        "reasoning": "HELM Safety framework is accessible, code models are open source and comparably sized. Straightforward comparison. Beginner-friendly."
+      },
+      "narrow_scope": {
+        "score": 4,
+        "weight": 5.0,
+        "reasoning": "3 code models vs. 3 general models on one benchmark. Clear scope and deliverable."
+      }
+    },
+    "weighted_score": 4.0,
+    "confidence": 0.80,
+    "eliminated": false,
+    "elimination_reason": null
+  },
+  {
+    "idea_id": "gen-0642",
+    "title": "Cross-Benchmark Correlation Study: AILuminate vs. HELM Safety",
+    "run_id": "2026-03-19T19-58-40",
+    "original_idea": "Evaluate five to seven open-source models on both AILuminate public prompts and HELM Safety. Compute rank correlations and identify models that rank highly on one but poorly on the other. Analyze which hazard categories explain divergences.",
+    "scores": {
+      "theory_of_impact": {
+        "score": 4,
+        "weight": 3.0,
+        "reasoning": "If leading benchmarks produce inconsistent rankings, it reveals a fundamental reliability problem for safety evaluation. Important meta-level finding."
+      },
+      "accessible_complexity": {
+        "score": 3,
+        "weight": 3.5,
+        "reasoning": "Running 5-7 models on two full benchmarks is compute-intensive and time-consuming. Correlation analysis itself is simple. Medium compute may be stretched."
+      },
+      "narrow_scope": {
+        "score": 3,
+        "weight": 5.0,
+        "reasoning": "5-7 models on 2 benchmarks is ambitious for 30 hours. Could be narrowed to 3 models but as stated it is broad."
+      }
+    },
+    "weighted_score": 3.3,
+    "confidence": 0.74,
+    "eliminated": false,
+    "elimination_reason": null
+  },
+  {
+    "idea_id": "gen-0643",
+    "title": "Safety Benchmark Performance Under Quantization",
+    "run_id": "2026-03-19T19-58-40",
+    "original_idea": "Take three models (e.g., Mistral-7B, Llama-3-8B, Phi-3-medium), run AILuminate or HELM Safety on the full-precision and 4-bit quantized versions, and measure safety score deltas relative to capability (MMLU) score deltas.",
+    "scores": {
+      "theory_of_impact": {
+        "score": 4,
+        "weight": 3.0,
+        "reasoning": "If quantization degrades safety disproportionately to capability, this is a direct, actionable finding for deployment practice."
+      },
+      "accessible_complexity": {
+        "score": 4,
+        "weight": 3.5,
+        "reasoning": "Quantization tools are well-documented, benchmark frameworks are public. Running both versions is straightforward. Good fit for medium compute."
+      },
+      "narrow_scope": {
+        "score": 4,
+        "weight": 5.0,
+        "reasoning": "3 models, 2 precisions each, 1-2 benchmarks. Clear comparison with defined deliverable."
+      }
+    },
+    "weighted_score": 4.0,
+    "confidence": 0.80,
+    "eliminated": false,
+    "elimination_reason": null
+  },
+  {
+    "idea_id": "gen-0644",
+    "title": "Replicating ForesightSafety Bench on Instruction-Tuned vs. Base Models",
+    "run_id": "2026-03-19T19-58-40",
+    "original_idea": "Run ForesightSafety Bench on base and instruction-tuned variants of the same model family (e.g., Llama-3-8B-base vs. Llama-3-8B-Instruct). Analyze which bench categories improve with instruction tuning and which do not.",
+    "scores": {
+      "theory_of_impact": {
+        "score": 4,
+        "weight": 3.0,
+        "reasoning": "If instruction tuning does not improve anticipatory safety reasoning, it exposes a limitation of RLHF-based alignment. Meaningful finding for alignment research."
+      },
+      "accessible_complexity": {
+        "score": 4,
+        "weight": 3.5,
+        "reasoning": "Matched base/instruct pairs are freely available. Running a benchmark on 2 model variants is simple. Beginner-friendly."
+      },
+      "narrow_scope": {
+        "score": 5,
+        "weight": 5.0,
+        "reasoning": "One benchmark, one model family, base vs. instruct comparison. Extremely focused."
+      }
+    },
+    "weighted_score": 4.3,
+    "confidence": 0.78,
+    "eliminated": false,
+    "elimination_reason": null
+  },
+  {
+    "idea_id": "gen-0645",
+    "title": "Safety Score Replication Across Prompt Formats (Chat vs. Completion)",
+    "run_id": "2026-03-19T19-58-40",
+    "original_idea": "Convert AILuminate prompts to completion format (no system prompt, no conversation structure) and run them against models evaluated in their standard chat format. Measure how much safety scores shift.",
+    "scores": {
+      "theory_of_impact": {
+        "score": 4,
+        "weight": 3.0,
+        "reasoning": "If completion format bypasses alignment mechanisms, this is directly actionable for API providers and developers who use raw completions."
+      },
+      "accessible_complexity": {
+        "score": 4,
+        "weight": 3.5,
+        "reasoning": "Simple transformation (strip chat formatting) and run inference. Very accessible for beginners."
+      },
+      "narrow_scope": {
+        "score": 5,
+        "weight": 5.0,
+        "reasoning": "One variable (prompt format), existing prompts, clear deliverable. Extremely narrow and well-defined."
+      }
+    },
+    "weighted_score": 4.3,
+    "confidence": 0.82,
+    "eliminated": false,
+    "elimination_reason": null
+  },
+  {
+    "idea_id": "gen-0646",
+    "title": "METR Task Suite Performance Replication Across Open-Source Agents",
+    "run_id": "2026-03-19T19-58-40",
+    "original_idea": "Run a subset of publicly available METR tasks on two or three open-source agentic frameworks. Compare task completion rates, safety failures, and instruction hierarchy violations against published proprietary baselines.",
+    "scores": {
+      "theory_of_impact": {
+        "score": 3,
+        "weight": 3.0,
+        "reasoning": "Characterizing safety gaps in open-source agents is useful but primarily descriptive. Moderate impact on safety practice."
+      },
+      "accessible_complexity": {
+        "score": 2,
+        "weight": 3.5,
+        "reasoning": "Setting up agentic frameworks (AutoGPT, OpenDevin) and running METR tasks requires significant configuration effort. Agentic evaluations are complex. Challenging for beginners."
+      },
+      "narrow_scope": {
+        "score": 2,
+        "weight": 5.0,
+        "reasoning": "Agentic evaluations involve many moving parts (framework setup, task configuration, evaluation criteria). Likely exceeds 30 hours."
+      }
+    },
+    "weighted_score": 2.3,
+    "confidence": 0.68,
+    "eliminated": false,
+    "elimination_reason": null
+  },
+  {
+    "idea_id": "gen-0647",
+    "title": "Safety Benchmark Sensitivity to System Prompt Wording",
+    "run_id": "2026-03-19T19-58-40",
+    "original_idea": "Evaluate three models on AILuminate using five systematically varied system prompts (varying strictness, persona, and topic framing). Compute variance in safety scores across system prompt variants and identify categories with highest sensitivity.",
+    "scores": {
+      "theory_of_impact": {
+        "score": 4,
+        "weight": 3.0,
+        "reasoning": "If safety benchmark scores are highly sensitive to system prompt wording, leaderboard rankings are unreliable. Directly undermines confidence in safety evaluations."
+      },
+      "accessible_complexity": {
+        "score": 5,
+        "weight": 3.5,
+        "reasoning": "Very simple: write 5 system prompts, run AILuminate on 3 models with each, compute variance. Minimal technical skills required. Perfect for beginners."
+      },
+      "narrow_scope": {
+        "score": 5,
+        "weight": 5.0,
+        "reasoning": "3 models, 5 system prompts, 1 benchmark. Clear, tight scope with a single variable under study."
+      }
+    },
+    "weighted_score": 4.6,
+    "confidence": 0.85,
+    "eliminated": false,
+    "elimination_reason": null
+  },
+  {
+    "idea_id": "gen-0648",
+    "title": "Replication Study: Does Model Size Predict Safety Score?",
+    "run_id": "2026-03-19T19-58-40",
+    "original_idea": "Run HELM Safety or AILuminate across the full scale range of one model family (e.g., Phi-3-mini 3.8B, Phi-3-small 7B, Phi-3-medium 14B). Plot safety score vs. parameter count and test whether the scaling relationship is monotonic.",
+    "scores": {
+      "theory_of_impact": {
+        "score": 3,
+        "weight": 3.0,
+        "reasoning": "If safety does not scale with model size, it challenges deployment intuitions. Useful but primarily descriptive."
+      },
+      "accessible_complexity": {
+        "score": 4,
+        "weight": 3.5,
+        "reasoning": "Run one benchmark on 3 model sizes. Simple analysis. Medium compute covers up to 14B. Good beginner project."
+      },
+      "narrow_scope": {
+        "score": 5,
+        "weight": 5.0,
+        "reasoning": "One model family, one benchmark, one variable (size). Extremely focused."
+      }
+    },
+    "weighted_score": 4.1,
+    "confidence": 0.82,
+    "eliminated": false,
+    "elimination_reason": null
+  },
+  {
+    "idea_id": "gen-0649",
+    "title": "Multimodal Safety Benchmark for Image-Augmented Harmful Prompts",
+    "run_id": "2026-03-19T19-58-40",
+    "original_idea": "Construct a small benchmark (200-400 items) pairing harmful text prompts with benign images vs. harmful text embedded in images (OCR-readable text, diagrams). Evaluate two vision-language models and measure whether image-embedded instructions bypass refusals.",
+    "scores": {
+      "theory_of_impact": {
+        "score": 4,
+        "weight": 3.0,
+        "reasoning": "Multimodal attack surfaces are identified as inadequately characterized in the 2026 safety report. Filling this gap is directly valuable."
+      },
+      "accessible_complexity": {
+        "score": 2,
+        "weight": 3.5,
+        "reasoning": "Constructing 200-400 image-text pairs, embedding text in images, and evaluating vision-language models is substantial work. Image creation and multimodal evaluation add complexity beyond beginner level."
+      },
+      "narrow_scope": {
+        "score": 2,
+        "weight": 5.0,
+        "reasoning": "200-400 items is a large benchmark to construct from scratch in 30 hours. Asset creation alone could exceed the time budget."
+      }
+    },
+    "weighted_score": 2.6,
+    "confidence": 0.72,
+    "eliminated": false,
+    "elimination_reason": null
+  },
+  {
+    "idea_id": "gen-0650",
+    "title": "Audio-Modality Safety Benchmark for Speech-Input Models",
+    "run_id": "2026-03-19T19-58-40",
+    "original_idea": "Generate 150-200 harmful prompts in both text and synthesized audio (using TTS). Run through a speech-LLM pipeline and measure refusal rate for audio-sourced inputs vs. direct text inputs.",
+    "scores": {
+      "theory_of_impact": {
+        "score": 3,
+        "weight": 3.0,
+        "reasoning": "Audio attack surfaces are under-explored, but the pipeline (TTS -> STT -> LLM) may not reveal fundamental safety issues if the STT step faithfully transcribes."
+      },
+      "accessible_complexity": {
+        "score": 2,
+        "weight": 3.5,
+        "reasoning": "Requires setting up TTS, speech-to-text, and LLM pipelines. Multiple modality-specific tools add significant setup complexity for beginners."
+      },
+      "narrow_scope": {
+        "score": 3,
+        "weight": 5.0,
+        "reasoning": "150-200 prompts through a multi-stage pipeline. The pipeline itself is the complexity; the experiment design is clear."
+      }
+    },
+    "weighted_score": 2.7,
+    "confidence": 0.68,
+    "eliminated": false,
+    "elimination_reason": null
+  },
+  {
+    "idea_id": "gen-0651",
+    "title": "Agentic Safety Eval: Tool-Misuse Benchmark for Single-Agent Systems",
+    "run_id": "2026-03-19T19-58-40",
+    "original_idea": "Design 100 scenarios where a user or injected content attempts to get a tool-using agent to perform harmful actions (delete files, exfiltrate data, execute malicious code). Evaluate two open-source agent frameworks and score refusal and detection rates.",
+    "scores": {
+      "theory_of_impact": {
+        "score": 4,
+        "weight": 3.0,
+        "reasoning": "Tool misuse is a top OWASP agentic risk. A lightweight benchmark directly addresses a documented safety gap."
+      },
+      "accessible_complexity": {
+        "score": 2,
+        "weight": 3.5,
+        "reasoning": "Designing 100 tool-misuse scenarios and setting up agent frameworks with sandboxed tool access is substantial work. Requires understanding of agentic architectures. Hard for beginners."
+      },
+      "narrow_scope": {
+        "score": 2,
+        "weight": 5.0,
+        "reasoning": "100 scenarios, 2 frameworks, multiple tool types. Benchmark design from scratch in 30 hours is very ambitious."
+      }
+    },
+    "weighted_score": 2.6,
+    "confidence": 0.70,
+    "eliminated": false,
+    "elimination_reason": null
+  },
+  {
+    "idea_id": "gen-0652",
+    "title": "Post-Deployment Drift Monitor: A Simple Tool for Tracking Safety Score Changes Over Time",
+    "run_id": "2026-03-19T19-58-40",
+    "original_idea": "Build a lightweight Python tool that periodically runs a fixed set of AILuminate-style safety probes against a local model endpoint and logs scores over time, flagging statistically significant drops. Validate by intentionally fine-tuning a model to degrade safety and confirming the tool detects it.",
+    "scores": {
+      "theory_of_impact": {
+        "score": 4,
+        "weight": 3.0,
+        "reasoning": "Post-deployment monitoring is identified as a critical gap by the 2026 safety report. Directly addresses an acknowledged need."
+      },
+      "accessible_complexity": {
+        "score": 3,
+        "weight": 3.5,
+        "reasoning": "Building a Python monitoring tool is feasible for CS students. The validation step (fine-tuning a model to degrade safety) adds significant complexity."
+      },
+      "narrow_scope": {
+        "score": 3,
+        "weight": 5.0,
+        "reasoning": "Tool building plus validation via fine-tuning is two distinct projects. The tool alone is narrow; the validation broadens scope."
+      }
+    },
+    "weighted_score": 3.3,
+    "confidence": 0.73,
+    "eliminated": false,
+    "elimination_reason": null
+  },
+  {
+    "idea_id": "gen-0653",
+    "title": "Scorer Reliability Toolkit: Comparing LLM Judges Against Human Annotations on Safety Datasets",
+    "run_id": "2026-03-19T19-58-40",
+    "original_idea": "Build a Python script that takes a sample of safety-labeled prompts and responses, runs multiple LLM judges, and computes inter-rater reliability metrics (Cohen's kappa, Fleiss' kappa, confusion matrices). Validate on a subset of the AILuminate public dataset.",
+    "scores": {
+      "theory_of_impact": {
+        "score": 4,
+        "weight": 3.0,
+        "reasoning": "Judge reliability directly affects the trustworthiness of all safety evaluations. A diagnostic tool addresses a foundational methodological concern."
+      },
+      "accessible_complexity": {
+        "score": 4,
+        "weight": 3.5,
+        "reasoning": "Python scripting, API calls to LLM judges, computing kappa statistics. Well within CS student skills. Standard libraries available."
+      },
+      "narrow_scope": {
+        "score": 4,
+        "weight": 5.0,
+        "reasoning": "Build one tool, validate on one dataset. Clear deliverable. Scope is well-contained."
+      }
+    },
+    "weighted_score": 4.0,
+    "confidence": 0.82,
+    "eliminated": false,
+    "elimination_reason": null
+  },
+  {
+    "idea_id": "gen-0654",
+    "title": "Multi-Turn Conversation Safety Benchmark",
+    "run_id": "2026-03-19T19-58-40",
+    "original_idea": "Construct 150 multi-turn conversation sequences (3-5 turns each) where turns gradually escalate toward a harmful request. Compare refusal rates on the final turn against single-turn equivalents across three models.",
+    "scores": {
+      "theory_of_impact": {
+        "score": 5,
+        "weight": 3.0,
+        "reasoning": "Single-turn benchmarks systematically overestimate safety. Demonstrating this gap with a multi-turn benchmark directly changes how safety is evaluated."
+      },
+      "accessible_complexity": {
+        "score": 3,
+        "weight": 3.5,
+        "reasoning": "Crafting 150 multi-turn sequences (3-5 turns each) requires significant prompt engineering effort. Running multi-turn inference is straightforward. Medium difficulty."
+      },
+      "narrow_scope": {
+        "score": 3,
+        "weight": 5.0,
+        "reasoning": "150 conversation sequences is a substantial authoring effort. Could be narrowed to 50. As stated, ambitious for 30 hours."
+      }
+    },
+    "weighted_score": 3.6,
+    "confidence": 0.75,
+    "eliminated": false,
+    "elimination_reason": null
+  },
+  {
+    "idea_id": "gen-0655",
+    "title": "Benchmark for Safety Robustness Under Paraphrasing Attacks",
+    "run_id": "2026-03-19T19-58-40",
+    "original_idea": "Generate 200 harmful prompts, then produce three paraphrase variants of each using an LLM. Evaluate three models on originals vs. paraphrases and measure the rate at which paraphrases succeed where originals fail.",
+    "scores": {
+      "theory_of_impact": {
+        "score": 4,
+        "weight": 3.0,
+        "reasoning": "If paraphrasing systematically circumvents safety measures, published safety scores drastically overestimate robustness. High practical relevance."
+      },
+      "accessible_complexity": {
+        "score": 4,
+        "weight": 3.5,
+        "reasoning": "Using an LLM to generate paraphrases is simple. Running inference and comparing ASR is straightforward. Good beginner project."
+      },
+      "narrow_scope": {
+        "score": 3,
+        "weight": 5.0,
+        "reasoning": "200 prompts x 3 paraphrases x 3 models = 2400 evaluations. The prompt generation is automated but 200 base prompts is ambitious to curate."
+      }
+    },
+    "weighted_score": 3.6,
+    "confidence": 0.78,
+    "eliminated": false,
+    "elimination_reason": null
+  },
+  {
+    "idea_id": "gen-0656",
+    "title": "Safety Eval Coverage Tool: Mapping Benchmark Prompts to Hazard Taxonomy",
+    "run_id": "2026-03-19T19-58-40",
+    "original_idea": "Build a Python tool that takes a benchmark prompt set and a hazard taxonomy, uses embeddings to cluster prompts into taxonomy categories, and outputs a coverage heatmap. Apply to AILuminate and HELM Safety to identify under-represented hazard types.",
+    "scores": {
+      "theory_of_impact": {
+        "score": 3,
+        "weight": 3.0,
+        "reasoning": "Useful for benchmark designers to identify gaps but does not directly improve safety. Meta-level tooling contribution."
+      },
+      "accessible_complexity": {
+        "score": 4,
+        "weight": 3.5,
+        "reasoning": "Embedding-based clustering is a standard ML task. Sentence transformers run on CPU. Visualization with matplotlib/seaborn. Good CS student project."
+      },
+      "narrow_scope": {
+        "score": 4,
+        "weight": 5.0,
+        "reasoning": "Build one tool, apply to 2 benchmarks. Clear deliverable (coverage heatmap). Well-scoped."
+      }
+    },
+    "weighted_score": 3.7,
+    "confidence": 0.80,
+    "eliminated": false,
+    "elimination_reason": null
+  },
+  {
+    "idea_id": "gen-0657",
+    "title": "Agentic Safety Eval: Prompt Injection Resistance Benchmark",
+    "run_id": "2026-03-19T19-58-40",
+    "original_idea": "Create 100 task scenarios where a tool-using LLM agent retrieves content containing adversarial injections. Score whether the agent follows the injected instruction vs. its original goal. Test two open-source models.",
+    "scores": {
+      "theory_of_impact": {
+        "score": 5,
+        "weight": 3.0,
+        "reasoning": "Prompt injection is the most practically exploited agentic vulnerability. A reproducible benchmark directly enables systematic safety tracking."
+      },
+      "accessible_complexity": {
+        "score": 2,
+        "weight": 3.5,
+        "reasoning": "Requires setting up tool-using agents, creating realistic retrieval scenarios with injected content, and scoring agent behavior. Complex infrastructure for beginners."
+      },
+      "narrow_scope": {
+        "score": 2,
+        "weight": 5.0,
+        "reasoning": "100 scenarios with tool-using agents, retrieval, and injection content. Benchmark design from scratch in 30 hours is very ambitious."
+      }
+    },
+    "weighted_score": 2.8,
+    "confidence": 0.70,
+    "eliminated": false,
+    "elimination_reason": null
+  },
+  {
+    "idea_id": "gen-0658",
+    "title": "Benchmark for Refusal Calibration: When Models Over-Refuse",
+    "run_id": "2026-03-19T19-58-40",
+    "original_idea": "Construct 200 benign prompts that superficially resemble harmful ones (e.g., chemistry questions, medical queries, fiction writing). Measure refusal rates across three models and correlate over-refusal rate with safety benchmark scores.",
+    "scores": {
+      "theory_of_impact": {
+        "score": 4,
+        "weight": 3.0,
+        "reasoning": "Over-refusal is a core alignment calibration problem. Measuring the safety-helpfulness tradeoff directly addresses a key gap in current benchmarks."
+      },
+      "accessible_complexity": {
+        "score": 4,
+        "weight": 3.5,
+        "reasoning": "Crafting benign-but-suspicious prompts is creative but not technically demanding. Running inference and measuring refusal rates is simple. Good beginner project."
+      },
+      "narrow_scope": {
+        "score": 3,
+        "weight": 5.0,
+        "reasoning": "200 prompts is substantial to craft well. Each needs to be genuinely benign yet plausibly flaggable. Time-consuming curation. Could be narrowed to 100."
+      }
+    },
+    "weighted_score": 3.6,
+    "confidence": 0.78,
+    "eliminated": false,
+    "elimination_reason": null
+  },
+  {
+    "idea_id": "gen-0659",
+    "title": "Persona-Jailbreak Resistance Benchmark",
+    "run_id": "2026-03-19T19-58-40",
+    "original_idea": "Create 150 persona-jailbreak prompts at varying levels of sophistication. Evaluate three models and measure refusal rates, partial compliance rates, and the point in a conversation where compliance emerges.",
+    "scores": {
+      "theory_of_impact": {
+        "score": 4,
+        "weight": 3.0,
+        "reasoning": "Persona-jailbreaks are a high-volume real-world attack vector. Systematic benchmarking complements existing AILuminate jailbreak work."
+      },
+      "accessible_complexity": {
+        "score": 3,
+        "weight": 3.5,
+        "reasoning": "Creating persona-jailbreak prompts at varying sophistication levels requires understanding of jailbreak techniques. Measuring partial compliance adds evaluation complexity."
+      },
+      "narrow_scope": {
+        "score": 3,
+        "weight": 5.0,
+        "reasoning": "150 prompts at varying sophistication plus multi-turn compliance tracking. Ambitious for 30 hours but could be narrowed."
+      }
+    },
+    "weighted_score": 3.3,
+    "confidence": 0.74,
+    "eliminated": false,
+    "elimination_reason": null
+  },
+  {
+    "idea_id": "gen-0660",
+    "title": "Benchmark for Long-Context Safety: Harmful Instructions Buried in Long Documents",
+    "run_id": "2026-03-19T19-58-40",
+    "original_idea": "Construct 100 scenarios placing a harmful instruction at varying positions within long benign documents (beginning, middle, end, buried in footnotes). Measure refusal rates as a function of instruction position and document length.",
+    "scores": {
+      "theory_of_impact": {
+        "score": 4,
+        "weight": 3.0,
+        "reasoning": "Long-context safety is poorly characterized and increasingly important as models handle longer inputs. Direct deployment relevance."
+      },
+      "accessible_complexity": {
+        "score": 3,
+        "weight": 3.5,
+        "reasoning": "Generating long benign documents and embedding instructions requires some engineering. Running long-context inference needs more compute/time. Moderate difficulty."
+      },
+      "narrow_scope": {
+        "score": 3,
+        "weight": 5.0,
+        "reasoning": "100 scenarios x multiple positions x multiple document lengths. Substantial content creation. Overlaps significantly with gen-0635 but at longer context and more positions."
+      }
+    },
+    "weighted_score": 3.3,
+    "confidence": 0.75,
+    "eliminated": false,
+    "elimination_reason": null
+  }
+]

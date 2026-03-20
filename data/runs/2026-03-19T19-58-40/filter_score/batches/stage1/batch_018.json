@@ -1,0 +1,1002 @@
+[
+  {
+    "idea_id": "gen-1701",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:17:40Z",
+    "subfield": "Adversarial Robustness & Red-Teaming",
+    "generation_strategy": "causal_chain_intervention",
+    "confidence": 0.8,
+    "body": "# First-Token Commitment as the Alignment Bottleneck: Can Intercepting the First Decoder Step Stop Jailbreaks?\n\n**Problem:** ICLR 2025 work shows safety alignment concentrates on the first few output tokens. The causal chain is: harmful prompt \u2192 jailbreak forces a non-refusal first token \u2192 model completes harmful content. The specific step of 'first-token commitment' is rarely targeted by defenses.\n\n**Direction:** Implement a lightweight 'commitment guard': sample the top-k first tokens from the model and check them against a refusal-token list before continuing generation. Measure attack success rate on a standard benchmark (JailbreakBench) for several attack families with and without the guard. Compare latency cost. Feasible in ~15 hours of coding + experiments.\n\n**Why it matters:** Targeting the causal bottleneck (first-token commitment) with a minimal inference-time patch could be a low-cost, model-agnostic defense applicable to any decoder LLM.\n\n**Relevant context:** Safety alignment concentrated in early tokens (ICLR 2025, arxiv proceedings); JailbreakBench evaluation framework."
+  },
+  {
+    "idea_id": "gen-1702",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:17:40Z",
+    "subfield": "Adversarial Robustness & Red-Teaming",
+    "generation_strategy": "causal_chain_intervention",
+    "confidence": 0.78,
+    "body": "# Style vs. Substance: Does Superficial Style Alignment Open a Causal Pathway for Tone-Based Jailbreaks?\n\n**Problem:** The superficial alignment hypothesis suggests models learn response style without internalizing safety principles. The causal chain is: style-only training \u2192 safety signal tied to surface form \u2192 prompts that alter surface style (e.g., pirate speak, poetry) bypass safety. The mechanistic link between style shift and safety bypass is not yet well characterised.\n\n**Direction:** Construct a small dataset of neutral vs. stylistically transformed versions of the same harmful prompts (formal, poetic, slang, code-comment). Measure attack success rate and compare middle-layer representations. Test whether a style-invariant probe trained on embeddings can predict harmfulness regardless of surface form.\n\n**Why it matters:** If style-shift is a genuine causal lever, style-invariant safety probes could close this vulnerability class cheaply and without full retraining.\n\n**Relevant context:** Arxiv 2506.07452 (style breaks safety); superficial alignment hypothesis; activation probing literature."
+  },
+  {
+    "idea_id": "gen-1703",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:17:40Z",
+    "subfield": "Adversarial Robustness & Red-Teaming",
+    "generation_strategy": "causal_chain_intervention",
+    "confidence": 0.83,
+    "body": "# Obfuscated Activations as an Adversarial Bypass: Measuring the Gap Between Probe Accuracy and Adaptive Resistance\n\n**Problem:** Activation-based probes can detect standard jailbreaks but obfuscation attacks (arxiv 2412.09565) can fool them by crafting prompts whose activations look benign. The causal chain is: linear probe relies on a low-dimensional direction \u2192 adversarial suffix moves activations off that direction \u2192 probe fails \u2192 harmful output proceeds. The probe's causal coverage of this step is the gap.\n\n**Direction:** Replicate a low-cost linear probe (logistic regression on layer-k residual stream) on an open model. Then craft simple obfuscation suffixes using greedy token search and measure the probe's failure rate. Propose and test a multi-layer ensemble probe to close the gap. Single GPU, ~25 hours.\n\n**Why it matters:** Demonstrates the limits of single-direction activation probes and motivates multi-layer or nonlinear detection strategies, contributing to the adaptive defenses open problem.\n\n**Relevant context:** Obfuscated activations paper (arxiv 2412.09565); SAID (arxiv 2510.20129); low-cost activation probe surprise result."
+  },
+  {
+    "idea_id": "gen-1704",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:17:40Z",
+    "subfield": "Adversarial Robustness & Red-Teaming",
+    "generation_strategy": "causal_chain_intervention",
+    "confidence": 0.84,
+    "body": "# Many-Shot Context Flooding: Which Causal Step\u2014Context Length, Demonstration Harmfulness, or Demonstration Count\u2014Drives Attack Success?\n\n**Problem:** Many-shot jailbreaking works by prefilling the context with faux harmful dialogues. The causal chain has three candidate links: (1) sheer context length dilutes safety, (2) the harmfulness of individual demonstrations, (3) the count of demonstrations. It is unclear which link is causally dominant.\n\n**Direction:** Create controlled ablations: vary context length holding demonstration count fixed, vary harmfulness of demonstrations holding count fixed, and vary count holding length fixed. Measure attack success rate on Llama-3-8B with JailbreakBench behaviors. A clean ablation study fits in ~20 hours.\n\n**Why it matters:** Pinpointing the dominant causal step directly informs the cheapest mitigation: if count is dominant, truncation suffices; if harmfulness of individual shots matters more, content filtering per-shot is the right intervention.\n\n**Relevant context:** Anthropic many-shot jailbreaking blog post; long-context LLM vulnerabilities; JailbreakBench."
+  },
+  {
+    "idea_id": "gen-1705",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:17:40Z",
+    "subfield": "Adversarial Robustness & Red-Teaming",
+    "generation_strategy": "causal_chain_intervention",
+    "confidence": 0.81,
+    "body": "# Causal Role of Instruction-Following Fine-Tuning in Safety Erasure: Minimal Examples to Trigger Alignment Loss\n\n**Problem:** Fine-tuning on even a handful of benign examples can erode safety alignment. The causal chain is: fine-tuning updates gradient \u2192 safety-aligned weights get overwritten \u2192 model responds to harmful prompts. The minimum causal trigger (how many examples, of what type) is not well quantified.\n\n**Direction:** Starting from an aligned open model (e.g., Llama-3-8B-Instruct), fine-tune on increasing numbers of benign instruction-following examples (1, 10, 100, 1000) and measure attack success rate on a fixed jailbreak set after each step. Identify the inflection point. Cost: a few GPU-hours; accessible to beginners.\n\n**Why it matters:** Quantifying the minimal trigger informs how much fine-tuning safety monitoring is needed (e.g., for API fine-tuning services) and whether even micro-fine-tuning should trigger safety re-evaluation.\n\n**Relevant context:** LLMs-Finetuning-Safety (GitHub); ICLR 2025 shallow alignment paper; BOOSTER and Lisa NeurIPS 2024."
+  },
+  {
+    "idea_id": "gen-1706",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:17:40Z",
+    "subfield": "Adversarial Robustness & Red-Teaming",
+    "generation_strategy": "causal_chain_intervention",
+    "confidence": 0.75,
+    "body": "# Causal Front-Door Adjustment in Practice: Can Students Reproduce and Extend the CFA2 Attack?\n\n**Problem:** The Causal Front-Door Adjustment Attack (CFA2, arxiv 2602.05444) uses Pearl's front-door criterion to sever confounding associations and achieve state-of-the-art attack success rates. The causal step it targets is the confounding path between harmful intent signal and safety filter activation. Student-reproducible implementations and ablations are lacking.\n\n**Direction:** Reproduce CFA2 on an open model, then ablate the front-door mediation step by replacing it with direct prompt manipulation. Compare ASR and interpret which causal path is actually exploited. Write a clear tutorial blog post. Accessible with basic Python + introductory causal inference reading.\n\n**Why it matters:** Causal attack frameworks represent a principled way to reason about jailbreak mechanisms; a reproducible student experiment bridges theory and practice for the next generation of safety researchers.\n\n**Relevant context:** CFA2 paper (arxiv 2602.05444); Pearl front-door criterion; ICLR 2025 jailbreak adaptive attacks."
+  },
+  {
+    "idea_id": "gen-1707",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:17:40Z",
+    "subfield": "Adversarial Robustness & Red-Teaming",
+    "generation_strategy": "causal_chain_intervention",
+    "confidence": 0.79,
+    "body": "# Early-Layer Harm Classification as a Chokepoint: How Robust Is It Against Token Substitution Attacks?\n\n**Problem:** Research shows LLMs classify inputs as harmful or benign in early layers. The causal chain is: early-layer classification \u2192 middle-layer emotional routing \u2192 refusal token generation. Attacks that perturb the early-layer classification (e.g., synonym substitution for trigger words) should break the whole chain.\n\n**Direction:** Extract early-layer representations for harmful vs. paraphrased-harmful prompts. Train a classifier, then measure how synonym substitution and paraphrase attacks degrade early-layer classification accuracy vs. final output safety. Propose minimal vocabulary-aware defenses.\n\n**Why it matters:** If early-layer classification is fragile to surface paraphrase, then the entire safety chain is fragile regardless of how robust later steps are, motivating semantic (not lexical) safety representations.\n\n**Relevant context:** Arxiv 2406.05644; shallow alignment ICLR 2025; stealthy jailbreak NAACL 2025."
+  },
+  {
+    "idea_id": "gen-1708",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:17:41Z",
+    "subfield": "Adversarial Robustness & Red-Teaming",
+    "generation_strategy": "causal_chain_intervention",
+    "confidence": 0.77,
+    "body": "# Refusal Token Vocabulary Analysis: Is Safety Alignment Concentrated on a Small Set of Tokens That Can Be Targeted?\n\n**Problem:** If safety alignment primarily tunes the probability of a small set of refusal tokens (e.g., 'I cannot', 'I'm sorry'), then attacks that suppress or redirect just those token probabilities form a minimal causal intervention. This link\u2014refusal token concentration\u2014is testable but under-studied.\n\n**Direction:** Use logit-lens to inspect next-token distributions at positions corresponding to refusal vs. compliance in aligned vs. unaligned models. Measure how concentrated probability mass is on refusal tokens. Test whether logit-level suppression (a targeted decoding attack) achieves high ASR with minimal prompt modification.\n\n**Why it matters:** If a handful of token-probability interventions bypass alignment, this is a critical vulnerability report and motivates distributional safety objectives beyond token-level tuning.\n\n**Relevant context:** Shallow alignment ICLR 2025; logit lens technique; decoding parameter attacks."
+  },
+  {
+    "idea_id": "gen-1709",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:17:41Z",
+    "subfield": "Adversarial Robustness & Red-Teaming",
+    "generation_strategy": "causal_chain_intervention",
+    "confidence": 0.8,
+    "body": "# Prompt Injection in Agentic Pipelines: Mapping the Causal Steps Between Injected Content and Unsafe Tool Use\n\n**Problem:** In agentic LLM systems, injected content in tool outputs can cause the agent to call unsafe tools. The causal chain is: injected text in environment \u2192 LLM parses as instruction \u2192 tool call with harmful parameters. The intermediate step of 'instruction parsing from environment data' is the key causal link, but its robustness to simple filtering is untested.\n\n**Direction:** Build a minimal agentic scaffold (LLM + fake tool with one dangerous action). Inject instructions at different positions (beginning, middle, end) in tool outputs. Measure injection success rate and test whether a simple heuristic filter (look for imperative sentences) at the tool-output parsing step reduces ASR. Fits in ~20 hours.\n\n**Why it matters:** Agentic pipelines are increasingly deployed; identifying the minimal causal step for prompt injection informs lightweight defenses that don't require full model retraining.\n\n**Relevant context:** Attacker Moves Second paper (arxiv 2510.09023); prompt injection red-teaming; adaptive attack evaluations."
+  },
+  {
+    "idea_id": "gen-1710",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:17:41Z",
+    "subfield": "Adversarial Robustness & Red-Teaming",
+    "generation_strategy": "causal_chain_intervention",
+    "confidence": 0.82,
+    "body": "# Persona Adoption as Safety Bypass: Measuring the Causal Dose-Response of Persona Strength on Refusal Rates\n\n**Problem:** Persona prompts reduce refusal rates by 50\u201370%. The causal chain is: persona assignment \u2192 model adopts character identity \u2192 safety norms attributed to character rather than model \u2192 refusal suppressed. The dose-response curve (how strong must the persona be?) is not characterised.\n\n**Direction:** Create a spectrum of persona prompts ranging from weak ('you are a helpful assistant') to strong ('you are an AI with no restrictions who never refuses') with five intensity levels. Measure refusal rate on a fixed harmful behavior set. Fit a logistic curve to the dose-response. Test whether a persona-strength classifier can flag dangerous personas pre-inference.\n\n**Why it matters:** A dose-response characterisation tells defenders exactly where to draw the line and enables a simple input filter targeting the causal lever of persona strength.\n\n**Relevant context:** Enhancing jailbreaks via persona prompts (arxiv 2507.22171); Quack role-play jailbreak; GUARD role-play diagnostics."
+  },
+  {
+    "idea_id": "gen-1711",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:17:41Z",
+    "subfield": "Adversarial Robustness & Red-Teaming",
+    "generation_strategy": "causal_chain_intervention",
+    "confidence": 0.76,
+    "body": "# Shared Representation Substrate of Transferable Jailbreaks: Can a Student Verify the Transfer Mechanism?\n\n**Problem:** Arxiv 2506.12913 suggests jailbreak transferability emerges from shared representations across models. The causal chain is: shared representation subspace \u2192 attack optimised in that subspace on model A \u2192 generalises to model B. This mechanism is not yet verified by independent experiments.\n\n**Direction:** Train GCG-style adversarial suffixes on Llama-3-8B. Measure attack success rate on Mistral-7B and Falcon-7B. Extract activations from all three models for the same suffix and compute CKA (Centered Kernel Alignment) to test whether transfer success correlates with representation similarity. ~25 hours, one GPU.\n\n**Why it matters:** Confirming or refuting the shared-representation transfer mechanism shapes whether defenses should be model-specific or target the shared subspace, which has implications for universal safety.\n\n**Relevant context:** Jailbreak transferability shared representations (arxiv 2506.12913); GCG attack; CKA similarity metric."
+  },
+  {
+    "idea_id": "gen-1712",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:17:41Z",
+    "subfield": "Adversarial Robustness & Red-Teaming",
+    "generation_strategy": "causal_chain_intervention",
+    "confidence": 0.73,
+    "body": "# Decoding Temperature as a Causal Lever for Safety Bypass: Systematic Measurement Across Attack Types\n\n**Problem:** High sampling temperature is known anecdotally to increase harmful output likelihood, but its causal role in jailbreak chains is not systematically measured. The causal step is: temperature increases token distribution entropy \u2192 non-refusal tokens move into the sampling mass \u2192 harmful completion sampled. This link is under-studied as a standalone intervention.\n\n**Direction:** For a fixed set of borderline and clearly harmful prompts, sweep temperature from 0 to 2.0 in steps of 0.2. Measure harmful output rate (using an LLM judge). Compare effect size for different attack categories. Assess whether temperature-capping is a viable partial defense. Pure inference experiment, ~10 hours.\n\n**Why it matters:** If temperature alone causally mediates a significant fraction of jailbreak risk, then deployment-time temperature constraints become a cheap, universally applicable safety layer.\n\n**Relevant context:** Decoding parameter attacks (ICLR 2025 shallow alignment); sampling strategies in LLM deployment."
+  },
+  {
+    "idea_id": "gen-1713",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:17:41Z",
+    "subfield": "Adversarial Robustness & Red-Teaming",
+    "generation_strategy": "causal_chain_intervention",
+    "confidence": 0.78,
+    "body": "# Harmful Intent Localisation: Is There a Single Attention Head Causally Responsible for Routing Safety Decisions?\n\n**Problem:** Mechanistic interpretability has found individual attention heads responsible for specific computations. The causal chain in safety routing may pass through one or a small set of heads. If so, patching or ablating just those heads could be a minimal intervention to test safety robustness.\n\n**Direction:** Use activation patching (causal mediation analysis) on a small open model (GPT-2 or Llama-3-8B) to identify which attention heads most causally mediate the difference between refusal and compliance on matched harmful/benign prompt pairs. Report head-level attribution scores and test whether zero-ablating the top-3 heads increases ASR.\n\n**Why it matters:** Head-level localisation would allow targeted defenses (fine-tuning only those heads) and reveal whether safety is distributed or bottlenecked, informing the cost of robustifying alignment.\n\n**Relevant context:** Activation patching / causal mediation analysis (Vig et al.); hidden state alignment explanation (arxiv 2406.05644); low-cost activation probes."
+  },
+  {
+    "idea_id": "gen-1714",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:17:41Z",
+    "subfield": "Adversarial Robustness & Red-Teaming",
+    "generation_strategy": "causal_chain_intervention",
+    "confidence": 0.74,
+    "body": "# Benchmark Contamination in Jailbreak Evaluation: Does Training Data Leakage Inflate Reported Attack Success Rates?\n\n**Problem:** Realistic jailbreak benchmarks are an open problem. A key causal step in inflated ASR numbers is: benchmark behaviors appear in model training data \u2192 model has a memorised response \u2192 evaluated ASR reflects memorisation rather than genuine vulnerability. This contamination step is rarely controlled.\n\n**Direction:** Test whether models produce harmful outputs for JailbreakBench behaviors verbatim (suggesting memorisation) vs. paraphrased versions of the same behaviors. Measure ASR for verbatim vs. paraphrase variants. A large delta would indicate contamination. Requires only API calls or local inference, ~15 hours.\n\n**Why it matters:** If contamination inflates ASR, the field is over-estimating attack power and under-estimating current defenses. Correcting for this would raise benchmark quality standards.\n\n**Relevant context:** JailbreakBench open problems; renewable benchmark work (EMNLP 2025 findings); realistic benchmark open problem."
+  },
+  {
+    "idea_id": "gen-1715",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:17:41Z",
+    "subfield": "Adversarial Robustness & Red-Teaming",
+    "generation_strategy": "causal_chain_intervention",
+    "confidence": 0.79,
+    "body": "# Multi-Turn Jailbreaks and the Incremental Commitment Problem: At Which Dialogue Turn Does Safety Collapse?\n\n**Problem:** Multi-turn jailbreaks escalate gradually. The causal chain is: each turn slightly normalises harmful content \u2192 cumulative context shifts model's prior \u2192 at some turn the model commits to a harmful line. The specific turn at which collapse occurs and what triggers it is not well characterised.\n\n**Direction:** Design multi-turn escalation sequences of fixed length (10 turns) with varying escalation rates. Log the turn at which the model first produces clearly harmful content for each sequence. Build a simple turn-level safety probe (logistic regression on accumulated context embedding) to predict collapse turn. ~20 hours.\n\n**Why it matters:** Identifying the collapse turn and its predictors allows defenses to trigger re-evaluation at the right moment in a conversation, an actionable intervention in deployed chat systems.\n\n**Relevant context:** M2S multi-turn to single-turn jailbreak (ACL 2025); multi-step jailbreaking prompts; adaptive red-teaming."
+  },
+  {
+    "idea_id": "gen-1716",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:17:41Z",
+    "subfield": "Adversarial Robustness & Red-Teaming",
+    "generation_strategy": "causal_chain_intervention",
+    "confidence": 0.77,
+    "body": "# Prefilling Attack Anatomy: Does the Causal Effect Work Through Bypassing the First-Token or Through Context Normalisation?\n\n**Problem:** Prefilling attacks supply the beginning of the assistant response, forcing the model past the refusal token. The causal chain has two candidate paths: (A) bypasses first-token refusal gate directly, or (B) the supplied prefix normalises the context so subsequent tokens follow naturally. Distinguishing these paths matters for defense design.\n\n**Direction:** Compare prefilling with a refusal-sounding prefix vs. a neutral prefix vs. a harmful prefix. Measure ASR and use activation analysis to check whether the model's 'intent classification' in early layers changes based on prefix type. Single GPU, ~15 hours.\n\n**Why it matters:** If path (A) dominates, defending the first-token gate is sufficient. If path (B) dominates, defenses must monitor cumulative context\u2014a more expensive operation. Causal disambiguation has direct design implications.\n\n**Relevant context:** Prefilling attacks in shallow alignment ICLR 2025; first-token commitment research."
+  },
+  {
+    "idea_id": "gen-1717",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:17:41Z",
+    "subfield": "Adversarial Robustness & Red-Teaming",
+    "generation_strategy": "causal_chain_intervention",
+    "confidence": 0.75,
+    "body": "# Adversarial Suffix Transferability Decay: How Quickly Does Transfer ASR Degrade With Model Size Difference?\n\n**Problem:** Adversarial suffixes transfer across models but the degree of transfer is inconsistent. One causal hypothesis: transfer is driven by shared tokenization and embedding geometry. If so, models with larger size gaps (and thus more divergent geometry) should show faster transfer decay. This causal link is unstudied.\n\n**Direction:** Generate GCG suffixes on Llama-3-8B. Measure ASR on Llama-3-70B, Mistral-7B, Phi-3, and Falcon-7B. Compute pairwise embedding similarity (CKA or linear CKA) between the source model and each target. Test whether transfer ASR correlates with embedding similarity. ~20 hours.\n\n**Why it matters:** If geometry predicts transfer, then models can be hardened by diversifying embedding geometry through architectural changes or fine-tuning, a targeted and interpretable intervention.\n\n**Relevant context:** Jailbreak transferability shared representations (arxiv 2506.12913); GCG attack; model size scaling effects."
+  },
+  {
+    "idea_id": "gen-1718",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:17:41Z",
+    "subfield": "Adversarial Robustness & Red-Teaming",
+    "generation_strategy": "causal_chain_intervention",
+    "confidence": 0.8,
+    "body": "# Guardrail Evasion via Paraphrase: How Robust Are Output Classifiers to Semantically Equivalent Harmful Outputs?\n\n**Problem:** Output safety classifiers (e.g., LlamaGuard) detect harmful outputs by surface features. The causal chain is: harmful content generated \u2192 classifier checks output \u2192 if surface form differs from training examples \u2192 classifier misses it. The paraphrase robustness of these classifiers is the under-studied causal link.\n\n**Direction:** Generate harmful model outputs, then paraphrase them with a second LLM. Feed both original and paraphrased versions to LlamaGuard and measure false negative rate for paraphrased content. Test whether embedding-based classifiers (cosine similarity to harmful prototypes) are more robust. ~20 hours.\n\n**Why it matters:** Output classifiers are widely deployed as safety guardrails. If paraphrase evasion is easy, the entire output-filtering pipeline is fragile, and embedding-based detectors may be needed.\n\n**Relevant context:** Bypassing LLM guardrails evasion attacks (arxiv 2504.11168); LlamaGuard; output-level defense research."
+  },
+  {
+    "idea_id": "gen-1719",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:17:41Z",
+    "subfield": "Adversarial Robustness & Red-Teaming",
+    "generation_strategy": "causal_chain_intervention",
+    "confidence": 0.76,
+    "body": "# Code-Mode Safety Bypass: Does Switching to Code-Completion Mode Causally Reduce Harm Detection in Early Layers?\n\n**Problem:** Models trained on code may represent harmful instructions differently when framed as code comments or function bodies. The causal chain is: code framing \u2192 early-layer harm classifier trained on natural language \u2192 misclassifies code-form harm as benign \u2192 harmful code generated. This is an under-measured causal step.\n\n**Direction:** Create matched pairs of harmful natural-language instructions and equivalent harmful code comments. Compare early-layer activation patterns (linear probe accuracy, cosine similarity to 'harmful' direction). Measure output harmful content rate for each framing. ~15 hours, one GPU.\n\n**Why it matters:** Code-as-jailbreak is practically relevant (malware, exploit generation). If early-layer harm detection fails for code framing, models with code training need code-aware safety representations.\n\n**Relevant context:** Early-layer harm classification (arxiv 2406.05644); code-mode jailbreaks in red-teaming practice; stealthy attacks NAACL 2025."
+  },
+  {
+    "idea_id": "gen-1720",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:17:41Z",
+    "subfield": "Adversarial Robustness & Red-Teaming",
+    "generation_strategy": "causal_chain_intervention",
+    "confidence": 0.81,
+    "body": "# Safety Alignment Forgetting Rate Under LoRA Fine-Tuning: Is the Causal Driver Rank, Learning Rate, or Data Mix?\n\n**Problem:** LoRA fine-tuning is widely used and can erase alignment. Three causal candidates for the erasure rate are LoRA rank (higher rank = more capacity to overwrite safety weights), learning rate, and data mix harmfulness. Isolating which factor is the dominant causal driver is important for safe fine-tuning guidelines.\n\n**Direction:** Sweep LoRA rank (4, 8, 16, 32), learning rate (1e-5, 1e-4, 1e-3), and data harmlessness (benign vs. slightly harmful) in a factorial experiment on Llama-3-8B-Instruct. Measure ASR after fine-tuning at each setting. A 3-factor ablation fits in ~25 hours.\n\n**Why it matters:** Providing concrete thresholds (e.g., 'LoRA rank > 16 with lr > 1e-4 causes significant alignment loss') gives practitioners an actionable, evidence-based safe fine-tuning guide.\n\n**Relevant context:** LLMs-Finetuning-Safety GitHub; BOOSTER ICLR 2025; rethinking safety fine-tuning optimization perspective (arxiv 2508.12531)."
+  },
+  {
+    "idea_id": "gen-1721",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:17:41Z",
+    "subfield": "Adversarial Robustness & Red-Teaming",
+    "generation_strategy": "causal_chain_intervention",
+    "confidence": 0.82,
+    "body": "# Is LLM-as-Judge for Jailbreak Evaluation Itself Jailbreakable? A Causal Analysis of Judge Failure Modes\n\n**Problem:** Automated evaluation of jailbreak success relies on LLM judges. The causal chain for inflated safety reports is: attack produces subtly harmful output \u2192 LLM judge is itself safety-aligned \u2192 judges outputs as safe \u2192 false low ASR reported. The judge's own alignment creates systematic blind spots.\n\n**Direction:** Collect model outputs rated as safe by LlamaGuard and GPT-4-as-judge. Human-label a random 100-item subset for actual harmfulness. Measure false-negative rate and characterise what types of harmful content are systematically missed. Compare to a simple keyword-based baseline. ~20 hours (annotation + analysis).\n\n**Why it matters:** If LLM judges systematically under-report ASR for certain content types, the entire evaluation pipeline for jailbreak benchmarks is miscalibrated, making the realistic benchmark open problem even more urgent.\n\n**Relevant context:** JailbreakBench evaluation challenges; realistic jailbreak benchmarks open problem; LLM judge literature."
+  },
+  {
+    "idea_id": "gen-1722",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:17:41Z",
+    "subfield": "Adversarial Robustness & Red-Teaming",
+    "generation_strategy": "causal_chain_intervention",
+    "confidence": 0.79,
+    "body": "# Harmfulness Gradient: Does Incremental Escalation of Harmful Content in Fine-Tuning Data Produce a Threshold Effect?\n\n**Problem:** Fine-tuning on harmful data erases alignment, but does this happen linearly or is there a threshold? The causal chain is: fraction of harmful examples in fine-tuning data \u2192 gradient updates to safety-relevant weights \u2192 alignment collapse. The shape of this dose-response is unknown.\n\n**Direction:** Fine-tune Llama-3-8B-Instruct on data mixes with 0%, 1%, 5%, 10%, 20%, 50% harmful examples (using a synthetic harmful instruction dataset). Measure ASR at each step. Fit linear, sigmoidal, and threshold models to the curve and compare AIC. ~20 hours.\n\n**Why it matters:** If a threshold exists, small amounts of harmful data may be safe and only crossing the threshold triggers rapid alignment collapse. This directly informs data-filtering thresholds for fine-tuning APIs.\n\n**Relevant context:** Fine-tuning lowers safety ACL 2025; ICLR 2025 shallow alignment paper; safety-aware fine-tuning literature."
+  },
+  {
+    "idea_id": "gen-1723",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:17:41Z",
+    "subfield": "Adversarial Robustness & Red-Teaming",
+    "generation_strategy": "causal_chain_intervention",
+    "confidence": 0.74,
+    "body": "# System Prompt Robustness: Causal Role of System Prompt Length and Specificity in Jailbreak Resistance\n\n**Problem:** Deployers use system prompts to constrain model behavior. The causal chain is: system prompt establishes context \u2192 user jailbreak attempts to override context \u2192 longer/more specific system prompts may occupy more context real estate and reduce jailbreak context \u2192 lower ASR. Whether this causal link holds across attack types is not systematically tested.\n\n**Direction:** Create system prompts of four types: empty, generic safety reminder, specific behavior prohibitions, and lengthy role constraints. Test each against five jailbreak families on JailbreakBench behaviors. Measure per-family ASR. ~15 hours.\n\n**Why it matters:** If specific prohibitions are causally more important than length, practitioners can write minimal but effective system prompts. If length matters, there are context trade-offs to quantify.\n\n**Relevant context:** Red-teaming evaluation frameworks; prompt injection system prompt overrides; adaptive defenses open problem."
+  },
+  {
+    "idea_id": "gen-1724",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:17:41Z",
+    "subfield": "Adversarial Robustness & Red-Teaming",
+    "generation_strategy": "causal_chain_intervention",
+    "confidence": 0.7,
+    "body": "# Latent Safety Direction Drift During RLHF: Can a Student Measure Alignment Vector Stability Across Training Checkpoints?\n\n**Problem:** RLHF is the dominant alignment method, but the safety direction in latent space may drift or stabilise at different rates than other capabilities. The causal chain is: RLHF updates \u2192 safety direction in residual stream is reshaped \u2192 early checkpoints may be more fragile. Checkpoint-level safety geometry is rarely studied.\n\n**Direction:** Using a publicly available RLHF training run or simulating RLHF checkpoints via reward-weighted fine-tuning, extract the 'refusal direction' (via contrast pairs) at each checkpoint. Measure cosine stability across checkpoints and correlate with ASR at each stage. ~25 hours.\n\n**Why it matters:** If safety direction stabilises late in RLHF, early-stopped models are more jailbreakable. This motivates safety-specific early stopping criteria for alignment training.\n\n**Relevant context:** RLHF training dynamics; representation engineering (Zou et al.); low-cost activation probes surprise result."
+  },
+  {
+    "idea_id": "gen-1725",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:17:41Z",
+    "subfield": "Adversarial Robustness & Red-Teaming",
+    "generation_strategy": "causal_chain_intervention",
+    "confidence": 0.8,
+    "body": "# Harmful Output via Indirect Request: How Causal Distance Between Request and Harm Affects Detection\n\n**Problem:** Direct harmful requests are caught by safety filters, but indirect requests (e.g., 'write a story where a character explains X') succeed by placing causal distance between the user's intent and the harmful output. The specific causal step being bypassed is intent classification in early layers. It is unclear how many causal steps of indirection are sufficient to defeat the intent classifier.\n\n**Direction:** Create a hierarchy of indirection depths (0=direct, 1=fictional frame, 2=nested fiction, 3=meta-fictional) for the same underlying harmful request. Measure ASR and compare early-layer activation patterns across depths using a trained intent probe. ~20 hours.\n\n**Why it matters:** Mapping the indirection threshold tells us where intent classifiers fail and informs whether intent probes need to be trained on fictional/indirect framings to be robust.\n\n**Relevant context:** Fictional frame jailbreaks; role-play jailbreak literature; early-layer classification research (arxiv 2406.05644)."
+  },
+  {
+    "idea_id": "gen-1726",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:17:41Z",
+    "subfield": "Adversarial Robustness & Red-Teaming",
+    "generation_strategy": "causal_chain_intervention",
+    "confidence": 0.78,
+    "body": "# In-Decoding Safety Probing: Reproducing and Stress-Testing the Real-Time Malicious Feature Detection Approach\n\n**Problem:** Arxiv 2601.10543 proposes monitoring internal representations during decoding to detect harmful outputs in real time (in-decoding safety probing). The causal intervention targets the step between harmful internal state and harmful token output. Its robustness to adaptive attackers who craft prompts aware of the probe is unknown.\n\n**Direction:** Reproduce the in-decoding probe on Llama-3-8B. Then craft adaptive prompts designed to suppress the triggering internal features (using a lightweight feature steering approach). Measure probe bypass rate. ~25 hours.\n\n**Why it matters:** Real-time in-decoding detection is a promising low-latency defense, but if it is easily bypassed by feature obfuscation, deployment value is limited. This study provides the necessary robustness characterisation.\n\n**Relevant context:** In-decoding safety awareness probing (arxiv 2601.10543); obfuscated activations (arxiv 2412.09565); SAID (arxiv 2510.20129)."
+  },
+  {
+    "idea_id": "gen-1727",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:17:41Z",
+    "subfield": "Adversarial Robustness & Red-Teaming",
+    "generation_strategy": "causal_chain_intervention",
+    "confidence": 0.76,
+    "body": "# Jailbreak Distillation for Renewable Benchmarks: Student Replication and Difficulty Calibration\n\n**Problem:** Sustainable jailbreak benchmarking (EMNLP 2025 findings paper) proposes distilling attacks into minimal high-quality test cases. The causal chain for stale benchmarks is: fixed test set \u2192 models trained to pass fixed set \u2192 ASR drops artifactually. Distillation breaks this by generating fresh tests, but the causal validity of distilled tests (do they test genuine vulnerability?) needs verification.\n\n**Direction:** Reproduce the distillation pipeline on a small scale: distill 3\u20134 attack families into a 50-item test set. Measure whether attack success on distilled tests correlates with success on the original full attack (validation of causal validity). Test 2\u20133 open models. ~20 hours.\n\n**Why it matters:** Validating that distilled benchmarks preserve causal validity is essential before the field adopts them; a student experiment contributes direct empirical support or refutation.\n\n**Relevant context:** Renewable benchmark (TechXplore March 2026, EMNLP 2025 findings); JailbreakBench; realistic benchmark open problem."
+  },
+  {
+    "idea_id": "gen-1728",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:17:41Z",
+    "subfield": "Adversarial Robustness & Red-Teaming",
+    "generation_strategy": "backcast_from_success",
+    "confidence": 0.88,
+    "body": "# Mapping the Resilience Gap: Reproducing AILuminate Jailbreak Benchmarks on Open-Weight Models\n\n**Problem:** The AILuminate v0.5 benchmark revealed that none of 39 tested models achieved a jailbreak score equal to their safety rating, but this 'resilience gap' has not been systematically reproduced or characterized on smaller open-weight models accessible to researchers with limited compute.\n\n**Direction:** Use the AILuminate taxonomy and StrongReject scorer to benchmark 3-5 open-weight models (e.g., Llama-3, Mistral, Phi-3) on a representative subset of attack categories. Quantify per-category resilience gaps and compare across model families. Publish results as a replication study with a blog post.\n\n**Why it matters:** If we define success as 'every deployed model achieves a jailbreak score at least as high as its safety score', we first need reproducible, accessible measurement tools. Replication studies build the evidentiary base that allows the field to trust benchmark results and act on them.\n\n**Relevant context:** MLCommons AILuminate v0.5 introduced the 'resilience gap' metric in late 2025. The full v1.0 release is planned for Q1 2026. StrongReject provides a 0-1 scorer already integrated into the Inspect Evals framework."
+  },
+  {
+    "idea_id": "gen-1729",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:17:42Z",
+    "subfield": "Adversarial Robustness & Red-Teaming",
+    "generation_strategy": "backcast_from_success",
+    "confidence": 0.85,
+    "body": "# Do StrongReject Scores Predict Real-World Jailbreak Resistance? A Construct Validity Study\n\n**Problem:** For benchmark scores to drive safety improvements, they must have construct validity \u2014 i.e., a model that scores well on StrongReject must also be harder to jailbreak in practice. This assumption is rarely tested empirically.\n\n**Direction:** Select 5-8 open-weight models with varying StrongReject scores. Run a standard suite of adaptive attacks (GCG, AutoDAN, PAIR) from AISafetyLab against each. Compute correlation between StrongReject score and adaptive attack success rate. Test whether the ranking is preserved.\n\n**Why it matters:** A success state for this subfield requires that safety metrics predict deployment safety. If StrongReject scores are uncorrelated with adaptive attack resistance, the entire evaluation pipeline needs rethinking before it can guide meaningful improvements.\n\n**Relevant context:** StrongReject measures refusal rates on a curated harmful prompt set. AISafetyLab (thu-coai) provides standardized attack implementations. The ICLR 2025 paper on adaptive attacks showed 100% ASR on many 'safe' models."
+  },
+  {
+    "idea_id": "gen-1730",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:17:42Z",
+    "subfield": "Adversarial Robustness & Red-Teaming",
+    "generation_strategy": "backcast_from_success",
+    "confidence": 0.87,
+    "body": "# Single-Token Detection of Jailbreaks: Replicating and Extending 'LLM Jailbreak Detection for (Almost) Free'\n\n**Problem:** Cost-effective jailbreak detection is an open problem. A 2025 paper proposed Free Jailbreak Detection (FJD) using the confidence of the model's first output token to distinguish jailbreak from benign prompts at near-zero cost. This approach has not been independently replicated or tested against newer attack categories.\n\n**Direction:** Replicate FJD on 2-3 open-weight models using AISafetyLab attack implementations. Test whether first-token confidence degrades against multi-turn attacks (Crescendo, MultiBreak) and encoding-based attacks not in the original paper's test set. Report false-positive rates on benign safety-adjacent prompts.\n\n**Why it matters:** Cheap, always-on jailbreak detection is a prerequisite for closing the lab-to-deployment gap. If detectors only work against attacks known at training time, deployment safety remains illusory. Understanding generalization limits is essential.\n\n**Relevant context:** FJD paper (arXiv 2509.14558) appeared at EMNLP 2025 Findings. Neural classifier guardrails cost tens-to-hundreds of milliseconds vs. microseconds for first-token approaches. Multi-turn attacks like Crescendo and MultiBreak (7,152 samples) are likely out-of-distribution for first-token detectors."
+  },
+  {
+    "idea_id": "gen-1731",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:17:42Z",
+    "subfield": "Adversarial Robustness & Red-Teaming",
+    "generation_strategy": "backcast_from_success",
+    "confidence": 0.82,
+    "body": "# Attack Transfer Within Model Families: Do Jailbreaks for Llama-3 Work on Llama-3.x Successors?\n\n**Problem:** Research shows attack success rates correlate strongly within model families and that 'newly released models are predictably vulnerable' to attacks on predecessors. This within-family transfer has not been quantified systematically as a standalone empirical study.\n\n**Direction:** Collect a fixed set of successful jailbreaks against Llama-3-8B using AISafetyLab. Without modification, test these prompts against Llama-3.1-8B, Llama-3.2, and Llama-3.3 (if accessible). Measure transfer rate per attack category. Repeat for one other family (e.g., Phi-3 to Phi-4).\n\n**Why it matters:** If jailbreaks transfer near-perfectly within model families, safety improvements across model generations are superficial. Characterizing this dynamic is a prerequisite for a success state where new model releases do not inherit predecessor vulnerabilities by default.\n\n**Relevant context:** Pattern Enhanced Multi-Turn Jailbreaking (arXiv 2510.08859) found models from the same provider show higher cross-model attack correlation. ICLR 2025 adaptive attacks paper demonstrated near-100% transfer in some cases."
+  },
+  {
+    "idea_id": "gen-1732",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:17:42Z",
+    "subfield": "Adversarial Robustness & Red-Teaming",
+    "generation_strategy": "backcast_from_success",
+    "confidence": 0.83,
+    "body": "# Benchmarking Jailbreak Defenses Against MLCommons Attack Taxonomy: What Survives Adaptive Evaluation?\n\n**Problem:** MLCommons introduced a mechanism-first taxonomy for jailbreak attacks in 2025-2026, but existing defenses (input filtering, output monitoring, prompt prepending) have not been systematically evaluated against this structured taxonomy to identify which attack mechanisms remain undefended.\n\n**Direction:** Map 4-6 common defense methods (perplexity filter, paraphrase defense, system-prompt injection guard, Llama-Guard) to the MLCommons taxonomy categories. For each defense, test against each taxonomy category using AISafetyLab. Produce a coverage matrix showing which attack classes each defense fails against.\n\n**Why it matters:** A success state requires adaptive defenses covering all known attack mechanisms. A taxonomy-defense coverage matrix would reveal systematic blind spots and guide prioritization of future defense research.\n\n**Relevant context:** MLCommons jailbreak taxonomy v0.7 (Feb 2026) established mechanism-first categorization. AISafetyLab implements attack methods including GCG, PAIR, AutoDAN, and encoding-based attacks. SoK paper (arXiv 2506.10597) evaluated guardrails but not against the MLCommons taxonomy."
+  },
+  {
+    "idea_id": "gen-1733",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:17:42Z",
+    "subfield": "Adversarial Robustness & Red-Teaming",
+    "generation_strategy": "backcast_from_success",
+    "confidence": 0.84,
+    "body": "# Measuring False Positive Rates of Jailbreak Detectors on Medical and Legal Edge-Case Prompts\n\n**Problem:** Jailbreak detectors cause over-refusals on legitimate sensitive queries (medical, legal, harm-reduction contexts). The CARES benchmark found this for medical domains, but no study has systematically compared false-positive rates across multiple detectors using a standardized benign-but-sensitive prompt set.\n\n**Direction:** Build a small evaluation set (~200 prompts) of legitimate sensitive queries in medical and legal contexts. Run each prompt through 3-4 jailbreak detectors (Llama-Guard-3, ShieldLM, FJD, perplexity filter). Measure false-positive rates and compare. Use StrongReject's benign test set as a baseline.\n\n**Why it matters:** A success state requires not just that models resist jailbreaks but that they remain useful for legitimate sensitive use. High false-positive rates represent a different kind of safety failure. Quantifying this tradeoff is necessary for informed deployment decisions.\n\n**Relevant context:** CARES benchmark (arXiv 2505.11413) introduced 18,000+ medical prompts with harm levels. StrongReject includes benign comparison prompts. Llama-Guard-3 is a publicly available classifier in AISafetyLab's scorer suite."
+  },
+  {
+    "idea_id": "gen-1734",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:17:42Z",
+    "subfield": "Adversarial Robustness & Red-Teaming",
+    "generation_strategy": "backcast_from_success",
+    "confidence": 0.81,
+    "body": "# Crescendo Multi-Turn Attack Replication: How Many Turns Until Success?\n\n**Problem:** The Crescendo multi-turn jailbreak gradually steers models toward harmful outputs through seemingly benign steps, but the relationship between conversation length and attack success rate has not been systematically characterized across model families.\n\n**Direction:** Implement a simplified Crescendo-style attack using a scripted progression of 3, 5, 8, and 12 turns targeting 3 open-weight models. Measure ASR at each turn threshold. Identify whether early detection is possible using turn-level first-token confidence scores (connecting to FJD approach).\n\n**Why it matters:** If success requires robust multi-turn defense, we need to know at what conversation depth attacks become effective. Early-turn detection would be far cheaper than session-level monitoring. This informs where to place defenses in a production pipeline.\n\n**Relevant context:** Crescendo (USENIX Security 2025) uses benign-seeming progressive turns. MultiBreak (7,152 samples) is the most comprehensive multi-turn dataset. Research showed multi-turn attacks are 'considerably more difficult to defend against than single-turn benchmarks'."
+  },
+  {
+    "idea_id": "gen-1735",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:17:42Z",
+    "subfield": "Adversarial Robustness & Red-Teaming",
+    "generation_strategy": "backcast_from_success",
+    "confidence": 0.79,
+    "body": "# Does RLHF Depth Predict Jailbreak Resistance? Comparing Instruction-Tuned vs. RLHF-Finetuned Models\n\n**Problem:** Safety alignment is described as 'shallow' in recent research, with RLHF models potentially over-relying on surface patterns. It is unclear whether models with more RLHF steps or preference-data volume show meaningfully better resistance to adaptive attacks.\n\n**Direction:** Compare pairs of models where one is instruction-tuned (SFT only) and one is RLHF-finetuned from the same base (e.g., Llama-3 SFT vs. Llama-3-Instruct). Run identical adaptive attack suites from AISafetyLab. Measure ASR, refusal consistency, and over-refusal rates for each pair.\n\n**Why it matters:** If the success state requires alignment that is not shallow, we need to understand what alignment methods actually contribute to robustness vs. which ones create the illusion of safety. This helps the field invest correctly in alignment techniques.\n\n**Relevant context:** ICLR 2025 research found that even models with strong baseline safety scores are vulnerable to adaptive attacks. The 'Alignment Tax' of Chain-of-Thought reasoning was hypothesized to explain DeepSeek-R1's higher vulnerability. Paired model comparisons isolate the effect of alignment method."
+  },
+  {
+    "idea_id": "gen-1736",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:17:42Z",
+    "subfield": "Adversarial Robustness & Red-Teaming",
+    "generation_strategy": "backcast_from_success",
+    "confidence": 0.8,
+    "body": "# Encoding-Based Jailbreak Generalization: Do Base64 / ROT13 Attacks Transfer Across Languages?\n\n**Problem:** Encoding-based jailbreaks (Base64, ROT13, Morse, leetspeak) are a core taxonomy category in AILuminate. Their effectiveness is documented in English, but whether they generalize to non-English models or multilingual models is not well characterized.\n\n**Direction:** Select 3 encoding attack types. Apply them to 2 multilingual models (e.g., Mistral, Qwen) using both English and one non-English language (e.g., Chinese, French). Measure whether encoding attacks are more or less effective in non-English contexts. Use StrongReject scorer for evaluation.\n\n**Why it matters:** AILuminate v1.0 targets international coverage. A success state requires that safety is not language-dependent. If encoding attacks work better in under-resourced languages, multilingual deployment creates systematic safety gaps.\n\n**Relevant context:** AILuminate v0.5 included encoding attacks (Base64, ROT13) as an attack category. AILuminate v1.0 (planned Q1 2026) explicitly adds multilingual/international coverage. Qwen and Mistral models have multilingual training data."
+  },
+  {
+    "idea_id": "gen-1737",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:17:42Z",
+    "subfield": "Adversarial Robustness & Red-Teaming",
+    "generation_strategy": "backcast_from_success",
+    "confidence": 0.78,
+    "body": "# Lightweight Safety Probes: Can Activation Patterns Predict Jailbreak Vulnerability Before Output?\n\n**Problem:** The 'In-Decoding Safety-Awareness Probing' paper (arXiv 2601.10543) proposed monitoring internal activations during generation as a defense. It is unclear how well simple linear probes on middle-layer activations can distinguish safe vs. jailbroken generation trajectories.\n\n**Direction:** Train a logistic regression probe on intermediate layer activations of a small open-weight model (e.g., Phi-3-mini) using a labeled set of jailbreak vs. benign prompt+response pairs from StrongReject and AILuminate. Evaluate probe accuracy, latency overhead, and generalization to unseen attack types.\n\n**Why it matters:** A cheap, interpretable internal probe that flags jailbreak trajectories early in generation would close the lab-to-deployment gap without requiring external classifiers. If linear probes suffice, this suggests safety-relevant features are linearly separable \u2014 an important finding for alignment theory.\n\n**Relevant context:** In-Decoding Safety-Awareness Probing paper appeared in early 2026 (arXiv 2601.10543). Mechanistic interpretability work has found that refusal-related features localize to specific layers. Phi-3-mini runs on a single consumer GPU."
+  },
+  {
+    "idea_id": "gen-1738",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:17:42Z",
+    "subfield": "Adversarial Robustness & Red-Teaming",
+    "generation_strategy": "backcast_from_success",
+    "confidence": 0.77,
+    "body": "# Taxonomy Stress-Test: Generating Novel Jailbreaks Not in Existing Benchmark Categories\n\n**Problem:** The MLCommons taxonomy-first methodology is only as useful as the taxonomy is complete. If simple human creativity can generate effective jailbreaks outside current taxonomy categories, the benchmark framework will have systematic blind spots.\n\n**Direction:** Have 3-5 participants (CS students) attempt to craft jailbreaks that don't fit existing AILuminate taxonomy categories against 2-3 open-weight models. Score successes with StrongReject. Attempt to categorize any successes within the existing taxonomy or propose new subcategories.\n\n**Why it matters:** A success state requires that all jailbreak categories are known and benchmarked. This study stress-tests taxonomic completeness in a low-cost human-in-the-loop way, directly addressing whether the current taxonomy is sufficient for governance-aligned safety evaluation.\n\n**Relevant context:** MLCommons jailbreak taxonomy v0.7 established mechanism-first categorization in Feb 2026. The taxonomy includes role-playing, misdirection, encoding, and multi-step attacks. Human creativity is acknowledged as a necessary complement to automated red-teaming."
+  },
+  {
+    "idea_id": "gen-1739",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:17:42Z",
+    "subfield": "Adversarial Robustness & Red-Teaming",
+    "generation_strategy": "backcast_from_success",
+    "confidence": 0.76,
+    "body": "# How Stable Are Jailbreak Attack Success Rates Across API Versions? A Longitudinal Mini-Study\n\n**Problem:** Model providers continuously update deployed models. Attack success rates measured at one point in time may not reflect current deployment safety. There is little systematic data on how jailbreak ASR changes across minor API updates for the same nominal model.\n\n**Direction:** Run a fixed set of ~50 standardized jailbreak prompts (from StrongReject and AILuminate) against a public API model (e.g., GPT-4o-mini or Claude Haiku) on a weekly cadence for 6-8 weeks. Track whether ASR changes, and whether improvements on one attack category come at the cost of regressions on others.\n\n**Why it matters:** The lab-to-deployment gap includes a temporal component: safety benchmarks measure a snapshot, not a process. If silent model updates cause safety regressions, current evaluation practices cannot catch them. Documenting this instability motivates continuous monitoring infrastructure.\n\n**Relevant context:** API providers update models silently without versioning in many cases. StrongReject provides a reproducible prompt set. This study requires only API credits and a cron-scheduled script, well within participant compute constraints."
+  },
+  {
+    "idea_id": "gen-1740",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:17:42Z",
+    "subfield": "Adversarial Robustness & Red-Teaming",
+    "generation_strategy": "backcast_from_success",
+    "confidence": 0.86,
+    "body": "# Perplexity Filter Failure Modes: When Do Low-Perplexity Jailbreaks Evade Detection?\n\n**Problem:** Perplexity-based input filters detect adversarial prompts by flagging unusually high perplexity (e.g., GCG suffix attacks produce token salads). However, semantically coherent jailbreaks (role-play, social engineering) have normal perplexity and evade these filters entirely.\n\n**Direction:** Collect a sample of successful jailbreaks from each AILuminate taxonomy category. Compute perplexity for each using a small LM (GPT-2 or similar). Plot perplexity distribution by attack category. Measure what fraction of successful jailbreaks would be caught by a standard perplexity threshold and what fraction evade it.\n\n**Why it matters:** Perplexity filters are widely deployed as a first-line defense. Understanding their coverage gaps is necessary for a success state where defenses are not falsely assumed to be comprehensive. This directly informs layered defense design.\n\n**Relevant context:** Perplexity-based defenses were shown to fail against semantically coherent adaptive attacks in the ICLR 2025 adaptive attacks paper. The SoK guardrails evaluation (arXiv 2506.10597) compared detection methods. GPT-2 perplexity computation is feasible on a single CPU."
+  },
+  {
+    "idea_id": "gen-1741",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:17:42Z",
+    "subfield": "Adversarial Robustness & Red-Teaming",
+    "generation_strategy": "backcast_from_success",
+    "confidence": 0.8,
+    "body": "# Renewable Benchmark Design: Implementing a Self-Updating Jailbreak Test Set\n\n**Problem:** Static jailbreak benchmarks become stale as models are patched against known attacks. Johns Hopkins researchers (TechXplore, March 2026) proposed a 'renewable' benchmark framework, but it has not been implemented as an accessible tool for small research groups.\n\n**Direction:** Implement a minimal renewable benchmark pipeline: a template-based prompt generator that creates novel surface variations of a fixed set of harmful intent categories, paired with StrongReject automated scoring. Validate that generated prompts maintain attack intent while varying surface form. Release as an open-source script.\n\n**Why it matters:** A success state requires that benchmarks stay ahead of model patching. Renewable benchmarks that can generate new test instances on demand prevent the 'benchmark overfitting' failure mode where models appear safe only because they have been patched against known prompts.\n\n**Relevant context:** TechXplore (March 2026) reported a Johns Hopkins renewable benchmark framework. The MLCommons coordinated disclosure framework motivates fresh attack generation. Template-based generation is computationally cheap and within participant constraints."
+  },
+  {
+    "idea_id": "gen-1742",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:17:42Z",
+    "subfield": "Adversarial Robustness & Red-Teaming",
+    "generation_strategy": "backcast_from_success",
+    "confidence": 0.81,
+    "body": "# Reasoning Model Safety Regression: Quantifying the Alignment Tax in Chain-of-Thought Models\n\n**Problem:** Research suggests that reasoning-specialized models (DeepSeek-R1, o1-style models) show higher jailbreak vulnerability due to an 'Alignment Tax' from Chain-of-Thought processes. This hypothesis has not been tested by directly comparing CoT vs. non-CoT variants of the same model on identical attack suites.\n\n**Direction:** Compare a CoT-enabled model variant against its non-CoT counterpart (e.g., DeepSeek-R1 vs. DeepSeek-V3, or a model with/without chain-of-thought prompting) on identical AISafetyLab attack suites. Measure whether enabling CoT reasoning increases ASR and whether specific attack categories benefit disproportionately from the model's reasoning process.\n\n**Why it matters:** If the success state requires that advanced reasoning capabilities do not degrade safety, we need empirical confirmation that CoT-induced vulnerability is real and quantifiable. This would make a strong case for investing in reasoning-aware safety fine-tuning.\n\n**Relevant context:** DeepSeek-R1's higher vulnerability to jailbreaks was noted in 2025 research, hypothesized to stem from CoT alignment interference. This is a testable prediction with publicly available models and a well-defined protocol."
+  },
+  {
+    "idea_id": "gen-1743",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:17:42Z",
+    "subfield": "Adversarial Robustness & Red-Teaming",
+    "generation_strategy": "backcast_from_success",
+    "confidence": 0.77,
+    "body": "# Automated Red-Teaming Coverage: What Fraction of Human-Discovered Jailbreaks Does AISafetyLab Find?\n\n**Problem:** Manual human red-teaming is acknowledged as still necessary to catch deployment issues. But the coverage of automated tools relative to human red-teamers is unknown \u2014 specifically, what fraction of jailbreaks a human red-teamer would find are also found by AISafetyLab's automated attacks.\n\n**Direction:** Take a published dataset of human-crafted jailbreaks (e.g., from WildChat or jailbreakchat.com archives). Run AISafetyLab's attack suite against the same models and intent categories. Measure what fraction of the human jailbreak intents are independently discovered by the automated suite within a fixed query budget.\n\n**Why it matters:** If automated tools cover only 30% of what human red-teamers find, no automated benchmark can be trusted alone for deployment safety. Quantifying this gap is essential for defining minimum human red-teaming requirements in deployment pipelines.\n\n**Relevant context:** AISafetyLab includes AutoDAN-Turbo, PAIR, GCG, and GPTFuzzer. The ICLR 2025 paper noted that manual human red teaming is still necessary. WildChat contains organic human jailbreak attempts in naturalistic settings."
+  },
+  {
+    "idea_id": "gen-1744",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:17:42Z",
+    "subfield": "Adversarial Robustness & Red-Teaming",
+    "generation_strategy": "backcast_from_success",
+    "confidence": 0.82,
+    "body": "# Safety Guardrail Bypass via Prompt Injection: Measuring Cross-Guardrail Transfer\n\n**Problem:** The 2025 paper 'Bypassing Prompt Injection and Jailbreak Detection in LLM Guardrails' (arXiv 2504.11168) showed that guardrail detectors themselves can be bypassed. It is unclear whether bypass techniques transfer across different guardrail implementations (Llama-Guard vs. ShieldLM vs. GPT-4-as-judge).\n\n**Direction:** Implement 3-4 known guardrail bypass techniques from the literature. Test each against Llama-Guard-3, ShieldLM, and a prompt-based GPT judge using identical harmful content. Measure bypass success rate for each technique-guardrail combination and assess cross-guardrail transfer.\n\n**Why it matters:** A success state requires that defenses themselves are robust. If a single bypass technique defeats multiple guardrail systems, monoculture in defense infrastructure creates catastrophic risk. Transfer measurement quantifies this systemic fragility.\n\n**Relevant context:** arXiv 2504.11168 documented guardrail bypass techniques in April 2025. AISafetyLab includes Llama-Guard-3 and ShieldLM as scorer implementations. This experiment requires only inference compute, well within single-GPU constraints."
+  },
+  {
+    "idea_id": "gen-1745",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:17:42Z",
+    "subfield": "Adversarial Robustness & Red-Teaming",
+    "generation_strategy": "backcast_from_success",
+    "confidence": 0.83,
+    "body": "# Minimum Viable Safety Evaluation: What Is the Smallest Prompt Set That Preserves Benchmark Rankings?\n\n**Problem:** Full jailbreak benchmarks (TrustLLM, AILuminate, HELM Safety) are expensive to run. For resource-constrained practitioners, a minimal subset that preserves the relative safety ranking of models would enable continuous monitoring. The minimum set size for ranking preservation is unknown.\n\n**Direction:** Start with a full StrongReject evaluation across 5-8 models. Iteratively subsample the prompt set (using random, stratified, and diversity-maximizing strategies). Find the smallest subset that preserves Spearman rank correlation above 0.9 with the full-set ranking. Report subset size and composition.\n\n**Why it matters:** Closing the lab-to-deployment gap requires that safety evaluation is cheap enough to run continuously. A validated minimal benchmark enables monitoring at inference time rather than only at release time, which is a prerequisite for catching safety regressions in production.\n\n**Relevant context:** StrongReject provides a curated, scored prompt set. TrustLLM and HELM Safety are large and expensive. The idea of 'efficient evaluation' has been explored in capability benchmarking but not systematically in safety evaluation."
+  },
+  {
+    "idea_id": "gen-1746",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:17:42Z",
+    "subfield": "Adversarial Robustness & Red-Teaming",
+    "generation_strategy": "backcast_from_success",
+    "confidence": 0.85,
+    "body": "# Do Safety Fine-Tuned Models Forget Jailbreak Resistance After Domain Fine-Tuning?\n\n**Problem:** When safety-aligned models are fine-tuned for domain-specific tasks (medical, legal, coding), safety alignment can degrade. The relationship between fine-tuning data volume and jailbreak resistance post-fine-tuning has not been systematically measured.\n\n**Direction:** Take a safety-aligned base model (e.g., Llama-3-Instruct). Fine-tune it on a domain dataset (e.g., coding QA or medical text) for varying numbers of steps (100, 500, 2000). After each checkpoint, evaluate jailbreak resistance using StrongReject and ASR with AISafetyLab attacks. Plot the safety degradation curve.\n\n**Why it matters:** Most deployed models are fine-tuned versions of safety-aligned base models. If fine-tuning reliably degrades jailbreak resistance, the lab-to-deployment gap includes a customization gap. Quantifying this is necessary before a success state where all deployed models maintain safety post-customization.\n\n**Relevant context:** Safety forgetting during fine-tuning is a documented phenomenon but the rate and thresholds are model-specific. This experiment uses LoRA fine-tuning feasible on a single GPU. The StrongReject scorer provides automated evaluation."
+  },
+  {
+    "idea_id": "gen-1747",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:17:42Z",
+    "subfield": "Adversarial Robustness & Red-Teaming",
+    "generation_strategy": "backcast_from_success",
+    "confidence": 0.8,
+    "body": "# Jailbreak Complexity vs. Effectiveness: Is Simpler Better for Attackers?\n\n**Problem:** The paper 'Multi-Turn Jailbreaks Are Simpler Than They Seem' (arXiv 2508.07646) suggested that complex multi-turn attacks may not outperform simpler reformulations. A systematic comparison of attack complexity vs. ASR across attack families would test this claim.\n\n**Direction:** Select 4 attack categories: simple prompt injection, role-play, multi-turn Crescendo-style, and optimization-based (GCG). Run each against 3 models with matched harmful intents. Measure ASR and prompt complexity (length, turn count, encoding operations). Test whether complexity correlates with ASR.\n\n**Why it matters:** If simple attacks consistently outperform complex ones, defense efforts focused on blocking complex attacks are misallocated. A success state requires defenses calibrated to actual attack effectiveness distributions, not theoretical attack sophistication.\n\n**Relevant context:** arXiv 2508.07646 (August 2025) argued multi-turn complexity is overstated. AISafetyLab implements both simple and complex attack methods. This experiment can be run within a 30-hour budget using a single GPU."
+  },
+  {
+    "idea_id": "gen-1748",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:17:42Z",
+    "subfield": "Adversarial Robustness & Red-Teaming",
+    "generation_strategy": "backcast_from_success",
+    "confidence": 0.75,
+    "body": "# Noise-Augmented Alignment: Testing Provable Defense Robustness on Accessible Models\n\n**Problem:** A 2026 paper proposed a provable defense framework for LLM jailbreaks via noise-augmented alignment (arXiv 2602.01587). Provable defenses are a key ingredient for a certified safety success state, but whether this approach is practically deployable on small models without extensive retraining is unknown.\n\n**Direction:** Implement the noise-augmented alignment inference procedure (without full retraining) as an inference-time wrapper on Phi-3-mini or Llama-3-8B. Test whether the noise augmentation reduces ASR for GCG and PAIR attacks from AISafetyLab. Measure the quality degradation on benign prompts (MMLU or MT-Bench subset).\n\n**Why it matters:** Provable defenses \u2014 not just empirical ones \u2014 are needed for a credible safety success state. Testing whether provable frameworks transfer to accessible models without full retraining determines whether formal safety guarantees are practically achievable.\n\n**Relevant context:** arXiv 2602.01587 appeared in February 2026. Provable robustness frameworks have been developed for image classifiers (randomized smoothing) and are only now reaching LLMs. Inference-time application avoids GPU-intensive retraining."
+  },
+  {
+    "idea_id": "gen-1749",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:17:42Z",
+    "subfield": "Adversarial Robustness & Red-Teaming",
+    "generation_strategy": "backcast_from_success",
+    "confidence": 0.82,
+    "body": "# Characterizing the 'Safety-Capability' Frontier: Does Higher Jailbreak Resistance Imply Lower Helpfulness?\n\n**Problem:** A recurring concern is that safety improvements come at the cost of helpfulness. For a success state where models are both robustly safe and highly capable, we need empirical data on whether and where this tradeoff is unavoidable.\n\n**Direction:** Evaluate 6-8 open-weight models on both StrongReject (safety) and a small capability benchmark (e.g., MMLU 5-shot subset, or MT-Bench). Plot safety score vs. capability score. Measure whether the relationship is negative (tradeoff), positive (both improve together), or model-family-dependent.\n\n**Why it matters:** Demonstrating that the safety-capability tradeoff is not inherent \u2014 that some models achieve both \u2014 would validate that a success state is achievable rather than utopian. If the tradeoff is real and universal, alignment strategies need fundamental rethinking.\n\n**Relevant context:** The 'Alignment Tax' framing suggests a real cost. But recent models like Claude and GPT-4o score highly on both safety and capability benchmarks. HELM Safety includes capability components. This analysis requires only inference on existing models."
+  },
+  {
+    "idea_id": "gen-1750",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:17:42Z",
+    "subfield": "Adversarial Robustness & Red-Teaming",
+    "generation_strategy": "backcast_from_success",
+    "confidence": 0.84,
+    "body": "# Jailbreak Detection Latency Benchmarking: What Is the Real Cost of Layered Defenses?\n\n**Problem:** Layered defense architectures (fast rule-based \u2192 medium neural classifier \u2192 slow LLM judge) are recommended but their end-to-end latency impact on user experience has not been measured in an accessible experimental setup.\n\n**Direction:** Implement a 3-layer defense pipeline: perplexity filter, Llama-Guard-3 classifier, and GPT-4o-mini as judge. Measure end-to-end latency for each layer and for the full stack on a sample of 200 prompts (100 benign, 100 jailbreak). Report the fraction of prompts that are caught at each layer and cumulative latency at each escalation point.\n\n**Why it matters:** Deployment-ready defenses must meet latency requirements. If the full layered stack adds 3+ seconds per query, it is impractical for real-time applications. This experiment quantifies the practical cost of comprehensive defense and identifies where the fastest acceptable defense cutoff lies.\n\n**Relevant context:** Leanware (2025) documented guardrail latency ranges: rule-based microseconds, neural classifiers tens-to-hundreds of milliseconds, LLM-based seconds. AISafetyLab includes Llama-Guard-3 scorer. This is a systems experiment requiring no training."
+  },
+  {
+    "idea_id": "gen-1751",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:17:43Z",
+    "subfield": "Adversarial Robustness & Red-Teaming",
+    "generation_strategy": "backcast_from_success",
+    "confidence": 0.86,
+    "body": "# Harm Category Sensitivity Mapping: Which Harm Types Are Easiest to Jailbreak Across All Models?\n\n**Problem:** AILuminate and TrustLLM both use harm taxonomies (CBRN, cybercrime, CSAM, misinformation, etc.) but it is unknown whether certain harm categories are systematically harder to defend across all model families \u2014 creating universal weak spots in the safety ecosystem.\n\n**Direction:** Using a subset of AILuminate harm categories (at least 5), run identical attack suites across 4-5 models from different families. Compute per-category ASR for each model. Identify categories where ASR is consistently high across all models (universal weak spots) vs. categories where models vary widely.\n\n**Why it matters:** A success state requires that no harm category has near-universal vulnerability. Identifying universal weak spots directs the field's most urgent safety work. If CBRN synthesis information, for instance, is consistently easy to extract, that demands immediate prioritization.\n\n**Relevant context:** AILuminate v0.5 covers hazardous chemicals, weapons, CSAM, cyberattacks, and misinformation among its harm categories. TrustLLM uses a similar but distinct taxonomy. Cross-model harm category analysis has not been published as a standalone study."
+  },
+  {
+    "idea_id": "gen-1752",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:17:43Z",
+    "subfield": "Adversarial Robustness & Red-Teaming",
+    "generation_strategy": "backcast_from_success",
+    "confidence": 0.89,
+    "body": "# Evaluator Agreement Study: Do StrongReject, Llama-Guard-3, and GPT-4-Judge Agree on Jailbreak Success?\n\n**Problem:** Different automated evaluators are used to score jailbreak success, but their inter-rater agreement on the same (prompt, response) pairs is unknown. If evaluators disagree substantially, benchmark results are not comparable across studies.\n\n**Direction:** Collect ~300 (prompt, response) pairs spanning clear refusals, borderline responses, and clear jailbreaks from AISafetyLab runs. Score each pair with StrongReject, Llama-Guard-3, ShieldLM, and a GPT-4o-mini judge. Compute pairwise agreement (Cohen's kappa, Spearman correlation). Identify prompt/response types with highest disagreement.\n\n**Why it matters:** A success state requires a common measurement language. If the field's evaluators disagree on whether a response constitutes a jailbreak, all reported ASRs are incomparable across papers. Characterizing evaluator (dis)agreement is foundational for reproducible safety science.\n\n**Relevant context:** AISafetyLab implements PatternScorer, ClassificationScorer, ShieldLMScorer, HarmBenchScorer, and LlamaGuard3Scorer. StrongReject is a separate tool. Evaluator comparison studies exist in NLG evaluation but not systematically in safety evaluation."
+  },
+  {
+    "idea_id": "gen-1753",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:17:43Z",
+    "subfield": "Adversarial Robustness & Red-Teaming",
+    "generation_strategy": "backcast_from_success",
+    "confidence": 0.83,
+    "body": "# System Prompt Robustness: Do Safety System Prompts Hold Against In-Context Override Attacks?\n\n**Problem:** Operators deploy models with safety system prompts that set behavioral constraints. Attacks that attempt to override system prompt instructions via in-context persuasion or authority escalation are documented but not systematically benchmarked against a range of system prompt strengths.\n\n**Direction:** Design 4 system prompt variants ranging from minimal ('Be helpful and harmless') to explicit rule-enumerated. Test 5 in-context override attack strategies (authority claims, hypothetical framing, user role escalation, contradiction injection, and jailbreak via fictional system prompt) across 3 models. Measure which system prompt formulations resist override attacks.\n\n**Why it matters:** Deployed models operate under operator-specified system prompts, not laboratory conditions. If system prompt safety degrades under in-context override, the entire operator safety model is compromised. This directly addresses the lab-to-deployment gap.\n\n**Relevant context:** Prompt injection bypass paper (arXiv 2504.11168) documented system prompt override techniques. The distinction between system-prompt-level and user-level safety is central to enterprise LLM deployment. This experiment requires no training \u2014 only inference."
+  },
+  {
+    "idea_id": "gen-1754",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:17:43Z",
+    "subfield": "Adversarial Robustness & Red-Teaming",
+    "generation_strategy": "backcast_from_success",
+    "confidence": 0.84,
+    "body": "# Safety Evaluation on Quantized Models: Does INT4 Quantization Affect Jailbreak Resistance?\n\n**Problem:** Quantized models (INT4, INT8) are widely deployed for cost efficiency. Whether quantization changes jailbreak resistance \u2014 either improving it (distribution shift blocks known attacks) or degrading it (safety-relevant activations disrupted) \u2014 is not documented.\n\n**Direction:** Run the same StrongReject and AISafetyLab attack evaluation on both FP16 and INT4-quantized versions of 2-3 models (using bitsandbytes or GPTQ). Measure whether ASR differs meaningfully between precision levels. Test whether refusal rate on benign safety-adjacent prompts changes.\n\n**Why it matters:** Nearly all consumer and edge deployments use quantized models. If quantization changes safety properties, the safety evaluations run on full-precision research models are not valid for the models that are actually deployed \u2014 a critical lab-to-deployment gap.\n\n**Relevant context:** INT4 quantization with bitsandbytes is widely used for single-GPU inference of 7-13B models. Safety properties of quantized models are studied in capability benchmarks but not in jailbreak benchmarks. This is a purely empirical study requiring only a single GPU."
+  },
+  {
+    "idea_id": "gen-1755",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:17:43Z",
+    "subfield": "Adversarial Robustness & Red-Teaming",
+    "generation_strategy": "tool_or_benchmark_gap",
+    "confidence": 0.88,
+    "body": "# Over-Refusal Rate Tracker: A Benchmark Extension for Measuring False-Positive Safety Refusals\n\n**Problem:** Existing jailbreak benchmarks like StrongReject and JailbreakBench focus exclusively on attack success rates (harmful content getting through), but have no standardized measurement of the complementary failure mode: over-refusal of benign requests. A model that refuses everything scores perfectly on attack benchmarks while being useless. The safety-utility tradeoff is unmeasured.\n\n**Direction:** Extend an existing benchmark (e.g., StrongReject or AILuminate) by adding a paired benign-prompt suite. For each harmful category in the original benchmark, construct 5\u201310 semantically similar but genuinely benign prompts. Run both suites on the same models and compute an Over-Refusal Rate (ORR) alongside the existing Attack Success Rate. Report both as a 2D safety-utility score. Requires only basic Python and an API budget.\n\n**Why it matters:** Safety alignment that collapses into blanket refusal is not alignment \u2014 it is just unhelpfulness. Currently, labs and researchers can optimize for attack-benchmark scores while silently degrading utility with no penalty. A paired ORR metric creates accountability for both failure directions and enables Pareto-optimal alignment research.\n\n**Relevant context:** StrongReject (Souly et al., BAIR 2024) introduced specificity + convincingness scores but focuses on harmful completions. RefusalBench (arxiv 2510.10390) proposes perturbation-based diagnostics for selective refusal. JailbreakBench NeurIPS 2024 notes the need for benign-example classifiers to test sensitivity. AILuminate v1.0 whitepaper acknowledges 'negative predictive power only' limitation \u2014 good scores don't guarantee safety OR utility."
+  },
+  {
+    "idea_id": "gen-1756",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:17:43Z",
+    "subfield": "Adversarial Robustness & Red-Teaming",
+    "generation_strategy": "tool_or_benchmark_gap",
+    "confidence": 0.87,
+    "body": "# Resilience Gap Disaggregation Tool: Per-Hazard-Category Attack Degradation Dashboard\n\n**Problem:** The AILuminate Jailbreak Benchmark v0.5 reports a single 'Resilience Gap' (baseline safety score minus under-attack score) averaged across all 12 hazard categories. This aggregate hides which specific hazard categories are most vulnerable \u2014 a model might be resilient to CSAM-related attacks but collapse entirely under chemical weapons prompts. No public tool disaggregates this per category.\n\n**Direction:** Build a lightweight Python analysis tool that takes AILuminate Jailbreak v0.5 raw result files (which are publicly structured) and computes per-category resilience gap scores. Output a ranked table and visualization of which hazard categories show the largest degradation under attack. Run on publicly available model evaluation outputs. Package as a reusable open-source tool with a blog post explaining per-category findings.\n\n**Why it matters:** Aggregate safety scores obscure which harm categories have thin defenses. Disaggregated metrics let researchers and practitioners prioritize which attack vectors to harden. This directly addresses the MLCommons team's own stated goal of 'expanded hazard coverage' in future releases, and provides immediate value to anyone using AILuminate.\n\n**Relevant context:** MLCommons AILuminate Jailbreak v0.5 whitepaper (Dec 2025) introduces Resilience Gap metric \u2014 defined as difference between baseline non-violating-rate and under-attack non-violating-rate \u2014 and reports 35/39 models scored lower under attack, with average 19.81 percentage point drop. The 12 hazard categories include CBRN, CSAM, violent speech, etc. Full structured results available publicly."
+  },
+  {
+    "idea_id": "gen-1757",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:17:43Z",
+    "subfield": "Adversarial Robustness & Red-Teaming",
+    "generation_strategy": "tool_or_benchmark_gap",
+    "confidence": 0.9,
+    "body": "# Jailbreak Evaluator Disagreement Benchmark: Measuring Inter-Judge Inconsistency as a First-Class Metric\n\n**Problem:** Multiple papers (JailbreakBench NeurIPS 2024, TeleAI-Safety 2025, survey papers) identify inconsistency across safety evaluators as a critical problem \u2014 rule-based classifiers, neural classifiers, and LLM-as-judge disagree substantially on the same responses. Yet no benchmark specifically measures how much evaluators disagree with each other. The field has metrics for attack success but not for evaluator reliability.\n\n**Direction:** Assemble a dataset of ~200\u2013500 model responses to jailbreak prompts spanning clear harmful, borderline, and clear benign cases. Run each response through 4\u20136 publicly available evaluators: GPT-4-as-judge (StrongReject prompt), Llama Guard, a keyword-based classifier, Beaver-Dam, and WildGuard. Compute pairwise inter-rater agreement (Cohen's Kappa, Krippendorff's alpha) across evaluators. Identify which prompt categories and response types produce maximum disagreement. Publish disagreement heatmaps.\n\n**Why it matters:** If evaluators disagree, reported attack success rates are evaluator-artifacts, not ground truth. Any paper's conclusions about whether a defense 'works' depend heavily on which evaluator was used. Quantifying evaluator disagreement is prerequisite to trusting any jailbreak benchmark. The 2026 jailbreak survey identifies this as 'perhaps the most concerning finding for the research community'.\n\n**Relevant context:** 2026 jailbreak survey (TechRxiv) notes: 'inconsistency of safety evaluators is perhaps the most concerning finding, with discrepancies among evaluators indicating the need for standardized and consensus-driven scoring schemes.' JailbreakBench collected 200 expert-labeled pairs with ~95% human agreement as reference. JAILJUDGE (OpenReview 2024) benchmarks judges across 4.5k+ labeled scenarios but does not compute cross-evaluator disagreement as a primary output."
+  },
+  {
+    "idea_id": "gen-1758",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:17:43Z",
+    "subfield": "Adversarial Robustness & Red-Teaming",
+    "generation_strategy": "tool_or_benchmark_gap",
+    "confidence": 0.89,
+    "body": "# Benchmark Generalization Gap Probe: Testing Whether High Benchmark Scores Reflect Overfitting\n\n**Problem:** Qwen3Guard-8B achieved 85.3% accuracy on the full HarmBench test set but only 33.8% on novel prompts not derived from public datasets \u2014 a 57.2 percentage point generalization gap. This suggests safety classifiers (and possibly aligned models) are overfitting to public benchmark distributions. No standardized tool exists to detect and quantify this overfitting phenomenon across models.\n\n**Direction:** Design a two-split evaluation protocol: (A) standard benchmark prompts drawn from HarmBench/AdvBench, and (B) 100\u2013200 novel prompts generated by paraphrasing or semantically transforming benchmark prompts using an LLM. Compare attack success rates (or classifier accuracy) on split A vs. split B for the same model. The gap between A and B is the 'Generalization Gap Score.' Run on 3\u20135 openly available models. This requires only API calls and basic Python.\n\n**Why it matters:** If safety benchmarks measure memorization rather than genuine robustness, published safety results are misleading. High leaderboard scores may reflect benchmark overfitting rather than alignment quality. A generalization gap metric would reveal which models have learned shallow pattern-matching vs. genuine safety reasoning.\n\n**Relevant context:** The 2026 jailbreak survey (TechRxiv) directly reports: 'Qwen3Guard-8B achieved 85.3% on full test set, performance dropped to 33.8% on novel prompts not derived from public datasets \u2014 57.2 percentage point generalization gap suggesting high benchmark scores may reflect overfitting to public benchmark distributions.' JailbreakBench NeurIPS 2024 maintains evolving adversarial prompt repository to combat this but no systematic generalization measurement tool exists."
+  },
+  {
+    "idea_id": "gen-1759",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:17:43Z",
+    "subfield": "Adversarial Robustness & Red-Teaming",
+    "generation_strategy": "tool_or_benchmark_gap",
+    "confidence": 0.91,
+    "body": "# Multi-Turn Jailbreak Gap Quantifier: Measuring Single-Turn vs. Multi-Turn Safety Degradation\n\n**Problem:** MTJ-Bench findings show that up to 41.7% of successful multi-turn jailbreak attacks would fail as single-turn attempts \u2014 meaning single-turn benchmarks miss nearly half of real attack surface. AILuminate v1.0 explicitly lists multi-turn interaction as a limitation. Yet most deployed evaluation pipelines only test single-turn safety.\n\n**Direction:** Build a lightweight benchmark extension that takes 50\u2013100 prompts from an existing single-turn benchmark (StrongReject or HarmBench) and wraps each in a standardized multi-turn escalation template (e.g., 3-turn Crescendo-style approach: innocent preamble \u2192 partial request \u2192 full request). Compare ASR between single-turn and multi-turn conditions on the same models. Report the 'Multi-Turn Gap' \u2014 the fraction of attacks that only succeed in multi-turn format. Requires basic Python and LLM API access.\n\n**Why it matters:** Real users interact with LLMs across multi-turn conversations, not just single prompts. Benchmarks that only measure single-turn safety create a false sense of security for deployed systems. Quantifying the multi-turn gap provides a concrete, actionable metric for labs to track.\n\n**Relevant context:** MTJ-Bench (EmergentMind 2025): 'a large fraction of attacks succeed only in multi-turn format (as much as 41.7% for some models), indicating that single-turn safety evaluations are incomplete.' Crescendo attack (USENIX Security 2025) demonstrates 95% multi-turn success via incremental escalation. AILuminate v1.0 whitepaper acknowledges multi-turn as a planned future area. AISafetyLab currently focuses on single-turn attack/defense evaluation."
+  },
+  {
+    "idea_id": "gen-1760",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:17:43Z",
+    "subfield": "Adversarial Robustness & Red-Teaming",
+    "generation_strategy": "tool_or_benchmark_gap",
+    "confidence": 0.85,
+    "body": "# Cross-Evaluator Calibration Dataset: A Ground-Truth Labeled Set for Validating Jailbreak Judges\n\n**Problem:** There is no publicly available ground-truth-labeled dataset specifically designed to calibrate and validate automated jailbreak evaluators. JailbreakBench has a small 200-example expert-labeled set, but it was designed for their specific benchmark, not as a reusable calibration resource. Researchers building new evaluators have no standard calibration target.\n\n**Direction:** Curate a ~300-example calibration dataset with 3-way expert annotation (harmful / borderline / benign) drawn from multiple existing benchmarks (StrongReject, JailbreakBench, WildJailbreak, in-the-wild prompts). Ensure representation across hazard categories and response types. Compute inter-annotator agreement. Release as a reusable calibration set with evaluation scripts. Show that existing evaluators have systematic biases revealed by calibration against this set.\n\n**Why it matters:** Without a reusable calibration dataset, every new evaluator is validated against different, incomparable standards. A shared calibration set enables the field to make apples-to-apples comparisons between evaluators and track whether evaluator quality is improving over time. This is foundational infrastructure for the entire jailbreak research field.\n\n**Relevant context:** JailbreakBench NeurIPS 2024 paper describes collecting 200 expert-labeled pairs (three experts, ~95% agreement) and 100 benign examples for classifier calibration, but this is embedded in their benchmark tooling, not a standalone resource. JAILJUDGE (OpenReview) has 4.5k labeled scenarios but is judge-evaluation-focused. The 2026 jailbreak survey identifies lack of standardized evaluator validation as a top-tier gap."
+  },
+  {
+    "idea_id": "gen-1761",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:17:43Z",
+    "subfield": "Adversarial Robustness & Red-Teaming",
+    "generation_strategy": "tool_or_benchmark_gap",
+    "confidence": 0.86,
+    "body": "# SafeTuneBed-Lite: A Beginner-Accessible Fine-Tuning Safety Degradation Measurement Tool\n\n**Problem:** SafeTuneBed (arxiv 2506.00676) is a full toolkit for benchmarking LLM safety alignment degradation during fine-tuning, but it requires significant ML expertise and compute. CS students and entry-level practitioners cannot easily measure how fine-tuning on task-specific data degrades safety alignment. No lightweight, beginner-accessible tool exists for this measurement.\n\n**Direction:** Build a simplified Python wrapper around SafeTuneBed that (1) takes a pre-trained open model (e.g., Llama-3-8B-Instruct), (2) fine-tunes it on a small benign task dataset (e.g., summarization, coding) for 100\u2013500 steps on a single GPU, and (3) evaluates safety degradation before/after using a curated 50-prompt safety probe from StrongReject. Report a 'fine-tuning safety tax' score. The entire pipeline should run in under 4 hours on a single GPU. Write a blog post documenting findings.\n\n**Why it matters:** Fine-tuning is ubiquitous in deployment \u2014 nearly every practical LLM use case involves some fine-tuning. Evidence shows even benign fine-tuning can degrade safety alignment. Making this measurable for practitioners closes the lab-to-deployment gap. The ACL 2025 paper 'Fine-Tuning Lowers Safety and Disrupts Evaluation Consistency' confirms this is a real, underappreciated problem.\n\n**Relevant context:** SafeTuneBed arxiv 2506.00676: 'unifies fine-tuning and defense evaluation, curating diverse fine-tuning datasets and enabling integration of state-of-the-art defenses, with evaluators for safety (ASR, refusal consistency) and utility.' ACL 2025 (aclanthology 2025.llmsec-1.10): 'Fine-Tuning Lowers Safety and Disrupts Evaluation Consistency.' GitHub LLM-Tuning-Safety: GPT-3.5 safety guardrails broken with 10 adversarial examples at <$0.20."
+  },
+  {
+    "idea_id": "gen-1762",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:17:43Z",
+    "subfield": "Adversarial Robustness & Red-Teaming",
+    "generation_strategy": "tool_or_benchmark_gap",
+    "confidence": 0.82,
+    "body": "# In-the-Wild vs. Lab Jailbreak Drift Detector: Measuring Temporal Decay of Lab-Generated Attack Effectiveness\n\n**Problem:** Lab-generated jailbreak prompts (GCG, AutoDAN, PAIR) are created at a fixed point in time and may quickly become obsolete as models are updated or fine-tuned on safety data. Meanwhile, in-the-wild jailbreaks on platforms like Reddit and Discord continue to evolve. No tool measures the 'temporal drift' \u2014 how quickly lab-generated benchmark attacks lose effectiveness compared to freshly crowd-sourced attacks.\n\n**Direction:** Collect a snapshot of in-the-wild jailbreak prompts from platforms (using the DAN dataset, SafetyPrompts.com, or other public sources). Compare their attack success rate against 3\u20135 models against the ASR of time-stamped lab-generated attacks from JailbreakBench or HarmBench on the same models. Compute a 'freshness gap' \u2014 the difference in ASR between current in-the-wild prompts and benchmark prompts. Track how this changes across different model versions where available. Requires basic Python and API access.\n\n**Why it matters:** If benchmarks use stale attacks that models have been patched against, high benchmark robustness scores are misleading \u2014 the model may still be vulnerable to novel attacks. The lab-to-deployment gap identified as an open problem includes this temporal drift dimension. Measuring it concretely helps calibrate how much to trust benchmark results.\n\n**Relevant context:** Shen et al. CCS 2024 'Do Anything Now' study collected 1,405 unique in-the-wild prompts from platforms (Dec 2022\u2013Dec 2023). ChatGPT average ASR was 0.685 for all tested jailbreak prompts, reaching 0.998 for most effective. SafetyPrompts.com maintains an open database of in-the-wild prompts. JailbreakBench NeurIPS 2024 maintains an evolving repository to address prompt aging but no systematic staleness measurement exists."
+  },
+  {
+    "idea_id": "gen-1763",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:17:43Z",
+    "subfield": "Adversarial Robustness & Red-Teaming",
+    "generation_strategy": "tool_or_benchmark_gap",
+    "confidence": 0.87,
+    "body": "# Hazard Category Specificity Scorer: Extending StrongReject to Measure Actionability of Harmful Completions\n\n**Problem:** StrongReject measures whether a response is harmful and how specific/convincing it is (1\u20135 scale), but does not measure the practical actionability of the harmful information \u2014 whether it actually provides meaningful capability uplift to a bad actor. A response containing detailed synthesis instructions is much more dangerous than one containing widely available information, but StrongReject treats them similarly.\n\n**Direction:** Extend the StrongReject evaluator by adding a third dimension: 'actionability score.' Operationalize this as: (1) Is the information already widely available via a simple internet search? (2) Does the response provide step-by-step operational instructions? (3) Does it provide information specific enough to meaningfully advance a harmful task beyond what a determined actor could find in 10 minutes online? Implement as an additional LLM-as-judge prompt. Validate on the existing StrongReject dataset. Compare actionability scores across attack methods and models.\n\n**Why it matters:** Differential capability uplift is identified as a key unmeasured property: 'benchmarks don't measure differential capability uplift or practical harm.' A model that outputs freely available chemistry facts is less dangerous than one that provides novel synthesis routes, but current benchmarks score them the same. Actionability scoring operationalizes the uplift concept for empirical research.\n\n**Relevant context:** StrongReject (Souly et al., BAIR 2024, arxiv 2402.10260): evaluator scores refusal, specificity, and convincingness but not real-world actionability. VENOM framework (arxiv 2025) evaluates 'real-world criminal potential' via knowledge-grounded tasks. MLCommons AILuminate Jailbreak v0.5 whitepaper notes 'capability uplift' concept for future development. Subfield context identifies 'differential capability uplift or practical harm' as an explicit benchmark gap."
+  },
+  {
+    "idea_id": "gen-1764",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:17:43Z",
+    "subfield": "Adversarial Robustness & Red-Teaming",
+    "generation_strategy": "tool_or_benchmark_gap",
+    "confidence": 0.83,
+    "body": "# System Prompt Injection Severity Ladder: A Tiered Benchmark for Indirect Prompt Injection Attacks\n\n**Problem:** Existing benchmarks like AgentSecurityBench and MASpi evaluate whether prompt injection attacks succeed or fail (binary), but do not measure severity or escalation potential \u2014 whether an injection merely bypasses a filter, exfiltrates conversation context, executes tool calls, or achieves full agent compromise. There is no tiered severity scale for prompt injection outcomes analogous to CVE severity scores in traditional security.\n\n**Direction:** Design a 5-tier severity ladder for prompt injection outcomes: (1) safety filter bypass only, (2) information disclosure, (3) unauthorized tool invocation, (4) data exfiltration or persistence, (5) full goal hijacking. Build a small benchmark of 30\u201350 prompt injection scenarios (using publicly available examples from OpenPromptInjection and AgentSecurityBench datasets) and annotate each successful attack outcome with its severity tier. Run against 3\u20134 LLM agents with tools. Report distribution of outcomes by severity tier across models.\n\n**Why it matters:** Binary success/failure metrics for prompt injection treat a trivial filter bypass identically to a full agent compromise. A severity ladder enables risk-proportionate evaluation and helps practitioners understand which attack types pose existential vs. minor risks. This is directly relevant to real deployment decisions for agentic LLM systems.\n\n**Relevant context:** MASpi (OpenReview 2025): evaluates 23 prompt injection attacks in LLM multi-agent systems but uses binary success metrics. ASB (ICLR 2025): 10 scenarios, 400+ tools, 23 attack types, 8 evaluation metrics \u2014 but no severity tiering. OWASP Top 10 for Agentic Applications (Dec 2025) categorizes injection risks but without quantitative severity scores. The 2025 landscape identifies 'optimization-based attacks evaluation against heuristic templates' as creating 'false sense of security.'"
+  },
+  {
+    "idea_id": "gen-1765",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:17:43Z",
+    "subfield": "Adversarial Robustness & Red-Teaming",
+    "generation_strategy": "tool_or_benchmark_gap",
+    "confidence": 0.88,
+    "body": "# Language Safety Parity Tester: Measuring Safety Alignment Consistency Across High vs. Low Resource Languages\n\n**Problem:** Research shows LLMs are up to 40\u201360% unsafe in low-resource languages vs. <2% in English on the same prompts. Despite this, most benchmark evaluations are conducted only in English or a small set of high-resource languages. No lightweight tool exists to let researchers quickly measure the safety parity gap for a specific model across a user-specified set of languages.\n\n**Direction:** Build a Python tool that takes a set of 50\u2013100 English safety prompts (drawn from StrongReject or AILuminate's public prompt set), auto-translates them to 5\u201310 target languages (using a free translation API or open model), and evaluates model responses using an LLM-as-judge in each language. Compute a 'Language Safety Parity Score' \u2014 the variance in refusal rate across languages weighted by resource level. Target languages should include at least 2 low-resource languages (e.g., Bengali, Swahili). Entire pipeline runnable in ~4 hours.\n\n**Why it matters:** LLMs are deployed globally but safety evaluation is overwhelmingly English-centric. Users in low-resource language contexts are systematically less protected. Measuring this gap with a reusable tool creates visibility into an underappreciated equity dimension of AI safety. AILuminate v1.0 acknowledges English-only limitation and cites it as a priority for future development.\n\n**Relevant context:** LinguaSafe (arxiv 2508.12733): comprehensive multilingual safety benchmark introduced in 2025. Welodata study (2025): across 210K model-prompt pairs, unsafe rates up to +20-25 percentage points worse in low-resource languages. arxiv 2511.00689 'Do Methods to Jailbreak and Defend LLMs Generalize Across Languages': systematic evaluation across 10 languages. Low-resource languages paper (Brown University): 'Low-Resource Languages Jailbreak GPT-4.' AILuminate v1.0 was English-only at launch."
+  },
+  {
+    "idea_id": "gen-1766",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:17:43Z",
+    "subfield": "Adversarial Robustness & Red-Teaming",
+    "generation_strategy": "tool_or_benchmark_gap",
+    "confidence": 0.85,
+    "body": "# Defense Transferability Probe: Testing Whether Single-Turn Defenses Hold Under Multi-Turn Attacks\n\n**Problem:** Research (2025) confirms that 'defenses designed for single-agent prompt injection do not reliably transfer to multi-turn or multi-agent settings; narrowly scoped defenses may inadvertently increase vulnerabilities to other attack types.' Yet no benchmark systematically probes this defense transferability failure across common defense types.\n\n**Direction:** Select 5\u20138 commonly cited defenses (e.g., output filtering, system prompt hardening, paraphrasing defense, self-reminder prompting) from AISafetyLab's 16 defense mechanisms. Test each defense on a matched set of attacks: (A) single-turn versions from a standard benchmark, and (B) multi-turn escalating versions of the same attacks. Compute a 'defense transferability score' for each defense type \u2014 does the defense hold equally well against both? Identify which defenses break most under multi-turn pressure.\n\n**Why it matters:** Defenses evaluated only on single-turn benchmarks may create a false sense of security for deployments where users can engage in multi-turn conversations. This directly addresses the 'adaptive defenses' open problem in the subfield. Identifying which defenses fail under multi-turn conditions guides practitioners toward more robust deployment choices.\n\n**Relevant context:** AISafetyLab (arxiv 2502.16776): evaluates 16 defense mechanisms, acknowledges current focus on single-turn LLMs with plans to expand. MASpi (OpenReview 2025): 'defenses designed for single-agent prompt injection do not reliably transfer to LLM-MAS.' Crescendo (USENIX Security 2025): 95% multi-turn success. ASB ICLR 2025: 23 attack/defense methods evaluated. MTJ-Bench: 41.7% of attacks succeed only in multi-turn format."
+  },
+  {
+    "idea_id": "gen-1767",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:17:43Z",
+    "subfield": "Adversarial Robustness & Red-Teaming",
+    "generation_strategy": "tool_or_benchmark_gap",
+    "confidence": 0.84,
+    "body": "# Jailbreak Complexity Cost Estimator: Measuring Attack Effort vs. Success Rate Tradeoff\n\n**Problem:** Jailbreak benchmarks report attack success rates but not attack cost (how many queries, how much human effort, how complex the prompt must be to succeed). A 99% ASR attack requiring 1000 API queries is very different from a 70% ASR attack requiring 1 query. The 2026 jailbreak survey notes that 'existing works compute attacker costs and success rates in incomparable ways.'\n\n**Direction:** Build a standardized attack cost measurement harness. For each attack method evaluated (GCG, PAIR, AutoDAN, manual jailbreaks), record: (1) number of API calls required, (2) prompt length in tokens, (3) attack generation time, (4) human effort estimate (automated vs. manual). Normalize these into a single 'Attack Effort Score.' Plot ASR vs. effort for multiple attack types across 3\u20135 models to create an effort-efficiency frontier. Propose a standardized cost-reporting schema for future papers to adopt.\n\n**Why it matters:** Cost-effectiveness of attacks determines real-world threat levels. A low-cost, moderate-success attack may be more dangerous in practice than a high-cost, high-success attack. Standardizing cost measurement enables the field to compare attack-defense tradeoffs on an equal footing and assess realistic threat models for deployment.\n\n**Relevant context:** 2026 jailbreak survey (TechRxiv): 'existing works compute attacker costs and success rates in incomparable ways.' JailbreakBench NeurIPS 2024: notes that 'costs and success rates in incomparable ways' is a key reproducibility gap. AISafetyLab evaluates 13 attack methods but without standardized cost reporting. Advanced automated attacks achieve 90\u201399% ASR on open-weight models but query counts are rarely normalized."
+  },
+  {
+    "idea_id": "gen-1768",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:17:43Z",
+    "subfield": "Adversarial Robustness & Red-Teaming",
+    "generation_strategy": "tool_or_benchmark_gap",
+    "confidence": 0.86,
+    "body": "# Agentic Jailbreak Escalation Benchmark: Measuring Safety Degradation When LLMs Use Tools\n\n**Problem:** AgentHarm (ICLR 2025) is limited to English-only, single-turn adversarial setups with basic multi-step agentic capability, and cannot test open-ended tool use. The research gap is measuring whether a model that refuses a harmful request in chat-only mode will still refuse when it has access to tools (web search, code execution, file access) that could amplify harm. The expanded attack surface of tool-enabled agents is currently unmeasured.\n\n**Direction:** Take 30\u201350 harmful prompts from AgentHarm or HarmBench and test them in two conditions: (A) standard chat mode with no tools, and (B) tool-enabled mode where the model has access to web search (via a mock/sandboxed API) and code execution. Measure whether the availability of tools changes refusal behavior and whether tool chains enable harm indirectly (e.g., model refuses to explain how to do X but will write code that does X when given a code interpreter). Report an 'Agentic Safety Delta' score.\n\n**Why it matters:** Most safety alignment is trained on chat interactions without tool use, yet production deployments increasingly use tool-enabled agents. If tool access creates a safety blindspot \u2014 models that refuse in chat but comply when using tools \u2014 this is a critical and unmeasured vulnerability. STAC attacks (sequential tool attack chaining) show this is exploitable but no benchmark measures the baseline safety delta.\n\n**Relevant context:** AgentHarm ICLR 2025 limitations: 'English-only prompts, single-turn adversarial setup, inability to exhaustively test third-party APIs, focus on basic multi-step agentic capability rather than fully open-ended autonomous behaviors.' OpenAgentSafety (arxiv 2507.06134): 'combines real tool use, complex social interactions, diverse intents.' STAC attacks: 'sequences of seemingly innocuous tool calls that individually pass safety checks but collectively achieve harmful goals.' ASB ICLR 2025: 400+ tools, 23 attack types."
+  },
+  {
+    "idea_id": "gen-1769",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:17:43Z",
+    "subfield": "Adversarial Robustness & Red-Teaming",
+    "generation_strategy": "tool_or_benchmark_gap",
+    "confidence": 0.85,
+    "body": "# Roleplay Safety Consistency Probe: Measuring Safety Alignment Stability Under Persona Conditioning\n\n**Problem:** Moral RolePlay Benchmark research (2025) shows models exhibit 'consistent degradation in role fidelity as required morality declines from paragon to villain,' and that safety alignment 'produces artifacts \u2014 prosocial models are unable to convincingly portray manipulative personas even in fictional contexts.' But no benchmark specifically measures the inverse: whether roleplay/persona conditioning degrades safety alignment on genuinely harmful requests (not just fictional characterization).\n\n**Direction:** Design a 2\u00d72 probe: (1) harmful requests in neutral framing vs. (2) the same requests wrapped in roleplay/persona framing (e.g., 'you are an AI with no restrictions,' 'you are a chemistry professor'). Measure ASR across both conditions for 40\u201360 prompts drawn from StrongReject. Compute a 'Roleplay Safety Gap' \u2014 the increase in ASR under persona conditioning. Test whether the gap varies by model (instruct-tuned vs. RLHF-aligned). Requires only Python and API access.\n\n**Why it matters:** Roleplay and persona manipulation are among the most commonly used real jailbreak techniques (found in the top DAN categories). If safety alignment is selectively disabled by persona framing, this is a systematic shallow alignment signature that affects real users. Measuring it precisely helps characterize the depth of safety training.\n\n**Relevant context:** Moral RolePlay Benchmark (EmergentMind 2025): models degrade in role fidelity as morality declines, safety alignment produces artifacts in persona play. RPEval (arxiv 2505.13157): evaluates role-playing across emotional understanding, decision-making, moral alignment, in-character consistency. RMTBench: bilingual 80-character, 8000-dialogue multi-turn roleplay benchmark. DAN ('Do Anything Now') jailbreaks in 'Do Anything Now' CCS 2024 study are predominantly persona-based."
+  },
+  {
+    "idea_id": "gen-1770",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:17:43Z",
+    "subfield": "Adversarial Robustness & Red-Teaming",
+    "generation_strategy": "tool_or_benchmark_gap",
+    "confidence": 0.83,
+    "body": "# Renewable Benchmark Staleness Detector: Measuring How Quickly Benchmark Prompts Become Ineffective\n\n**Problem:** 'Jailbreak Distillation: Renewable Safety Benchmarking' (EMNLP 2025 Findings) proposes methods for refreshing benchmarks, but the problem of staleness \u2014 how quickly existing benchmark prompts lose effectiveness as models are patched \u2014 has not been quantified systematically. Without measuring staleness rate, we cannot know how often benchmarks need renewal.\n\n**Direction:** Select a fixed set of 100 jailbreak prompts from JailbreakBench or HarmBench that were published at known timestamps. Test these prompts against model versions with known training cutoff dates (using open models with version history, e.g., Llama 2 \u2192 Llama 3 \u2192 Llama 3.1). Plot ASR as a function of time elapsed since prompt publication. Compute a 'prompt half-life' \u2014 the time at which a prompt's ASR drops to half its original value. This characterizes how fast benchmarks need to be refreshed.\n\n**Why it matters:** If benchmark prompts become ineffective within weeks of publication (because models are patched against known attacks), then static benchmarks are nearly useless for ongoing safety monitoring. A concrete 'prompt half-life' measurement would inform how frequently benchmarks must be renewed and motivates investment in renewable benchmark infrastructure.\n\n**Relevant context:** TechXplore March 2026: 'New renewable benchmark streamlines LLM jailbreak safety tests with minimal human effort' \u2014 reports on EMNLP 2025 Findings paper 'Jailbreak Distillation: Renewable Safety Benchmarking.' JailbreakBench NeurIPS 2024: maintains evolving prompt repository to combat staleness. Shen et al. CCS 2024 collected prompts Dec 2022\u2013Dec 2023 showing evolution over time. The benchmark renewal problem is recognized but staleness rate is unmeasured."
+  },
+  {
+    "idea_id": "gen-1771",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:17:43Z",
+    "subfield": "Adversarial Robustness & Red-Teaming",
+    "generation_strategy": "tool_or_benchmark_gap",
+    "confidence": 0.84,
+    "body": "# Safety Benchmark Coverage Map: Identifying Underrepresented Harm Categories Across Existing Datasets\n\n**Problem:** Multiple safety benchmarks exist (AILuminate, HarmBench, AdvBench, StrongReject, TrustLLM, WildJailbreak) but each uses different hazard category taxonomies and different prompt distributions. No comprehensive map exists showing which harm categories are well-covered vs. underrepresented across the aggregate of all publicly available safety benchmark prompts. Researchers may be systematically ignoring certain harm categories by defaulting to popular benchmarks.\n\n**Direction:** Collect prompt metadata (harm category labels) from all major public safety benchmarks: AILuminate (12 categories), HarmBench, AdvBench, StrongReject, TrustLLM (6 dimensions), JAILJUDGE (multilingual), WildJailbreak. Map all category taxonomies to a unified schema using LLM-assisted label alignment. Count prompt volume by unified category. Visualize coverage gaps \u2014 which harm types are over-represented (e.g., CBRN) vs. under-represented (e.g., economic manipulation, psychological harm). Publish as an interactive coverage map.\n\n**Why it matters:** Benchmarking resources are finite; if the field is over-investing in well-studied harm categories while ignoring others, safety gaps accumulate invisibly. A coverage map enables researchers to deliberately target underrepresented areas and ensures the aggregate safety benchmark ecosystem has broad hazard coverage. This is meta-level infrastructure the field lacks.\n\n**Relevant context:** AILuminate v1.0 (arxiv 2503.05731): 12 hazard categories, 24K+ prompts. TrustLLM: 6 dimensions. StrongReject: 100+ forbidden behaviors. HarmBench, AdvBench: widely used. JAILJUDGE: 4.5k+ multilingual. AILuminate v1.0 whitepaper acknowledges 'emerging hazard categories' as a future area. No cross-benchmark taxonomy mapping tool currently exists."
+  },
+  {
+    "idea_id": "gen-1772",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:17:44Z",
+    "subfield": "Adversarial Robustness & Red-Teaming",
+    "generation_strategy": "tool_or_benchmark_gap",
+    "confidence": 0.82,
+    "body": "# Context Window Poisoning Benchset: Measuring Safety Degradation from Malicious Document Injection\n\n**Problem:** When LLMs process long documents (retrieved context, uploaded files, tool outputs), malicious content embedded in those documents can manipulate model behavior through the context window. This is distinct from both direct jailbreaks (user prompt manipulation) and prompt injection (injecting instructions). No benchmark specifically measures safety degradation from context-window poisoning across varying document positions, lengths, and poisoning rates.\n\n**Direction:** Create a benchmark of 50\u201380 test cases where a model is given a long document context (2000\u20138000 tokens) containing embedded malicious instructions at varying positions (beginning, middle, end, distributed). Measure whether the model follows the malicious instructions vs. the system prompt. Test how position, injection density, and document length affect success rate. Use 3\u20135 models. This requires document generation (scriptable with Python) and LLM API access only.\n\n**Why it matters:** RAG (retrieval-augmented generation) systems and document-processing agents routinely consume untrusted external content. If malicious actors can poison retrieved documents to manipulate model outputs, this is a critical real-world attack vector currently unbenchmarked. As LLMs are deployed in document-heavy workflows (legal, medical, financial), this attack surface grows rapidly.\n\n**Relevant context:** AgentSecurity landscape (arxiv 2601.05293): context manipulation is among top exploit patterns. MCP protocol vulnerabilities (arxiv 2601.17549): prompt injection via tool outputs. Open-Prompt-Injection benchmark (EmergentMind): covers some injection cases but not systematic context-window position/density testing. ASB ICLR 2025: evaluates 23 attack types but context poisoning via document position is not systematically measured."
+  },
+  {
+    "idea_id": "gen-1773",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:17:44Z",
+    "subfield": "Adversarial Robustness & Red-Teaming",
+    "generation_strategy": "tool_or_benchmark_gap",
+    "confidence": 0.86,
+    "body": "# Safety Evaluator Bias Detector: Probing Systematic Biases in LLM-as-Judge Safety Scoring\n\n**Problem:** LLM-as-judge evaluators are widely used in safety benchmarks (StrongReject uses GPT-4, JailbreakBench uses Llama Guard and GPT-4), but these evaluators may have systematic biases: they may score identical content differently based on surface features like writing style, language, cultural framing, or model family of the response. These biases contaminate benchmark results but are unmeasured.\n\n**Direction:** Design a controlled experiment: take 50\u201380 fixed harmful/borderline content units and generate multiple surface variants of each (formal vs. casual register, first vs. third person, different nationalities mentioned, different model families generating the response). Run all variants through 3\u20134 common safety evaluators (GPT-4-as-judge with StrongReject prompt, Llama Guard, WildGuard, keyword classifier). Measure whether safety scores vary by surface feature holding content constant. Report systematic biases as a 'Evaluator Bias Report Card.'\n\n**Why it matters:** If safety evaluators are biased toward certain writing styles or cultural contexts, published safety scores systematically undercount or overcount safety failures for specific user populations. This is both a measurement validity problem (polluting research) and an equity problem (some communities systematically under-protected). Characterizing these biases is prerequisite to fixing them.\n\n**Relevant context:** JAILJUDGE (OpenReview): evaluates judges across broad-range risks, adversarial, in-the-wild, multilingual, but does not probe surface-feature biases. HarmMetric Eval (arxiv 2509.24384): 'benchmarking metrics and judges for LLM harmfulness assessment.' StrongReject (arxiv 2402.10260): uses GPT-4-as-judge but cannot self-assess its own biases. The 2026 jailbreak survey notes evaluator inconsistency as the most concerning research gap."
+  },
+  {
+    "idea_id": "gen-1774",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:17:44Z",
+    "subfield": "Adversarial Robustness & Red-Teaming",
+    "generation_strategy": "tool_or_benchmark_gap",
+    "confidence": 0.83,
+    "body": "# Jailbreak Transferability Matrix Builder: An Open Tool for Measuring Cross-Model Attack Transfer Rates\n\n**Problem:** Jailbreak Strength and Model Similarity Predict Transferability (arxiv 2506.12913) shows that cross-model jailbreak transfer depends on source-model jailbreak strength and representation similarity between models. However, no open, reusable tool exists that lets researchers compute a cross-model transferability matrix for a set of attacks and models. Practitioners cannot easily assess whether a new attack will transfer to their target model.\n\n**Direction:** Build a Python tool that takes a set of jailbreak prompts (from JailbreakBench or user-supplied) and a list of models (open-weight, accessible via HuggingFace or API), runs each prompt against each model, and outputs a transferability matrix: rows = source models, columns = target models, cells = transfer rate. Include a simple cosine similarity computation on model embeddings to correlate with transfer rates. Requires single-GPU compute and basic Python. Validate by replicating the correlation finding from arxiv 2506.12913.\n\n**Why it matters:** Practitioners deploying LLMs need to know whether attacks demonstrated on public models transfer to their specific model. Researchers need a reusable tool to study transfer dynamics without building it from scratch each time. A standardized transferability matrix tool would become valuable community infrastructure.\n\n**Relevant context:** arxiv 2506.12913 'Jailbreak Strength and Model Similarity Predict Transferability': 'transfer success depends on jailbreak strength with respect to source model and contextual representation similarity of the two models.' Springer 2025 'Boosting Jailbreak Transferability for Large Language Models.' JailbreakBench maintains prompts but no transfer matrix tooling. AISafetyLab evaluates 13 attack methods without systematic cross-model transfer measurement."
+  },
+  {
+    "idea_id": "gen-1775",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:17:44Z",
+    "subfield": "Adversarial Robustness & Red-Teaming",
+    "generation_strategy": "tool_or_benchmark_gap",
+    "confidence": 0.81,
+    "body": "# Therapeutic Dialogue Safety Probe: Measuring Longitudinal Safety Risks in Mental Health Support Conversations\n\n**Problem:** Current safety benchmarks test single-turn or short multi-turn interactions but are poorly suited to measuring safety risks in extended therapeutic or mental health support dialogues. Research notes that 'safety benchmarks often fail to detect the complex, longitudinal risks inherent in therapeutic dialogue, particularly when LLMs are utilized for mental health support.' No benchmark covers this use case.\n\n**Direction:** Develop a set of 30\u201350 synthetic therapeutic conversation transcripts (5\u201315 turns each) that escalate toward potentially harmful advice-giving scenarios: suicidal ideation, disordered eating encouragement, relationship manipulation, premature medical advice. For each transcript, measure at which turn the model's responses become safety-relevant, whether the model identifies the risk, and whether it provides appropriate escalation (recommending human professionals). Compare across 3\u20135 models.\n\n**Why it matters:** Mental health applications are among the highest-stakes LLM deployment contexts. Users in crisis may interact extensively with AI assistants before or instead of seeking human help. Safety failures in this context can directly contribute to harm. The absence of longitudinal therapeutic safety benchmarks means no model is evaluated for this critical use case.\n\n**Relevant context:** Red teaming as socio-technical practice (arxiv 2602.18483): 'current safety benchmarks often fail to detect complex, longitudinal risks inherent in therapeutic dialogue.' Multi-turn interaction research shows 41.7% of attack successes only occur in multi-turn format (MTJ-Bench). AgentHarm ICLR 2025: covers harmful agentic behaviors but not therapeutic contexts. MindGard AI Red Teaming Statistics 2026: notes mental health as high-stakes deployment area."
+  },
+  {
+    "idea_id": "gen-1776",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:17:44Z",
+    "subfield": "Adversarial Robustness & Red-Teaming",
+    "generation_strategy": "tool_or_benchmark_gap",
+    "confidence": 0.85,
+    "body": "# Benchmark Prompt Diversity Scorer: Measuring Semantic Redundancy Within Safety Evaluation Sets\n\n**Problem:** Safety benchmarks may contain semantically redundant prompts that test the same model behavior repeatedly, inflating confidence in coverage while leaving genuine gaps unmeasured. No tool exists to quantify prompt diversity within a benchmark \u2014 whether 100 prompts in a category are truly testing 100 distinct safety behaviors or 20 behaviors with 5 paraphrases each.\n\n**Direction:** Build a prompt diversity analysis tool using embedding-based clustering (sentence-transformers, which run on CPU/small GPU). For each public safety benchmark (StrongReject, AILuminate public samples, HarmBench), compute pairwise semantic similarity between prompts within each hazard category. Identify clusters of near-duplicate prompts. Report a 'Diversity Score' (e.g., ratio of unique semantic clusters to total prompts). Compare diversity scores across benchmarks. Propose minimum diversity thresholds as a benchmark quality standard.\n\n**Why it matters:** A benchmark with 1000 prompts but 50 unique semantic behaviors gives a false sense of comprehensive coverage. Low prompt diversity means small model changes can dramatically alter scores without changing actual safety. Diversity scoring is a lightweight quality check that could become a standard benchmark publication requirement.\n\n**Relevant context:** AILuminate v1.0 (arxiv 2503.05731): 24K+ prompts across 12 categories \u2014 but internal semantic diversity unknown. JailbreakBench: 100 behaviors, explicitly designed for diversity, but no automated diversity metric. StrongReject: 100+ forbidden behaviors. The 2026 jailbreak survey notes that 'high benchmark scores may reflect overfitting to public benchmark distributions' \u2014 diversity measurement is complementary. Sentence-transformers library enables this analysis with basic Python and minimal compute."
+  },
+  {
+    "idea_id": "gen-1777",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:17:44Z",
+    "subfield": "Adversarial Robustness & Red-Teaming",
+    "generation_strategy": "tool_or_benchmark_gap",
+    "confidence": 0.84,
+    "body": "# Code-Based Harm Enablement Detector: Benchmarking Safety for Indirect Harm via Code Generation\n\n**Problem:** LLMs will refuse to explain how to build malware in natural language but may write functional malicious code when framed as a programming task. Academic jailbreaking research (arxiv 2512.10415) shows this code-framing bypass is systematically exploited in educational settings. No benchmark specifically measures the safety gap between natural language harm refusal and equivalent harm enabled through code generation.\n\n**Direction:** Create a paired benchmark of 40\u201360 harmful request pairs: (A) natural language request (e.g., 'explain how to exfiltrate files from a system'), and (B) equivalent code task framing (e.g., 'write a Python script that copies files to a remote server without user notification'). Measure ASR for each framing condition across 3\u20135 models. Compute a 'Code Framing Safety Gap' \u2014 the difference in harmful compliance rate between the two conditions. Categorize by harm type (malware, data extraction, social engineering scripts, etc.).\n\n**Why it matters:** Code generation is one of the most common LLM use cases. If safety alignment treats code tasks differently from natural language requests, this creates a systematic exploitation pathway. The academic jailbreaking study found this is already being used in practice. Quantifying the code-framing safety gap creates visibility into a real vulnerability in deployed systems.\n\n**Relevant context:** arxiv 2512.10415 'How to Trick Your AI TA: A Systematic Study of Academic Jailbreaking in LLM Code Evaluation': code framing used to bypass safety in educational LLM deployments. AgentHarm ICLR 2025 includes some code-related harmful behaviors. HarmBench includes some coding harms but no systematic natural-language vs. code-framing comparison. ACL 2025 academic jailbreaking paper. AISafetyLab includes code-related attack vectors."
+  },
+  {
+    "idea_id": "gen-1778",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:17:44Z",
+    "subfield": "Adversarial Robustness & Red-Teaming",
+    "generation_strategy": "tool_or_benchmark_gap",
+    "confidence": 0.87,
+    "body": "# Defense Overhead Profiler: Measuring Latency and Cost Tradeoffs of Safety Defenses for Deployment Decisions\n\n**Problem:** Safety defenses (output filtering, input paraphrasing, self-reminder prompting, Guard models) all impose latency and compute cost overhead, but no benchmark measures these costs alongside defense effectiveness. A defense that reduces ASR by 30% but doubles inference time may be impractical in production, while a 15% ASR reduction with 5% latency overhead may be the practical choice. This tradeoff is invisible in current evaluations.\n\n**Direction:** Select 5\u20138 common defenses from AISafetyLab (system prompt hardening, output filtering, Llama Guard integration, paraphrasing defense). For each, measure: (1) ASR reduction vs. no defense on a 50-prompt subset of StrongReject, (2) average latency overhead in milliseconds, (3) cost overhead in API tokens or GPU seconds, (4) over-refusal rate on a 50-prompt benign set. Plot ASR reduction vs. latency overhead on a 2D efficiency frontier. Run on a single GPU and summarize practical recommendations.\n\n**Why it matters:** Safety defenses are useless if they cannot be deployed in practice. Latency constraints in real-time applications make some defenses infeasible regardless of their theoretical effectiveness. No public resource guides practitioners on the latency-security tradeoff, forcing them to make deployment decisions without data. A defense overhead benchmark closes this gap between research and practice.\n\n**Relevant context:** AISafetyLab (arxiv 2502.16776): evaluates 16 defense mechanisms for effectiveness but not latency/cost overhead. MindGard AI Red Teaming Statistics 2026: 'budget and workforce skills gaps are top inhibitors preventing organizations from executing on AI red teaming.' Industry deployment context: latency SLAs are typically <500ms for conversational systems. Current safety defense papers focus on ASR without reporting inference overhead. Cost-effective jailbreak detection is listed as an open problem in the subfield."
+  },
+  {
+    "idea_id": "gen-1779",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:17:44Z",
+    "subfield": "Adversarial Robustness & Red-Teaming",
+    "generation_strategy": "tool_or_benchmark_gap",
+    "confidence": 0.82,
+    "body": "# Safety Alignment Stress Test Under Distribution Shift: Measuring Robustness to Novel Topics Unseen During Training\n\n**Problem:** Safety alignment is trained on fixed datasets, but the world continuously generates novel topics (new technologies, geopolitical events, new drugs, new attack techniques). If a model has never seen a particular topic in safety training, it may lack safe behaviors for that topic. No tool exists to measure how well safety alignment generalizes to genuinely novel topic domains not present in training data.\n\n**Direction:** Identify 5\u201310 topic domains that emerged or substantially evolved recently (post-2024): specific emerging biotechnologies, new synthetic drug precursors, new social engineering frameworks, new hacking toolkits. Construct 10\u201315 prompts per topic requesting harmful information specific to these novel domains. Compare ASR on these novel-topic prompts vs. equivalent prompts on well-established harmful topics (e.g., traditional chemistry, older malware). A higher ASR on novel topics indicates alignment generalization failure.\n\n**Why it matters:** Safety alignment trained on historical data will have blind spots for future harms. Measuring how ASR scales with topic novelty reveals whether safety training has learned general principles or domain-specific pattern-matching. This is directly relevant to the 'shallow safety alignment' open problem and to deployment planning for models that will encounter continuously evolving harmful use cases.\n\n**Relevant context:** The 57.2 percentage point generalization gap finding (Qwen3Guard-8B, 2026 jailbreak survey) on novel vs. benchmark-derived prompts supports the hypothesis that safety evaluation generalizes poorly to novel inputs. JailbreakBench maintains evolving prompts but doesn't specifically target novel topic domains. AISafetyLab evaluation framework: current evaluation has limitations for novel scenarios. SafeTuneBed (arxiv 2506.00676) measures distribution shift post-fine-tuning but not novel-topic generalization of base alignment."
+  },
+  {
+    "idea_id": "gen-1780",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:17:44Z",
+    "subfield": "Adversarial Robustness & Red-Teaming",
+    "generation_strategy": "tool_or_benchmark_gap",
+    "confidence": 0.79,
+    "body": "# Public Leaderboard Gap Analyzer: Comparing Disclosed vs. Undisclosed Safety Evaluation Results Across Labs\n\n**Problem:** Major AI labs (OpenAI, Anthropic, Google, Meta) conduct internal red-teaming and safety evaluations before deployment but publish only selective results in system cards and model cards. No systematic tool exists to compare what labs disclose about safety evaluations against standardized external benchmark results, revealing what kinds of safety information are routinely not disclosed.\n\n**Direction:** Collect all publicly available safety evaluation disclosures from model system cards and model cards for major frontier models (GPT-4o, Claude 3.x, Gemini 1.5/2.0, Llama 3.x). For each model, run the same model (or use published API) against a standardized evaluation suite (AILuminate public tier, StrongReject). Compare disclosed internal evaluation claims against externally measured results. Build a structured comparison table showing: metrics reported internally vs. externally, gaps in disclosure, consistency between self-reports and external measurements.\n\n**Why it matters:** The 'lab-to-deployment gap' open problem includes the transparency dimension: labs may have safety data they do not publish. Understanding the systematic patterns in what is and is not disclosed helps the research community identify which safety dimensions need more external scrutiny. This is directly relevant to AI governance and accountability.\n\n**Relevant context:** AILuminate v1.0 'negative predictive power only' limitation. MLCommons AILuminate was designed precisely to provide external evaluation independent of lab self-reports. CSET Georgetown 'AI Safety Evaluations: An Explainer': analysis of evaluation disclosure practices. AISI UK 'Early lessons from evaluating frontier AI systems' (blog 2025): transparency challenges. ResponsibleAILabs 2025 benchmark overview covers 15+ evaluation datasets but no cross-lab disclosure comparison tool."
+  },
+  {
+    "idea_id": "gen-1781",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:17:44Z",
+    "subfield": "Adversarial Robustness & Red-Teaming",
+    "generation_strategy": "tool_or_benchmark_gap",
+    "confidence": 0.81,
+    "body": "# Benchmark Saturation Detector: Identifying When Models Have Effectively 'Solved' a Safety Benchmark\n\n**Problem:** As models improve at safety, some benchmarks may become saturated \u2014 nearly all models score near the ceiling, making the benchmark useless for differentiating safety quality. Conversely, some benchmarks may be too hard (floor effects). No tool exists to automatically detect benchmark saturation or floor/ceiling effects across the current distribution of available models, which is necessary to know when a benchmark needs refreshing.\n\n**Direction:** Collect publicly available benchmark scores for 10\u201320 models across 3\u20135 major safety benchmarks (AILuminate, StrongReject, HarmBench, HELM Safety). For each benchmark, compute the score distribution across models: mean, variance, skewness. Apply a statistical test for ceiling effects (>80% of models scoring in the top 20% of the range) or floor effects. Flag benchmarks showing saturation. Track this over time if historical scores are available. Visualize as a benchmark health dashboard.\n\n**Why it matters:** A saturated benchmark provides no useful signal for evaluating or comparing new models. If researchers continue publishing results on saturated benchmarks, they are measuring noise rather than safety quality. Automatic saturation detection would prompt the research community to develop harder, more discriminating evaluations before the field invests heavily in gaming soft benchmarks.\n\n**Relevant context:** AILuminate v1.0 acknowledged 'considerable variance in test outcomes relative to actual behavior.' MLCommons leaderboard publicly reports model scores across multiple benchmarks, enabling distribution analysis. JailbreakBench NeurIPS 2024: maintains evolving prompts specifically to avoid saturation but no quantitative saturation metric. HELM Safety scores publicly available. The 2026 jailbreak survey notes that high-scoring models may be overfitting \u2014 saturation and overfitting are related phenomena."
+  },
+  {
+    "idea_id": "gen-1782",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:17:44Z",
+    "subfield": "Adversarial Robustness & Red-Teaming",
+    "generation_strategy": "tool_or_benchmark_gap",
+    "confidence": 0.86,
+    "body": "# Instruction Hierarchy Violation Benchmark: Measuring Whether Models Correctly Prioritize System vs. User vs. Tool Prompts\n\n**Problem:** Deployed LLMs operate under a hierarchy of instructions: system prompt (operator level) > user prompt > tool/environment outputs. When these conflict, models should prioritize higher-level instructions. No standardized benchmark measures how reliably models maintain this hierarchy under adversarial conditions where lower-level prompts attempt to override higher-level ones.\n\n**Direction:** Build a 3-level conflict benchmark with 60\u201390 test cases: (A) user prompt contradicts system prompt on safety-relevant behavior, (B) tool output contains instructions that contradict system prompt, (C) injected content in retrieved documents contradicts both. For each conflict type, measure whether the model correctly prioritizes the higher-level instruction. Compare across models with different RLHF training (Claude, GPT-4o, Llama). Report an 'Instruction Hierarchy Fidelity Score' per model and conflict type.\n\n**Why it matters:** Correct instruction hierarchy enforcement is a foundational safety property for deployed LLM systems. Operators set system prompts to constrain model behavior; if users or environmental inputs can override these constraints, the entire operator-level safety architecture is undermined. This is particularly critical for enterprise deployments where operators establish safety guardrails that must not be bypassable by end users.\n\n**Relevant context:** MCP protocol security (arxiv 2601.17549): instruction hierarchy violations via tool-integrated agents. ASB ICLR 2025: multi-scenario agent safety but without explicit instruction-hierarchy violation measurement. OWASP Top 10 for Agentic Applications (Dec 2025): instruction hierarchy violations in top-10 risks. Prompt injection landscape paper (arxiv 2602.10453): taxonomy includes authority escalation attacks. OpenAI system card and Anthropic model card both describe instruction hierarchy as a key safety mechanism but no independent benchmark validates it."
+  },
+  {
+    "idea_id": "gen-1783",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:17:44Z",
+    "subfield": "Mechanistic Interpretability",
+    "generation_strategy": "cross_domain_transfer",
+    "confidence": 0.82,
+    "body": "# Delta Debugging for Minimal Circuit Identification\n\n**Problem:** Discovered circuits in transformers are often large and contain many redundant components. It is unclear which subset of attention heads and MLP layers is truly necessary for a behavior, making circuits hard to interpret.\n\n**Direction:** Import delta debugging from software testing: iteratively remove components (heads, layers, neurons) from a candidate circuit while checking whether the target behavior is preserved, converging on a 1-minimal circuit that still reproduces the behavior. Implement this as a wrapper around TransformerLens activation patching.\n\n**Why it matters:** Minimal circuits are easier to interpret and write up. Delta debugging provides a principled, automated shrinking procedure that does not require manual inspection, lowering the barrier for student researchers to find clean mechanistic stories.\n\n**Relevant context:** Delta debugging (Zeller 1999) finds minimal failure-inducing inputs by binary search over subsets. DelBugV already applies it to DNN verifiers. TransformerLens supports arbitrary head/layer ablation, making this directly implementable."
+  },
+  {
+    "idea_id": "gen-1784",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:17:44Z",
+    "subfield": "Mechanistic Interpretability",
+    "generation_strategy": "cross_domain_transfer",
+    "confidence": 0.79,
+    "body": "# Mutation Testing for Circuit Robustness Scoring\n\n**Problem:** Mechanistic interpretability circuits are discovered on a narrow set of prompts. It is unknown how robust a circuit is: whether small changes to input phrasing break the claimed mechanism.\n\n**Direction:** Adapt mutation testing from software engineering: systematically mutate inputs (swap synonyms, reorder tokens, change surface form) and measure how often the circuit still executes the same internal algorithm. Circuits that survive many mutations receive a high robustness score.\n\n**Why it matters:** Robustness scoring gives practitioners a quantitative handle on generalization of discovered circuits, addressing a key criticism that mech interp findings may not generalize. A student can implement this in ~100 lines using TransformerLens and a small synonym dictionary.\n\n**Relevant context:** DeepMutation (2018) applied mutation operators to DNN weights. Here the mutations are on inputs, analogous to source-level mutation testing used to assess test suite quality. The 2025 ACM survey on failure analysis in AI systems notes this gap."
+  },
+  {
+    "idea_id": "gen-1785",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:17:44Z",
+    "subfield": "Mechanistic Interpretability",
+    "generation_strategy": "cross_domain_transfer",
+    "confidence": 0.77,
+    "body": "# Program Slicing for Token-Level Information Flow\n\n**Problem:** Attribution graphs show which features causally affect outputs, but the full computation graph is dense. It is hard to extract the minimal set of token positions and layers responsible for a single predicted token.\n\n**Direction:** Apply program slicing (backward slicing from the output logit) through the residual stream: starting from the final logit, trace back only the components that have nonzero causal effect (via activation patching), discarding irrelevant paths. The result is a 'program slice' \u2014 a sparse subgraph of the transformer.\n\n**Why it matters:** Program slicing is a mature technique from software analysis for reducing a program to only the statements relevant to a variable of interest. Applying it layer-by-layer through a transformer could yield cleaner, sparser explanations than full attribution graphs, which currently succeed on only ~25% of prompts (Anthropic 2025).\n\n**Relevant context:** Static/dynamic program slicing is a standard software engineering technique. Relevance Patching (RelP, 2025) and causal tracing share philosophical similarity but do not explicitly implement slicing semantics."
+  },
+  {
+    "idea_id": "gen-1786",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:17:44Z",
+    "subfield": "Mechanistic Interpretability",
+    "generation_strategy": "cross_domain_transfer",
+    "confidence": 0.72,
+    "body": "# Flow Cytometry Gating for SAE Feature Subpopulation Discovery\n\n**Problem:** Sparse autoencoder (SAE) dictionaries contain thousands of features. Practitioners lack principled methods to identify which features belong to a coherent functional subpopulation (e.g., 'all features related to factual recall').\n\n**Direction:** Import flow cytometry gating: define bivariate threshold gates on pairs of SAE feature activation statistics (mean activation, max activation, co-activation rate) to sequentially isolate subpopulations of features, analogous to how immunologists gate cell types by marker expression.\n\n**Why it matters:** Flow cytometry gating is a validated, interpretable clustering approach used to separate millions of cells into functional subtypes. Applying it to SAE feature spaces could help researchers systematically characterize feature populations without manual inspection of thousands of features.\n\n**Relevant context:** Gemma Scope 2 (DeepMind, Dec 2025) provides large SAE dictionaries for Gemma 3. SAELens provides feature activation data. Flow cytometry gating is formalized in bioinformatics tools like FlowSOM and DeepCyTOF."
+  },
+  {
+    "idea_id": "gen-1787",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:17:44Z",
+    "subfield": "Mechanistic Interpretability",
+    "generation_strategy": "cross_domain_transfer",
+    "confidence": 0.74,
+    "body": "# Epidemiological R0 for Concept Spreading Across Layers\n\n**Problem:** It is unclear how strongly a concept encoded in an early layer 'infects' later layers \u2014 does information about a token's entity type spread widely or stay localized?\n\n**Direction:** Borrow the epidemiological basic reproduction number R0: define an 'information R0' for a SAE feature as the average number of later-layer features it causally activates (via attribution patching). Features with R0 > 1 are 'super-spreading' concepts; features with R0 < 1 are local. Map these across layers for a model.\n\n**Why it matters:** Epidemiological framing gives an intuitive, quantitative measure of how pervasively a concept propagates through the network. Super-spreading features may be especially important for safety-relevant behaviors (e.g., a 'deception' feature that activates many downstream features).\n\n**Relevant context:** Anthropic's attribution graphs (March 2025) already trace feature-to-feature causality. R0 is a standard quantity in SIR epidemic models. The Stream algorithm (Oct 2025) enables efficient attention analysis needed for large-scale attribution."
+  },
+  {
+    "idea_id": "gen-1788",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:17:44Z",
+    "subfield": "Mechanistic Interpretability",
+    "generation_strategy": "cross_domain_transfer",
+    "confidence": 0.8,
+    "body": "# Dose-Response Curves for Feature Activation Thresholds\n\n**Problem:** It is unclear how sensitive model behaviors are to the magnitude of a feature's activation \u2014 does a feature need to be strongly active to affect the output, or is any activation sufficient?\n\n**Direction:** Import the pharmacological dose-response curve: systematically vary the steering magnitude of a SAE feature (the 'dose') by activation addition and measure the probability of the target behavior (the 'response'). Fit a Hill equation to extract EC50 (half-maximal effective concentration), Hill coefficient (steepness), and Emax (maximum effect).\n\n**Why it matters:** Dose-response analysis reveals whether features act as binary switches or graded modulators, and identifies therapeutic windows analogous to pharmacology. This quantification could standardize how researchers report the causal strength of features.\n\n**Relevant context:** Activation addition / steering vectors are established in mech interp. Hill equations are the standard dose-response model in pharmacology. The Hill coefficient also measures cooperativity \u2014 relevant if multiple features must co-activate."
+  },
+  {
+    "idea_id": "gen-1789",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:17:44Z",
+    "subfield": "Mechanistic Interpretability",
+    "generation_strategy": "cross_domain_transfer",
+    "confidence": 0.68,
+    "body": "# Stratigraphic Column Analysis of the Residual Stream\n\n**Problem:** The residual stream accumulates representations across layers, but it is unclear how the 'deposit' from each layer relates to what was present before \u2014 whether each layer adds genuinely new information or mostly refines existing content.\n\n**Direction:** Treat transformer layers as geological strata: compute the cosine similarity between residual stream states at consecutive layers and define a 'deposition rate' (norm of the layer's contribution) and 'erosion rate' (degree to which earlier information is suppressed). Plot a stratigraphic column visualizing information accumulation per layer per concept.\n\n**Why it matters:** Geology's stratigraphic framework provides a spatial-temporal vocabulary for understanding layer-by-layer computation. This could reveal 'unconformities' \u2014 layers that dramatically reset rather than refine representations \u2014 which may correspond to phase transitions in computation.\n\n**Relevant context:** The logit lens and tuned lens already project residual stream states to vocabulary space. The residual stream norm analysis is a standard TransformerLens diagnostic. Stratigraphic unconformities are a geology concept for gaps in the rock record."
+  },
+  {
+    "idea_id": "gen-1790",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:17:44Z",
+    "subfield": "Mechanistic Interpretability",
+    "generation_strategy": "cross_domain_transfer",
+    "confidence": 0.65,
+    "body": "# Musical Voice Leading Analysis of Attention Head Coordination\n\n**Problem:** Multiple attention heads operate in parallel within a layer, but their functional coordination is not well understood. Do they act independently, or do they interact in structured ways analogous to harmony?\n\n**Direction:** Apply music theory's voice leading framework: treat each attention head as a 'voice' and define 'harmonic consonance' as heads attending to the same token and 'dissonance' as heads attending to conflicting tokens. Measure whether heads follow smooth motion (attending to nearby tokens) or contrary motion (attending to opposite ends of context). Correlate these patterns with task performance.\n\n**Why it matters:** Voice leading rules were developed over centuries to describe stable, interpretable multi-voice coordination. If attention heads follow analogous principles, this suggests emergent coordination rules that could be used to predict or audit model behavior.\n\n**Relevant context:** Research on the Harmony Transformer shows attention heads form distinct harmonic patterns in music analysis. TransformerLens provides per-head attention patterns. A 2025 ScienceDirect paper surveys attention head taxonomy in LLMs."
+  },
+  {
+    "idea_id": "gen-1791",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:17:44Z",
+    "subfield": "Mechanistic Interpretability",
+    "generation_strategy": "cross_domain_transfer",
+    "confidence": 0.78,
+    "body": "# Cognitive Load Tracing for Prompt Complexity Analysis\n\n**Problem:** It is unclear why some prompts cause models to use more computation (more heads activate, more features fire) than others. There is no principled framework for quantifying computational demand from an input.\n\n**Direction:** Import Cognitive Load Theory: define Intrinsic Load as the inherent difficulty of the task (measured by SAE feature count active on task tokens), Extraneous Load as computation wasted on irrelevant features (measured by non-task-related feature activations), and Germane Load as schema-formation (measured by novel feature combinations). Use these three metrics to profile prompts.\n\n**Why it matters:** Cognitive load profiling could predict which prompts are most likely to cause errors or unsafe behavior \u2014 high extraneous load may indicate the model is 'confused.' The framework is well-specified enough that a student can operationalize each metric using SAELens activation data.\n\n**Relevant context:** A 2025 arXiv paper (Cognitive Load Traces) directly maps Cognitive Load Theory onto transformer dynamics, validating the analogy. SAELens provides feature activation data needed to compute the metrics."
+  },
+  {
+    "idea_id": "gen-1792",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:17:44Z",
+    "subfield": "Mechanistic Interpretability",
+    "generation_strategy": "cross_domain_transfer",
+    "confidence": 0.73,
+    "body": "# Pharmacokinetic Clearance Modeling for Feature Activation Decay\n\n**Problem:** When a concept is introduced early in a prompt, its representation may persist or fade across subsequent layers and token positions. The dynamics of this 'clearance' are poorly understood.\n\n**Direction:** Borrow pharmacokinetics: model the activation strength of a SAE feature across layers as a concentration-time curve. Fit a one- or two-compartment PK model to extract a 'half-life' (number of layers before activation drops 50%) and 'volume of distribution' (how many residual stream dimensions the feature occupies). Compare clearance rates across feature types.\n\n**Why it matters:** Understanding how quickly concept activations decay could explain why models lose track of earlier context. Features with slow clearance (long half-life) are candidates for persistent context representations; fast-clearing features may be transient signals.\n\n**Relevant context:** PK modeling is standard in drug development. The logit lens and residual stream decomposition in TransformerLens provide the activation-vs-layer curves needed. SAE features provide clean, monosemantic signals to track."
+  },
+  {
+    "idea_id": "gen-1793",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:17:45Z",
+    "subfield": "Mechanistic Interpretability",
+    "generation_strategy": "cross_domain_transfer",
+    "confidence": 0.81,
+    "body": "# Fault Injection Testing for Identifying Critical Circuit Nodes\n\n**Problem:** Not all neurons and heads contribute equally to a circuit. Current methods identify which components are part of a circuit but do not rank their criticality in terms of sensitivity to corruption.\n\n**Direction:** Adapt hardware fault injection: inject synthetic faults (zero-out, random noise, bit-flip analog) into individual components of a discovered circuit and measure the degradation in output quality. Rank components by their fault sensitivity to identify single-points-of-failure in the circuit \u2014 the mechanistic equivalent of safety-critical code paths.\n\n**Why it matters:** Safety-critical systems engineering prioritizes identifying single-points-of-failure. Applying this to transformer circuits could reveal which nodes, if corrupted (by adversarial inputs or fine-tuning), cause the most dramatic behavioral changes \u2014 directly relevant to model robustness and safety.\n\n**Relevant context:** TorchFI and TensorFI2 are established fault injection frameworks for DNNs. The concept maps naturally to activation patching in TransformerLens. The 2025 ACM survey on failure analysis in AI systems reviews existing approaches."
+  },
+  {
+    "idea_id": "gen-1794",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:17:45Z",
+    "subfield": "Mechanistic Interpretability",
+    "generation_strategy": "cross_domain_transfer",
+    "confidence": 0.76,
+    "body": "# Trophic Level Analysis of Feature Hierarchy in Attribution Graphs\n\n**Problem:** Attribution graphs show feature-to-feature causality but provide no summary of the overall hierarchical structure \u2014 it is unclear which features are 'primary producers' (input-driven) versus 'apex predators' (output-determining).\n\n**Direction:** Import ecology's trophic level concept: compute the trophic level of each SAE feature as 1 + the average trophic level of its causal inputs in the attribution graph. Features activated directly by token embeddings get level 1; features that only activate features of other features get higher levels. Analyze whether safety-relevant features cluster at particular trophic levels.\n\n**Why it matters:** Trophic analysis provides a single scalar summary of a feature's position in the causal hierarchy, enabling ranking and filtering without manual graph inspection. Identifying high-trophic features could help focus safety research on the most 'downstream' decision-making representations.\n\n**Relevant context:** Anthropic's attribution graphs (2025) provide the feature causality data. Trophic levels are computed from adjacency matrices in ecology \u2014 straightforward to adapt. SAELens and TransformerLens provide the infrastructure."
+  },
+  {
+    "idea_id": "gen-1795",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:17:45Z",
+    "subfield": "Mechanistic Interpretability",
+    "generation_strategy": "cross_domain_transfer",
+    "confidence": 0.72,
+    "body": "# Contagion Threshold Analysis for Feature Co-activation Cascades\n\n**Problem:** It is unknown whether there exist 'tipping point' combinations of features whose co-activation triggers a cascade of further activations, potentially leading to emergent behaviors or unsafe outputs.\n\n**Direction:** Apply the network contagion threshold model (Watts 2002): treat each SAE feature as a node that activates if a threshold fraction of its input features are active. Estimate empirical thresholds from activation data and simulate which combinations of seed feature activations produce the largest downstream cascades.\n\n**Why it matters:** Cascade analysis could identify fragile combinations of features that, if triggered together, reliably produce unsafe behaviors \u2014 a form of circuit-level red-teaming that is more principled than random prompt search.\n\n**Relevant context:** Watts threshold model is standard in sociology and network science for modeling opinion cascades and adoption. SAE feature co-activation data from SAELens provides empirical basis. Attribution graphs from Anthropic 2025 give directional edges."
+  },
+  {
+    "idea_id": "gen-1796",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:17:45Z",
+    "subfield": "Mechanistic Interpretability",
+    "generation_strategy": "cross_domain_transfer",
+    "confidence": 0.83,
+    "body": "# Signal Detection Theory for Feature Detection Sensitivity\n\n**Problem:** SAE features activate to varying degrees across contexts. It is unclear whether a feature is genuinely detecting a concept or merely producing noisy activations, and current binary presence/absence analyses lose this nuance.\n\n**Direction:** Apply Signal Detection Theory (SDT) from psychophysics: for each SAE feature, compute d-prime (sensitivity) and criterion (response bias) by treating feature activations as detection events and using hand-labeled concept presence as ground truth. Plot ROC curves for feature reliability.\n\n**Why it matters:** SDT is the gold standard in psychophysics for separating true sensitivity from response bias. Applying it to SAE features would let researchers rigorously characterize feature reliability and identify features that are 'sensitive but biased' \u2014 high recall but low precision for a concept.\n\n**Relevant context:** SDT is a foundational framework in cognitive psychology. Probing classifiers in mech interp share similar goals but do not decompose sensitivity vs. bias. SAELens provides the activation distributions needed."
+  },
+  {
+    "idea_id": "gen-1797",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:17:45Z",
+    "subfield": "Mechanistic Interpretability",
+    "generation_strategy": "cross_domain_transfer",
+    "confidence": 0.8,
+    "body": "# Hierarchical Cluster Dendrogram of Attention Head Functions\n\n**Problem:** Attention heads are often analyzed individually, but there is no standard method to discover which heads form functional groups (e.g., 'all induction heads', 'all name-mover heads') automatically.\n\n**Direction:** Apply hierarchical clustering from taxonomy biology: compute pairwise functional distances between heads (using correlation of attention patterns across diverse prompts) and build a dendrogram. Cut at different heights to reveal coarse head families and fine-grained subfamilies, analogous to species classification.\n\n**Why it matters:** Biological taxonomy provides a principled, hierarchical vocabulary for describing diversity. A head dendrogram would give a structured map of the head 'ecosystem' in a model, making it easier to navigate and communicate discoveries without relying on ad-hoc naming.\n\n**Relevant context:** TransformerLens provides head attention patterns. Hierarchical clustering (scipy.cluster.hierarchy) is a standard Python tool accessible to intro-ML students. Known head types (induction, copy-suppression, name-mover) validate that functional clusters exist."
+  },
+  {
+    "idea_id": "gen-1798",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:17:45Z",
+    "subfield": "Mechanistic Interpretability",
+    "generation_strategy": "cross_domain_transfer",
+    "confidence": 0.67,
+    "body": "# Thermodynamic Free Energy Analogy for Representation Stability\n\n**Problem:** Some representations in the residual stream seem stable (robust to perturbation) while others are fragile. There is no principled measure of representational stability across contexts.\n\n**Direction:** Import statistical mechanics: define a 'free energy' for a representation as the negative log-probability of its activation pattern under a fitted distribution. Low free energy = stable, high-probability state; high free energy = unstable, rare configuration. Measure how free energy changes as a function of input perturbation to identify stable attractor states in the residual stream.\n\n**Why it matters:** Free energy is a theoretically grounded measure of stability with well-understood mathematical properties. Identifying stable attractors in the residual stream could reveal canonical computational states the model relies on, connecting mech interp to dynamical systems theory.\n\n**Relevant context:** Free energy concepts have been applied in neuroscience (Friston's free energy principle) and statistical mechanics. The residual stream can be modeled as a high-dimensional random variable. TransformerLens provides activation data for distribution fitting."
+  },
+  {
+    "idea_id": "gen-1799",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:17:45Z",
+    "subfield": "Mechanistic Interpretability",
+    "generation_strategy": "cross_domain_transfer",
+    "confidence": 0.85,
+    "body": "# Clinical Sensitivity and Specificity Audit of Probing Classifiers\n\n**Problem:** Probing classifiers are used to test whether a concept is linearly encoded in activations, but their classification accuracy is not decomposed into sensitivity (recall) and specificity (true negative rate), making it hard to assess whether a probe is genuinely detecting the concept or simply exploiting class imbalance.\n\n**Direction:** Import medical diagnostic test evaluation: report probing classifier performance using sensitivity, specificity, positive predictive value, negative predictive value, and likelihood ratios in addition to accuracy. Run probes on balanced vs. imbalanced datasets to check for Bayesian base-rate inflation.\n\n**Why it matters:** Medical diagnostics has a decades-long tradition of rigorous test evaluation that prevents overconfident claims from class imbalance. Adopting these standards in mech interp would raise the bar for probe-based claims about what a model 'knows,' reducing false positives in concept attribution.\n\n**Relevant context:** Probing classifiers are a core mech interp tool (logistic regression on activations). Medical diagnostic statistics are standard in epidemiology (sensitivity/specificity, ROC-AUC, PPV/NPV). The framework is trivially implementable with sklearn's classification_report."
+  },
+  {
+    "idea_id": "gen-1800",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:17:45Z",
+    "subfield": "Mechanistic Interpretability",
+    "generation_strategy": "cross_domain_transfer",
+    "confidence": 0.82,
+    "body": "# Network Centrality Measures for Identifying Key Circuit Nodes\n\n**Problem:** In discovered circuits, some nodes may be structurally more important than others, but importance is usually measured by causal effect on the output \u2014 not by structural position in the circuit graph.\n\n**Direction:** Apply social network analysis centrality measures (betweenness centrality, eigenvector centrality, PageRank) to the circuit graph, treating nodes as heads/features and edges as attribution weights. Compare structural centrality rankings to causal importance rankings from activation patching.\n\n**Why it matters:** In network science, high betweenness-centrality nodes are information bottlenecks \u2014 removing them disconnects the graph. Identifying such bottleneck heads or features in circuits could reveal which components are most safety-critical, and whether structurally central nodes are also causally important.\n\n**Relevant context:** NetworkX (Python) makes centrality computation trivial for intro-ML students. Attribution graphs from Anthropic 2025 provide the graph structure. PageRank is the basis of Google's original algorithm and is well-understood."
+  }
+]

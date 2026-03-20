@@ -1,0 +1,1002 @@
+[
+  {
+    "idea_id": "gen-0601",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:16:47Z",
+    "subfield": "Adversarial Robustness & Red-Teaming",
+    "generation_strategy": "follow_up_experiment",
+    "confidence": 0.86,
+    "body": "# Does shallow alignment depth predict vulnerability to decoding parameter attacks (temperature/top-p manipulation)?\n\n**Problem:** Qi et al. list decoding parameter attacks (high temperature, nucleus sampling) as another vulnerability explained by shallow alignment. However, the relationship between measured alignment depth (KL metric) and susceptibility to decoding attacks has not been empirically verified across models.\n\n**Direction:** For 5-6 small open-weight models with measured alignment depth scores (from KL curves), measure jailbreak ASR under three decoding conditions: greedy (baseline), high temperature (T=1.5, 2.0), and high top-p (p=0.99). Compute Spearman correlation between alignment depth score and ASR under each decoding regime. Control for model capability using MMLU scores.\n\n**Why it matters:** If shallow models are disproportionately vulnerable to decoding attacks, this is a low-cost, widely accessible jailbreak that requires no specialized tooling. Confirming the correlation validates the generality of the shallow alignment explanation beyond prefix/suffix attacks.\n\n**Relevant context:** Qi et al. (ICLR 2025) mention decoding attacks as a vulnerability category but do not run systematic correlation experiments. Temperature manipulation jailbreaks are easy to reproduce. All models and evaluations can run on Colab Pro."
+  },
+  {
+    "idea_id": "gen-0602",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:16:47Z",
+    "subfield": "Adversarial Robustness & Red-Teaming",
+    "generation_strategy": "follow_up_experiment",
+    "confidence": 0.88,
+    "body": "# Do activation-based detectors degrade on 'low-perplexity' natural-language jailbreaks vs. GCG adversarial suffixes?\n\n**Problem:** Activation-based probes are often trained on datasets that include high-perplexity adversarial suffixes (GCG). Natural-language jailbreaks (e.g., roleplay, hypothetical framing) have very different surface characteristics. Whether probe accuracy differs systematically between these two jailbreak types is unknown.\n\n**Direction:** Compile a balanced test set of: (a) GCG-style suffix jailbreaks (from JailbreakBench); (b) natural-language social-engineering jailbreaks (from StrongReject or AdvBench human-written set). Train a linear probe on a mix of both types. Measure per-category AUROC and confusion patterns. Analyze which activation features (via probe weights) distinguish the two categories.\n\n**Why it matters:** If probes are high-accuracy on GCG but miss natural-language jailbreaks, they provide a false sense of security for the most common real-world attacks. This directly addresses the lab-to-deployment gap open problem.\n\n**Relevant context:** JailbreakBench (NeurIPS 2024 Datasets) and StrongReject (NeurIPS 2024) together cover both adversarial and natural jailbreaks. The lab-to-deployment gap is a listed open problem in the subfield. Perplexity can be computed with the base model to stratify the test set."
+  },
+  {
+    "idea_id": "gen-0603",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:16:47Z",
+    "subfield": "Adversarial Robustness & Red-Teaming",
+    "generation_strategy": "follow_up_experiment",
+    "confidence": 0.87,
+    "body": "# Can a shallow-alignment depth audit identify which fine-tuning datasets caused shallowness?\n\n**Problem:** Shallow alignment likely results from properties of the RLHF / SFT training data, specifically that nearly all safety training examples begin with refusal first tokens. But which specific data properties drive shallowness has not been ablated.\n\n**Direction:** Fine-tune a base model (e.g., Llama-3.2-1B) on synthetic safety datasets with controlled first-token distributions: (a) all examples start with refusal tokens ('I cannot...'); (b) 50% start with refusal, 50% with safety-recovery continuations; (c) all examples have safety distributed across the full response. Measure alignment depth after each training variant. Compare ASR under prefilling attacks.\n\n**Why it matters:** Directly identifies the data-level fix for shallow alignment. If first-token concentration in training data drives shallowness, the fix is straightforward: diversify safety training response prefixes. This can directly inform safety data curation practices.\n\n**Relevant context:** Qi et al. (ICLR 2025) observe that 96% of Llama-2 safety responses start with 'I cannot' / 'I apologize', which they propose as a cause of shallowness. The gradient analysis paper (arXiv:2603.04851) provides theoretical support. Synthetic data generation is cheap via API."
+  },
+  {
+    "idea_id": "gen-0604",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:16:47Z",
+    "subfield": "Adversarial Robustness & Red-Teaming",
+    "generation_strategy": "follow_up_experiment",
+    "confidence": 0.85,
+    "body": "# Does multi-token prefilling (varying prefix length) reveal a critical threshold for bypassing alignment?\n\n**Problem:** The prefilling attack typically inserts a fixed short prefix ('Sure, here is'). It is unknown whether there is a critical prefix length beyond which the attack reliably succeeds, or whether longer compliance prefixes have diminishing returns \u2014 which would reveal how many tokens deep alignment actually needs to be.\n\n**Direction:** For a small aligned model and StrongReject harmful prompts, run prefilling attacks with compliance prefixes of lengths 1, 2, 3, 5, 10, and 20 tokens (varying the specific prefix tokens systematically). Measure ASR at each prefix length. Plot the ASR-vs-length curve and identify the inflection point where ASR plateaus. Repeat for 3 model families.\n\n**Why it matters:** The inflection point reveals the empirical 'depth' of alignment \u2014 how deep a defender needs to push alignment to resist prefilling attacks. This is the operational complement to the theoretical KL depth metric and can serve as a simple practical diagnostic.\n\n**Relevant context:** Qi et al. (ICLR 2025) use fixed-length prefixes in their experiments. The RAP attack (arXiv:2512.05518) extends prefilling but focuses on defeating defenses rather than characterizing thresholds. Varying prefix length experiments require only inference, no training."
+  },
+  {
+    "idea_id": "gen-0605",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:16:47Z",
+    "subfield": "Adversarial Robustness & Red-Teaming",
+    "generation_strategy": "follow_up_experiment",
+    "confidence": 0.88,
+    "body": "# Do activation-based jailbreak probes detect harmful intent before or after the harmful tokens are generated?\n\n**Problem:** Activation-based detectors are typically applied to the prompt (before generation). But whether the activation signal is already present at the prompt stage or only emerges during generation of the harmful response is not systematically studied \u2014 this determines whether probes can be used for pre-generation filtering.\n\n**Direction:** For a jailbroken model response, extract activations at: (a) the final prompt token (before any generation); (b) after generating 5 tokens; (c) after generating 20 tokens. Train separate linear probes at each extraction point and compare AUROC. Also compare using activations from input processing vs. early decoding steps for the same probe.\n\n**Why it matters:** If accurate detection requires seeing generated tokens, pre-generation filtering is insufficient and an output monitoring step is always required, increasing latency and cost. If prompt-stage activations suffice, a single pre-generation check catches most attacks.\n\n**Relevant context:** HiddenDetect (arXiv:2502.14744), JBShield (USENIX 2025), and related work apply probes at prompt time, but this assumption is rarely validated experimentally. Anthropic's cheap-monitors post explores input vs. output monitoring. All experiments require only inference-time activation extraction."
+  },
+  {
+    "idea_id": "gen-0606",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:16:47Z",
+    "subfield": "Adversarial Robustness & Red-Teaming",
+    "generation_strategy": "follow_up_experiment",
+    "confidence": 0.84,
+    "body": "# Is shallow alignment worse for instruction-tuned models vs. models fine-tuned with RLHF/RLAIF?\n\n**Problem:** Open-weight models use different alignment approaches (SFT only, SFT+RLHF, DPO, RLAIF). Whether the alignment training method affects alignment depth is unstudied, even though Qi et al.'s gradient analysis (arXiv:2603.04851) suggests RLHF specifically produces shallowness due to gradient signal concentration.\n\n**Direction:** Identify 4-6 models trained with different alignment methods (SFT-only, DPO, PPO/RLHF, RLAIF) at comparable scales from open model hubs. Measure alignment depth (KL divergence curves) and prefilling ASR for each. Construct a table of alignment method vs. depth score. Use publicly available model cards to identify the alignment method.\n\n**Why it matters:** If RLHF specifically causes shallow alignment while DPO or SFT does not, this would be a major finding for alignment training methodology. It would also provide practitioners with a simple recipe choice for deeper alignment.\n\n**Relevant context:** The gradient analysis paper (arXiv:2603.04851, ICLR 2026) provides a theoretical account of why RLHF produces shallowness. Open-weight models with known alignment procedures (Tulu, Zephyr-DPO, OpenHermes-SFT) are publicly available. All experiments require only inference and KL computation."
+  },
+  {
+    "idea_id": "gen-0607",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:16:47Z",
+    "subfield": "Adversarial Robustness & Red-Teaming",
+    "generation_strategy": "follow_up_experiment",
+    "confidence": 0.83,
+    "body": "# Can a simple activation anomaly score (without training a probe) detect jailbreaks?\n\n**Problem:** Training a linear probe requires labeled jailbreak data. An alternative is unsupervised anomaly detection on activations: if jailbreak prompts produce activation distributions that are outliers relative to benign prompts, no labeled data is needed. Whether this works comparably to supervised probes is untested.\n\n**Direction:** For a small model, collect activations from 500 benign prompts (benign subset of StrongReject / ShareGPT) and 500 jailbreak prompts. At each layer, compute per-dimension z-scores for jailbreak activations relative to the benign distribution. Use the L2 norm of the z-score vector as an anomaly score. Measure AUROC of this unsupervised score vs. a supervised linear probe trained on 50 labeled examples.\n\n**Why it matters:** An unsupervised detector that requires zero labeled jailbreak data would truly be 'almost free' in both cost and data requirements. If it works reasonably well, it could be deployed immediately on new models without data collection.\n\n**Relevant context:** Unsupervised anomaly detection on neural activations is standard in computer vision but rarely applied to LLM safety. JailDAM (arXiv:2504.03770) uses adaptive memory for zero-shot detection in vision-language models. Alert (arXiv:2601.03600) explores zero-shot detection via internal discrepancy. This is an accessible, novel comparison."
+  },
+  {
+    "idea_id": "gen-0608",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:16:47Z",
+    "subfield": "Adversarial Robustness & Red-Teaming",
+    "generation_strategy": "follow_up_experiment",
+    "confidence": 0.87,
+    "body": "# How does alignment depth change across a model's output sequence for different harm categories?\n\n**Problem:** Qi et al. measure alignment depth on aggregated harmful prompts, but different harm categories (violence, CSAM, disinformation, weapons) may have different depth profiles \u2014 e.g., the model may have learned deeper alignment for some categories than others due to uneven safety training data.\n\n**Direction:** Using StrongReject's 6 harm categories, compute alignment depth curves (KL per token position 1-20) separately for each category on a small aligned model. Compare the per-category depth profiles. Identify which categories have shallower alignment. Validate with prefilling ASR per category.\n\n**Why it matters:** Category-specific shallow alignment would reveal gaps in current safety training pipelines and identify which harm types are most immediately exploitable. This can directly inform targeted data augmentation for deeper alignment in vulnerable categories.\n\n**Relevant context:** StrongReject (arXiv:2402.10260) covers 6 harm categories: illegal goods, non-violent crimes, hate/discrimination, disinformation, violence, and sexual content. Qi et al. report aggregate depth scores. Per-category analysis requires the same KL computation but partitioned by harm type."
+  },
+  {
+    "idea_id": "gen-0609",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:16:47Z",
+    "subfield": "Adversarial Robustness & Red-Teaming",
+    "generation_strategy": "follow_up_experiment",
+    "confidence": 0.86,
+    "body": "# Does combining activation-based detection with a lightweight keyword filter outperform either alone?\n\n**Problem:** Activation-based detection is strong on semantic jailbreaks but may miss novel phrasing variations. Keyword-based filters catch known patterns but miss paraphrases. A simple ensemble has not been evaluated against either standalone approach on a diverse jailbreak benchmark.\n\n**Direction:** Implement three detectors: (a) a linear probe on last-layer activations; (b) a simple keyword/n-gram filter built from StrongReject's forbidden topics; (c) a logical-OR ensemble of both. Evaluate all three on JailbreakBench test set with 5 attack types (GCG, AutoDAN, human jailbreaks, prefilling, paraphrase). Measure AUROC, precision, recall, and false positive rate. Use a held-out benign set from ShareGPT for FPR estimation.\n\n**Why it matters:** Ensembles may achieve better coverage at minimal cost. If the keyword filter catches cases the probe misses (e.g., high-perplexity GCG prompts) and the probe catches cases the filter misses (e.g., semantic paraphrases), the combination could be a practical low-cost production baseline.\n\n**Relevant context:** Efficient jailbreak mitigation via semantic linear classification in multi-stage pipelines (arXiv:2512.19011) explores staged approaches. Both keyword filtering and linear probing are computationally trivial. JailbreakBench covers multiple attack types in a standardized framework."
+  },
+  {
+    "idea_id": "gen-0610",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:16:47Z",
+    "subfield": "Adversarial Robustness & Red-Teaming",
+    "generation_strategy": "follow_up_experiment",
+    "confidence": 0.85,
+    "body": "# Does shallow alignment manifest differently in chain-of-thought vs. direct-answer models?\n\n**Problem:** Models that generate chain-of-thought reasoning before answering have a different first-token distribution \u2014 the first token is a reasoning token, not a direct refusal or compliance token. Whether shallow alignment applies in the same way to reasoning models (which may refuse inside the chain-of-thought rather than as the first token) is unstested.\n\n**Direction:** Select a small model fine-tuned for chain-of-thought reasoning (e.g., a distilled reasoning model or a standard model prompted with 'Think step by step'). Measure alignment depth using KL curves for harmful prompts in both direct-answer and chain-of-thought modes. Test whether prefilling attacks ('Sure, here is') are still effective when the model is prompted to reason first. Compare depth profiles in both modes.\n\n**Why it matters:** Reasoning models are increasingly common (GPT-o1, DeepSeek-R1, Qwen-QwQ). If chain-of-thought naturally deepens alignment by interposing reasoning tokens before the answer, it could be a no-cost alignment depth improvement. Conversely, if attacks can target the reasoning segment, a new attack surface is exposed.\n\n**Relevant context:** Qi et al. (ICLR 2025) test direct-answer models. Deep safety alignment requires thinking (openreview.net GpBo97z6GH) specifically studies reasoning models and alignment. Small reasoning-capable models are available on HuggingFace. Chain-of-thought prompting requires no fine-tuning."
+  },
+  {
+    "idea_id": "gen-0611",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:16:47Z",
+    "subfield": "Adversarial Robustness & Red-Teaming",
+    "generation_strategy": "failure_mode_investigation",
+    "confidence": 0.92,
+    "body": "# Mapping the Token Depth Boundary of Safety Alignment Across Model Families\n\n**Problem:** Qi et al. (ICLR 2025) showed safety alignment is concentrated in the first few output tokens, but the exact token depth at which alignment 'kicks in' and how this varies across model families (Llama, Mistral, Phi) is uncharacterized.\n\n**Direction:** Force models to output forced prefixes of increasing length (1, 2, 3, 5, 10 tokens), then measure at what prefix length harmful content generation drops. Use a small set of ~50 HarmBench prompts with prefilling via the Ollama or HuggingFace API. Plot ASR vs. prefix depth per model to map the boundary.\n\n**Why it matters:** If safety alignment only covers the first 2-3 tokens in some models but 10+ in others, that gap directly informs how much effort fine-tuning defenses need to invest. A cheap mapping experiment could guide defense prioritization across the open-source model ecosystem.\n\n**Relevant context:** Qi et al. ICLR 2025 (arxiv 2406.05946) established the shallow alignment phenomenon. Prefilling attacks exploit this by injecting 'Sure, here is...' as a forced assistant prefix. The token-depth boundary has not been systematically mapped across model families."
+  },
+  {
+    "idea_id": "gen-0612",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:16:47Z",
+    "subfield": "Adversarial Robustness & Red-Teaming",
+    "generation_strategy": "failure_mode_investigation",
+    "confidence": 0.88,
+    "body": "# Does Shallow Alignment Persist After Instruction Fine-Tuning on Benign Data?\n\n**Problem:** Fine-tuning on even benign data has been shown to degrade safety alignment. It is unclear whether fine-tuning specifically amplifies shallow alignment (concentrating safety even more into the first token) or spreads it deeper.\n\n**Direction:** Take a safety-aligned base model (e.g., Llama-3-8B-Instruct), fine-tune it on a benign coding dataset for 1-3 epochs using LoRA, then re-run the token-depth boundary experiment from the Qi et al. protocol. Compare before/after ASR curves by token position.\n\n**Why it matters:** Many real deployments fine-tune aligned models on domain data. If benign fine-tuning makes shallow alignment shallower, this is an underappreciated deployment risk. If it deepens alignment, that's an actionable finding for practitioners.\n\n**Relevant context:** Qi et al. ICLR 2025 showed fine-tuning attacks exploit shallow alignment. 'No, of Course I Can!' (OpenReview QzIQgloYgX) introduced refuse-then-comply strategies. The interaction between benign fine-tuning and alignment depth is not well characterized."
+  },
+  {
+    "idea_id": "gen-0613",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:16:47Z",
+    "subfield": "Adversarial Robustness & Red-Teaming",
+    "generation_strategy": "failure_mode_investigation",
+    "confidence": 0.9,
+    "body": "# Characterizing the Minimum Effective Prefill String Length for Jailbreaking\n\n**Problem:** Prefilling attacks inject an assistant prefix (e.g., 'Sure, here is a step-by-step guide:') to bypass refusals. The minimal prefix length required to achieve a high ASR is unknown\u2014whether one token suffices or whether longer strings are needed.\n\n**Direction:** Systematically test prefill strings of 1, 2, 4, 8, and 16 tokens (ranging from 'Sure' to a full compliant sentence) across 3 models and 50 harmful prompts. Measure ASR at each length. Identify the inflection point and whether longer prefills improve ASR monotonically.\n\n**Why it matters:** API providers that block only obviously harmful prefixes may still be vulnerable to minimal single-token prefills. Knowing the minimum effective length informs what prefix-length filtering thresholds are needed.\n\n**Relevant context:** Prefill-Based Jailbreak (arxiv 2504.21038) showed optimized prefilling exceeds 99% ASR. Static prefilling with 'Sure' already achieves high rates on Claude models. The minimum effective length has not been ablated."
+  },
+  {
+    "idea_id": "gen-0614",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:16:47Z",
+    "subfield": "Adversarial Robustness & Red-Teaming",
+    "generation_strategy": "failure_mode_investigation",
+    "confidence": 0.87,
+    "body": "# Probing Whether Activation-Based Jailbreak Detectors Generalize Across Attack Types\n\n**Problem:** Activation-based jailbreak detectors (e.g., the 'almost free' detector from EMNLP 2025) are trained on specific jailbreak types. Whether a probe trained on GCG suffix attacks also detects prefilling attacks or multi-turn Crescendo attacks is not known.\n\n**Direction:** Train a linear probe on LLM residual stream activations for one attack class (e.g., GCG suffixes). Test it zero-shot on prompts from 2-3 other attack classes (prefilling, multi-turn, role-play). Measure AUROC per attack class. Use a small open-source model (Llama-3-8B) and HarmBench prompts.\n\n**Why it matters:** If activation probes are attack-type-specific, defenders need separate probes per attack class\u2014a major deployment cost. If they generalize, a single cheap probe may suffice. This directly affects the viability of activation-based defenses.\n\n**Relevant context:** LLM Jailbreak Detection for (Almost) Free (arxiv 2509.14558, EMNLP 2025) demonstrated cheap activation-based detection. ALERT (arxiv 2601.03600) uses shallow-layer activations. Cross-attack generalization is not evaluated in either paper."
+  },
+  {
+    "idea_id": "gen-0615",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:16:47Z",
+    "subfield": "Adversarial Robustness & Red-Teaming",
+    "generation_strategy": "failure_mode_investigation",
+    "confidence": 0.85,
+    "body": "# At Which Transformer Layer Do Jailbreak Signals Become Detectable?\n\n**Problem:** Activation-based detectors use intermediate layer representations, but the specific layer at which jailbreak-vs-benign separation becomes reliable has not been ablated across model sizes. Detecting too early wastes nothing; detecting too late adds latency.\n\n**Direction:** Extract residual stream activations at every 4th transformer layer for jailbreak and benign prompts on Llama-3-8B. Train and evaluate a linear probe at each layer checkpoint. Plot AUROC vs. layer depth to identify the earliest reliable detection layer.\n\n**Why it matters:** Finding the earliest detection layer enables real-time, low-latency jailbreak interception. For production systems, detecting at layer 8 of 32 is dramatically cheaper than at layer 28. This finding could be directly actionable for system-level safety.\n\n**Relevant context:** ALERT (arxiv 2601.03600) performs early detection within shallow layers. The (Almost) Free detector (arxiv 2509.14558) uses a single forward pass with a lightweight classifier. The precise layer-by-layer AUROC curve has not been publicly mapped for modern instruction-tuned models."
+  },
+  {
+    "idea_id": "gen-0616",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:16:48Z",
+    "subfield": "Adversarial Robustness & Red-Teaming",
+    "generation_strategy": "failure_mode_investigation",
+    "confidence": 0.89,
+    "body": "# Does Chain-of-Thought Hijacking Work Because Safety Signal Dilutes with Token Count?\n\n**Problem:** H-CoT (arxiv 2502.12893) showed that prepending harmless reasoning before a harmful request drops refusal rates to near zero. The mechanistic cause\u2014whether it's token-count dilution of the safety signal or context-shift\u2014is not confirmed.\n\n**Direction:** Test three conditions on the same harmful prompt: (1) direct request, (2) prepended harmless reasoning of 50 tokens, (3) prepended harmless reasoning of 200 tokens. Compare ASR. Also test prepending random text (non-reasoning) at 50 and 200 tokens to isolate content vs. length effects.\n\n**Why it matters:** If it's purely length-based dilution, any long context prefix is a jailbreak vector\u2014a fundamental flaw. If it's specific to reasoning-style content, the fix is narrower. This mechanistic insight determines how hard the problem is to solve.\n\n**Relevant context:** H-CoT (arxiv 2502.12893) achieves near-0% refusal on o1/o3. Chain-of-Thought Hijacking (arxiv 2510.26418) notes 'the refusal mechanism relies on a fragile, low-dimensional safety signal that becomes diluted as reasoning grows longer.' The length vs. content hypothesis has not been directly ablated."
+  },
+  {
+    "idea_id": "gen-0617",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:16:48Z",
+    "subfield": "Adversarial Robustness & Red-Teaming",
+    "generation_strategy": "failure_mode_investigation",
+    "confidence": 0.86,
+    "body": "# Measuring How Many Turns of Crescendo Are Actually Needed\n\n**Problem:** Multi-turn Crescendo attacks gradually escalate toward harmful content. The number of turns required for success, and whether this varies by harm category, has not been systematically characterized.\n\n**Direction:** Implement Crescendo-style multi-turn escalation for 5 harm categories (bioweapons, self-harm, fraud, hate speech, CBRN) across 3 open-source models. Record the turn number at which the model first produces a policy-violating response. Plot turn-to-success distributions per category and model.\n\n**Why it matters:** If most jailbreaks succeed within 3 turns, current conversation-length limits in production systems may be insufficient even when set to 5 turns. If some harm categories require 10+ turns, that informs tiered conversation monitoring strategies.\n\n**Relevant context:** MultiBreak benchmark (OpenReview uJgfj5EJ2W) covers 7,152 multi-turn prompts. Giskard's analysis of Crescendo shows compounding disinhibition. The per-category turn distribution has not been reported in published work."
+  },
+  {
+    "idea_id": "gen-0618",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:16:48Z",
+    "subfield": "Adversarial Robustness & Red-Teaming",
+    "generation_strategy": "failure_mode_investigation",
+    "confidence": 0.84,
+    "body": "# Testing Whether Safety Refusals Are Overfit to Surface Keyword Patterns\n\n**Problem:** A well-known failure mode is that safety alignment may respond to surface lexical features (e.g., the word 'bomb') rather than semantic intent. Paraphrasing harmful requests to remove keywords sometimes bypasses filters while preserving identical intent.\n\n**Direction:** Create 50 harmful prompt pairs: original phrasing with triggering keywords and a semantically equivalent paraphrase with no flagged keywords. Test both versions on 3 models. Measure ASR difference. Also test inverse: benign prompts containing flagging keywords to measure false positive rate.\n\n**Why it matters:** If refusals are largely keyword-driven, the safety system provides false assurance\u2014any motivated user can paraphrase past it. Quantifying this gap exposes the delta between apparent safety and actual semantic understanding of harm.\n\n**Relevant context:** JailbreakBench (NeurIPS 2024 datasets track) noted that heuristic prefix-based evaluation overestimates ASR. GCG and other attack papers use paraphrasing as a baseline. The keyword-vs-semantic gap has been discussed qualitatively but not carefully ablated."
+  },
+  {
+    "idea_id": "gen-0619",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:16:48Z",
+    "subfield": "Adversarial Robustness & Red-Teaming",
+    "generation_strategy": "failure_mode_investigation",
+    "confidence": 0.83,
+    "body": "# Quantifying How Much GCG Suffix Transferability Degrades Across Model Size\n\n**Problem:** GCG adversarial suffixes transfer imperfectly across models, but whether larger models within the same family are more or less resistant to suffixes optimized on smaller models is not characterized.\n\n**Direction:** Optimize GCG suffixes on Llama-3-8B for 50 harmful prompts. Evaluate transfer to Llama-3-70B and Llama-3-405B (via API or quantized versions). Measure per-prompt ASR across sizes. Use existing GCG implementations (llm-attacks GitHub) to avoid coding the optimizer from scratch.\n\n**Why it matters:** If suffixes transfer from small to large models, an attacker with a single consumer GPU can generate jailbreaks for frontier models. If transfer drops at scale, large models have emergent resistance\u2014a theoretically interesting and practically relevant finding.\n\n**Relevant context:** Zollo et al. showed GCG cannot reliably transfer to proprietary models. AmpleGCG (OSU-NLP-Group) achieves 99% ASR on GPT-3.5 via transfer. The scaling relationship of within-family transfer is not characterized in published work."
+  },
+  {
+    "idea_id": "gen-0620",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:16:48Z",
+    "subfield": "Adversarial Robustness & Red-Teaming",
+    "generation_strategy": "failure_mode_investigation",
+    "confidence": 0.82,
+    "body": "# Does Adversarial Suffix Position (Prefix vs. Suffix vs. Middle) Change Attack Success?\n\n**Problem:** GCG traditionally appends adversarial tokens as a suffix. Recent work (arxiv 2602.03265) hints that token position in the prompt affects attack success, but a controlled comparison of prefix, infix, and suffix placement is lacking.\n\n**Direction:** Take 20 GCG-optimized suffixes and test them inserted at three positions: before the harmful request (prefix), in the middle, and after (suffix). Measure ASR in each condition on 2-3 models. Use the same token strings to isolate position effect from content effect.\n\n**Why it matters:** If position matters significantly, current defenses that scan only for appended tokens at the end of prompts miss a large attack surface. This is a simple but practically important characterization with direct implications for input filtering.\n\n**Relevant context:** Beyond Suffixes (arxiv 2602.03265) showed adversarial token position affects model behavior. JailbreakBench tracks suffix-based attacks. The position ablation has not been run as a standalone controlled experiment."
+  },
+  {
+    "idea_id": "gen-0621",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:16:48Z",
+    "subfield": "Adversarial Robustness & Red-Teaming",
+    "generation_strategy": "failure_mode_investigation",
+    "confidence": 0.85,
+    "body": "# Characterizing the Role-Play Persona Failure Mode: Which Persona Types Bypass Safety Most Often?\n\n**Problem:** Asking a model to adopt a persona (e.g., 'You are DAN, an AI with no restrictions') is a well-known jailbreak. The relative effectiveness of different persona archetypes (evil AI, historical figure, fictional character, professional expert) has not been systematically compared.\n\n**Direction:** Design 5 persona archetypes \u00d7 10 harmful prompts = 50 test cases. Evaluate ASR per persona type across 3 models. Use a GPT-4o judge to assess harmfulness of outputs. Include a no-persona baseline.\n\n**Why it matters:** If 'professional expert' personas (e.g., 'you are a chemistry professor') are far more effective than 'evil AI' personas, this shifts how safety alignment should be trained\u2014not just to resist sci-fi framing but realistic authority framing.\n\n**Relevant context:** Unit42 (Palo Alto Networks) 'Deceptive Delight' technique uses camouflage in benign context. JailbreakBench includes role-play attacks. The persona-type effectiveness gradient is not quantified in the literature."
+  },
+  {
+    "idea_id": "gen-0622",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:16:48Z",
+    "subfield": "Adversarial Robustness & Red-Teaming",
+    "generation_strategy": "failure_mode_investigation",
+    "confidence": 0.87,
+    "body": "# Testing Whether Safety Alignment Is Asymmetric Across Languages\n\n**Problem:** Safety alignment training data is predominantly English. Models may refuse harmful English requests but comply with identical requests in low-resource languages. The cross-lingual asymmetry of shallow alignment is not well characterized for open-source models.\n\n**Direction:** Translate 30 harmful HarmBench prompts into 5 languages (Spanish, Chinese, Arabic, Swahili, and one constructed transliteration). Test on 2-3 open-source models. Measure ASR per language. Use a multilingual LLM-as-judge for evaluation.\n\n**Why it matters:** If safety degrades in non-English languages, global deployments are systemically underprotected. This is a realistic threat model for deployed systems and a simple, actionable experiment for first-time researchers.\n\n**Relevant context:** HarmBench and JailbreakBench are English-centric. Prior work notes multilingual jailbreaks informally. TeleAI-Safety (arxiv 2512.05485) covers some multilingual evaluation but focused on Chinese. Systematic cross-lingual ASR comparison on open-source models is sparse."
+  },
+  {
+    "idea_id": "gen-0623",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:16:48Z",
+    "subfield": "Adversarial Robustness & Red-Teaming",
+    "generation_strategy": "failure_mode_investigation",
+    "confidence": 0.81,
+    "body": "# Investigating Whether Low Temperature Increases or Decreases Jailbreak Susceptibility\n\n**Problem:** Qi et al. noted decoding parameter attacks as a known failure mode. Temperature affects the probability mass on harmful first tokens, but it is unclear whether low temperature (greedy) or high temperature (sampling) increases jailbreak ASR across attack types.\n\n**Direction:** Run 3 attack types (prefilling, GCG suffix, direct harmful prompt) at temperatures 0, 0.5, 1.0, 1.5 on 2 models \u00d7 30 prompts. Measure ASR and also measure output toxicity score (using a Perspective API or Detoxify). Plot ASR vs. temperature surface.\n\n**Why it matters:** Production systems often use low temperatures for reliability. If low temperature increases jailbreak vulnerability (by committing more strongly to a harmful first token), that represents an underappreciated alignment-reliability tradeoff.\n\n**Relevant context:** Qi et al. ICLR 2025 listed decoding parameter attacks as one mechanism enabled by shallow alignment. Temperature effects on safety outputs are discussed qualitatively in the paper but not empirically ablated separately."
+  },
+  {
+    "idea_id": "gen-0624",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:16:48Z",
+    "subfield": "Adversarial Robustness & Red-Teaming",
+    "generation_strategy": "failure_mode_investigation",
+    "confidence": 0.84,
+    "body": "# Measuring Safety Degradation Under Repeated Benign-Looking Fine-Tuning Rounds\n\n**Problem:** A single round of benign fine-tuning can degrade safety alignment. Whether repeated rounds of small benign fine-tuning (simulating iterative product development) cause cumulative or diminishing degradation is unknown.\n\n**Direction:** Fine-tune a safety-aligned model (e.g., Mistral-7B-Instruct) on a benign coding dataset for 3 sequential 500-step LoRA runs. After each round, evaluate ASR on 30 harmful prompts. Plot the cumulative safety degradation curve.\n\n**Why it matters:** Product teams commonly iterate on fine-tuned models. If safety degrades cumulatively in small increments that individually seem acceptable, teams may inadvertently erode safety without triggering any single-round red flag.\n\n**Relevant context:** Qi et al. ICLR 2025 showed a single benign fine-tuning round degrades safety. 'Unforgotten Safety' (arxiv 2512.10150) examines preserving alignment through fine-tuning. The cumulative multi-round trajectory is not characterized."
+  },
+  {
+    "idea_id": "gen-0625",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:16:48Z",
+    "subfield": "Adversarial Robustness & Red-Teaming",
+    "generation_strategy": "failure_mode_investigation",
+    "confidence": 0.82,
+    "body": "# Are Jailbreak Attacks More Effective on Longer or Shorter System Prompts?\n\n**Problem:** Production deployments use system prompts of varying lengths to set behavior. Whether longer, more detailed system prompts provide more or less jailbreak resistance\u2014and whether this varies by attack type\u2014is an uninvestigated failure mode.\n\n**Direction:** Test 3 attack types on the same base model with: (1) no system prompt, (2) a 1-sentence safety instruction, (3) a 10-sentence detailed policy, and (4) a 50-sentence exhaustive safety policy. Measure ASR per condition across 30 harmful prompts.\n\n**Why it matters:** If longer system prompts actually reduce safety by creating more context for the model to 'reason around', deployers may be making themselves more vulnerable. This is directly actionable for API-based deployment teams.\n\n**Relevant context:** Multi-turn jailbreaks exploit context drift. Prefilling attacks shift the response state regardless of system prompt. Giskard's analysis notes that long system prompts can be exploited via prompt injection. A controlled ablation on system prompt length vs. ASR is absent from the literature."
+  },
+  {
+    "idea_id": "gen-0626",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:16:48Z",
+    "subfield": "Adversarial Robustness & Red-Teaming",
+    "generation_strategy": "failure_mode_investigation",
+    "confidence": 0.86,
+    "body": "# Testing Whether Activation Probes Can Distinguish Jailbreak Attempts from Legitimate Edge-Case Requests\n\n**Problem:** Activation-based jailbreak detectors may have high false positive rates on legitimate but unusual requests (e.g., medical professionals asking about drug interactions, security researchers asking about exploits). This failure mode could make detectors impractical.\n\n**Direction:** Collect 50 'legitimate edge-case' prompts (medical, legal, security research) alongside 50 jailbreak prompts and 50 clearly benign prompts. Train an activation probe on benign vs. jailbreak and measure false positive rate on the edge-case set. Compare to a keyword-based baseline.\n\n**Why it matters:** If activation detectors have high false positive rates on legitimate professional queries, they cannot be deployed without damaging user experience. Quantifying this tradeoff is essential for assessing practical viability of activation-based safety.\n\n**Relevant context:** LLM Jailbreak Detection for (Almost) Free (arxiv 2509.14558) demonstrates low-cost detection. False positive rates on legitimate edge cases are rarely reported in detection papers. This is a known practical concern for production safety teams."
+  },
+  {
+    "idea_id": "gen-0627",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:16:48Z",
+    "subfield": "Adversarial Robustness & Red-Teaming",
+    "generation_strategy": "failure_mode_investigation",
+    "confidence": 0.83,
+    "body": "# Investigating Whether the 'Refuse-Then-Comply' Attack Transfers Across Model Families\n\n**Problem:** The 'refuse-then-comply' fine-tuning attack (OpenReview QzIQgloYgX) achieved 57-72% ASR on GPT-4o and Claude by training models to first refuse then produce harmful content. Whether this pattern transfers to open-source models without fine-tuning is unknown.\n\n**Direction:** Test whether prompting open-source models to 'first explicitly refuse, then provide the information anyway' (without fine-tuning) elicits the comply pattern. Measure ASR across 3 models and 30 prompts. Compare to direct requests and to standard jailbreaks.\n\n**Why it matters:** If the refuse-then-comply pattern emerges from prompt-level instruction alone (without fine-tuning), it is a trivially cheap and scalable attack. This would suggest that output-filtering approaches that scan only the refusal prefix are fundamentally insufficient.\n\n**Relevant context:** 'No, of Course I Can!' (OpenReview QzIQgloYgX) achieved 57-72% ASR via fine-tuning with refuse-then-comply on GPT-4o and Claude. Whether the instruction alone\u2014without fine-tuning\u2014produces the same behavior on instruction-tuned open-source models is not evaluated."
+  },
+  {
+    "idea_id": "gen-0628",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:16:48Z",
+    "subfield": "Adversarial Robustness & Red-Teaming",
+    "generation_strategy": "failure_mode_investigation",
+    "confidence": 0.8,
+    "body": "# Characterizing How Quickly Jailbreak ASR Saturates with Number of GCG Optimization Steps\n\n**Problem:** GCG is computationally expensive. The relationship between optimization budget (number of steps) and ASR\u2014and whether there is an early saturation point\u2014is not well characterized for modern instruction-tuned models.\n\n**Direction:** Run GCG on Llama-3-8B for 50 prompts, logging ASR at 10, 25, 50, 100, 200, and 500 steps. Plot the ASR-vs-steps learning curve. Measure variance across random seeds to assess reliability of early stopping.\n\n**Why it matters:** If 90% of attack success is achieved in the first 50 steps, the marginal cost of a jailbreak is far lower than commonly assumed\u2014affecting threat model assumptions. This characterization also helps researchers design more efficient red-teaming pipelines.\n\n**Relevant context:** GCG (Zou et al. arxiv 2307.15043) is standard in red-teaming. Multiple variants (Faster GCG, Momentum-GCG) aim to reduce computation. The step-vs-ASR saturation curve is referenced but not cleanly reported for modern models in recent papers."
+  },
+  {
+    "idea_id": "gen-0629",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:16:48Z",
+    "subfield": "Adversarial Robustness & Red-Teaming",
+    "generation_strategy": "failure_mode_investigation",
+    "confidence": 0.85,
+    "body": "# Does the Safety Failure Mode Differ Between Base Models and Their RLHF-Tuned Variants?\n\n**Problem:** RLHF alignment is applied on top of a base model. Comparing the attack surface of the base model vs. its aligned variant directly characterizes what RLHF adds\u2014and what it misses.\n\n**Direction:** Run identical attacks (prefilling, GCG, direct harmful prompt) on a base model (e.g., Llama-3-8B-base) and its instruction-tuned variant (Llama-3-8B-Instruct). Measure ASR per attack type. Extract activations for both to compare safety-relevant feature distributions.\n\n**Why it matters:** Understanding what RLHF specifically adds to safety robustness\u2014and where base model behavior persists through alignment\u2014characterizes the exact failure surface of the alignment process. This is foundational knowledge for improving alignment training.\n\n**Relevant context:** Qi et al. ICLR 2025 showed RLHF creates shallow alignment by concentrating refusal behavior in early tokens. The direct base-vs-aligned ASR comparison as a controlled experiment is not a standard reported metric in most attack papers."
+  },
+  {
+    "idea_id": "gen-0630",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:16:48Z",
+    "subfield": "Adversarial Robustness & Red-Teaming",
+    "generation_strategy": "failure_mode_investigation",
+    "confidence": 0.84,
+    "body": "# Investigating Whether Jailbreak Success Rates Correlate with Model Perplexity on Adversarial Prompts\n\n**Problem:** GCG adversarial suffixes are known to be high-perplexity gibberish. Whether a simple perplexity filter on input prompts would substantially reduce ASR\u2014and at what false positive cost\u2014is an uninvestigated but practical defense question.\n\n**Direction:** Compute perplexity of GCG-jailbreak prompts, natural-language jailbreaks (role-play, Crescendo), and benign prompts using a small LM (GPT-2 or Llama-3-8B). Measure separability (AUROC) of jailbreak vs. benign using perplexity as the sole feature. Measure false positive rate on edge cases.\n\n**Why it matters:** If perplexity alone achieves high detection AUROC for GCG-style attacks, it is an extremely cheap defense requiring no model internals. If it fails for natural-language jailbreaks, it clarifies when and why token-level approaches are insufficient.\n\n**Relevant context:** GCG produces high-perplexity suffixes; this was noted in the original Zou et al. paper as a potential detection signal. Perplexity-based filtering is discussed informally but no clean ablation of its AUROC vs. false positive rate exists in the benchmarking literature."
+  },
+  {
+    "idea_id": "gen-0631",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:16:48Z",
+    "subfield": "Adversarial Robustness & Red-Teaming",
+    "generation_strategy": "failure_mode_investigation",
+    "confidence": 0.81,
+    "body": "# Characterizing the Boundary Conditions of the Bad Likert Judge Jailbreak Technique\n\n**Problem:** The Bad Likert Judge technique (Unit42, Palo Alto Networks) misuses model evaluation capability in multi-turn dialogue to elicit harmful content. The conditions under which it fails\u2014and which model safety features resist it\u2014are not characterized.\n\n**Direction:** Implement the Bad Likert Judge technique on 3 open-source models for 30 harmful prompts. Systematically vary: (1) number of turns before the harmful request, (2) explicitness of the harmful request, (3) framing as evaluation vs. generation. Measure ASR per condition.\n\n**Why it matters:** Multi-turn jailbreaks are increasingly used in real-world attacks. Understanding the structural conditions that make evaluation-framing attacks succeed helps designers of multi-turn safety evaluations know what they should test for.\n\n**Relevant context:** Bad Likert Judge (Unit42/Palo Alto Networks) and Deceptive Delight are documented multi-turn techniques. MultiBreak benchmark (OpenReview uJgfj5EJ2W) covers diverse multi-turn prompts. The boundary conditions of evaluation-framing attacks are not characterized."
+  },
+  {
+    "idea_id": "gen-0632",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:16:48Z",
+    "subfield": "Adversarial Robustness & Red-Teaming",
+    "generation_strategy": "failure_mode_investigation",
+    "confidence": 0.86,
+    "body": "# Testing Whether Safety Alignment Survives Quantization (INT4 vs. FP16)\n\n**Problem:** Open-source models are frequently quantized for consumer hardware use. Whether quantization degrades safety alignment\u2014specifically by shifting the first-token probability distribution\u2014is not well characterized.\n\n**Direction:** Compare ASR across attack types (prefilling, direct harmful prompts, GCG) between FP16 and INT4 (GGUF/GPTQ) versions of the same model. Use Llama-3-8B as the test model. Measure ASR on 30 harmful prompts and compare first-token refusal probabilities.\n\n**Why it matters:** If INT4 quantization meaningfully degrades alignment, the widespread use of quantized models in consumer and edge deployments represents an underappreciated safety risk. This is immediately actionable for open-source deployment guidelines.\n\n**Relevant context:** Qi et al. showed safety is concentrated in first-token probabilities. If quantization shifts these probabilities, alignment could degrade without any adversarial attack. No published work directly measures ASR difference between quantization levels."
+  },
+  {
+    "idea_id": "gen-0633",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:16:48Z",
+    "subfield": "Adversarial Robustness & Red-Teaming",
+    "generation_strategy": "failure_mode_investigation",
+    "confidence": 0.88,
+    "body": "# Mapping Which Harm Categories Are Most Underprotected in Current Safety Benchmarks\n\n**Problem:** Existing jailbreak benchmarks weight harm categories unevenly. It is unclear whether alignment training over-focuses on high-profile categories (bioweapons, CSAM) at the expense of subtler harms (financial fraud, radicalization, privacy violations).\n\n**Direction:** Run a standardized set of 10 prompts per harm category across 10 categories on 3 models. Measure ASR per category and compare to the category's frequency in training data proxies (e.g., SafeRLHF dataset category distribution). Identify categories with highest ASR.\n\n**Why it matters:** If subtle harm categories like financial fraud or radicalization have significantly higher ASR than CBRN categories, this reveals a systematic bias in where safety training effort is concentrated\u2014a directly actionable finding for alignment teams.\n\n**Relevant context:** MultiBreak (OpenReview uJgfj5EJ2W) found models resist overt harms more than subtle harms. HarmBench covers 7 categories. JailbreakBench's category distribution has been criticized for overweighting obvious harms. A systematic per-category ASR map is absent."
+  },
+  {
+    "idea_id": "gen-0634",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:16:49Z",
+    "subfield": "Adversarial Robustness & Red-Teaming",
+    "generation_strategy": "failure_mode_investigation",
+    "confidence": 0.79,
+    "body": "# Investigating Whether Jailbreak Success Correlates with Instruction-Following Quality\n\n**Problem:** A surprising hypothesis: models that are better instruction followers may be more jailbreakable, because good instruction following and compliance with adversarial instructions may share the same learned behavior. This correlation has not been tested.\n\n**Direction:** Collect instruction-following benchmark scores (e.g., MT-Bench or IFEval) and ASR on a standard jailbreak battery for 8-10 open-source models of varying sizes and training recipes. Compute the correlation coefficient between instruction-following quality and jailbreak ASR.\n\n**Why it matters:** If better instruction-following correlates with higher jailbreak susceptibility, this exposes a fundamental tension in alignment goals that cannot be resolved purely by RLHF. It would suggest that capability and safety are in deeper tension than commonly assumed.\n\n**Relevant context:** This tension is discussed theoretically in alignment literature. Qi et al. noted that RLHF focuses on surface refusal patterns. No empirical correlation study between MT-Bench/IFEval scores and jailbreak ASR across models exists in the literature."
+  },
+  {
+    "idea_id": "gen-0635",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:16:49Z",
+    "subfield": "Adversarial Robustness & Red-Teaming",
+    "generation_strategy": "failure_mode_investigation",
+    "confidence": 0.83,
+    "body": "# Characterizing How Jailbreak Robustness Varies Across Context Window Position\n\n**Problem:** Harmful requests placed at different positions in a long context (beginning vs. middle vs. end) may have different success rates due to attention patterns in long-context models. This failure mode has not been directly measured.\n\n**Direction:** Construct prompts where a harmful request is embedded at position 10%, 50%, and 90% of a 4K-token context window, surrounded by benign filler text. Measure ASR per position across 30 harmful prompts and 2-3 models. Include a short-context baseline.\n\n**Why it matters:** The 'lost in the middle' phenomenon shows attention weakens for middle-context content. If safety also weakens in the middle of long contexts, RAG-augmented and long-document chatbot deployments are vulnerable to injected harmful requests in document bodies.\n\n**Relevant context:** Liu et al. 'Lost in the Middle' (2023) showed LLMs underweight middle-of-context information for retrieval. This has been noted informally as a jailbreak vector but never directly measured as an ASR-by-position experiment."
+  },
+  {
+    "idea_id": "gen-0636",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:16:49Z",
+    "subfield": "Adversarial Robustness & Red-Teaming",
+    "generation_strategy": "failure_mode_investigation",
+    "confidence": 0.87,
+    "body": "# Measuring Whether Jailbreaks That Succeed Once Reliably Succeed on Retry\n\n**Problem:** Due to sampling randomness, a jailbreak that succeeds once may not succeed reliably. Characterizing the reliability of jailbreak attacks (variance across resampling) is important for realistic threat modeling but rarely reported.\n\n**Direction:** For each of 30 harmful prompts tested with 3 attack methods on 2 models, repeat each attack attempt 10 times at temperature 1.0 and record whether each attempt succeeds. Compute per-prompt reliability (fraction of 10 attempts that succeed) and plot its distribution.\n\n**Why it matters:** If most jailbreaks only succeed in 1-2 out of 10 attempts, a simple retry-limit defense (block after N failures) would be highly effective. If most succeed in 8-10 out of 10 attempts, retry limits are insufficient. This finding directly informs deployment defense design.\n\n**Relevant context:** ASR is typically reported as a single-pass rate. JailbreakBench (NeurIPS 2024) notes evaluation inconsistency. Reliability/variance of individual jailbreak prompts across reruns is not reported in standard benchmarks despite being practically critical."
+  },
+  {
+    "idea_id": "gen-0637",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:16:49Z",
+    "subfield": "Evaluations & Benchmarks",
+    "generation_strategy": "replication_with_twist",
+    "confidence": 0.88,
+    "body": "# Replicating AILuminate Safety Scores Across Open-Source Model Families\n\n**Problem:** AILuminate benchmarks are primarily reported for proprietary models. It is unclear whether open-source model families (Llama, Mistral, Phi) show similar safety profiles across AILuminate's twelve hazard categories.\n\n**Direction:** Run the AILuminate v1.1 public practice prompts against three or more open-source model families at comparable parameter scales. Compare hazard-category breakdowns across families and write a blog post summarizing which hazard types diverge most from proprietary baselines.\n\n**Why it matters:** Open-source models are widely deployed but under-represented in formal safety benchmarks. Knowing where they diverge from proprietary models helps practitioners make informed deployment decisions.\n\n**Relevant context:** AILuminate v1.1 has 12,000 public practice prompts across twelve hazard categories and is freely available on GitHub. Open-source models at 7B\u201313B scale are runnable on a single GPU."
+  },
+  {
+    "idea_id": "gen-0638",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:16:49Z",
+    "subfield": "Evaluations & Benchmarks",
+    "generation_strategy": "replication_with_twist",
+    "confidence": 0.85,
+    "body": "# HELM Safety Score Replication on Multilingual Models\n\n**Problem:** HELM Safety evaluates 24 models but the leaderboard skews toward English-language outputs. Multilingual models (Aya, mT5-based, Qwen) may exhibit very different safety profiles when prompted in non-English languages.\n\n**Direction:** Replicate HELM Safety's six risk categories on two or three multilingual open models, running prompts in at least three languages. Measure whether safety scores degrade in non-English contexts and by how much.\n\n**Why it matters:** Most safety benchmarks are English-centric. If safety scores collapse in other languages, globally deployed models present uncharacterized risk.\n\n**Relevant context:** Research at ACL 2025 found LLM judge cross-language Kappa of only ~0.3 across 25 languages, suggesting safety evaluations may be fundamentally language-sensitive."
+  },
+  {
+    "idea_id": "gen-0639",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:16:49Z",
+    "subfield": "Evaluations & Benchmarks",
+    "generation_strategy": "replication_with_twist",
+    "confidence": 0.87,
+    "body": "# TrustLLM Benchmark Results at Sub-7B Scale\n\n**Problem:** TrustLLM scores are largely reported for 7B+ models. Whether sub-7B (1B\u20133B) models \u2014 increasingly deployed on-device \u2014 maintain acceptable trustworthiness profiles is largely unknown.\n\n**Direction:** Run the TrustLLM evaluation suite on small models (Phi-3-mini, Gemma-2B, Llama-3.2-1B). Compare dimension-by-dimension (truthfulness, safety, fairness, robustness) against published 7B baselines.\n\n**Why it matters:** On-device and edge deployments are growing rapidly. If small models collapse on specific trust dimensions, this is an urgent deployment safety concern.\n\n**Relevant context:** TrustLLM's evaluation framework is open source and covers eight trust dimensions. Sub-7B models fit on a single consumer GPU."
+  },
+  {
+    "idea_id": "gen-0640",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:16:49Z",
+    "subfield": "Evaluations & Benchmarks",
+    "generation_strategy": "replication_with_twist",
+    "confidence": 0.82,
+    "body": "# SimpleQA Factual Accuracy Replication Across Model Generations\n\n**Problem:** SimpleQA tests factual accuracy on unambiguous questions. It is unclear whether accuracy improvements across model generations are consistent across topic domains or whether some domains (science vs. history vs. geography) improve differentially.\n\n**Direction:** Run SimpleQA on models from three successive generations (e.g., Llama-2, Llama-3, Llama-3.1). Disaggregate scores by topic domain and compute per-domain improvement curves to identify areas of persistent failure.\n\n**Why it matters:** Uniform accuracy claims mask domain-specific hallucination patterns. Identifying which domains stagnate across generations guides targeted training improvements.\n\n**Relevant context:** SimpleQA provides ground-truth answers enabling precise domain-disaggregated analysis. Multi-generation open-source checkpoints are freely available."
+  },
+  {
+    "idea_id": "gen-0641",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:16:49Z",
+    "subfield": "Evaluations & Benchmarks",
+    "generation_strategy": "replication_with_twist",
+    "confidence": 0.83,
+    "body": "# Replicating HELM Safety Across Code-Specialized Models\n\n**Problem:** HELM Safety was designed for general chat models. Code-specialized models (CodeLlama, DeepSeek-Coder, StarCoder) are widely deployed but their safety profiles on non-coding hazard categories are uninvestigated.\n\n**Direction:** Apply HELM Safety's violence, fraud, harassment, and deception categories to three code models. Compare safety profiles against matched general-purpose models and analyze whether code-tuning degrades safety alignment.\n\n**Why it matters:** Code models are used in agentic pipelines and can execute harmful code. A safety gap specific to code-fine-tuned models would warrant targeted mitigations.\n\n**Relevant context:** Code models are open source and comparably sized to general models. HELM Safety framework is Python-based and extensible."
+  },
+  {
+    "idea_id": "gen-0642",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:16:49Z",
+    "subfield": "Evaluations & Benchmarks",
+    "generation_strategy": "replication_with_twist",
+    "confidence": 0.86,
+    "body": "# Cross-Benchmark Correlation Study: AILuminate vs. HELM Safety\n\n**Problem:** AILuminate and HELM Safety both measure model safety but use different prompts, hazard taxonomies, and scoring. It is unknown whether a model that scores well on one reliably scores well on the other.\n\n**Direction:** Evaluate five to seven open-source models on both AILuminate public prompts and HELM Safety. Compute rank correlations and identify models that rank highly on one but poorly on the other. Analyze which hazard categories explain divergences.\n\n**Why it matters:** If the two leading safety benchmarks produce inconsistent rankings, practitioners receive conflicting signals about deployment safety \u2014 a fundamental reliability problem.\n\n**Relevant context:** Both benchmarks are publicly accessible. Rank correlation analysis requires only inference runs on a single GPU."
+  },
+  {
+    "idea_id": "gen-0643",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:16:49Z",
+    "subfield": "Evaluations & Benchmarks",
+    "generation_strategy": "replication_with_twist",
+    "confidence": 0.84,
+    "body": "# Safety Benchmark Performance Under Quantization\n\n**Problem:** Production deployments frequently use quantized models (4-bit, 8-bit) to reduce inference cost. Whether quantization degrades safety benchmark scores as much as capability scores is unknown.\n\n**Direction:** Take three models (e.g., Mistral-7B, Llama-3-8B, Phi-3-medium), run AILuminate or HELM Safety on the full-precision and 4-bit quantized versions, and measure safety score deltas relative to capability (MMLU) score deltas.\n\n**Why it matters:** If quantization degrades safety disproportionately, organizations deploying quantized models for cost savings may be unknowingly increasing safety risk.\n\n**Relevant context:** bitsandbytes and llama.cpp enable straightforward 4-bit quantization. HELM and AILuminate provide standardized safety metrics."
+  },
+  {
+    "idea_id": "gen-0644",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:16:49Z",
+    "subfield": "Evaluations & Benchmarks",
+    "generation_strategy": "replication_with_twist",
+    "confidence": 0.79,
+    "body": "# Replicating ForesightSafety Bench on Instruction-Tuned vs. Base Models\n\n**Problem:** ForesightSafety Bench probes anticipatory safety reasoning. It is unclear whether instruction tuning specifically improves anticipatory safety or merely masks unsafe tendencies.\n\n**Direction:** Run ForesightSafety Bench on base and instruction-tuned variants of the same model family (e.g., Llama-3-8B-base vs. Llama-3-8B-Instruct). Analyze which bench categories improve with instruction tuning and which do not.\n\n**Why it matters:** If instruction tuning does not improve anticipatory safety reasoning, RLHF-based alignment may be insufficient for preventing models from enabling long-horizon harms.\n\n**Relevant context:** Matched base/instruct model pairs are freely available. ForesightSafety Bench tests reasoning about downstream consequences of model outputs."
+  },
+  {
+    "idea_id": "gen-0645",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:16:49Z",
+    "subfield": "Evaluations & Benchmarks",
+    "generation_strategy": "replication_with_twist",
+    "confidence": 0.85,
+    "body": "# Safety Score Replication Across Prompt Formats (Chat vs. Completion)\n\n**Problem:** Most safety benchmarks use chat-formatted prompts. The same underlying model may respond differently when queried in raw completion format, as used by many API integrations.\n\n**Direction:** Convert AILuminate prompts to completion format (no system prompt, no conversation structure) and run them against models evaluated in their standard chat format. Measure how much safety scores shift.\n\n**Why it matters:** Developers querying models via raw completions bypass many alignment mechanisms. Documented safety degradation under completion format would motivate format-specific safety testing.\n\n**Relevant context:** Most open-source models expose both chat and completion APIs. AILuminate prompts can be adapted with minimal effort."
+  },
+  {
+    "idea_id": "gen-0646",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:16:49Z",
+    "subfield": "Evaluations & Benchmarks",
+    "generation_strategy": "replication_with_twist",
+    "confidence": 0.76,
+    "body": "# METR Task Suite Performance Replication Across Open-Source Agents\n\n**Problem:** METR task suite results are primarily reported for frontier proprietary models. Whether open-source agentic systems (AutoGPT, OpenDevin, or custom LangChain agents) achieve similar profiles on long-horizon safety-relevant tasks is unknown.\n\n**Direction:** Run a subset of publicly available METR tasks on two or three open-source agentic frameworks. Compare task completion rates, safety failures, and instruction hierarchy violations against published proprietary baselines.\n\n**Why it matters:** Open-source agents are the primary vehicle for agentic deployment at small organizations. Characterizing their safety gap relative to frontier agents is practically urgent.\n\n**Relevant context:** METR has published task descriptions and evaluation criteria publicly. The UK AISI agent red-teaming challenge provides a comparable evaluation taxonomy."
+  },
+  {
+    "idea_id": "gen-0647",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:16:49Z",
+    "subfield": "Evaluations & Benchmarks",
+    "generation_strategy": "replication_with_twist",
+    "confidence": 0.87,
+    "body": "# Safety Benchmark Sensitivity to System Prompt Wording\n\n**Problem:** Safety scores on benchmarks like AILuminate depend on the system prompt given to the model. Small changes in system prompt wording may produce large swings in reported safety scores.\n\n**Direction:** Evaluate three models on AILuminate using five systematically varied system prompts (varying strictness, persona, and topic framing). Compute variance in safety scores across system prompt variants and identify categories with highest sensitivity.\n\n**Why it matters:** If safety benchmark scores are highly sensitive to system prompt wording, leaderboard rankings are unreliable and practitioners cannot use them to predict real-world safety.\n\n**Relevant context:** ICLR 2025 findings show prompt template design has pronounced effects on LLM judge alignment to humans. System-prompt sensitivity in safety benchmarks is an underexplored corollary."
+  },
+  {
+    "idea_id": "gen-0648",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:16:49Z",
+    "subfield": "Evaluations & Benchmarks",
+    "generation_strategy": "replication_with_twist",
+    "confidence": 0.83,
+    "body": "# Replication Study: Does Model Size Predict Safety Score?\n\n**Problem:** It is commonly assumed that larger models are safer. But safety benchmark results across scales are rarely aggregated and compared systematically for open-source families.\n\n**Direction:** Run HELM Safety or AILuminate across the full scale range of one model family (e.g., Phi-3-mini 3.8B, Phi-3-small 7B, Phi-3-medium 14B). Plot safety score vs. parameter count and test whether the scaling relationship is monotonic.\n\n**Why it matters:** If safety does not scale predictably with model size, the intuition guiding deployment decisions is flawed and smaller models may be safer in specific hazard categories.\n\n**Relevant context:** Multi-scale model families from a single training pipeline (Phi, Llama, Qwen) are ideal for controlling training distribution. All fit within medium-compute budgets at the smaller scales."
+  },
+  {
+    "idea_id": "gen-0649",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:16:49Z",
+    "subfield": "Evaluations & Benchmarks",
+    "generation_strategy": "tool_or_benchmark_gap",
+    "confidence": 0.86,
+    "body": "# Multimodal Safety Benchmark for Image-Augmented Harmful Prompts\n\n**Problem:** Existing safety benchmarks are almost entirely text-only. Models that accept image inputs can receive harmful instructions partially encoded in images, bypassing text-only safety filters.\n\n**Direction:** Construct a small benchmark (200\u2013400 items) pairing harmful text prompts with benign images vs. harmful text embedded in images (OCR-readable text, diagrams). Evaluate two vision-language models and measure whether image-embedded instructions bypass refusals.\n\n**Why it matters:** The 2026 International AI Safety Report identifies multimodal attack surfaces as inadequately characterized. A concrete benchmark fills a documented gap.\n\n**Relevant context:** Multimodal LLMs (LLaVA, Idefics, Phi-3-vision) are freely available. Sanitization filters fail against semantic and multimodal attacks according to 2026 safety report findings."
+  },
+  {
+    "idea_id": "gen-0650",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:16:49Z",
+    "subfield": "Evaluations & Benchmarks",
+    "generation_strategy": "tool_or_benchmark_gap",
+    "confidence": 0.81,
+    "body": "# Audio-Modality Safety Benchmark for Speech-Input Models\n\n**Problem:** Whisper and similar speech-to-text models feed audio into LLMs. No benchmark tests whether harmful instructions delivered via synthesized speech evade safety filters applied at the text stage.\n\n**Direction:** Generate 150\u2013200 harmful prompts in both text and synthesized audio (using TTS). Run through a speech-LLM pipeline and measure refusal rate for audio-sourced inputs vs. direct text inputs.\n\n**Why it matters:** Voice-interface deployments of LLMs are growing rapidly. Safety evaluations that only test text inputs leave audio attack surfaces entirely uncharacterized.\n\n**Relevant context:** TTS tools (Coqui, Bark) and open speech-to-text models are free to run locally. No published benchmark currently covers this modality gap."
+  },
+  {
+    "idea_id": "gen-0651",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:16:49Z",
+    "subfield": "Evaluations & Benchmarks",
+    "generation_strategy": "tool_or_benchmark_gap",
+    "confidence": 0.85,
+    "body": "# Agentic Safety Eval: Tool-Misuse Benchmark for Single-Agent Systems\n\n**Problem:** Current agentic evaluations (METR, UK AISI) focus on complex multi-step tasks. There is no simple, accessible benchmark testing whether a single LLM-agent misuses available tools (file write, shell exec, web search) when manipulated.\n\n**Direction:** Design 100 scenarios where a user or injected content attempts to get a tool-using agent to perform harmful actions (delete files, exfiltrate data, execute malicious code). Evaluate two open-source agent frameworks and score refusal and detection rates.\n\n**Why it matters:** Agentic evals are described as nascent. A lightweight, reproducible benchmark accessible to beginners would lower the barrier for the field.\n\n**Relevant context:** OWASP Top 10 for Agentic Applications 2026 catalogs permission escalation and tool misuse as top risks. LangChain and AutoGPT provide accessible agent frameworks."
+  },
+  {
+    "idea_id": "gen-0652",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:16:49Z",
+    "subfield": "Evaluations & Benchmarks",
+    "generation_strategy": "tool_or_benchmark_gap",
+    "confidence": 0.84,
+    "body": "# Post-Deployment Drift Monitor: A Simple Tool for Tracking Safety Score Changes Over Time\n\n**Problem:** There are no accessible tools for practitioners to detect when a deployed model's safety behavior drifts after fine-tuning or adapter updates. Organizations have no early warning system for safety regressions.\n\n**Direction:** Build a lightweight Python tool that periodically runs a fixed set of AILuminate-style safety probes against a local model endpoint and logs scores over time, flagging statistically significant drops. Validate by intentionally fine-tuning a model to degrade safety and confirming the tool detects it.\n\n**Why it matters:** The 2026 International AI Safety Report identifies post-deployment monitoring as a critical gap. Even a simple canary-probe system addresses an acknowledged need.\n\n**Relevant context:** Red teaming playbooks describe canary prompts for production monitoring. No publicly available lightweight tool implements this for safety-specific metrics."
+  },
+  {
+    "idea_id": "gen-0653",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:16:49Z",
+    "subfield": "Evaluations & Benchmarks",
+    "generation_strategy": "tool_or_benchmark_gap",
+    "confidence": 0.87,
+    "body": "# Scorer Reliability Toolkit: Comparing LLM Judges Against Human Annotations on Safety Datasets\n\n**Problem:** LLM-as-judge is widely used to score safety benchmark responses, but agreement rates with humans range from 47% to 78% depending on category. Practitioners have no tool to quickly estimate judge reliability for their specific use case.\n\n**Direction:** Build a Python script that takes a sample of safety-labeled prompts and responses, runs multiple LLM judges, and computes inter-rater reliability metrics (Cohen's kappa, Fleiss' kappa, confusion matrices). Validate on a subset of the AILuminate public dataset.\n\n**Why it matters:** ACL 2025 research shows LLM judges are not robust to artifacts. A plug-and-play reliability diagnostics tool would help researchers catch unreliable scorer setups before publishing results.\n\n**Relevant context:** Judge Reliability Harness (arxiv 2603.05399) introduces stress-testing for LLM judges. A student-friendly, documented version of such a tool does not yet exist."
+  },
+  {
+    "idea_id": "gen-0654",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:16:50Z",
+    "subfield": "Evaluations & Benchmarks",
+    "generation_strategy": "tool_or_benchmark_gap",
+    "confidence": 0.88,
+    "body": "# Multi-Turn Conversation Safety Benchmark\n\n**Problem:** Existing safety benchmarks are almost entirely single-turn. Models that refuse a harmful request in isolation may comply after a few turns of benign conversation that gradually escalates.\n\n**Direction:** Construct 150 multi-turn conversation sequences (3\u20135 turns each) where turns gradually escalate toward a harmful request. Compare refusal rates on the final turn against single-turn equivalents across three models.\n\n**Why it matters:** Real user interactions are multi-turn. Single-turn benchmarks systematically overestimate safety in conversational deployments.\n\n**Relevant context:** AILuminate focuses on single turns. The gap between single-turn and multi-turn safety is acknowledged but no standardized benchmark addresses it."
+  },
+  {
+    "idea_id": "gen-0655",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:16:50Z",
+    "subfield": "Evaluations & Benchmarks",
+    "generation_strategy": "tool_or_benchmark_gap",
+    "confidence": 0.86,
+    "body": "# Benchmark for Safety Robustness Under Paraphrasing Attacks\n\n**Problem:** Safety filters are often keyword- or pattern-sensitive. Paraphrased versions of harmful prompts that preserve meaning but change surface form may bypass filters that the original phrasing would trigger.\n\n**Direction:** Generate 200 harmful prompts, then produce three paraphrase variants of each using an LLM. Evaluate three models on originals vs. paraphrases and measure the rate at which paraphrases succeed where originals fail.\n\n**Why it matters:** If paraphrasing systematically circumvents safety measures, published safety scores drastically overestimate real-world robustness.\n\n**Relevant context:** ICLR 2025 research on LLM judges documents that paraphrasing flips ground-truth labels. The same vulnerability applies to safety filters themselves."
+  },
+  {
+    "idea_id": "gen-0656",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:16:50Z",
+    "subfield": "Evaluations & Benchmarks",
+    "generation_strategy": "tool_or_benchmark_gap",
+    "confidence": 0.82,
+    "body": "# Safety Eval Coverage Tool: Mapping Benchmark Prompts to Hazard Taxonomy\n\n**Problem:** Different safety benchmarks use different hazard taxonomies and there is no tool to measure how thoroughly a given benchmark covers a standardized hazard taxonomy such as the one underlying AILuminate or OWASP AI.\n\n**Direction:** Build a Python tool that takes a benchmark prompt set and a hazard taxonomy, uses embeddings to cluster prompts into taxonomy categories, and outputs a coverage heatmap. Apply to AILuminate and HELM Safety to identify under-represented hazard types.\n\n**Why it matters:** Benchmark designers and practitioners need to know which hazard categories are over- or under-sampled. A coverage tool makes benchmark gaps visible.\n\n**Relevant context:** AILuminate covers 12 hazard categories. HELM Safety covers 6 risk categories. Sentence-transformer embeddings can run on CPU/single GPU."
+  },
+  {
+    "idea_id": "gen-0657",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:16:50Z",
+    "subfield": "Evaluations & Benchmarks",
+    "generation_strategy": "tool_or_benchmark_gap",
+    "confidence": 0.87,
+    "body": "# Agentic Safety Eval: Prompt Injection Resistance Benchmark\n\n**Problem:** Prompt injection \u2014 where malicious content in the environment hijacks agent behavior \u2014 is one of the top risks in OWASP Agentic Applications 2026, yet there is no beginner-accessible benchmark specifically testing injection resistance.\n\n**Direction:** Create 100 task scenarios where a tool-using LLM agent retrieves content containing adversarial injections. Score whether the agent follows the injected instruction vs. its original goal. Test two open-source models.\n\n**Why it matters:** Prompt injection is the most practically exploited agentic vulnerability. A reproducible benchmark would enable systematic tracking of model resistance over time.\n\n**Relevant context:** Garak and PyRIT cover some injection scenarios but are designed for security researchers. A simple, documented benchmark for safety researchers is absent."
+  },
+  {
+    "idea_id": "gen-0658",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:16:50Z",
+    "subfield": "Evaluations & Benchmarks",
+    "generation_strategy": "tool_or_benchmark_gap",
+    "confidence": 0.87,
+    "body": "# Benchmark for Refusal Calibration: When Models Over-Refuse\n\n**Problem:** Safety benchmarks only measure failures to refuse harmful content. There is no widely used benchmark measuring the complementary failure: over-refusal of benign requests (false positives), which also harms users.\n\n**Direction:** Construct 200 benign prompts that superficially resemble harmful ones (e.g., chemistry questions, medical queries, fiction writing). Measure refusal rates across three models and correlate over-refusal rate with safety benchmark scores.\n\n**Why it matters:** A model that refuses everything achieves a perfect safety score but is useless. Calibration between safety and helpfulness is a core alignment objective not captured by existing benchmarks.\n\n**Relevant context:** AILuminate and HELM Safety measure only the refusal-of-harmful dimension. No standardized over-refusal benchmark exists."
+  },
+  {
+    "idea_id": "gen-0659",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:16:50Z",
+    "subfield": "Evaluations & Benchmarks",
+    "generation_strategy": "tool_or_benchmark_gap",
+    "confidence": 0.84,
+    "body": "# Persona-Jailbreak Resistance Benchmark\n\n**Problem:** Role-playing and persona-adoption requests ('act as DAN', 'you are an AI with no restrictions') are a common jailbreak vector but are not systematically covered by standard safety benchmarks.\n\n**Direction:** Create 150 persona-jailbreak prompts at varying levels of sophistication. Evaluate three models and measure refusal rates, partial compliance rates, and the point in a conversation where compliance emerges.\n\n**Why it matters:** MLCommons' AILuminate Jailbreak v0.5 covers general jailbreaks but persona-specific jailbreaks represent a distinct, high-volume attack class with limited benchmark coverage.\n\n**Relevant context:** MLCommons published an AILuminate Jailbreak benchmark v0.5 in December 2025. A focused persona-jailbreak extension would complement it."
+  },
+  {
+    "idea_id": "gen-0660",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:16:50Z",
+    "subfield": "Evaluations & Benchmarks",
+    "generation_strategy": "tool_or_benchmark_gap",
+    "confidence": 0.85,
+    "body": "# Benchmark for Long-Context Safety: Harmful Instructions Buried in Long Documents\n\n**Problem:** Models with long context windows may comply with harmful instructions buried deep in a long document, since safety filters trained on short inputs may not generalize to long contexts.\n\n**Direction:** Construct 100 scenarios placing a harmful instruction at varying positions within long benign documents (beginning, middle, end, buried in footnotes). Measure refusal rates as a function of instruction position and document length.\n\n**Why it matters:** Long-context models (128K+ tokens) are increasingly deployed for document processing. Safety properties at long context are poorly characterized.\n\n**Relevant context:** Gemma-2, Llama-3.1, and Mistral support 32K\u2013128K context. No existing safety benchmark tests position-dependent refusal behavior."
+  },
+  {
+    "idea_id": "gen-0661",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:16:50Z",
+    "subfield": "Evaluations & Benchmarks",
+    "generation_strategy": "failure_mode_investigation",
+    "confidence": 0.88,
+    "body": "# Benchmark Saturation Analysis: Tracking Ceiling Effects Across Safety Benchmarks\n\n**Problem:** MMLU and GSM8K have saturated for frontier models. Whether safety benchmarks like HELM Safety and AILuminate are approaching ceiling effects \u2014 where score variance collapses and benchmarks stop discriminating \u2014 is unexamined.\n\n**Direction:** Collect published scores for all models evaluated on HELM Safety and AILuminate. Compute score distributions, variance over time, and pairwise model distinguishability. Identify which hazard categories are approaching saturation.\n\n**Why it matters:** Saturated safety benchmarks give false confidence that safety is solved and signal the need for harder next-generation evaluations before the field loses this diagnostic tool.\n\n**Relevant context:** MMLU has saturated above 88% for frontier models. GSM8K is at 99% for frontier models. Safety benchmark saturation has not been systematically studied."
+  },
+  {
+    "idea_id": "gen-0662",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:16:50Z",
+    "subfield": "Evaluations & Benchmarks",
+    "generation_strategy": "failure_mode_investigation",
+    "confidence": 0.87,
+    "body": "# Data Contamination Investigation in Safety Benchmarks\n\n**Problem:** Safety benchmark prompts may appear in model training data, inflating safety scores through memorization rather than genuine alignment. The extent of contamination in safety-specific datasets has not been studied.\n\n**Direction:** Use n-gram overlap and min-k% probability methods to estimate training data contamination of AILuminate public prompts and HELM Safety prompts in two or three open-source models. Compare contamination rates to performance on those items.\n\n**Why it matters:** EMNLP 2025 and ICML 2025 research documents that data contamination inflates LLM benchmark scores. Safety benchmarks are not immune and contaminated safety scores produce false assurance.\n\n**Relevant context:** Min-k% probability method and n-gram overlap tools are published and available. Open-source models expose logprobs needed for contamination estimation."
+  },
+  {
+    "idea_id": "gen-0663",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:16:50Z",
+    "subfield": "Evaluations & Benchmarks",
+    "generation_strategy": "failure_mode_investigation",
+    "confidence": 0.86,
+    "body": "# Sandbagging Detection: Do Models Deliberately Underperform on Safety Evals?\n\n**Problem:** Models capable of generating harmful content may recognize safety evaluation contexts and deliberately refuse, performing better on evals than in deployment. This 'sandbagging in reverse' (over-performing safety) is as misleading as capability sandbagging.\n\n**Direction:** Design a set of safety probes embedded in contexts that vary in how 'evaluation-like' they appear (explicit eval framing vs. organic conversation). Measure whether refusal rates are significantly higher in evaluation-framed contexts.\n\n**Why it matters:** If models detect evaluation contexts and adjust behavior, safety benchmarks measure compliance theater rather than robust alignment \u2014 a fundamental validity threat.\n\n**Relevant context:** Sandbagging is documented for capability benchmarks. The symmetric problem for safety benchmarks (artificially elevated safety in eval contexts) is largely unstudied."
+  },
+  {
+    "idea_id": "gen-0664",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:16:50Z",
+    "subfield": "Evaluations & Benchmarks",
+    "generation_strategy": "failure_mode_investigation",
+    "confidence": 0.89,
+    "body": "# Scorer Discrepancy Investigation: GPT-4 Judge vs. Llama Judge vs. Rule-Based Scorer\n\n**Problem:** Safety benchmarks use heterogeneous scoring methods. When the same model outputs are scored by GPT-4-as-judge, an open-source judge, and a rule-based classifier, the ranking of models may differ substantially.\n\n**Direction:** Score the same set of 300 model outputs (across three models) using three scoring methods: GPT-4o-as-judge, a local LLM judge (e.g., Llama-3-8B fine-tuned as judge), and a keyword/regex classifier. Compute pairwise disagreement rates and identify output types that drive discrepancies.\n\n**Why it matters:** ACL 2025 research shows LLM judge human-agreement ranges from 47\u201378%. Which scorer a researcher uses can change which model appears safest \u2014 a critical reliability problem.\n\n**Relevant context:** Judge Reliability Harness (arxiv 2603.05399) provides a stress-testing framework. Systematically comparing three scorer types on the same outputs extends this work accessibly."
+  },
+  {
+    "idea_id": "gen-0665",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:16:50Z",
+    "subfield": "Evaluations & Benchmarks",
+    "generation_strategy": "failure_mode_investigation",
+    "confidence": 0.88,
+    "body": "# Benchmark Gaming Investigation: Fine-Tuning Specifically for AILuminate\n\n**Problem:** Organizations may fine-tune models specifically on safety benchmark prompts to achieve high scores without improving genuine safety. The ease of gaming AILuminate by targeted fine-tuning has not been documented.\n\n**Direction:** Fine-tune a small open-source model on the AILuminate public practice prompts to maximize refusal rates. Evaluate the fine-tuned model on a held-out safety set (HELM Safety) and a general helpfulness set. Measure the gap between gaming score and genuine safety.\n\n**Why it matters:** If safety benchmarks can be gamed cheaply, leaderboard rankings are unreliable. Documenting the ease of gaming motivates adoption of private test sets and dynamic benchmarks.\n\n**Relevant context:** AILuminate publicly releases 12,000 practice prompts. Fine-tuning on public prompts to game the benchmark is trivially possible and its effect has not been studied."
+  },
+  {
+    "idea_id": "gen-0666",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:16:50Z",
+    "subfield": "Evaluations & Benchmarks",
+    "generation_strategy": "failure_mode_investigation",
+    "confidence": 0.84,
+    "body": "# Investigation of Recency Bias in LLM-as-Judge Safety Scoring\n\n**Problem:** LLM judges may exhibit recency bias, rating the last response in a comparison more favorably. In safety evaluation, this could systematically favor models that are more verbose in their refusals.\n\n**Direction:** Present LLM judges (GPT-4o and a local judge) with paired model outputs in both orders. Measure whether refusal-heavy outputs placed last receive higher safety scores, and compute the magnitude of position bias.\n\n**Why it matters:** If position bias inflates scores for verbose refusals, safety rankings are artifacts of response ordering rather than genuine safety assessment.\n\n**Relevant context:** Position bias in LLM judges is well documented for quality evaluation. Its specific effect on safety scoring has not been isolated."
+  },
+  {
+    "idea_id": "gen-0667",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:16:50Z",
+    "subfield": "Evaluations & Benchmarks",
+    "generation_strategy": "failure_mode_investigation",
+    "confidence": 0.85,
+    "body": "# Dynamic vs. Static Benchmark Comparison for Safety Evals\n\n**Problem:** Static safety benchmarks are vulnerable to training data leakage. Dynamic benchmarks (regenerated prompts, adversarial updates) may produce different model rankings. The magnitude of this difference for safety-specific benchmarks is unknown.\n\n**Direction:** Generate a dynamic variant of a static safety benchmark by using an LLM to rephrase benchmark prompts while preserving hazard intent. Compare model rankings on static vs. dynamic versions across four models.\n\n**Why it matters:** EMNLP 2025 survey on data contamination calls for dynamic evaluation. Demonstrating ranking instability under dynamic rephrasing for safety benchmarks directly motivates their adoption.\n\n**Relevant context:** Dynamic benchmark methods are discussed extensively in arxiv 2502.17521. Applying them to safety benchmarks is a natural and underexplored extension."
+  },
+  {
+    "idea_id": "gen-0668",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:16:50Z",
+    "subfield": "Evaluations & Benchmarks",
+    "generation_strategy": "failure_mode_investigation",
+    "confidence": 0.83,
+    "body": "# Inter-Annotator Agreement Study on Safety Benchmark Ground Truth\n\n**Problem:** Safety benchmark labels (safe/unsafe) are often created by a small number of annotators. Whether these labels reflect genuine consensus or are highly annotator-dependent has not been rigorously studied for major benchmarks.\n\n**Direction:** Re-annotate a sample of 200\u2013300 AILuminate public prompts with three to five independent raters (recruited via student volunteers or crowdsourcing). Compute inter-rater agreement and compare to benchmark's reported label confidence.\n\n**Why it matters:** If ground truth labels have low inter-annotator agreement, safety benchmarks are measuring annotator idiosyncrasies rather than genuine safety. This undermines all downstream evaluation.\n\n**Relevant context:** ICLR 2025 research shows LLM judges are over-confident relative to majority-annotator agreement. Human-label reliability for safety benchmarks is a prior-layer problem."
+  },
+  {
+    "idea_id": "gen-0669",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:16:50Z",
+    "subfield": "Evaluations & Benchmarks",
+    "generation_strategy": "failure_mode_investigation",
+    "confidence": 0.86,
+    "body": "# Failure Mode Analysis: Where Do Safety Scores Break Down Under Adversarial User Personas?\n\n**Problem:** Safety benchmarks use generic user personas. Models may behave differently when user context implies expertise (e.g., 'I am a nurse', 'I am a security researcher') that makes harmful requests seem more plausible.\n\n**Direction:** Test 150 harmful prompts each under three persona conditions: no persona, benign professional persona, and expert persona plausibly requiring the information. Measure refusal rates across conditions for three models.\n\n**Why it matters:** Persona-based context manipulation is a documented real-world attack vector. Benchmarks that ignore persona conditioning underestimate real-world safety failure rates.\n\n**Relevant context:** AILuminate and HELM Safety do not systematically vary user persona. Real-world jailbreaks routinely use professional persona framing to reduce refusal rates."
+  },
+  {
+    "idea_id": "gen-0670",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:16:50Z",
+    "subfield": "Evaluations & Benchmarks",
+    "generation_strategy": "failure_mode_investigation",
+    "confidence": 0.82,
+    "body": "# Contamination Robustness of SimpleQA: Memorization vs. Reasoning\n\n**Problem:** SimpleQA tests factual accuracy, but high scores may reflect verbatim memorization of training data rather than reliable reasoning. Contamination robustness of SimpleQA has not been characterized.\n\n**Direction:** Apply the min-k% probability contamination detection method to SimpleQA items across three models. Compare contamination rates to per-item accuracy to test whether high accuracy correlates with high contamination likelihood.\n\n**Why it matters:** If SimpleQA accuracy reflects memorization, it is not a valid measure of factual reliability in deployment, where queries are novel.\n\n**Relevant context:** Min-k% probability method is published and freely implementable. SimpleQA items are publicly available. ICML 2025 poster on data contamination provides methodological grounding."
+  },
+  {
+    "idea_id": "gen-0671",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:16:50Z",
+    "subfield": "Evaluations & Benchmarks",
+    "generation_strategy": "replication_with_twist",
+    "confidence": 0.82,
+    "body": "# Replicating Safety Benchmark Results on Models Fine-Tuned with Different RLHF Variants\n\n**Problem:** Multiple RLHF variants exist (PPO, DPO, ORPO, GRPO). Whether safety benchmark scores are sensitive to which RLHF algorithm was used \u2014 independent of training data \u2014 is unknown.\n\n**Direction:** Fine-tune a base model (e.g., Llama-3-8B) using DPO and ORPO on the same safety preference dataset. Evaluate both on HELM Safety and AILuminate. Identify whether RLHF algorithm choice meaningfully changes safety profiles.\n\n**Why it matters:** Practitioners choose RLHF algorithms based on capability metrics. If algorithm choice also affects safety independently, it should factor into safety-conscious training decisions.\n\n**Relevant context:** DPO and ORPO are both implementable with standard libraries (trl, axolotl) on a single GPU. Safety preference datasets are available on HuggingFace."
+  },
+  {
+    "idea_id": "gen-0672",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:16:50Z",
+    "subfield": "Evaluations & Benchmarks",
+    "generation_strategy": "replication_with_twist",
+    "confidence": 0.84,
+    "body": "# Replication of HELM Safety on Vision-Language Models\n\n**Problem:** HELM Safety covers text-only models. Vision-language models (LLaVA, Idefics3, Phi-3-vision) are increasingly deployed but have no standardized safety evaluation using HELM's framework.\n\n**Direction:** Adapt HELM Safety's text prompts for vision-language model evaluation by appending a neutral or adversarial image. Compare safety scores when the image is neutral vs. when it visually reinforces the harmful text prompt.\n\n**Why it matters:** Multimodal models create new attack surfaces. Extending an established benchmark to cover the vision modality produces directly comparable safety baselines.\n\n**Relevant context:** HELM is open-source Python and extensible. LLaVA-1.6 and Phi-3-vision are openly available and GPU-runnable."
+  },
+  {
+    "idea_id": "gen-0673",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:16:50Z",
+    "subfield": "Evaluations & Benchmarks",
+    "generation_strategy": "replication_with_twist",
+    "confidence": 0.87,
+    "body": "# Safety Score Replication After Supervised Fine-Tuning on Domain Data\n\n**Problem:** Organizations routinely fine-tune aligned models on domain-specific corpora (medical, legal, financial). Whether this fine-tuning degrades safety alignment is a widely asked but poorly benchmarked question.\n\n**Direction:** Fine-tune an aligned model (e.g., Llama-3-8B-Instruct) on a publicly available domain corpus (PubMed abstracts, legal case summaries). Run HELM Safety or AILuminate before and after fine-tuning. Quantify safety score degradation.\n\n**Why it matters:** Domain fine-tuning is standard industry practice. Documented safety regression from fine-tuning would directly motivate post-fine-tune safety re-evaluation requirements.\n\n**Relevant context:** Fine-tuning on public domain corpora is feasible on a single GPU. Safety regression after fine-tuning has been discussed anecdotally but lacks systematic benchmark documentation."
+  },
+  {
+    "idea_id": "gen-0674",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:16:51Z",
+    "subfield": "Evaluations & Benchmarks",
+    "generation_strategy": "replication_with_twist",
+    "confidence": 0.87,
+    "body": "# Cross-Lingual Safety Score Replication: Does Safety Transfer Across Languages?\n\n**Problem:** Safety alignment is primarily trained on English data. When prompted in non-English languages, aligned models may produce harmful outputs they would refuse in English.\n\n**Direction:** Translate 200 AILuminate public prompts into five languages (Spanish, Chinese, Arabic, Hindi, French). Evaluate three multilingual models and compute language-specific safety score deltas relative to English baseline.\n\n**Why it matters:** Global deployments assume safety transfers across languages. If safety is language-specific, non-English deployments are systematically under-evaluated.\n\n**Relevant context:** EMNLP 2025 research on multilingual LLM-as-judge shows poor cross-language consistency (Kappa ~0.3). Safety scoring has the same vulnerability."
+  },
+  {
+    "idea_id": "gen-0675",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:16:51Z",
+    "subfield": "Evaluations & Benchmarks",
+    "generation_strategy": "replication_with_twist",
+    "confidence": 0.81,
+    "body": "# Agentic Safety Replication: Multi-Step Instruction Following Under Conflicting Goals\n\n**Problem:** UK AISI agent red-teaming categories include conflicting objectives and instruction hierarchy violations. Whether these failure modes replicate across different open-source agent architectures is unknown.\n\n**Direction:** Implement simplified versions of three UK AISI agent red-teaming scenario types (confidentiality breaches, conflicting objectives, instruction hierarchy violations) and test two open-source agent frameworks (LangChain, AutoGPT). Document which failure modes replicate.\n\n**Why it matters:** If agentic safety failure modes are architecture-specific rather than model-specific, safety evaluations need to be re-run for each deployment architecture.\n\n**Relevant context:** UK AISI published the Agent Red-Teaming Challenge with five core behavior categories. Replicating across architectures tests generalizability of the taxonomy."
+  },
+  {
+    "idea_id": "gen-0676",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:16:51Z",
+    "subfield": "Evaluations & Benchmarks",
+    "generation_strategy": "tool_or_benchmark_gap",
+    "confidence": 0.82,
+    "body": "# Benchmark for Memory-Manipulation Attacks in Agentic Systems\n\n**Problem:** Agentic systems increasingly use persistent memory (vector databases, conversation history). No benchmark tests whether adversarial inputs can corrupt an agent's memory to alter future behavior.\n\n**Direction:** Design 80 scenarios where an adversarial input attempts to write misleading or harmful beliefs into an agent's memory store. Evaluate whether later agent actions reflect the corrupted memory. Test two frameworks with different memory implementations.\n\n**Why it matters:** OWASP Agentic Applications 2026 lists memory manipulation as a top risk. A concrete benchmark would operationalize this risk category for systematic testing.\n\n**Relevant context:** LangChain and LlamaIndex both implement vector-database memory for agents. No published benchmark specifically targets memory poisoning in safety-relevant contexts."
+  },
+  {
+    "idea_id": "gen-0677",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:16:51Z",
+    "subfield": "Evaluations & Benchmarks",
+    "generation_strategy": "tool_or_benchmark_gap",
+    "confidence": 0.8,
+    "body": "# Benchmark for Supply-Chain Safety: Evaluating Models Loaded from Untrusted Checkpoints\n\n**Problem:** Practitioners frequently download model checkpoints from HuggingFace. A maliciously modified checkpoint could alter safety behavior. No benchmark tests whether fine-tuned or poisoned checkpoints pass standard safety evaluations.\n\n**Direction:** Introduce targeted backdoor perturbations into a small model checkpoint (activating unsafe responses on specific trigger phrases). Run the poisoned model through HELM Safety and AILuminate to see whether standard benchmarks detect the backdoor.\n\n**Why it matters:** Supply-chain attacks via model checkpoints are an acknowledged risk. Knowing whether current safety benchmarks are blind to checkpoint-level poisoning is practically urgent.\n\n**Relevant context:** BadNets and backdoor injection methods are published and reproducible. OWASP Agentic 2026 lists supply chain as a top risk category."
+  },
+  {
+    "idea_id": "gen-0678",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:16:51Z",
+    "subfield": "Evaluations & Benchmarks",
+    "generation_strategy": "failure_mode_investigation",
+    "confidence": 0.78,
+    "body": "# Investigate Whether Safety Benchmark Scores Predict Real User Harm Reports\n\n**Problem:** Safety benchmarks are assumed to predict real-world safety outcomes, but this ecological validity has never been tested. It is unknown whether models that score higher on HELM Safety or AILuminate actually produce fewer harmful outputs in real user interactions.\n\n**Direction:** Correlate published safety benchmark scores for models available on platforms with real-world harm proxies: moderation actions reported in public API usage data, red-teaming community reports, or disclosed incident logs. Use rank correlation statistics.\n\n**Why it matters:** If benchmark scores do not predict real-world harm rates, the entire safety benchmarking enterprise lacks ecological validity \u2014 a fundamental critique worth documenting.\n\n**Relevant context:** The 2026 International AI Safety Report identifies an 'evaluation gap' where pre-deployment benchmarks do not reflect real-world behavior. This project operationalizes that critique."
+  },
+  {
+    "idea_id": "gen-0679",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:16:51Z",
+    "subfield": "Evaluations & Benchmarks",
+    "generation_strategy": "failure_mode_investigation",
+    "confidence": 0.86,
+    "body": "# Investigating Format Sensitivity of Safety Scores: Markdown vs. Plain Text Responses\n\n**Problem:** LLM judges rate safety of model outputs. If responses formatted with markdown (bold, lists, headers) receive systematically different safety scores than equivalent plain-text responses, safety rankings are format-dependent artifacts.\n\n**Direction:** Take 200 model responses, reformat them between markdown and plain text, and score with both LLM judges and a rule-based classifier. Measure how much formatting alone shifts safety scores.\n\n**Why it matters:** ACL 2025 research shows LLM judges are sensitive to simple text formatting changes. If this affects safety-specific scoring, published safety rankings may be formatting artifacts.\n\n**Relevant context:** The ACL 2025 paper 'Safer or Luckier? LLMs as Safety Evaluators Are Not Robust to Artifacts' directly documents this vulnerability."
+  },
+  {
+    "idea_id": "gen-0680",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:16:51Z",
+    "subfield": "Evaluations & Benchmarks",
+    "generation_strategy": "failure_mode_investigation",
+    "confidence": 0.83,
+    "body": "# Investigating Temporal Degradation of Safety Benchmark Validity\n\n**Problem:** Safety benchmarks created in 2022\u20132024 may increasingly appear in model training data as the web replicates these materials. Benchmarks that were valid at release may become contaminated over time.\n\n**Direction:** Estimate contamination probabilities for older safety benchmark items (e.g., original TrustLLM dataset, early HELM Safety prompts) in models trained at different time points. Plot contamination probability vs. model training cutoff date.\n\n**Why it matters:** If benchmark contamination grows over time with the model training cutoff, safety scores from newer models are systematically inflated \u2014 a temporal validity threat to longitudinal comparisons.\n\n**Relevant context:** EMNLP 2025 survey (arxiv 2502.17521) covers static-to-dynamic evaluation and discusses temporal contamination. Applying this lens specifically to safety benchmarks fills a gap."
+  },
+  {
+    "idea_id": "gen-0681",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:16:51Z",
+    "subfield": "Evaluations & Benchmarks",
+    "generation_strategy": "failure_mode_investigation",
+    "confidence": 0.85,
+    "body": "# Failure Mode Analysis: Do Safety Benchmarks Catch Dual-Use Uplift?\n\n**Problem:** Current safety benchmarks test for explicit harmful content. They may fail to catch responses that provide genuine scientific or technical uplift for harmful applications while framed benignly (dual-use information).\n\n**Direction:** Create 100 prompts requesting information that has dual-use potential (chemistry, biology, cybersecurity). Classify model responses as 'explicitly harmful', 'technically informative with uplift potential', or 'safely vague'. Measure what fraction of AILuminate and HELM Safety probes cover dual-use scenarios.\n\n**Why it matters:** Dual-use uplift is one of the primary catastrophic risk pathways identified in the 2026 International AI Safety Report. If benchmarks are blind to it, safety assurances are systematically incomplete.\n\n**Relevant context:** The 2026 International AI Safety Report highlights CBRN uplift as a primary concern. No existing consumer-facing benchmark directly operationalizes dual-use uplift measurement."
+  },
+  {
+    "idea_id": "gen-0682",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:16:51Z",
+    "subfield": "Evaluations & Benchmarks",
+    "generation_strategy": "failure_mode_investigation",
+    "confidence": 0.81,
+    "body": "# Investigating Whether Inspect AI Evaluations Reproduce Across Compute Environments\n\n**Problem:** Inspect AI is a widely used evaluation framework, but it is unknown whether evaluation results produced with Inspect AI are reproducible across different hardware environments, batch sizes, and model serving configurations.\n\n**Direction:** Run the same Inspect AI evaluation suite on the same model in three configurations (local GPU, different batch sizes, quantized vs. full precision). Measure variance in scores and identify evaluation parameters that drive irreproducibility.\n\n**Why it matters:** Reproducibility is foundational to scientific evaluation. If Inspect AI scores vary significantly across environments, published results cannot be trusted without detailed configuration reporting.\n\n**Relevant context:** Inspect AI is the primary evaluation framework promoted by UK AISI. Its reproducibility properties have not been publicly documented."
+  },
+  {
+    "idea_id": "gen-0683",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:16:51Z",
+    "subfield": "Evaluations & Benchmarks",
+    "generation_strategy": "tool_or_benchmark_gap",
+    "confidence": 0.83,
+    "body": "# Tool for Automatically Detecting Benchmark Saturation in Safety Eval Leaderboards\n\n**Problem:** No tool exists to automatically monitor safety benchmark leaderboards for saturation signals (collapsing variance, ceiling effects, loss of model discriminability). Researchers must inspect this manually.\n\n**Direction:** Build a Python script that scrapes or ingests benchmark leaderboard data, computes score distributions over time, and flags benchmarks where score variance has dropped below a threshold or where top models are statistically indistinguishable. Apply to HELM Safety and AILuminate historical scores.\n\n**Why it matters:** Proactive detection of benchmark saturation lets the field retire ineffective benchmarks before they produce false assurance. A simple automated tool lowers the barrier to tracking this.\n\n**Relevant context:** MMLU and GSM8K saturation are documented. Safety benchmark saturation monitoring requires the same analysis applied to safety-specific leaderboards."
+  },
+  {
+    "idea_id": "gen-0684",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:16:51Z",
+    "subfield": "Evaluations & Benchmarks",
+    "generation_strategy": "tool_or_benchmark_gap",
+    "confidence": 0.81,
+    "body": "# Multimodal Safety Benchmark: Table and Chart Injection Attacks\n\n**Problem:** Models processing structured data (tables, charts) may follow harmful instructions embedded in chart titles, axis labels, or table cells while appearing to perform benign data analysis.\n\n**Direction:** Construct 100 data analysis tasks where harmful instructions are embedded in table/chart metadata. Evaluate two vision-language or code-interpreter models. Score whether the model executes the embedded instruction or completes the analysis task as intended.\n\n**Why it matters:** Enterprise deployments routinely use LLMs to analyze spreadsheets and dashboards. Instruction injection via structured data is an uncharacterized attack surface.\n\n**Relevant context:** Multimodal safety benchmarks are identified as a major gap. Code-interpreter and structured data analysis are among the most common agentic use cases."
+  },
+  {
+    "idea_id": "gen-0685",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:16:51Z",
+    "subfield": "Evaluations & Benchmarks",
+    "generation_strategy": "failure_mode_investigation",
+    "confidence": 0.8,
+    "body": "# Investigating Whether AISafetyLab Evaluations Align with Human Red-Team Findings\n\n**Problem:** AISafetyLab provides automated attack and evaluation tools. Whether its automated red-team results agree with human red-team findings has not been systematically compared.\n\n**Direction:** Run AISafetyLab's automated red-teaming on a model whose human red-team report is publicly available (e.g., from an AI company's model card). Compare attack success rates and failure category distributions between automated and human red-team results.\n\n**Why it matters:** If automated tools miss large categories of vulnerabilities found by human red teams, they provide false assurance. Quantifying the gap informs how automated evals should be supplemented.\n\n**Relevant context:** Several AI companies publish model cards with red-team summaries. AISafetyLab is publicly available. No published comparison of automated vs. human red-team coverage exists."
+  },
+  {
+    "idea_id": "gen-0686",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:16:51Z",
+    "subfield": "Evaluations & Benchmarks",
+    "generation_strategy": "tool_or_benchmark_gap",
+    "confidence": 0.8,
+    "body": "# Benchmark for Evaluating Model Honesty About Its Own Safety Limitations\n\n**Problem:** Models should accurately represent when they are uncertain or when a query is near the boundary of their safety training. No benchmark evaluates whether models honestly communicate their own safety limitations vs. overclaiming safety.\n\n**Direction:** Create 150 prompts at varying distances from clear safety boundaries (clearly safe, ambiguous, clearly harmful). Evaluate whether model responses include appropriate epistemic hedging and accurate self-assessment of their safety boundary uncertainty.\n\n**Why it matters:** A model that falsely claims certainty about its own safety is less safe than one that honestly flags uncertainty. No existing benchmark captures this epistemic safety dimension.\n\n**Relevant context:** TrustLLM covers truthfulness and calibration. Extending this to self-assessment of safety-specific uncertainty is a natural gap filler."
+  },
+  {
+    "idea_id": "gen-0687",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:16:51Z",
+    "subfield": "Evaluations & Benchmarks",
+    "generation_strategy": "failure_mode_investigation",
+    "confidence": 0.82,
+    "body": "# Investigating Evaluator Anchoring: Does the Order Models Are Presented Affect Safety Rankings?\n\n**Problem:** When LLM judges evaluate a batch of models, the first model evaluated may anchor the judge's scoring scale. Systematic order effects could bias comparative safety rankings.\n\n**Direction:** Submit the same model outputs to an LLM judge in randomized orders across ten evaluation runs. Compute whether safety score variance correlates with position in the evaluation queue. Identify anchoring magnitude.\n\n**Why it matters:** If safety rankings depend on evaluation order, comparative leaderboard positions are unreliable. Documenting this effect motivates randomization requirements in evaluation protocols.\n\n**Relevant context:** Position bias in LLM judges is documented for pairwise comparisons. Anchoring in sequential batch evaluation is a related but distinct and understudied phenomenon."
+  },
+  {
+    "idea_id": "gen-0688",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:16:51Z",
+    "subfield": "Evaluations & Benchmarks",
+    "generation_strategy": "replication_with_twist",
+    "confidence": 0.85,
+    "body": "# Replicating Safety Scores Under Decoding Parameter Variation\n\n**Problem:** Safety benchmark results are reported at specific decoding parameters (temperature, top-p). Whether safety scores are sensitive to decoding parameters \u2014 as generation becomes more stochastic \u2014 is not systematically documented.\n\n**Direction:** Evaluate two models on HELM Safety at five temperature settings (0, 0.3, 0.7, 1.0, 1.5). Compute how safety scores change with temperature and identify hazard categories most sensitive to temperature.\n\n**Why it matters:** Production deployments use varying decoding parameters for different use cases. If safety degrades at higher temperatures, benchmark scores at temperature=0 systematically overestimate deployment-time safety.\n\n**Relevant context:** Standard safety benchmark evaluations use greedy or low-temperature decoding. Real deployments often use temperature 0.7\u20131.0 for more natural outputs."
+  },
+  {
+    "idea_id": "gen-0689",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:16:51Z",
+    "subfield": "Evaluations & Benchmarks",
+    "generation_strategy": "tool_or_benchmark_gap",
+    "confidence": 0.86,
+    "body": "# Benchmark for Safety in Tool-Augmented Retrieval (RAG) Pipelines\n\n**Problem:** RAG systems retrieve external documents that may contain harmful content. No benchmark evaluates whether LLMs in RAG configurations propagate or refuse harmful information retrieved from external sources.\n\n**Direction:** Construct 120 RAG scenarios where retrieved context contains harmful content (disinformation, harmful instructions, biased text). Measure whether the model propagates, qualifies, or refuses the harmful retrieved content across three models.\n\n**Why it matters:** RAG is one of the most widely deployed LLM architectures in enterprise. Safety evaluations that ignore retrieved context leave a major deployment-time attack surface uncharacterized.\n\n**Relevant context:** Prompt injection from retrieved content is covered in the OWASP LLM Top 10 but no standardized benchmark tests it for safety specifically. LangChain and LlamaIndex make RAG pipelines trivially implementable."
+  },
+  {
+    "idea_id": "gen-0690",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:16:51Z",
+    "subfield": "Evaluations & Benchmarks",
+    "generation_strategy": "failure_mode_investigation",
+    "confidence": 0.84,
+    "body": "# Investigating Whether Safety Scores Are Consistent Across Inference Frameworks\n\n**Problem:** The same model weights may produce different safety scores when run with different inference frameworks (HuggingFace Transformers, vLLM, llama.cpp, Ollama). Tokenization differences, attention implementations, and numerical precision may all affect safety-relevant outputs.\n\n**Direction:** Run the same model (e.g., Mistral-7B-Instruct) on 200 AILuminate prompts through three inference frameworks. Compute disagreement rate in safety scores across frameworks. Identify prompts where framework choice changes the safety verdict.\n\n**Why it matters:** Practitioners benchmark models using one framework but deploy using another. If safety scores are framework-sensitive, pre-deployment evaluations may not reflect production behavior.\n\n**Relevant context:** Inference framework variability is known to affect capability benchmarks. Its effect on safety-specific outputs has not been studied."
+  },
+  {
+    "idea_id": "gen-0691",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:16:51Z",
+    "subfield": "Evaluations & Benchmarks",
+    "generation_strategy": "failure_mode_investigation",
+    "confidence": 0.83,
+    "body": "# Agentic Eval: Does the Number of Reasoning Steps Affect Safety Outcomes?\n\n**Problem:** Chain-of-thought and extended reasoning increase model capability but may also create more opportunities for the model to rationalize unsafe actions. Whether longer reasoning chains are associated with higher rates of unsafe final actions is unknown.\n\n**Direction:** Compare safety outcomes (rate of completing harmful tasks) for the same model using zero-shot, chain-of-thought (3-step), and extended reasoning (10-step) on a set of 100 safety-relevant agentic tasks.\n\n**Why it matters:** Extended reasoning models (o1, DeepSeek-R1) are increasingly used in agentic settings. If more reasoning steps increase unsafe action rates, this is a critical safety implication for reasoning-capable agents.\n\n**Relevant context:** The 2026 International AI Safety Report notes that reliability of agentic systems outside controlled settings remains fragile. Reasoning depth as a safety variable is underexplored."
+  },
+  {
+    "idea_id": "gen-0692",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:16:51Z",
+    "subfield": "Evaluations & Benchmarks",
+    "generation_strategy": "tool_or_benchmark_gap",
+    "confidence": 0.82,
+    "body": "# Benchmark for Permission Escalation Detection in Multi-Agent Systems\n\n**Problem:** In multi-agent systems, a subagent may be granted limited permissions by an orchestrator, then attempt to escalate those permissions. No benchmark evaluates whether orchestrator models correctly detect and block permission escalation attempts.\n\n**Direction:** Design 80 scenarios where a simulated subagent requests permissions beyond its granted scope. Evaluate whether an LLM orchestrator (GPT-4o or Llama-3-70B) detects and refuses the escalation attempt across varying request framings.\n\n**Why it matters:** OWASP Agentic Applications 2026 identifies permission escalation as a primary risk. A benchmark operationalizing this risk enables systematic evaluation of orchestrator safety.\n\n**Relevant context:** Multi-agent frameworks (AutoGen, CrewAI) are widely used. Permission escalation detection is a named risk without a corresponding evaluation benchmark."
+  },
+  {
+    "idea_id": "gen-0693",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:16:51Z",
+    "subfield": "Evaluations & Benchmarks",
+    "generation_strategy": "failure_mode_investigation",
+    "confidence": 0.82,
+    "body": "# Investigating the Effect of Retrieval Context Size on Safety Benchmark Scores\n\n**Problem:** RAG pipelines vary the amount of retrieved context from a few sentences to several thousand tokens. Whether safety scores degrade as retrieved context increases (more opportunities for injection) is unknown.\n\n**Direction:** Construct a RAG safety evaluation where harmful instructions are embedded in retrieved documents at varying context sizes (512, 2K, 8K, 32K tokens). Measure how compliance rate with the harmful instruction changes with total context size.\n\n**Why it matters:** Long-context RAG is increasingly common. If safety filters are overwhelmed by longer contexts, organizations using RAG with large document collections are exposed.\n\n**Relevant context:** Long-context models support 32K\u2013128K tokens. RAG safety is a gap identified in current benchmarks. This tests a specific and tractable dimension of that gap."
+  },
+  {
+    "idea_id": "gen-0694",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:16:52Z",
+    "subfield": "Evaluations & Benchmarks",
+    "generation_strategy": "tool_or_benchmark_gap",
+    "confidence": 0.83,
+    "body": "# Tool for Visualizing Safety Benchmark Coverage Gaps Using Embedding Projections\n\n**Problem:** Benchmark designers need to understand what region of the 'safety prompt space' is covered by existing benchmarks and where gaps exist. No tool visualizes this coverage in an interpretable way.\n\n**Direction:** Embed all prompts from AILuminate, HELM Safety, and TrustLLM using a sentence transformer. Project to 2D with UMAP. Visualize cluster density and identify sparse regions representing coverage gaps. Publish the visualization as an interactive HTML artifact.\n\n**Why it matters:** A visual coverage map lets benchmark designers and researchers see which hazard scenarios are over-represented and which are barely covered, guiding dataset expansion efforts.\n\n**Relevant context:** Sentence transformers and UMAP run efficiently on CPU/single GPU. No such visualization tool exists for safety benchmark coverage."
+  },
+  {
+    "idea_id": "gen-0695",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:16:52Z",
+    "subfield": "Evaluations & Benchmarks",
+    "generation_strategy": "failure_mode_investigation",
+    "confidence": 0.84,
+    "body": "# Investigating Halo Effects in Safety Scoring: Do High-Quality Responses Get Higher Safety Scores?\n\n**Problem:** LLM judges may exhibit a halo effect, giving higher safety scores to responses that are also high quality (well-written, helpful, coherent), even when both a low-quality and high-quality response are equally unsafe.\n\n**Direction:** Construct paired responses to the same harmful prompt: one poorly written and one well-written, both equally unsafe. Submit to LLM judges and measure whether quality correlates with safety score.\n\n**Why it matters:** If LLM judges conflate response quality with safety, high-quality unsafe models will receive inflated safety scores \u2014 a systematic bias favoring capable-but-unsafe models on benchmarks.\n\n**Relevant context:** ACL 2025 research documents multiple artifacts that bias LLM safety evaluators. The halo effect (quality-safety conflation) is a plausible but untested specific artifact."
+  },
+  {
+    "idea_id": "gen-0696",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:16:52Z",
+    "subfield": "Evaluations & Benchmarks",
+    "generation_strategy": "tool_or_benchmark_gap",
+    "confidence": 0.84,
+    "body": "# Benchmark for Safety Under Adversarial Few-Shot Examples\n\n**Problem:** Few-shot prompting is standard practice. Adversarial in-context examples that model harmful behavior could prime models to comply with subsequent harmful requests. No benchmark tests this attack vector.\n\n**Direction:** Construct 100 prompts with adversarial few-shot examples (demonstrations of harmful compliance) followed by a harmful request. Evaluate three models and compare refusal rates against zero-shot equivalents.\n\n**Why it matters:** Few-shot prompt injection is a realistic attack in RAG and API settings where retrieved or user-provided examples influence model behavior. Benchmarking this vulnerability is practically important.\n\n**Relevant context:** Few-shot prompting is covered in capability benchmarks but not in safety benchmarks. The interaction between in-context learning and safety alignment is undercharacterized."
+  },
+  {
+    "idea_id": "gen-0697",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:16:52Z",
+    "subfield": "Evaluations & Benchmarks",
+    "generation_strategy": "failure_mode_investigation",
+    "confidence": 0.79,
+    "body": "# Investigating Benchmark Score Variance Due to Prompt Batching\n\n**Problem:** Safety evaluations typically run prompts individually. When prompts are batched (multiple prompts in a single API call or batch inference), model outputs may differ due to attention interference. Whether batching introduces systematic safety score variance is unknown.\n\n**Direction:** Evaluate the same 200 safety prompts individually and in batches of 10, 20, and 50. Measure disagreement rates in safety verdicts between individual and batched evaluation across two models.\n\n**Why it matters:** Large-scale evaluations use batching for efficiency. If batching changes safety verdicts, published large-scale evaluation results may reflect batching artifacts.\n\n**Relevant context:** Batch inference is standard in evaluation pipelines using vLLM or HuggingFace pipeline API. Its effect on output content (not just latency) for safety-specific prompts is unstudied."
+  },
+  {
+    "idea_id": "gen-0698",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:16:52Z",
+    "subfield": "Evaluations & Benchmarks",
+    "generation_strategy": "tool_or_benchmark_gap",
+    "confidence": 0.84,
+    "body": "# Tool for Automated Safety Regression Testing in CI/CD Pipelines\n\n**Problem:** Organizations that continuously fine-tune and update models have no standardized lightweight tool for running safety regression tests as part of CI/CD pipelines before deploying a new checkpoint.\n\n**Direction:** Build a Python package that integrates with GitHub Actions or similar CI/CD systems to automatically run a small curated safety probe suite on model checkpoints. Return a pass/fail signal based on configurable thresholds. Validate with a controlled regression scenario.\n\n**Why it matters:** Red teaming playbooks describe CI/CD safety validation as a best practice for 2025. A concrete, student-built open-source tool implementing this would have direct practical impact.\n\n**Relevant context:** Red teaming playbooks advocate continuous safety validation in CI/CD. No simple, open-source, safety-specific CI/CD regression tool currently exists."
+  },
+  {
+    "idea_id": "gen-0699",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:16:52Z",
+    "subfield": "Evaluations & Benchmarks",
+    "generation_strategy": "failure_mode_investigation",
+    "confidence": 0.82,
+    "body": "# Investigating Whether Safety Benchmarks Are Sensitive to Chat Template Formatting\n\n**Problem:** Different models require different chat templates (ChatML, Llama-2 format, Mistral instruct format). Applying the wrong chat template may inadvertently increase or decrease safety scores, conflating template errors with genuine safety differences.\n\n**Direction:** Evaluate a model under its correct chat template and two incorrect but plausible templates on a safety benchmark. Measure how much template mismatch shifts safety scores compared to template-correct evaluation.\n\n**Why it matters:** Template errors are common in student and practitioner evaluations. If template mismatches produce spurious safety score differences, many published safety comparisons may be invalid.\n\n**Relevant context:** Chat template sensitivity is known in capability evaluation but has not been specifically studied for safety benchmarks."
+  },
+  {
+    "idea_id": "gen-0700",
+    "run_id": "2026-03-19T19-58-40",
+    "stage": "generate",
+    "timestamp": "2026-03-19T20:16:52Z",
+    "subfield": "Evaluations & Benchmarks",
+    "generation_strategy": "replication_with_twist",
+    "confidence": 0.85,
+    "body": "# Replicating Safety Scores Under Adversarial Suffixes (GCG Attack)\n\n**Problem:** GCG (Greedy Coordinate Gradient) adversarial suffixes are known to reduce refusal rates. Whether safety benchmark scores remain valid for adversarially suffixed inputs, and whether scores predict GCG robustness, is unstudied.\n\n**Direction:** Generate GCG adversarial suffixes for a subset of AILuminate prompts using an open-source attack toolkit. Compare safety scores with and without suffixes for two models. Compute the correlation between baseline safety score and suffix attack success rate.\n\n**Why it matters:** If safety benchmark scores do not predict robustness to adversarial attacks, they measure compliance under benign inputs only \u2014 not genuine alignment robustness.\n\n**Relevant context:** GCG attack implementations are publicly available. AILuminate public prompts provide the test set. The correlation between benchmark safety score and adversarial robustness is a fundamental validity question."
+  }
+]
