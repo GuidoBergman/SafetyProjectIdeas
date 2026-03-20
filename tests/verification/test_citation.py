@@ -1,226 +1,242 @@
-"""Tests for citation verification module."""
+"""Tests for citation lookup module."""
 
 import json
 from unittest.mock import MagicMock, patch
 
 from safety_ideas.verification.citation import (
-    filter_unverified,
-    verify_citations,
-    verify_doi,
-    verify_semantic_scholar,
+    lookup_citations,
+    lookup_doi,
+    search_crossref,
+    search_semantic_scholar,
 )
 
 
-class TestVerifyDoi:
-    @patch("safety_ideas.verification.citation.urllib.request.urlopen")
-    def test_valid_doi_returns_true(self, mock_urlopen):
-        mock_response = MagicMock()
-        mock_response.status = 200
-        mock_response.__enter__ = lambda s: s
-        mock_response.__exit__ = MagicMock(return_value=False)
-        mock_urlopen.return_value = mock_response
+def _mock_urlopen(response_data: dict | str) -> MagicMock:
+    """Create a mock urlopen context manager returning the given data."""
+    if isinstance(response_data, dict):
+        body = json.dumps(response_data).encode()
+    else:
+        body = response_data.encode()
+    mock_response = MagicMock()
+    mock_response.read.return_value = body
+    mock_response.status = 200
+    mock_response.__enter__ = lambda s: s
+    mock_response.__exit__ = MagicMock(return_value=False)
+    return mock_response
 
-        assert verify_doi("10.1234/test") is True
+
+class TestLookupDoi:
+    @patch("safety_ideas.verification.citation.urllib.request.urlopen")
+    def test_returns_metadata_on_success(self, mock_urlopen_fn):
+        crossref_response = {
+            "message": {
+                "title": ["Attention Is All You Need"],
+                "author": [
+                    {"given": "Ashish", "family": "Vaswani"},
+                    {"given": "Noam", "family": "Shazeer"},
+                ],
+                "URL": "https://doi.org/10.1234/test",
+            }
+        }
+        mock_urlopen_fn.return_value = _mock_urlopen(crossref_response)
+
+        result = lookup_doi("10.1234/test")
+        assert result is not None
+        assert result["doi"] == "10.1234/test"
+        assert result["title"] == "Attention Is All You Need"
+        assert result["authors"] == ["Ashish Vaswani", "Noam Shazeer"]
+        assert result["url"] == "https://doi.org/10.1234/test"
 
     @patch("safety_ideas.verification.citation.urllib.request.urlopen")
-    def test_invalid_doi_returns_false(self, mock_urlopen):
+    def test_returns_none_on_404(self, mock_urlopen_fn):
         import urllib.error
 
-        mock_urlopen.side_effect = urllib.error.HTTPError(
+        mock_urlopen_fn.side_effect = urllib.error.HTTPError(
             url="", code=404, msg="Not Found", hdrs={}, fp=None
         )
-
-        assert verify_doi("10.9999/nonexistent") is False
+        assert lookup_doi("10.9999/nonexistent") is None
 
     @patch("safety_ideas.verification.citation.urllib.request.urlopen")
-    def test_network_error_returns_false(self, mock_urlopen):
+    def test_returns_none_on_network_error(self, mock_urlopen_fn):
         import urllib.error
 
-        mock_urlopen.side_effect = urllib.error.URLError("Connection refused")
+        mock_urlopen_fn.side_effect = urllib.error.URLError("Connection refused")
+        assert lookup_doi("10.1234/test") is None
 
-        assert verify_doi("10.1234/test") is False
-
-
-class TestVerifySemanticScholar:
     @patch("safety_ideas.verification.citation.urllib.request.urlopen")
-    def test_exact_title_match(self, mock_urlopen):
+    def test_handles_missing_fields(self, mock_urlopen_fn):
+        crossref_response = {"message": {}}
+        mock_urlopen_fn.return_value = _mock_urlopen(crossref_response)
+
+        result = lookup_doi("10.1234/test")
+        assert result is not None
+        assert result["title"] == ""
+        assert result["authors"] == []
+
+
+class TestSearchCrossref:
+    @patch("safety_ideas.verification.citation.urllib.request.urlopen")
+    def test_returns_candidates(self, mock_urlopen_fn):
+        crossref_response = {
+            "message": {
+                "items": [
+                    {
+                        "DOI": "10.1234/paper1",
+                        "title": ["Paper One"],
+                        "author": [{"given": "Alice", "family": "Smith"}],
+                        "URL": "https://doi.org/10.1234/paper1",
+                    },
+                    {
+                        "DOI": "10.1234/paper2",
+                        "title": ["Paper Two"],
+                        "author": [],
+                        "URL": "https://doi.org/10.1234/paper2",
+                    },
+                ]
+            }
+        }
+        mock_urlopen_fn.return_value = _mock_urlopen(crossref_response)
+
+        results = search_crossref("Paper One")
+        assert len(results) == 2
+        assert results[0]["doi"] == "10.1234/paper1"
+        assert results[0]["title"] == "Paper One"
+        assert results[0]["authors"] == ["Alice Smith"]
+        assert results[1]["doi"] == "10.1234/paper2"
+
+    @patch("safety_ideas.verification.citation.urllib.request.urlopen")
+    def test_returns_empty_on_no_results(self, mock_urlopen_fn):
+        crossref_response = {"message": {"items": []}}
+        mock_urlopen_fn.return_value = _mock_urlopen(crossref_response)
+
+        results = search_crossref("Nonexistent Paper")
+        assert results == []
+
+    @patch("safety_ideas.verification.citation.urllib.request.urlopen")
+    def test_returns_empty_on_network_error(self, mock_urlopen_fn):
+        import urllib.error
+
+        mock_urlopen_fn.side_effect = urllib.error.URLError("Connection refused")
+        assert search_crossref("Some Paper") == []
+
+
+class TestSearchSemanticScholar:
+    @patch("safety_ideas.verification.citation.urllib.request.urlopen")
+    def test_returns_candidates(self, mock_urlopen_fn):
         response_data = {
             "data": [
-                {"paperId": "abc123", "title": "Test Paper Title", "url": "https://example.com"}
+                {"paperId": "abc123", "title": "Test Paper Title", "url": "https://example.com"},
+                {"paperId": "def456", "title": "Related Paper", "url": "https://example.com/2"},
             ]
         }
-        mock_response = MagicMock()
-        mock_response.read.return_value = json.dumps(response_data).encode()
-        mock_response.__enter__ = lambda s: s
-        mock_response.__exit__ = MagicMock(return_value=False)
-        mock_urlopen.return_value = mock_response
+        mock_urlopen_fn.return_value = _mock_urlopen(response_data)
 
-        result = verify_semantic_scholar("Test Paper Title")
-        assert result is not None
-        assert result["paperId"] == "abc123"
-        assert result["title"] == "Test Paper Title"
+        results = search_semantic_scholar("Test Paper Title")
+        assert len(results) == 2
+        assert results[0]["paperId"] == "abc123"
+        assert results[0]["title"] == "Test Paper Title"
 
     @patch("safety_ideas.verification.citation.urllib.request.urlopen")
-    def test_no_results_returns_none(self, mock_urlopen):
+    def test_returns_empty_on_no_results(self, mock_urlopen_fn):
         response_data = {"data": []}
-        mock_response = MagicMock()
-        mock_response.read.return_value = json.dumps(response_data).encode()
-        mock_response.__enter__ = lambda s: s
-        mock_response.__exit__ = MagicMock(return_value=False)
-        mock_urlopen.return_value = mock_response
+        mock_urlopen_fn.return_value = _mock_urlopen(response_data)
 
-        result = verify_semantic_scholar("Nonexistent Paper")
-        assert result is None
+        results = search_semantic_scholar("Nonexistent Paper")
+        assert results == []
 
     @patch("safety_ideas.verification.citation.urllib.request.urlopen")
-    def test_close_match_returns_first(self, mock_urlopen):
-        response_data = {
-            "data": [
-                {"paperId": "abc123", "title": "Similar Paper Title", "url": "https://example.com"}
-            ]
-        }
-        mock_response = MagicMock()
-        mock_response.read.return_value = json.dumps(response_data).encode()
-        mock_response.__enter__ = lambda s: s
-        mock_response.__exit__ = MagicMock(return_value=False)
-        mock_urlopen.return_value = mock_response
-
-        result = verify_semantic_scholar("Different Paper Title")
-        assert result is not None
-        assert result["title"] == "Similar Paper Title"
-
-    @patch("safety_ideas.verification.citation.urllib.request.urlopen")
-    def test_network_error_returns_none(self, mock_urlopen):
+    def test_returns_empty_on_network_error(self, mock_urlopen_fn):
         import urllib.error
 
-        mock_urlopen.side_effect = urllib.error.URLError("Connection refused")
+        mock_urlopen_fn.side_effect = urllib.error.URLError("Connection refused")
+        assert search_semantic_scholar("Some Paper") == []
 
-        result = verify_semantic_scholar("Some Paper")
-        assert result is None
+    @patch("safety_ideas.verification.citation.urllib.request.urlopen")
+    @patch.dict("os.environ", {"S2_API_KEY": "test-key-123"})
+    def test_sends_api_key_header_when_set(self, mock_urlopen_fn):
+        response_data = {"data": []}
+        mock_urlopen_fn.return_value = _mock_urlopen(response_data)
+
+        search_semantic_scholar("Some Paper")
+
+        req = mock_urlopen_fn.call_args[0][0]
+        assert req.get_header("X-api-key") == "test-key-123"
+
+    @patch("safety_ideas.verification.citation.urllib.request.urlopen")
+    @patch.dict("os.environ", {}, clear=True)
+    def test_no_api_key_header_when_unset(self, mock_urlopen_fn):
+        response_data = {"data": []}
+        mock_urlopen_fn.return_value = _mock_urlopen(response_data)
+
+        search_semantic_scholar("Some Paper")
+
+        req = mock_urlopen_fn.call_args[0][0]
+        assert req.get_header("X-api-key") is None
 
 
-class TestVerifyCitations:
-    @patch("safety_ideas.verification.citation.verify_doi")
-    @patch("safety_ideas.verification.citation.verify_semantic_scholar")
-    def test_all_verified_via_doi(self, mock_ss, mock_doi):
-        mock_doi.return_value = True
-        idea = {
-            "citations": [
-                {"doi": "10.1234/paper1", "title": "Paper One"},
-                {"doi": "10.1234/paper2", "title": "Paper Two"},
-            ]
-        }
-        result = verify_citations(idea)
-        assert len(result["verified"]) == 2
-        assert len(result["failed"]) == 0
-        assert len(result["removed"]) == 0
-        mock_ss.assert_not_called()
+class TestLookupCitations:
+    @patch("safety_ideas.verification.citation.lookup_doi")
+    @patch("safety_ideas.verification.citation.search_crossref")
+    @patch("safety_ideas.verification.citation.search_semantic_scholar")
+    def test_looks_up_doi_and_title(self, mock_s2, mock_crossref, mock_doi):
+        mock_doi.return_value = {"doi": "10.1234/p1", "title": "Paper", "authors": [], "url": ""}
+        mock_crossref.return_value = [{"doi": "10.1234/p1", "title": "Paper", "authors": []}]
+        mock_s2.return_value = [{"paperId": "abc", "title": "Paper", "url": ""}]
 
-    @patch("safety_ideas.verification.citation.verify_doi")
-    @patch("safety_ideas.verification.citation.verify_semantic_scholar")
-    def test_fallback_to_semantic_scholar(self, mock_ss, mock_doi):
-        mock_doi.return_value = False
-        mock_ss.return_value = {"paperId": "abc", "title": "Paper One", "url": ""}
-        idea = {
-            "citations": [
-                {"doi": "10.1234/bad", "title": "Paper One"},
-            ]
-        }
-        result = verify_citations(idea)
-        assert len(result["verified"]) == 1
-        assert len(result["failed"]) == 0
+        idea = {"citations": [{"doi": "10.1234/p1", "title": "Paper"}]}
+        results = lookup_citations(idea)
 
-    @patch("safety_ideas.verification.citation.verify_doi")
-    @patch("safety_ideas.verification.citation.verify_semantic_scholar")
-    def test_unverified_goes_to_failed(self, mock_ss, mock_doi):
-        mock_doi.return_value = False
-        mock_ss.return_value = None
-        idea = {
-            "citations": [
-                {"doi": "10.1234/bad", "title": "Fake Paper"},
-            ]
-        }
-        result = verify_citations(idea)
-        assert len(result["verified"]) == 0
-        assert len(result["failed"]) == 1
-        assert len(result["removed"]) == 1
+        assert len(results) == 1
+        assert results[0]["crossref_doi"] is not None
+        assert len(results[0]["crossref_search"]) == 1
+        assert len(results[0]["semantic_scholar"]) == 1
+
+    @patch("safety_ideas.verification.citation.lookup_doi")
+    @patch("safety_ideas.verification.citation.search_crossref")
+    @patch("safety_ideas.verification.citation.search_semantic_scholar")
+    def test_title_only_skips_doi_lookup(self, mock_s2, mock_crossref, mock_doi):
+        mock_crossref.return_value = []
+        mock_s2.return_value = []
+
+        idea = {"citations": [{"title": "Some Paper"}]}
+        results = lookup_citations(idea)
+
+        assert len(results) == 1
+        mock_doi.assert_not_called()
+        assert results[0]["crossref_doi"] is None
+
+    @patch("safety_ideas.verification.citation.lookup_doi")
+    @patch("safety_ideas.verification.citation.search_crossref")
+    @patch("safety_ideas.verification.citation.search_semantic_scholar")
+    def test_doi_only_skips_title_searches(self, mock_s2, mock_crossref, mock_doi):
+        mock_doi.return_value = {"doi": "10.1234/p1", "title": "Paper", "authors": [], "url": ""}
+
+        idea = {"citations": [{"doi": "10.1234/p1"}]}
+        results = lookup_citations(idea)
+
+        assert len(results) == 1
+        assert results[0]["crossref_doi"] is not None
+        mock_crossref.assert_not_called()
+        mock_s2.assert_not_called()
 
     def test_no_citations_returns_empty(self):
-        idea = {"title": "No citations idea"}
-        result = verify_citations(idea)
-        assert result == {"verified": [], "failed": [], "removed": []}
+        assert lookup_citations({"title": "No citations"}) == []
 
-    @patch("safety_ideas.verification.citation.verify_doi")
-    @patch("safety_ideas.verification.citation.verify_semantic_scholar")
-    def test_mixed_verified_and_failed(self, mock_ss, mock_doi):
-        mock_doi.side_effect = [True, False]
-        mock_ss.return_value = None
+    @patch("safety_ideas.verification.citation.lookup_doi")
+    @patch("safety_ideas.verification.citation.search_crossref")
+    @patch("safety_ideas.verification.citation.search_semantic_scholar")
+    def test_multiple_citations(self, mock_s2, mock_crossref, mock_doi):
+        mock_doi.return_value = None
+        mock_crossref.return_value = []
+        mock_s2.return_value = []
+
         idea = {
             "citations": [
-                {"doi": "10.1234/good", "title": "Good Paper"},
-                {"doi": "10.1234/bad", "title": "Bad Paper"},
+                {"doi": "10.1/a", "title": "Paper A"},
+                {"doi": "10.1/b", "title": "Paper B"},
             ]
         }
-        result = verify_citations(idea)
-        assert len(result["verified"]) == 1
-        assert len(result["failed"]) == 1
-
-
-class TestFilterUnverified:
-    def test_removes_failed_citations(self):
-        idea = {
-            "title": "Test",
-            "citations": [
-                {"doi": "10.1234/good", "title": "Good Paper"},
-                {"doi": "10.1234/bad", "title": "Bad Paper"},
-            ],
-        }
-        verification = {
-            "verified": ["10.1234/good"],
-            "failed": ["10.1234/bad"],
-            "removed": ["10.1234/bad"],
-        }
-        result = filter_unverified(idea, verification)
-        assert len(result["citations"]) == 1
-        assert result["citations"][0]["doi"] == "10.1234/good"
-
-    def test_no_failed_returns_same(self):
-        idea = {
-            "title": "Test",
-            "citations": [{"doi": "10.1234/good", "title": "Good Paper"}],
-        }
-        verification = {"verified": ["10.1234/good"], "failed": [], "removed": []}
-        result = filter_unverified(idea, verification)
-        assert len(result["citations"]) == 1
-
-    def test_all_failed_removes_all(self):
-        idea = {
-            "title": "Test",
-            "citations": [
-                {"doi": "10.1234/bad1", "title": "Bad 1"},
-                {"doi": "10.1234/bad2", "title": "Bad 2"},
-            ],
-        }
-        verification = {
-            "verified": [],
-            "failed": ["10.1234/bad1", "10.1234/bad2"],
-            "removed": ["10.1234/bad1", "10.1234/bad2"],
-        }
-        result = filter_unverified(idea, verification)
-        assert len(result["citations"]) == 0
-
-    def test_does_not_mutate_original(self):
-        idea = {
-            "title": "Test",
-            "citations": [
-                {"doi": "10.1234/good", "title": "Good"},
-                {"doi": "10.1234/bad", "title": "Bad"},
-            ],
-        }
-        verification = {
-            "verified": ["10.1234/good"],
-            "failed": ["10.1234/bad"],
-            "removed": ["10.1234/bad"],
-        }
-        filter_unverified(idea, verification)
-        assert len(idea["citations"]) == 2  # Original unchanged
+        results = lookup_citations(idea)
+        assert len(results) == 2
+        assert results[0]["citation"]["title"] == "Paper A"
+        assert results[1]["citation"]["title"] == "Paper B"

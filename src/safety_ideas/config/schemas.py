@@ -15,7 +15,9 @@ class TeamProfile(BaseModel):
 
     name: str = Field(description="Team display name")
     team_type: TeamType = Field(description="Team type classification")
-    technical_skills: list[str] = Field(default_factory=list, description="Technical skills available")
+    technical_skills: list[str] = Field(
+        default_factory=list, description="Technical skills available"
+    )
     criteria_weights: dict[str, float] = Field(
         default_factory=dict,
         description="Custom scoring criteria weight overrides for this team type",
@@ -51,12 +53,8 @@ class KBCriteria(BaseModel):
     organizations: list[str] = Field(
         default_factory=list, description="Organizations whose work to prioritize"
     )
-    authors: list[str] = Field(
-        default_factory=list, description="Key authors to track"
-    )
-    exclusions: list[str] = Field(
-        default_factory=list, description="Topics or sources to exclude"
-    )
+    authors: list[str] = Field(default_factory=list, description="Key authors to track")
+    exclusions: list[str] = Field(default_factory=list, description="Topics or sources to exclude")
 
 
 class StageModelAssignment(BaseModel):
@@ -71,6 +69,70 @@ class StageThreshold(BaseModel):
 
     min_score: float = Field(ge=0.0, le=5.0, description="Minimum score to pass filter")
     max_ideas: int = Field(ge=1, description="Maximum ideas to pass through")
+
+
+class QuickFilterConfig(BaseModel):
+    """Configuration for the Stage 1 quick relevance filter."""
+
+    threshold: float = Field(
+        default=2.0,
+        ge=0.0,
+        le=5.0,
+        description="Minimum score to pass the quick relevance filter",
+    )
+    rubric: list[RubricLevel] = Field(
+        default_factory=list,
+        description="Rubric levels defining what each quick-filter score means",
+    )
+
+
+class ConfidenceRubricLevel(BaseModel):
+    """A single level in the confidence rubric."""
+
+    min: float = Field(
+        ge=0.0, le=1.0, description="Lower bound of this confidence band (inclusive)"
+    )
+    max: float = Field(
+        ge=0.0, le=1.0, description="Upper bound of this confidence band (inclusive)"
+    )
+    label: str = Field(description="Short label (e.g., 'High', 'Very low')")
+    description: str = Field(description="What this confidence range means")
+
+
+class CitationRelevanceConfig(BaseModel):
+    """Configuration for citation relevance scoring in Phase 3b."""
+
+    threshold: int = Field(
+        default=3,
+        ge=1,
+        le=5,
+        description="Minimum relevance score for a citation to be verified. "
+        "Citations below this threshold are kept as-is without verification.",
+    )
+    rubric: list[RubricLevel] = Field(
+        default_factory=list,
+        description="Rubric levels defining citation relevance to the idea",
+    )
+
+
+class BatchSizeConfig(BaseModel):
+    """Batch sizes for parallel scoring subagents."""
+
+    stage1_quick_filter: int = Field(
+        default=100,
+        ge=1,
+        description="Ideas per subagent in Stage 1 quick filter",
+    )
+    stage2_full_scoring: int = Field(
+        default=30,
+        ge=1,
+        description="Ideas per subagent in Stage 2 full scoring",
+    )
+    stage3_novelty_citations: int = Field(
+        default=15,
+        ge=1,
+        description="Ideas per subagent in Stage 3 novelty + citations",
+    )
 
 
 class GenerateSettings(BaseModel):
@@ -98,6 +160,22 @@ class PipelineSettings(BaseModel):
     generate: GenerateSettings = Field(
         default_factory=GenerateSettings,
         description="Settings for the idea generation stage",
+    )
+    batch_sizes: BatchSizeConfig = Field(
+        default_factory=BatchSizeConfig,
+        description="Batch sizes for parallel scoring subagents",
+    )
+    quick_filter: QuickFilterConfig = Field(
+        default_factory=QuickFilterConfig,
+        description="Stage 1 quick relevance filter configuration",
+    )
+    confidence_rubric: list[ConfidenceRubricLevel] = Field(
+        default_factory=list,
+        description="Rubric defining what each confidence score range (0.0-1.0) means",
+    )
+    citation_relevance: CitationRelevanceConfig = Field(
+        default_factory=CitationRelevanceConfig,
+        description="Citation relevance scoring configuration for Phase 3b",
     )
     thresholds: dict[str, StageThreshold] = Field(
         default_factory=dict,

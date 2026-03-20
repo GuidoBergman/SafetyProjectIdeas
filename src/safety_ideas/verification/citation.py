@@ -1,9 +1,14 @@
-"""Citation verification: DOI and Semantic Scholar API lookups."""
+"""Citation lookup: DOI and Semantic Scholar API queries.
+
+These functions are *lookup tools* — they return metadata for the LLM to
+inspect and judge.  They do NOT make verification decisions themselves.
+"""
 
 from __future__ import annotations
 
 import json
 import logging
+import os
 import urllib.error
 import urllib.request
 from urllib.parse import quote
@@ -17,139 +22,156 @@ _SEMANTIC_SCHOLAR_BASE = "https://api.semanticscholar.org/graph/v1/paper/search"
 _HTTP_TIMEOUT = 10
 
 
-def verify_doi(doi: str) -> bool:
-    """Check whether a DOI resolves via the CrossRef API.
+def lookup_doi(doi: str) -> dict | None:
+    """Fetch metadata for a DOI from the CrossRef API.
 
     Args:
         doi: DOI string (e.g. "10.1234/example").
 
     Returns:
-        True if the DOI resolves (HTTP 200), False otherwise.
+        Dict with ``doi``, ``title``, ``authors``, and ``url`` if the DOI
+        resolves, or None on failure.
     """
     url = f"{_CROSSREF_BASE}/{quote(doi, safe='')}"
     try:
         req = urllib.request.Request(url, method="GET")
         req.add_header("User-Agent", "SafetyIdeas/0.1 (citation-check)")
         with urllib.request.urlopen(req, timeout=_HTTP_TIMEOUT) as resp:
-            return resp.status == 200
-    except (urllib.error.HTTPError, urllib.error.URLError, OSError) as exc:
-        logger.debug("DOI verification failed for %s: %s", doi, exc)
-        return False
+            data = json.loads(resp.read().decode())
+
+        message = data.get("message", {})
+        titles = message.get("title", [])
+        authors_raw = message.get("author", [])
+        authors = [
+            " ".join(filter(None, [a.get("given", ""), a.get("family", "")]))
+            for a in authors_raw
+        ]
+        return {
+            "doi": doi,
+            "title": titles[0] if titles else "",
+            "authors": authors,
+            "url": message.get("URL", f"https://doi.org/{doi}"),
+        }
+    except (urllib.error.HTTPError, urllib.error.URLError, OSError, json.JSONDecodeError) as exc:
+        logger.debug("DOI lookup failed for %s: %s", doi, exc)
+        return None
 
 
-def verify_semantic_scholar(title: str) -> dict | None:
-    """Look up a paper by title via the Semantic Scholar API.
+def search_crossref(title: str, rows: int = 3) -> list[dict]:
+    """Search CrossRef by title and return candidate papers.
 
     Args:
         title: Paper title to search for.
+        rows: Maximum number of results to return.
 
     Returns:
-        Dict with paper metadata (paperId, title, url) if a match is found,
-        or None if no match.
+        List of dicts, each with ``doi``, ``title``, ``authors``, and ``url``.
     """
     query = quote(title)
-    url = f"{_SEMANTIC_SCHOLAR_BASE}?query={query}&limit=3"
+    url = f"{_CROSSREF_BASE}?query.bibliographic={query}&rows={rows}"
     try:
         req = urllib.request.Request(url, method="GET")
         req.add_header("User-Agent", "SafetyIdeas/0.1 (citation-check)")
         with urllib.request.urlopen(req, timeout=_HTTP_TIMEOUT) as resp:
             data = json.loads(resp.read().decode())
 
-        papers = data.get("data", [])
-        if not papers:
-            return None
-
-        # Check for a title match (case-insensitive).
-        title_lower = title.lower().strip()
-        for paper in papers:
-            paper_title = (paper.get("title") or "").lower().strip()
-            if paper_title == title_lower:
-                return {
-                    "paperId": paper.get("paperId"),
-                    "title": paper.get("title"),
-                    "url": paper.get("url", ""),
-                }
-
-        # Return first result as a close match if no exact match found.
-        first = papers[0]
-        return {
-            "paperId": first.get("paperId"),
-            "title": first.get("title"),
-            "url": first.get("url", ""),
-        }
+        items = data.get("message", {}).get("items", [])
+        results = []
+        for item in items:
+            titles = item.get("title", [])
+            authors_raw = item.get("author", [])
+            authors = [
+                " ".join(filter(None, [a.get("given", ""), a.get("family", "")]))
+                for a in authors_raw
+            ]
+            results.append({
+                "doi": item.get("DOI", ""),
+                "title": titles[0] if titles else "",
+                "authors": authors,
+                "url": item.get("URL", ""),
+            })
+        return results
     except (urllib.error.HTTPError, urllib.error.URLError, OSError, json.JSONDecodeError) as exc:
-        logger.debug("Semantic Scholar lookup failed for %r: %s", title, exc)
-        return None
+        logger.debug("CrossRef search failed for %r: %s", title, exc)
+        return []
 
 
-def verify_citations(idea: dict) -> dict:
-    """Verify all citations in an idea dict.
-
-    Expects the idea to have a ``citations`` key containing a list of dicts,
-    each with optional ``doi`` and/or ``title`` fields.
+def search_semantic_scholar(title: str, limit: int = 3) -> list[dict]:
+    """Search Semantic Scholar by title and return candidate papers.
 
     Args:
-        idea: Idea dict with a ``citations`` list.
+        title: Paper title to search for.
+        limit: Maximum number of results to return.
 
     Returns:
-        Dict with ``verified``, ``failed``, and ``removed`` lists.
+        List of dicts, each with ``paperId``, ``title``, and ``url``.
+    """
+    query = quote(title)
+    url = f"{_SEMANTIC_SCHOLAR_BASE}?query={query}&limit={limit}"
+    try:
+        req = urllib.request.Request(url, method="GET")
+        req.add_header("User-Agent", "SafetyIdeas/0.1 (citation-check)")
+        s2_key = os.environ.get("S2_API_KEY")
+        if s2_key:
+            req.add_header("x-api-key", s2_key)
+        with urllib.request.urlopen(req, timeout=_HTTP_TIMEOUT) as resp:
+            data = json.loads(resp.read().decode())
+
+        papers = data.get("data", [])
+        return [
+            {
+                "paperId": p.get("paperId", ""),
+                "title": p.get("title", ""),
+                "url": p.get("url", ""),
+            }
+            for p in papers
+        ]
+    except (urllib.error.HTTPError, urllib.error.URLError, OSError, json.JSONDecodeError) as exc:
+        logger.debug("Semantic Scholar search failed for %r: %s", title, exc)
+        return []
+
+
+def lookup_citations(idea: dict) -> list[dict]:
+    """Look up metadata for all citations in an idea.
+
+    For each citation, queries CrossRef (by DOI if available, then by title)
+    and Semantic Scholar (by title).  Returns all results for the LLM to judge.
+
+    Args:
+        idea: Idea dict with a ``citations`` list.  Each citation should have
+            optional ``doi`` and/or ``title`` fields.
+
+    Returns:
+        List of per-citation lookup results.  Each entry is a dict with:
+        - ``citation``: the original citation dict
+        - ``crossref_doi``: metadata from DOI lookup (or None)
+        - ``crossref_search``: list of title-search candidates from CrossRef
+        - ``semantic_scholar``: list of candidates from Semantic Scholar
     """
     citations = idea.get("citations", [])
-    verified: list[str] = []
-    failed: list[str] = []
+    results = []
 
     for citation in citations:
         doi = citation.get("doi", "")
         title = citation.get("title", "")
-        identifier = doi or title or "unknown"
 
-        is_verified = False
+        entry: dict = {
+            "citation": citation,
+            "crossref_doi": None,
+            "crossref_search": [],
+            "semantic_scholar": [],
+        }
 
-        # Try DOI first (cheapest).
         if doi:
-            if verify_doi(doi):
-                is_verified = True
+            entry["crossref_doi"] = lookup_doi(doi)
 
-        # Fall back to Semantic Scholar title search.
-        if not is_verified and title:
-            result = verify_semantic_scholar(title)
-            if result is not None:
-                is_verified = True
+        if title:
+            entry["crossref_search"] = search_crossref(title)
+            entry["semantic_scholar"] = search_semantic_scholar(title)
 
-        if is_verified:
-            verified.append(identifier)
-        else:
-            failed.append(identifier)
+        results.append(entry)
 
-    return {
-        "verified": verified,
-        "failed": failed,
-        "removed": list(failed),  # Failed citations will be removed.
-    }
-
-
-def filter_unverified(idea: dict, verification: dict) -> dict:
-    """Remove unverified citations from an idea dict.
-
-    Args:
-        idea: Idea dict with a ``citations`` list.
-        verification: Verification results from ``verify_citations()``.
-
-    Returns:
-        New idea dict with unverified citations removed.
-    """
-    failed_set = set(verification.get("failed", []))
-    if not failed_set:
-        return idea
-
-    filtered = dict(idea)
-    original_citations = idea.get("citations", [])
-    filtered["citations"] = [
-        c
-        for c in original_citations
-        if (c.get("doi") or c.get("title") or "unknown") not in failed_set
-    ]
-    return filtered
+    return results
 
 
 def main() -> None:
@@ -158,25 +180,30 @@ def main() -> None:
     if len(sys.argv) < 2:
         print("Usage: python -m safety_ideas.verification.citation <command> [args]")
         print("Commands:")
-        print("  verify-doi <doi>           — verify a single DOI")
-        print("  verify-title <title>       — search Semantic Scholar by title")
-        print("  verify-idea <idea_json>    — verify all citations in an idea")
+        print("  lookup-doi <doi>           — fetch metadata for a DOI")
+        print("  search-crossref <title>    — search CrossRef by title")
+        print("  search-s2 <title>          — search Semantic Scholar by title")
+        print("  lookup-idea <idea_json>    — look up all citations in an idea")
         sys.exit(1)
 
     cmd = sys.argv[1]
 
-    if cmd == "verify-doi":
+    if cmd == "lookup-doi":
         doi = sys.argv[2]
-        result = verify_doi(doi)
-        print(json.dumps({"doi": doi, "verified": result}))
-    elif cmd == "verify-title":
-        title = sys.argv[2]
-        result = verify_semantic_scholar(title)
+        result = lookup_doi(doi)
         print(json.dumps(result, default=str))
-    elif cmd == "verify-idea":
+    elif cmd == "search-crossref":
+        title = sys.argv[2]
+        results = search_crossref(title)
+        print(json.dumps(results, default=str))
+    elif cmd == "search-s2":
+        title = sys.argv[2]
+        results = search_semantic_scholar(title)
+        print(json.dumps(results, default=str))
+    elif cmd == "lookup-idea":
         idea_data = json.loads(sys.argv[2])
-        result = verify_citations(idea_data)
-        print(json.dumps(result))
+        results = lookup_citations(idea_data)
+        print(json.dumps(results, default=str))
     else:
         print(f"Unknown command: {cmd}", file=sys.stderr)
         sys.exit(1)

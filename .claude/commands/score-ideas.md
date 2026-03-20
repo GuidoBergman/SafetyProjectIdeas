@@ -1,8 +1,8 @@
 # Score and Filter AI Safety Research Ideas
 
-Score generated ideas against configured criteria, assess novelty, and verify citations.
+Score generated ideas against configured criteria, assess novelty, and verify citations using **parallel subagents** organized in 3 waves.
 
-**IMPORTANT — Source reading policy:** Throughout this entire skill, NEVER read full papers or full system cards. Only read **abstracts, summaries, and introductions**. WebFetch should target summary pages, not full documents.
+**IMPORTANT — Source reading policy:** For Waves 1-2, only read **abstracts, summaries, and introductions** — never full papers. For Wave 3 (novelty assessment), targeted deep reading of specific sections (discussion, limitations, future work) is permitted via the paper_fetcher module when the LLM judges that abstract-level evidence is insufficient to classify novelty.
 
 ## Setup
 
@@ -28,142 +28,339 @@ Load scoring configuration (criteria, weights, thresholds):
 uv run python -m safety_ideas.config.cli show-scoring
 ```
 
-Load all generated ideas:
+Load the quick filter rubric and threshold:
 
 ```bash
-uv run python -m safety_ideas.pipeline.generate read <run_dir>
+uv run python -m safety_ideas.config.cli show-quick-filter
 ```
 
-Parse the JSON output and store the list of ideas for processing.
+Load batch sizes for parallel processing:
+
+```bash
+uv run python -m safety_ideas.config.cli show-batch-sizes
+```
 
 Load participant profile for context on the team's skill level:
 
 ```bash
-uv run python -c "
-from safety_ideas.config.participants import get_default_participant
-p = get_default_participant()
-if p:
-    print(f'name: {p.name}')
-    print(f'background: {p.background}')
-    print(f'technical_skills: {p.technical_skills}')
-    print(f'compute_resources: {p.compute_resources}')
-else:
-    print('NO_PARTICIPANT')
-"
+uv run python -m safety_ideas.config.cli show-participant
 ```
 
-## Phase 1: Quick Relevance Filter (Stage 1)
-
-For each idea, do a quick relevance and scope check. Read just the title, problem, and direction fields.
-
-Evaluate each idea on basic relevance to AI Safety and scope appropriateness. Assign a quick score (1-5). Ideas scoring below 2.0 are eliminated immediately.
-
-For each idea that passes, note it as a Stage 1 survivor.
-
-For each idea that fails, record it with elimination reason "Stage 1: quick relevance score below 2.0".
-
-Log the Stage 1 results:
+Load the citation relevance rubric:
 
 ```bash
-uv run python -c "
-from pathlib import Path
-from safety_ideas.pipeline.orchestrator import PipelineLogger
-logger = PipelineLogger(Path('<run_dir>'))
-logger.log('filter_score', 'info', 'Stage 1 complete: quick relevance filter', {
-    'total_ideas': <TOTAL>,
-    'survivors': <SURVIVORS>,
-    'eliminated': <ELIMINATED>
-})
-"
+uv run python -m safety_ideas.config.cli show-citation-relevance
 ```
 
-## Phase 2: Full Per-Criterion Scoring (Stage 2)
+Save all the configuration outputs — they will be embedded in subagent prompts so subagents don't need to call config commands themselves.
 
-For each surviving idea, score it against ALL criteria and active weights loaded from `show-scoring` in Setup. Do NOT hardcode criteria names or weights — use exactly what `show-scoring` returned.
+Before proceeding, echo the active configuration:
+> **Scoring with:** team=[default_team], criteria=[list each criterion name=active_weight], thresholds=[filter_score min_score], batch_sizes=[stage1=N, stage2=N, stage3=N]
 
-Before scoring, echo the active configuration you are using:
-> **Scoring with:** team=[default_team], criteria=[list each criterion name=active_weight], thresholds=[filter_score min_score, rank min_score]
+## Wave 1: Quick Relevance Filter (Stage 1)
 
-For each criterion, use the rubric from the config to assign a score 1-5 with explicit reasoning.
+### Step 1.1: Create batches
 
-**Scoring format for each criterion:**
-- **Score** (1-5): Based on the rubric levels
-- **Reasoning**: 1-3 sentences explaining why this score, referencing the rubric level
-- **Confidence** (0.0-1.0): How confident you are in this score
+```bash
+uv run python -m safety_ideas.pipeline.filter_score create-batches <run_dir> 1 <stage1_batch_size>
+```
 
-After scoring all criteria, compute the weighted score. Then write each scored idea:
+This reads all generated ideas, partitions them into batches, and writes batch files. It prints the batch count and file paths as JSON.
+
+### Step 1.2: Launch parallel subagents
+
+Launch **one Agent subagent per batch**, all in a single message for maximum parallelism. Each subagent receives a self-contained prompt with all config needed.
+
+**Subagent prompt template** (substitute values for each batch):
+
+> You are a quick relevance filter for AI Safety research ideas.
+>
+> **Your task:** Read each idea's title, problem, and direction. Score it 1-5 against the rubric below. Write results when done.
+>
+> **Quick Filter Rubric (threshold: [THRESHOLD]):**
+> [FULL RUBRIC FROM show-quick-filter — all 5 levels with descriptions]
+>
+> **Confidence Rubric:**
+> [FULL CONFIDENCE RUBRIC FROM show-scoring]
+>
+> **Step 1:** Read your batch:
+> ```bash
+> uv run python -m safety_ideas.pipeline.filter_score read-batch [BATCH_PATH]
+> ```
+>
+> **Step 2:** For EACH idea in the batch, score it against the rubric. Match the idea against the rubric level descriptions and pick the level that best fits — do NOT score based on gut feeling.
+>
+> **Step 3:** Build a JSON array of results. For each idea:
+> ```json
+> {
+>   "idea_id": "<id>",
+>   "title": "<title>",
+>   "run_id": "<run_id>",
+>   "quick_score": <1-5>,
+>   "quick_reasoning": "<1 sentence matching rubric level>",
+>   "quick_confidence": <0.0-1.0>,
+>   "eliminated": <true if quick_score below [THRESHOLD], else false>,
+>   "elimination_reason": <null or "Stage 1: quick relevance score [X] below threshold [Y]">
+> }
+> ```
+>
+> Do NOT skip any ideas. Include every idea from the batch.
+>
+> **Step 4:** Write results:
+> ```bash
+> uv run python -m safety_ideas.pipeline.filter_score write-batch-results [RESULT_PATH] '<json_array>'
+> ```
+>
+> Where [RESULT_PATH] is: `[RUN_DIR]/filter_score/results/stage1/batch_[NNN]_results.json`
+
+### Step 1.3: Collect and filter
+
+After all Wave 1 subagents complete:
+
+```bash
+uv run python -m safety_ideas.pipeline.filter_score filter-survivors <run_dir> 1
+```
+
+This merges all batch results, filters out eliminated ideas, and writes the survivors file. It prints survivor and eliminated counts.
+
+Log the results:
+
+```bash
+uv run python -m safety_ideas.pipeline.orchestrator log <run_dir> filter_score info 'Stage 1 complete: quick relevance filter' '{"total_ideas": <TOTAL>, "survivors": <SURVIVORS>, "eliminated": <ELIMINATED>}'
+```
+
+## Wave 2: Full Per-Criterion Scoring (Stage 2)
+
+### Step 2.1: Create batches from Stage 1 survivors
+
+```bash
+uv run python -m safety_ideas.pipeline.filter_score create-batches <run_dir> 2 <stage2_batch_size>
+```
+
+### Step 2.2: Launch parallel subagents
+
+Launch **one Agent subagent per batch**, all in a single message.
+
+**Subagent prompt template:**
+
+> You are scoring AI Safety research ideas against multiple criteria.
+>
+> **Your task:** Score each idea against ALL criteria listed below using the rubrics. Write results when done.
+>
+> **Scoring Criteria and Rubrics:**
+> [FOR EACH CRITERION from show-scoring (EXCLUDING novelty): name, description, active_weight, and full 5-level rubric]
+>
+> **Skip the `novelty` criterion** — it is derived from evidence in Wave 3, not scored here.
+>
+> **Confidence Rubric:**
+> [FULL CONFIDENCE RUBRIC]
+>
+> **Participant profile:**
+> [PARTICIPANT SUMMARY or "none specified"]
+>
+> **Weighted score threshold:** [MIN_SCORE from show-scoring thresholds]
+>
+> **Weighted score formula:** For each scored criterion, multiply score by its active weight. Sum all (score × weight), divide by sum of weights. Active weights: [LIST criterion=weight pairs, excluding novelty].
+>
+> **Step 1:** Read your batch:
+> ```bash
+> uv run python -m safety_ideas.pipeline.filter_score read-batch [BATCH_PATH]
+> ```
+>
+> **Step 2:** For EACH idea, score it against every criterion (except novelty). Match the idea against the rubric level descriptions and pick the level that best fits — do NOT score based on gut feeling. Compute the weighted score. Compute overall confidence as the average of per-criterion confidences.
+>
+> **Step 3:** Build a JSON array of results. For each idea:
+> ```json
+> {
+>   "idea_id": "<id>",
+>   "title": "<title>",
+>   "run_id": "<run_id>",
+>   "original_idea": <full idea object from batch>,
+>   "scores": {
+>     "<criterion_name>": {
+>       "score": <1-5>,
+>       "reasoning": "<1-3 sentences referencing rubric level>",
+>       "confidence": <0.0-1.0>
+>     }
+>   },
+>   "weighted_score": <computed weighted average>,
+>   "confidence": <average of per-criterion confidences>,
+>   "eliminated": <true if weighted_score below [MIN_SCORE]>,
+>   "elimination_reason": <null or "Stage 2: weighted score [X] below threshold [Y]">
+> }
+> ```
+>
+> Do NOT skip any ideas.
+>
+> **Step 4:** Write results:
+> ```bash
+> uv run python -m safety_ideas.pipeline.filter_score write-batch-results [RESULT_PATH] '<json_array>'
+> ```
+>
+> Where [RESULT_PATH] is: `[RUN_DIR]/filter_score/results/stage2/batch_[NNN]_results.json`
+
+### Step 2.3: Collect and filter
+
+```bash
+uv run python -m safety_ideas.pipeline.filter_score filter-survivors <run_dir> 2
+```
+
+Log the results:
+
+```bash
+uv run python -m safety_ideas.pipeline.orchestrator log <run_dir> filter_score info 'Stage 2 complete: full scoring' '{"survivors": <SURVIVORS>, "eliminated": <ELIMINATED>}'
+```
+
+## Wave 3: Novelty Assessment & Citation Verification (Stage 3)
+
+### Step 3.1: Create batches from Stage 2 survivors
+
+```bash
+uv run python -m safety_ideas.pipeline.filter_score create-batches <run_dir> 3 <stage3_batch_size>
+```
+
+### Step 3.2: Launch parallel subagents
+
+Launch **one Agent subagent per batch**, all in a single message. These subagents use tools (WebSearch, Bash) — keep batches small.
+
+**Subagent prompt template:**
+
+> You are assessing novelty and verifying citations for AI Safety research ideas.
+>
+> **IMPORTANT — Source reading policy:** Only read abstracts, summaries, and introductions — never full papers. For novelty assessment, targeted deep reading of specific sections (discussion, limitations, future work) is permitted via the paper_fetcher module when abstract-level evidence is insufficient.
+>
+> **Novelty Classification Rubric:**
+> - **already_solved** (score 1): Existing published work FULLY addresses this idea — the proposed research would not produce new knowledge. You must cite the specific paper(s).
+> - **largely_addressed** (score 2): Multiple published works cover most of the proposed contribution; remaining gaps are minor.
+> - **partially_addressed** (score 3): Published work exists on the topic but the specific angle/method/combination proposed has not been explored.
+> - **mostly_novel** (score 4): No direct published work on this specific proposal; related work exists in adjacent areas.
+> - **novel** (score 5): No published work found addressing this question or approach.
+>
+> **HARD GATE:** If classification is "already_solved", the idea is eliminated immediately.
+>
+> **Citation Relevance Rubric (verification threshold: [THRESHOLD]):**
+> [FULL CITATION RELEVANCE RUBRIC from show-citation-relevance]
+>
+> **Citation removal consequences:**
+> - Relevance 3 (Substantive): Flag with warning, idea survives
+> - Relevance 4 (Load-bearing): Confidence penalty, re-score affected criterion, attempt rewrite
+> - Relevance 5 (Foundational): Attempt rewrite; eliminate if idea cannot stand without it
+>
+> **Confidence Rubric:**
+> [FULL CONFIDENCE RUBRIC]
+>
+> **Step 1:** Read your batch:
+> ```bash
+> uv run python -m safety_ideas.pipeline.filter_score read-batch [BATCH_PATH]
+> ```
+>
+> **Step 2:** For EACH idea in the batch, perform:
+>
+> **2a — Novelty Assessment:**
+> - Use WebSearch to search for existing work on ArXiv, Semantic Scholar, and Google Scholar
+> - Collect evidence: for each relevant paper, note source, title, url, summary
+> - If any evidence papers warrant deeper reading (abstract suggests overlap but degree is ambiguous), fetch sections:
+>   ```bash
+>   uv run python -m safety_ideas.connectors.paper_fetcher fetch-batch '<json_array_of_urls>'
+>   ```
+> - Classify novelty using the rubric above
+> - Validate and format:
+>   ```bash
+>   uv run python -m safety_ideas.pipeline.novelty format '<novelty_json>'
+>   ```
+>
+> **2b — Citation Relevance & Verification:**
+> - Score each citation's relevance (1-5) using the rubric
+> - For citations at or above the threshold, verify via:
+>   ```bash
+>   uv run python -m safety_ideas.verification.citation lookup-idea '<idea_json>'
+>   ```
+> - Judge each verified citation: verified, corrected, or removed
+> - For citations about to be removed, try WebSearch with paper title + authors first
+> - Apply consequences for removed citations based on relevance level
+>
+> **Step 3:** Build a JSON array of results. For each idea:
+> ```json
+> {
+>   "idea_id": "<id>",
+>   "title": "<title>",
+>   "run_id": "<run_id>",
+>   "novelty_assessment": {
+>     "classification": "<one of the 5 levels>",
+>     "evidence": [{"source": "<src>", "title": "<paper>", "url": "<url>", "summary": "<relevance>"}],
+>     "confidence": <0.0-1.0>,
+>     "derived_score": <1-5>,
+>     "reasoning": "<2-4 sentences>"
+>   },
+>   "citation_verification": {
+>     "relevance_scores": [{"citation": {...}, "relevance_score": <1-5>, "relevance_label": "<label>", "relevance_reasoning": "<1 sentence>"}],
+>     "verified": [{"citation": {...}, "reason": "<1 sentence>"}],
+>     "corrected": [{"original": {...}, "corrected": {...}, "reason": "<1 sentence>"}],
+>     "removed": [{"citation": {...}, "reason": "<1 sentence>", "relevance_score": <int>}]
+>   },
+>   "scores_updates": {<criterion_name>: {"score": <new>, "reasoning": "<updated>", "confidence": <new>}},
+>   "eliminated": <true if already_solved or foundational citation removed and unrewritable>,
+>   "elimination_reason": <null or reason string>
+> }
+> ```
+>
+> If web search fails for an idea: classify as "mostly_novel" (conservative — do not eliminate).
+> If citation lookup APIs fail: keep all citations as-is, record "api_unavailable".
+>
+> Do NOT skip any ideas.
+>
+> **Step 4:** Write results:
+> ```bash
+> uv run python -m safety_ideas.pipeline.filter_score write-batch-results [RESULT_PATH] '<json_array>'
+> ```
+>
+> Where [RESULT_PATH] is: `[RUN_DIR]/filter_score/results/stage3/batch_[NNN]_results.json`
+
+### Step 3.3: Collect and filter
+
+```bash
+uv run python -m safety_ideas.pipeline.filter_score filter-survivors <run_dir> 3
+```
+
+Log the results:
+
+```bash
+uv run python -m safety_ideas.pipeline.orchestrator log <run_dir> filter_score info 'Stage 3 complete: novelty + citations' '{"survivors": <SURVIVORS>, "eliminated": <ELIMINATED>}'
+```
+
+## Phase 4: Assemble Final Scored Ideas
+
+After all 3 waves complete, assemble the final scored idea JSON files.
+
+Read the results from all 3 stages:
+
+```bash
+uv run python -m safety_ideas.pipeline.filter_score merge-results <run_dir> 1
+uv run python -m safety_ideas.pipeline.filter_score merge-results <run_dir> 2
+uv run python -m safety_ideas.pipeline.filter_score merge-results <run_dir> 3
+```
+
+For each idea that appears in the Stage 2 results (all ideas that were scored, both survivors and eliminated):
+
+1. Start with the Stage 2 result (contains `original_idea`, `scores`, `weighted_score`, `eliminated`)
+2. If the idea has Stage 3 results, splice in:
+   - `novelty_assessment` from Stage 3
+   - `citation_verification` from Stage 3
+   - Update the `novelty` score in `scores` to `novelty_assessment.derived_score`
+   - Apply any `scores_updates` from citation consequences
+   - Recompute `weighted_score` with novelty now included
+   - Set `filter_stage_passed` to 3 for Stage 3 survivors
+   - Apply elimination from Stage 3 if applicable
+3. If the idea was eliminated at Stage 1, build a minimal scored idea with the Stage 1 result data
+4. Add metadata: `stage: "filter_score"`, `timestamp`, `filter_stage_passed`
+
+Write each final scored idea:
 
 ```bash
 uv run python -m safety_ideas.pipeline.filter_score write <run_dir> '<scored_idea_json>'
 ```
 
-Where `<scored_idea_json>` includes all the fields from the scored idea format (see story-4.1.md for the full JSON schema).
-
-Ideas with weighted score below the `min_score` threshold from `config/pipeline.yaml` (default 2.5) are eliminated at Stage 2.
-
-## Phase 3: Novelty Assessment & Citation Verification (Stage 3)
-
-For each idea that passed Stage 2:
-
-### 3a: Hybrid Novelty Assessment
-
-Search for existing work that addresses this idea. Use WebSearch to check:
-- ArXiv for related papers
-- Semantic Scholar for published work
-- Google Scholar for broader coverage
-
-Collect evidence as a list of relevant papers/results found. For each piece of evidence, note:
-- `source`: where it was found (arxiv, semantic_scholar, google_scholar)
-- `title`: paper/result title
-- `url`: link if available
-- `summary`: brief description of what this paper does and how it relates to the idea
-
-After collecting all evidence, **YOU (the LLM) classify the novelty** by reading all evidence and reasoning about it. Produce:
-- `classification`: one of "already_solved", "largely_addressed", "partially_addressed", "mostly_novel", "novel"
-- `confidence`: 0.0-1.0 reflecting how thorough the search was and how clear the evidence is
-- `reasoning`: 2-4 sentences explaining why you chose this classification, referencing specific papers
-
-Use the rubric from `config/criteria.yaml` novelty criterion to guide your classification:
-- **already_solved** (score 1): Existing published work FULLY addresses this idea — the proposed research would not produce new knowledge. You must cite the specific paper(s).
-- **largely_addressed** (score 2): Multiple published works cover most of the proposed contribution; remaining gaps are minor.
-- **partially_addressed** (score 3): Published work exists on the topic but the specific angle/method/combination proposed has not been explored.
-- **mostly_novel** (score 4): No direct published work on this specific proposal; related work exists in adjacent areas.
-- **novel** (score 5): No published work found addressing this question or approach.
-
-Then validate and format the assessment:
-
-```bash
-uv run python -m safety_ideas.pipeline.novelty format '{"classification": "<classification>", "evidence": <evidence_json>, "confidence": <confidence>, "reasoning": "<reasoning>"}'
-```
-
-**HARD GATE:** If classification is "already_solved", the idea is eliminated immediately regardless of other scores.
-
-### 3b: Citation Verification
-
-For each idea that references papers (in its `relevant_context` or explicit citations), verify them:
-
-```bash
-uv run python -m safety_ideas.verification.citation verify-idea '<idea_json_with_citations>'
-```
-
-Remove unverified citations from the idea output (NFR4).
-
-### 3c: Update Scored Ideas
-
-Update each scored idea's JSON with:
-- `novelty_assessment`: classification, evidence, confidence, derived_score
-- `citation_verification`: verified, failed, removed lists
-- Update the `novelty` criterion score to the derived novelty score
-- Recompute `weighted_score` with novelty included
-- Set `filter_stage_passed` to 3 for survivors
-
-Write the updated scored ideas:
-
-```bash
-uv run python -m safety_ideas.pipeline.filter_score write <run_dir> '<updated_scored_idea_json>'
-```
-
-## Phase 4: Results Summary
+## Phase 5: Results Summary
 
 Present the coordinator with:
 
@@ -173,7 +370,7 @@ Present the coordinator with:
    - idea_id, title, weighted_score, confidence
    - Per-criterion scores summary
    - Novelty classification
-   - Citation verification status
+   - Citation verification status (verified/corrected/removed counts, any warnings from removed load-bearing or foundational citations)
 4. **Team weight overrides** applied (if any)
 
 Tell the coordinator:
@@ -181,7 +378,8 @@ Tell the coordinator:
 
 ## Error Handling
 
-- If web search fails during novelty assessment: note degraded assessment, classify as "mostly_novel" by default (conservative — do not eliminate)
-- If citation verification APIs are down: note unverified status, do not remove citations
-- If scoring fails for an individual idea: log the error and continue with remaining ideas
+- **Subagent failure**: After each wave, check if any batch result files are missing. Re-launch failed batches once. If retry also fails, mark those ideas as eliminated with "Scoring failed: subagent error" and add a warning to the pipeline log.
+- **Web search failure** (Wave 3): classify as "mostly_novel" by default (conservative — do not eliminate)
+- **Citation lookup API failure** (Wave 3): note unverified status, keep all citations as-is, record "api_unavailable"
+- **Scoring failure** for individual ideas within a subagent: log the error within the batch results and continue with remaining ideas
 - Always produce output even with degraded sources — partial scoring is better than none

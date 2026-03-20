@@ -9,6 +9,7 @@ import sys
 from safety_ideas.pipeline.orchestrator import (
     PipelineLogger,
     create_run_dir,
+    log_entry,
     write_run_meta,
 )
 
@@ -61,6 +62,42 @@ def test_pipeline_logger(tmp_path):
     assert log_path.exists()
     written = json.loads(log_path.read_text())
     assert len(written) == 2
+
+
+def test_log_entry_creates_log(tmp_path):
+    """log_entry creates a new log file with one entry."""
+    run_dir = tmp_path / "test-run"
+    run_dir.mkdir()
+    log_entry(str(run_dir), "filter_score", "info", "Stage done", '{"survivors": 10}')
+    log_path = run_dir / "pipeline.log.json"
+    assert log_path.exists()
+    entries = json.loads(log_path.read_text())
+    assert len(entries) == 1
+    assert entries[0]["stage"] == "filter_score"
+    assert entries[0]["level"] == "info"
+    assert entries[0]["message"] == "Stage done"
+    assert entries[0]["data"] == {"survivors": 10}
+
+
+def test_log_entry_appends_to_existing(tmp_path):
+    """log_entry preserves existing entries when appending."""
+    run_dir = tmp_path / "test-run"
+    run_dir.mkdir()
+    log_entry(str(run_dir), "generate", "info", "First")
+    log_entry(str(run_dir), "filter_score", "info", "Second")
+    entries = json.loads((run_dir / "pipeline.log.json").read_text())
+    assert len(entries) == 2
+    assert entries[0]["message"] == "First"
+    assert entries[1]["message"] == "Second"
+
+
+def test_log_entry_without_data(tmp_path):
+    """log_entry works when no data JSON is provided."""
+    run_dir = tmp_path / "test-run"
+    run_dir.mkdir()
+    log_entry(str(run_dir), "source", "debug", "No data")
+    entries = json.loads((run_dir / "pipeline.log.json").read_text())
+    assert entries[0]["data"] is None
 
 
 def test_cli_init(tmp_path):

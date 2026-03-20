@@ -73,21 +73,7 @@ test -f data/output/research-landscape.md && echo "EXISTS" || echo "MISSING"
 Load the configured participant profile and translate it into concrete generation constraints:
 
 ```bash
-uv run python -c "
-from safety_ideas.config.participants import get_default_participant
-p = get_default_participant()
-if p:
-    print(f'name: {p.name}')
-    print(f'background: {p.background}')
-    print(f'technical_skills: {p.technical_skills}')
-    print(f'compute_resources: {p.compute_resources}')
-    print(f'total_hours: {p.total_hours}')
-    print(f'time_context: {p.time_context}')
-    print(f'deliverables: {p.deliverables}')
-    print(f'goals: {p.goals}')
-else:
-    print('NO_PARTICIPANT')
-"
+uv run python -m safety_ideas.config.cli show-participant
 ```
 
 **If a participant profile is loaded**, derive explicit constraints for subagent prompts. Map each profile field to a concrete generation constraint:
@@ -185,7 +171,7 @@ Each subfield gets 10 subagents, one per strategy:
 > - `relevant_context` (string): grounding references (abstracts, key findings cited)
 > - `subfield` (string): the subfield name
 > - `generation_strategy` (string): "[STRATEGY_NAME]"
-> - `confidence` (float): 0.0-1.0 confidence score
+> - `confidence` (float): 0.0-1.0 confidence score (use the confidence rubric from `config/pipeline.yaml`)
 >
 > Return results as a JSON array.
 
@@ -223,7 +209,7 @@ After all per-subfield subagents complete, launch **three** cross-synthesis suba
 > - `relevant_context` (string): grounding references (abstracts, key findings cited)
 > - `subfield` (string): comma-separated list of bridged subfields
 > - `generation_strategy` (string): "methodology_bridging"
-> - `confidence` (float): 0.0-1.0 confidence score
+> - `confidence` (float): 0.0-1.0 confidence score (use the confidence rubric from `config/pipeline.yaml`)
 >
 > Return results as a JSON array.
 
@@ -257,7 +243,7 @@ After all per-subfield subagents complete, launch **three** cross-synthesis suba
 > - `relevant_context` (string): grounding references (abstracts, key findings cited)
 > - `subfield` (string): comma-separated list of bridged subfields
 > - `generation_strategy` (string): "problem_decomposition"
-> - `confidence` (float): 0.0-1.0 confidence score
+> - `confidence` (float): 0.0-1.0 confidence score (use the confidence rubric from `config/pipeline.yaml`)
 >
 > Return results as a JSON array.
 
@@ -291,7 +277,7 @@ After all per-subfield subagents complete, launch **three** cross-synthesis suba
 > - `relevant_context` (string): grounding references (abstracts, key findings cited)
 > - `subfield` (string): comma-separated list of relevant subfields
 > - `generation_strategy` (string): "landscape_gap_targeting"
-> - `confidence` (float): 0.0-1.0 confidence score
+> - `confidence` (float): 0.0-1.0 confidence score (use the confidence rubric from `config/pipeline.yaml`)
 >
 > Return results as a JSON array.
 
@@ -329,7 +315,7 @@ After Phase 2b, run a structured combinatorial pass. This generates ideas from e
 > - `relevant_context` (string): grounding references (abstracts, key findings cited)
 > - `subfield` (string): comma-separated list of bridged subfields
 > - `generation_strategy` (string): "combinatorial_matrix"
-> - `confidence` (float): 0.0-1.0 confidence score
+> - `confidence` (float): 0.0-1.0 confidence score (use the confidence rubric from `config/pipeline.yaml`)
 >
 > Return results as a JSON array. Skip nonsensical pairings — only return viable ideas.
 

@@ -73,17 +73,35 @@ class PipelineLogger:
         return self._entries
 
 
+def log_entry(run_dir_str: str, stage: str, level: str, message: str, data_json: str | None = None) -> None:
+    """Append a structured log entry to a run's pipeline log."""
+    data = json.loads(data_json) if data_json else None
+    logger = PipelineLogger(Path(run_dir_str))
+    # Load existing entries so we append rather than overwrite
+    if logger._log_path.exists():
+        with open(logger._log_path) as f:
+            logger._entries = json.load(f)
+    logger.log(stage, level, message, data)
+
+
 def main() -> None:
     import sys
 
     if len(sys.argv) < 2:
         print("Usage: python -m safety_ideas.pipeline.orchestrator <command>")
+        print("Commands: init [stages...], log <run_dir> <stage> <level> <message> [data_json]")
         sys.exit(1)
     cmd = sys.argv[1]
     if cmd == "init":
         stages = sys.argv[2:] if len(sys.argv) > 2 else None
         run_dir = create_run_dir(stages)
         print(run_dir)
+    elif cmd == "log":
+        if len(sys.argv) < 6:
+            print("Usage: ... log <run_dir> <stage> <level> <message> [data_json]", file=sys.stderr)
+            sys.exit(1)
+        data_json = sys.argv[6] if len(sys.argv) > 6 else None
+        log_entry(sys.argv[2], sys.argv[3], sys.argv[4], sys.argv[5], data_json)
     else:
         print(f"Unknown command: {cmd}", file=sys.stderr)
         sys.exit(1)

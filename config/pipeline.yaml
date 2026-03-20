@@ -6,8 +6,8 @@ model_assignments:
     model: opus
     fallback: sonnet
   filter_score:
-    model: sonnet
-    fallback: haiku
+    model: opus
+    fallback: sonnet
   refine:
     model: opus
     fallback: sonnet
@@ -17,6 +17,77 @@ model_assignments:
 generate:
   min_ideas_per_strategy_per_subfield: 25
   combinatorial_top_n: 10
+quick_filter:
+  threshold: 2.0
+  rubric:
+    - score: 1
+      label: Off-topic
+      description: Not related to AI Safety in any meaningful way, or addresses a completely different domain (e.g., general software engineering, unrelated science)
+    - score: 2
+      label: Tangential
+      description: Touches on AI or safety peripherally but lacks a direct connection to an AI Safety problem — e.g., general ML performance improvement with no safety framing.
+    - score: 3
+      label: Relevant
+      description: Clearly addresses an AI Safety topic (alignment, interpretability, robustness, governance, etc.) but the scope may be too broad, too vague, or the connection between the proposed work and a safety outcome needs refinement
+    - score: 4
+      label: Well-targeted
+      description: Directly addresses a recognized AI Safety problem with a reasonably scoped approach; the safety relevance is immediate and the direction is concrete enough to evaluate further
+    - score: 5
+      label: Precisely scoped
+      description: Targets a specific, well-defined AI Safety problem with a clear and focused approach; the safety relevance is obvious and the scope is appropriate for further detailed evaluation
+confidence_rubric:
+  - min: 0.0
+    max: 0.2
+    label: Very low
+    description: >-
+      No supporting evidence found or assessment is essentially a guess;
+      the claim rests on general priors alone with no specific backing.
+  - min: 0.2
+    max: 0.4
+    label: Low
+    description: >-
+      Weak or indirect evidence; only tangentially related sources found,
+      or the available information leaves major ambiguity about the correct assessment.
+  - min: 0.4
+    max: 0.6
+    label: Moderate
+    description: >-
+      Some relevant evidence supports the assessment but notable gaps remain;
+      a different interpretation of the same evidence could shift the conclusion.
+  - min: 0.6
+    max: 0.8
+    label: High
+    description: >-
+      Strong, directly relevant evidence with only minor uncertainties;
+      the assessment is well-supported and unlikely to change with more information.
+  - min: 0.8
+    max: 1.0
+    label: Very high
+    description: >-
+      Thorough evidence from multiple sources converges on the same conclusion;
+      the assessment is robust and would require substantial counter-evidence to overturn.
+citation_relevance:
+  threshold: 3
+  rubric:
+    - score: 1
+      label: Decorative
+      description: Citation adds color or background context. Removing it changes nothing about the idea's claims or feasibility.
+    - score: 2
+      label: Supporting
+      description: Citation reinforces a point that stands on its own or is common knowledge in the field. Removing it slightly weakens framing but the idea is unchanged.
+    - score: 3
+      label: Substantive
+      description: Citation provides evidence for a specific claim the idea makes. Removing it means the claim becomes unsubstantiated and the idea needs a minor adjustment or alternative justification.
+    - score: 4
+      label: Load-bearing
+      description: Citation underpins a core assumption or feasibility argument. Removing it creates a significant gap — the idea's viability becomes uncertain without it or a replacement.
+    - score: 5
+      label: Foundational
+      description: The idea is a direct extension of or builds directly on this cited work. Removing it would require fundamentally rethinking the idea.
+batch_sizes:
+  stage1_quick_filter: 100
+  stage2_full_scoring: 30
+  stage3_novelty_citations: 15
 thresholds:
   filter_score:
     min_score: 2.0

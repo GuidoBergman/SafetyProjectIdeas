@@ -12,7 +12,11 @@ import yaml
 from pydantic import ValidationError
 
 from safety_ideas.config.loader import load_config
-from safety_ideas.config.participants import get_default_participant, list_participants, load_participant
+from safety_ideas.config.participants import (
+    get_default_participant,
+    list_participants,
+    load_participant,
+)
 from safety_ideas.config.schemas import (
     ParticipantProfile,
     PipelineSettings,
@@ -40,7 +44,9 @@ def show_config() -> None:
     for team_type, team in config.teams.items():
         default_marker = " (DEFAULT)" if team_type == config.default_team else ""
         print(f"\n  [{team_type}] {team.name}{default_marker}")
-        print(f"    Skills: {', '.join(team.technical_skills) if team.technical_skills else 'none'}")
+        print(
+            f"    Skills: {', '.join(team.technical_skills) if team.technical_skills else 'none'}"
+        )
         if team.criteria_weights:
             print(f"    Weight overrides: {team.criteria_weights}")
 
@@ -62,7 +68,9 @@ def show_config() -> None:
         fallback = f" (fallback: {assignment.fallback})" if assignment.fallback else ""
         print(f"  {stage}: {assignment.model}{fallback}")
     for stage, threshold in config.pipeline.thresholds.items():
-        print(f"  {stage} threshold: min_score={threshold.min_score}, max_ideas={threshold.max_ideas}")
+        print(
+            f"  {stage} threshold: min_score={threshold.min_score}, max_ideas={threshold.max_ideas}"
+        )
 
     print(f"\n=== Default Participant: {config.default_participant or '(none)'} ===")
 
@@ -70,7 +78,13 @@ def show_config() -> None:
     participants = list_participants()
     if participants:
         for p in participants:
-            default_marker = " (DEFAULT)" if config.default_participant and p.name.lower().replace(" ", "_") == config.default_participant.lower().replace(" ", "_") else ""
+            default_marker = (
+                " (DEFAULT)"
+                if config.default_participant
+                and p.name.lower().replace(" ", "_")
+                == config.default_participant.lower().replace(" ", "_")
+                else ""
+            )
             print(f"\n  [{p.name}]{default_marker}")
             print(f"    Background: {p.background}")
             print(f"    Skills: {p.technical_skills}")
@@ -87,6 +101,16 @@ def show_config() -> None:
         print("  No participant profiles found.")
 
 
+def show_participant() -> None:
+    """Print all fields of the currently active participant profile."""
+    p = get_default_participant()
+    if not p:
+        print("NO_PARTICIPANT")
+        return
+    for field_name in ParticipantProfile.model_fields:
+        print(f"{field_name}: {getattr(p, field_name)}")
+
+
 def show_generate_config() -> None:
     """Display generation-specific settings."""
     config = load_config(load_env=False)
@@ -96,7 +120,7 @@ def show_generate_config() -> None:
 
 
 def show_scoring_config() -> None:
-    """Display scoring-specific settings: criteria with active weights, thresholds."""
+    """Display scoring-specific settings: criteria with rubrics and active weights, thresholds."""
     config = load_config(load_env=False)
 
     team = config.teams.get(config.default_team)
@@ -104,10 +128,25 @@ def show_scoring_config() -> None:
 
     print(f"=== Default Team: {config.default_team} ===\n")
 
-    print("=== Scoring Criteria (active weights) ===")
+    print("=== Scoring Criteria (with rubrics) ===")
     for c in config.criteria:
         active_weight = overrides.get(c.name, c.default_weight)
-        print(f"  [{c.name}] weight={active_weight} — {c.description}")
+        if c.name == "novelty":
+            print(
+                f"\n  [{c.name}] weight={active_weight} — SKIP in Phase 2"
+                " (derived from novelty assessment in Phase 3)"
+            )
+            continue
+        print(f"\n  [{c.name}] weight={active_weight} — {c.description}")
+        if c.rubric:
+            for level in c.rubric:
+                print(f"    [{level.score}] {level.label}: {level.description}")
+
+    cr = config.pipeline.confidence_rubric
+    if cr:
+        print("\n=== Confidence Rubric (0.0-1.0) ===")
+        for level in cr:
+            print(f"  [{level.min}-{level.max}] {level.label}: {level.description}")
 
     print("\n=== Thresholds ===")
     for stage, threshold in config.pipeline.thresholds.items():
@@ -264,11 +303,39 @@ def save_participant_cmd(json_str: str) -> None:
     print(f"Saved participant profile: {profile.name}")
 
 
+def show_quick_filter_config() -> None:
+    """Display the Stage 1 quick filter rubric and threshold."""
+    config = load_config(load_env=False)
+    qf = config.pipeline.quick_filter
+    print(f"threshold: {qf.threshold}")
+    for level in qf.rubric:
+        print(f"  [{level.score}] {level.label}: {level.description}")
+
+
+def show_batch_sizes_config() -> None:
+    """Display batch size settings for parallel scoring."""
+    config = load_config(load_env=False)
+    bs = config.pipeline.batch_sizes
+    print(f"stage1_quick_filter: {bs.stage1_quick_filter}")
+    print(f"stage2_full_scoring: {bs.stage2_full_scoring}")
+    print(f"stage3_novelty_citations: {bs.stage3_novelty_citations}")
+
+
+def show_citation_relevance_config() -> None:
+    """Display the citation relevance rubric and verification threshold."""
+    config = load_config(load_env=False)
+    cr = config.pipeline.citation_relevance
+    print(f"threshold: {cr.threshold}")
+    for level in cr.rubric:
+        print(f"  [{level.score}] {level.label}: {level.description}")
+
+
 def main() -> None:
     """CLI dispatcher."""
     if len(sys.argv) < 2:
         print("Usage: python -m safety_ideas.config.cli <command> [args]")
-        print("Commands: show, show-generate, show-scoring,")
+        print("Commands: show, show-participant, show-generate, show-scoring,")
+        print("          show-quick-filter, show-citation-relevance,")
         print("          validate-team, validate-criterion, validate-participant,")
         print("          add-team, remove-team, set-default-team, add-criterion,")
         print("          remove-criterion, update-pipeline, save-participant,")
@@ -279,10 +346,18 @@ def main() -> None:
 
     if command == "show":
         show_config()
+    elif command == "show-participant":
+        show_participant()
     elif command == "show-generate":
         show_generate_config()
     elif command == "show-scoring":
         show_scoring_config()
+    elif command == "show-quick-filter":
+        show_quick_filter_config()
+    elif command == "show-citation-relevance":
+        show_citation_relevance_config()
+    elif command == "show-batch-sizes":
+        show_batch_sizes_config()
     elif command == "validate-team":
         validate_team_json(sys.argv[2])
     elif command == "validate-criterion":

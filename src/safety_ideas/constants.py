@@ -33,13 +33,22 @@ PRIORITY_LOW = 3
 TEAM_TYPES = ["mentor_novice", "solo_novice", "experienced_group"]
 
 # Scoring criteria names
-# Staged filtering defaults
-STAGE1_RELEVANCE_THRESHOLD = 2.0
-
 SCORING_CRITERIA = [
     "theory_of_impact",
     "low_compute",
     "accessible_complexity",
     "narrow_scope",
     "novelty",
+]
+
+# Deep reading config for novelty assessment
+DEEP_READ_SECTION_LIMIT = 3000  # max chars per extracted section
+DEEP_READ_CONTENT_LIMIT = 5000  # max chars for blog content
+DEEP_READ_TIMEOUT = 15  # seconds per fetch
+ARXIV_HTML_BASE = "https://arxiv.org/html"
+KNOWN_BLOG_DOMAINS = [
+    "alignmentforum.org",
+    "lesswrong.com",
+    "anthropic.com",
+    "deepmind.google",
 ]
