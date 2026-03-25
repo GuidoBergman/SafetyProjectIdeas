@@ -281,7 +281,9 @@ class TestFixRankedProposals:
             f.write("old markdown")
 
         fixed = {"gen-001": {"approach_outline": "complete approach."}}
-        count = _fix_ranked_proposals(tmp_path, fixed)
+        output_dir = tmp_path / "output"
+        output_dir.mkdir()
+        count = _fix_ranked_proposals(tmp_path, fixed, output_dir=output_dir)
         assert count == 3
 
         with open(rank_dir / "ranked_proposals.json") as f:
@@ -293,5 +295,8 @@ class TestFixRankedProposals:
         assert "complete approach." in md
 
     def test_returns_zero_when_no_rank_dir(self, tmp_path):
-        count = _fix_ranked_proposals(tmp_path, {"gen-001": {"x": "y"}})
+        output_dir = tmp_path / "output"
+        count = _fix_ranked_proposals(
+            tmp_path, {"gen-001": {"x": "y"}}, output_dir=output_dir
+        )
         assert count == 0

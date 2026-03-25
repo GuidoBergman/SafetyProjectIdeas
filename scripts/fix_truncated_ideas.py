@@ -216,12 +216,23 @@ def _update_sections_in_dict(idea_dict: dict, fixed_sections: dict) -> bool:
 
 
 def _fix_ranked_proposals(
-    run_dir: Path, fixed_ideas: dict[str, dict]
+    run_dir: Path,
+    fixed_ideas: dict[str, dict],
+    output_dir: Path | None = None,
 ) -> int:
     """Fix sections in rank/ranked_proposals.json and regenerate .md files.
 
+    Args:
+        run_dir: Pipeline run directory.
+        fixed_ideas: Mapping of idea_id to corrected sections dict.
+        output_dir: Directory for the output copy of ranked_proposals.md.
+            Defaults to OUTPUT_DIR from constants.
+
     Returns count of files updated.
     """
+    if output_dir is None:
+        output_dir = OUTPUT_DIR
+
     rank_json = run_dir / "rank" / "ranked_proposals.json"
     if not rank_json.exists():
         return 0
@@ -251,18 +262,32 @@ def _fix_ranked_proposals(
         f.write(md_content)
 
     # Also update data/output/ copy
-    output_md = OUTPUT_DIR / "ranked_proposals.md"
+    output_md = output_dir / "ranked_proposals.md"
     if output_md.exists():
-        OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
+        output_dir.mkdir(parents=True, exist_ok=True)
         with open(output_md, "w") as f:
             f.write(md_content)
 
     return 3  # json + rank md + output md
 
 
-def fix_run(run_dir: Path) -> None:
-    """Fix all truncated ideas in a pipeline run."""
+def fix_run(
+    run_dir: Path,
+    ideas_dir: Path | None = None,
+    output_dir: Path | None = None,
+) -> None:
+    """Fix all truncated ideas in a pipeline run.
+
+    Args:
+        run_dir: Pipeline run directory.
+        ideas_dir: Directory for persistent idea files.
+            Defaults to IDEAS_DIR from constants.
+        output_dir: Directory for output copies.
+            Defaults to OUTPUT_DIR from constants.
+    """
     run_dir = Path(run_dir)
+    if ideas_dir is None:
+        ideas_dir = IDEAS_DIR
 
     # Load all generate-stage ideas
     originals = {i["idea_id"]: i for i in read_idea_sketches(run_dir)}
@@ -311,7 +336,7 @@ def fix_run(run_dir: Path) -> None:
             write_refined_proposal(run_dir, proposal)
 
         # Write back to data/ideas/ if the file exists there
-        ideas_file = IDEAS_DIR / f"{idea_id}.md"
+        ideas_file = ideas_dir / f"{idea_id}.md"
         if ideas_file.exists():
             _write_ideas_file(ideas_file, proposal)
 
@@ -329,7 +354,7 @@ def fix_run(run_dir: Path) -> None:
                 all_sections[proposal["idea_id"]] = proposal.get("sections", {})
 
     if all_sections:
-        rank_count = _fix_ranked_proposals(run_dir, all_sections)
+        rank_count = _fix_ranked_proposals(run_dir, all_sections, output_dir)
         print(f"  Ranked proposals: {rank_count} files updated")
 
     print("\nDone.")
