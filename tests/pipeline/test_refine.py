@@ -156,6 +156,14 @@ class TestIdentifyWeakDimensions:
 
 
 class TestAnalyzeWeaknesses:
+    def test_string_original_idea(self):
+        scored = _make_scored_idea()
+        scored["original_idea"] = "A plain string describing the idea."
+        criteria = _make_criteria()
+        ctx = analyze_weaknesses(scored, criteria)
+        assert ctx["original_body"] == "A plain string describing the idea."
+        assert ctx["idea_id"] == "gen-001"
+
     def test_structure(self):
         scored = _make_scored_idea()
         criteria = _make_criteria()
@@ -223,6 +231,15 @@ class TestBuildProposalSkeleton:
         assert "strength_rationale" in sections
         assert isinstance(sections["alternative_framings"], list)
         assert isinstance(sections["cited_sources"], list)
+
+    def test_string_original_idea(self):
+        scored = _make_scored_idea()
+        scored["original_idea"] = "Plain text idea body"
+        refinement = analyze_weaknesses(scored, _make_criteria())
+        skeleton = build_proposal_skeleton(scored, refinement)
+        assert skeleton["generation_strategy"] == ""
+        assert skeleton["subfield"] == ""
+        assert skeleton["provenance"]["generation_method"] == ""
 
     def test_original_scores_are_ints(self):
         scored = _make_scored_idea()

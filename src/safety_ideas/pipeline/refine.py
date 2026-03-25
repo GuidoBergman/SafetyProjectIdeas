@@ -132,10 +132,16 @@ def analyze_weaknesses(
             })
     strong_dimensions.sort(key=lambda x: x["score"], reverse=True)
 
+    # original_idea may be a dict or a plain string (the idea body text)
+    if isinstance(original, dict):
+        original_body = original.get("body", "")
+    else:
+        original_body = str(original) if original else ""
+
     return {
         "idea_id": scored_idea.get("idea_id", "unknown"),
         "title": scored_idea.get("title", ""),
-        "original_body": original.get("body", ""),
+        "original_body": original_body,
         "weak_dimensions": weak_dimensions,
         "strong_dimensions": strong_dimensions,
         "novelty_classification": novelty.get("classification", ""),
@@ -166,6 +172,14 @@ def build_proposal_skeleton(scored_idea: dict, refinement: dict) -> dict:
 
     weak_addressed = [d["name"] for d in refinement.get("weak_dimensions", [])]
 
+    # original_idea may be a dict or a plain string
+    if isinstance(original, dict):
+        gen_strategy = original.get("generation_strategy", "")
+        subfield = original.get("subfield", "")
+    else:
+        gen_strategy = ""
+        subfield = ""
+
     return {
         "idea_id": scored_idea.get("idea_id", "unknown"),
         "run_id": scored_idea.get("run_id", "unknown"),
@@ -179,10 +193,10 @@ def build_proposal_skeleton(scored_idea: dict, refinement: dict) -> dict:
         "pre_refine_weighted_score": scored_idea.get("weighted_score", 0.0),
         "weak_dimensions_addressed": weak_addressed,
         "num_alternative_framings": 0,
-        "generation_strategy": original.get("generation_strategy", ""),
-        "subfield": original.get("subfield", ""),
+        "generation_strategy": gen_strategy,
+        "subfield": subfield,
         "provenance": {
-            "generation_method": original.get("generation_strategy", ""),
+            "generation_method": gen_strategy,
             "kb_sources": [],
             "web_sources": [],
         },
