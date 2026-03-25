@@ -241,6 +241,15 @@ class TestBuildProposalSkeleton:
         assert skeleton["subfield"] == ""
         assert skeleton["provenance"]["generation_method"] == ""
 
+    def test_run_id_fallback_to_original_idea(self):
+        scored = _make_scored_idea()
+        # Remove top-level run_id so it falls back to original_idea.run_id
+        del scored["run_id"]
+        refinement = analyze_weaknesses(scored, _make_criteria())
+        skeleton = build_proposal_skeleton(scored, refinement)
+        assert skeleton["run_id"] == "2026-03-19T14-30-00"
+
+
     def test_original_scores_are_ints(self):
         scored = _make_scored_idea()
         refinement = analyze_weaknesses(scored, _make_criteria())

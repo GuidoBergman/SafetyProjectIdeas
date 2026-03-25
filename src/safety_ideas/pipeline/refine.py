@@ -176,13 +176,18 @@ def build_proposal_skeleton(scored_idea: dict, refinement: dict) -> dict:
     if isinstance(original, dict):
         gen_strategy = original.get("generation_strategy", "")
         subfield = original.get("subfield", "")
+        orig_run_id = original.get("run_id", "")
     else:
         gen_strategy = ""
         subfield = ""
+        orig_run_id = ""
+
+    # run_id may be at top level or nested in original_idea
+    run_id = scored_idea.get("run_id") or orig_run_id or "unknown"
 
     return {
         "idea_id": scored_idea.get("idea_id", "unknown"),
-        "run_id": scored_idea.get("run_id", "unknown"),
+        "run_id": run_id,
         "stage": "refine",
         "timestamp": now,
         "title": scored_idea.get("title", ""),
