@@ -47,6 +47,7 @@ def score_idea(idea: dict, criteria: list[ScoringCriteria], team_profile: TeamPr
             "confidence": 0.0,
             "derived_score": 0,
         },
+        "novelty_method": None,
         "citation_verification": {
             "relevance_scores": [],
             "verified": [],
@@ -190,7 +191,7 @@ def staged_filter(
 
 
 def write_scored_idea(run_dir: Path, scored: dict) -> Path:
-    """Write a scored idea as a JSON file in filter_score/.
+    """Write a scored idea as a JSON file in filter_score/scored/.
 
     Args:
         run_dir: Run directory path.
@@ -199,18 +200,18 @@ def write_scored_idea(run_dir: Path, scored: dict) -> Path:
     Returns:
         Path to the written JSON file.
     """
-    filter_dir = run_dir / "filter_score"
-    filter_dir.mkdir(parents=True, exist_ok=True)
+    scored_dir = run_dir / "filter_score" / "scored"
+    scored_dir.mkdir(parents=True, exist_ok=True)
 
     idea_id = scored.get("idea_id", "unknown")
-    file_path = filter_dir / f"{idea_id}.json"
+    file_path = scored_dir / f"{idea_id}.json"
     with open(file_path, "w") as f:
         json.dump(scored, f, indent=2, default=str)
     return file_path
 
 
 def read_scored_ideas(run_dir: Path) -> list[dict]:
-    """Read all scored idea JSON files from filter_score/.
+    """Read all scored idea JSON files from filter_score/scored/.
 
     Args:
         run_dir: Run directory path.
@@ -218,12 +219,12 @@ def read_scored_ideas(run_dir: Path) -> list[dict]:
     Returns:
         List of scored idea dicts, sorted by idea_id.
     """
-    filter_dir = run_dir / "filter_score"
-    if not filter_dir.exists():
+    scored_dir = run_dir / "filter_score" / "scored"
+    if not scored_dir.exists():
         return []
 
     results = []
-    for json_file in sorted(filter_dir.glob("*.json")):
+    for json_file in sorted(scored_dir.glob("*.json")):
         with open(json_file) as f:
             results.append(json.load(f))
     return results

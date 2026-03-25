@@ -43,58 +43,83 @@ _SECTION_HEADINGS = {
 def identify_weak_dimensions(
     scored_idea: dict,
     criteria: list[ScoringCriteria],
+    active_weights: dict[str, float] | None = None,
 ) -> list[str]:
-    """Find the lowest-scoring criteria for an idea (bottom 2 by score value).
+    """Find criteria scoring below their refinement threshold.
+
+    Only criteria whose current weight is non-zero are considered.  The
+    effective weight for each criterion is looked up in *active_weights*
+    first (team overrides), falling back to ``default_weight``.
 
     Args:
         scored_idea: Scored idea dict with a ``scores`` mapping of
             criterion_name -> {score, reasoning, confidence}.
         criteria: List of ScoringCriteria objects from config.
+        active_weights: Optional mapping of criterion name to effective
+            weight (e.g. from team profile overrides).  When ``None``,
+            ``default_weight`` from each criterion is used.
 
     Returns:
-        List of criterion names that are weakest (up to 2), sorted by score
-        ascending.  Only criteria present in both ``scored_idea["scores"]``
-        and the provided *criteria* list are considered.
+        List of criterion names that are below their refinement threshold,
+        sorted by score ascending.  Criteria with zero effective weight
+        are skipped.
     """
     scores = scored_idea.get("scores", {})
-    criteria_names = {c.name for c in criteria}
+    criteria_by_name = {c.name: c for c in criteria}
 
-    scored_pairs = []
-    for name, entry in scores.items():
-        if name not in criteria_names:
+    weak = []
+    for name, crit in criteria_by_name.items():
+        weight = (active_weights or {}).get(name, crit.default_weight)
+        if weight == 0:
+            continue
+        entry = scores.get(name)
+        if entry is None:
             continue
         score_val = entry.get("score", 0)
-        scored_pairs.append((name, score_val))
+        if score_val < crit.refinement_threshold:
+            weak.append((name, score_val))
 
-    scored_pairs.sort(key=lambda x: x[1])
-    return [name for name, _ in scored_pairs[:2]]
+    weak.sort(key=lambda x: x[1])
+    return [name for name, _ in weak]
 
 
-def build_refinement_context(scored_idea: dict, weak_dims: list[str]) -> dict:
-    """Prepare context dict for LLM refinement.
+def analyze_weaknesses(
+    scored_idea: dict,
+    criteria: list[ScoringCriteria],
+    active_weights: dict[str, float] | None = None,
+) -> dict:
+    """Identify weak dimensions and build refinement context in one step.
 
-    Assembles the idea's metadata, weak and strong dimensions with their
-    scores and reasoning, and auto-generated improvement suggestions.
+    Combines weak-dimension identification (threshold-based) with context
+    assembly for LLM refinement.
 
     Args:
         scored_idea: Scored idea dict.
-        weak_dims: List of weak dimension names (from ``identify_weak_dimensions``).
+        criteria: List of ScoringCriteria objects from config.
+        active_weights: Optional mapping of criterion name to effective
+            weight (e.g. from team profile overrides).
 
     Returns:
         Dict with keys: idea_id, title, original_body, weak_dimensions,
-        strong_dimensions, novelty_classification, suggestions.
+        strong_dimensions, novelty_classification.
     """
+    weak_dims = identify_weak_dimensions(scored_idea, criteria, active_weights)
+
     scores = scored_idea.get("scores", {})
     original = scored_idea.get("original_idea", {})
     novelty = scored_idea.get("novelty_assessment", {})
 
+    criteria_by_name = {c.name: c for c in criteria}
+
     weak_dimensions = []
     for name in weak_dims:
         entry = scores.get(name, {})
+        crit = criteria_by_name.get(name)
         weak_dimensions.append({
             "name": name,
             "score": entry.get("score", 0),
             "reasoning": entry.get("reasoning", ""),
+            "threshold": crit.refinement_threshold if crit else 3,
         })
 
     weak_set = set(weak_dims)
@@ -107,13 +132,6 @@ def build_refinement_context(scored_idea: dict, weak_dims: list[str]) -> dict:
             })
     strong_dimensions.sort(key=lambda x: x["score"], reverse=True)
 
-    suggestions = []
-    for dim in weak_dimensions:
-        suggestions.append(
-            f"Improve {dim['name']} (current score: {dim['score']}): "
-            f"address weaknesses noted in scoring reasoning."
-        )
-
     return {
         "idea_id": scored_idea.get("idea_id", "unknown"),
         "title": scored_idea.get("title", ""),
@@ -121,7 +139,6 @@ def build_refinement_context(scored_idea: dict, weak_dims: list[str]) -> dict:
         "weak_dimensions": weak_dimensions,
         "strong_dimensions": strong_dimensions,
         "novelty_classification": novelty.get("classification", ""),
-        "suggestions": suggestions,
     }
 
 
@@ -133,7 +150,7 @@ def build_proposal_skeleton(scored_idea: dict, refinement: dict) -> dict:
 
     Args:
         scored_idea: Scored idea dict.
-        refinement: Refinement context dict (from ``build_refinement_context``).
+        refinement: Refinement context dict (from ``analyze_weaknesses``).
 
     Returns:
         Full proposal dict ready for LLM completion and persistence.
@@ -158,6 +175,7 @@ def build_proposal_skeleton(scored_idea: dict, refinement: dict) -> dict:
         "original_scores": original_scores,
         "novelty_classification": novelty.get("classification", ""),
         "novelty_score": novelty.get("derived_score", 0),
+        "novelty_method": scored_idea.get("novelty_method"),
         "pre_refine_weighted_score": scored_idea.get("weighted_score", 0.0),
         "weak_dimensions_addressed": weak_addressed,
         "num_alternative_framings": 0,
@@ -326,21 +344,17 @@ def main() -> None:
 
     if len(sys.argv) < 2:
         print("Usage: python -m safety_ideas.pipeline.refine <command> <run_dir> [args]")
-        print("Commands: identify-weak, build-context, build-skeleton, write, read, list")
+        print("Commands: analyze-weaknesses, build-skeleton, write, read, list")
         sys.exit(1)
 
     cmd = sys.argv[1]
 
-    if cmd == "identify-weak":
+    if cmd == "analyze-weaknesses":
         scored_data = json.loads(sys.argv[2])
         criteria_data = json.loads(sys.argv[3])
         criteria = [ScoringCriteria(**c) for c in criteria_data]
-        weak = identify_weak_dimensions(scored_data, criteria)
-        print(json.dumps(weak))
-    elif cmd == "build-context":
-        scored_data = json.loads(sys.argv[2])
-        weak_dims = json.loads(sys.argv[3])
-        ctx = build_refinement_context(scored_data, weak_dims)
+        active_weights = json.loads(sys.argv[4]) if len(sys.argv) > 4 else None
+        ctx = analyze_weaknesses(scored_data, criteria, active_weights)
         print(json.dumps(ctx, indent=2, default=str))
     elif cmd == "build-skeleton":
         scored_data = json.loads(sys.argv[2])

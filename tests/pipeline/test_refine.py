@@ -4,8 +4,8 @@ from pathlib import Path
 
 from safety_ideas.config.schemas import ScoringCriteria
 from safety_ideas.pipeline.refine import (
+    analyze_weaknesses,
     build_proposal_skeleton,
-    build_refinement_context,
     identify_weak_dimensions,
     read_refined_proposals,
     write_refined_proposal,
@@ -13,12 +13,32 @@ from safety_ideas.pipeline.refine import (
 
 
 def _make_criteria() -> list[ScoringCriteria]:
-    """Create test scoring criteria."""
+    """Create test scoring criteria with refinement thresholds."""
     return [
-        ScoringCriteria(name="theory_of_impact", description="ToI", default_weight=1.0),
-        ScoringCriteria(name="low_compute", description="Compute", default_weight=1.0),
-        ScoringCriteria(name="feasibility", description="Feasibility", default_weight=1.0),
-        ScoringCriteria(name="novelty", description="Novelty", default_weight=1.0),
+        ScoringCriteria(
+            name="theory_of_impact",
+            description="ToI",
+            default_weight=1.5,
+            refinement_threshold=4,
+        ),
+        ScoringCriteria(
+            name="low_compute",
+            description="Compute",
+            default_weight=1.5,
+            refinement_threshold=3,
+        ),
+        ScoringCriteria(
+            name="feasibility",
+            description="Feasibility",
+            default_weight=1.0,
+            refinement_threshold=3,
+        ),
+        ScoringCriteria(
+            name="novelty",
+            description="Novelty",
+            default_weight=1.0,
+            refinement_threshold=3,
+        ),
     ]
 
 
@@ -59,62 +79,114 @@ def _make_scored_idea(
 
 
 class TestIdentifyWeakDimensions:
-    def test_returns_bottom_two(self):
+    def test_returns_below_threshold(self):
         scored = _make_scored_idea()
         criteria = _make_criteria()
         weak = identify_weak_dimensions(scored, criteria)
-        assert weak == ["low_compute", "novelty"]
+        # low_compute=2 < threshold 3, theory_of_impact=4 not < 4, novelty=3 not < 3
+        assert weak == ["low_compute"]
 
-    def test_returns_up_to_two(self):
-        scored = _make_scored_idea({"only_one": 3})
-        criteria = [ScoringCriteria(name="only_one", description="x", default_weight=1.0)]
+    def test_multiple_weak(self):
+        scored = _make_scored_idea({
+            "theory_of_impact": 2,
+            "low_compute": 1,
+            "feasibility": 5,
+            "novelty": 2,
+        })
+        criteria = _make_criteria()
         weak = identify_weak_dimensions(scored, criteria)
-        assert len(weak) == 1
-        assert weak == ["only_one"]
+        # low_compute=1 < 3, theory_of_impact=2 < 4, novelty=2 < 3 — sorted ascending
+        assert weak == ["low_compute", "theory_of_impact", "novelty"]
+
+    def test_skips_zero_weight_criteria(self):
+        scored = _make_scored_idea({"theory_of_impact": 1, "low_compute": 1})
+        criteria = [
+            ScoringCriteria(
+                name="theory_of_impact",
+                description="ToI",
+                default_weight=1.5,
+                refinement_threshold=4,
+            ),
+            ScoringCriteria(
+                name="low_compute",
+                description="Compute",
+                default_weight=0.0,
+                refinement_threshold=3,
+            ),
+        ]
+        weak = identify_weak_dimensions(scored, criteria)
+        assert weak == ["theory_of_impact"]
+
+    def test_active_weights_override(self):
+        scored = _make_scored_idea({"theory_of_impact": 1, "low_compute": 1})
+        criteria = _make_criteria()
+        # Override low_compute weight to 0 via active_weights
+        weak = identify_weak_dimensions(scored, criteria, active_weights={"low_compute": 0})
+        assert "low_compute" not in weak
+        assert "theory_of_impact" in weak
 
     def test_ignores_criteria_not_in_list(self):
         scored = _make_scored_idea()
-        # Only include two criteria
         criteria = [
-            ScoringCriteria(name="theory_of_impact", description="ToI", default_weight=1.0),
-            ScoringCriteria(name="feasibility", description="F", default_weight=1.0),
+            ScoringCriteria(
+                name="theory_of_impact",
+                description="ToI",
+                default_weight=1.0,
+                refinement_threshold=4,
+            ),
         ]
         weak = identify_weak_dimensions(scored, criteria)
-        assert weak == ["theory_of_impact", "feasibility"]
+        # theory_of_impact=4 is not < 4
+        assert weak == []
 
     def test_empty_scores(self):
         scored = {"scores": {}}
         criteria = _make_criteria()
         assert identify_weak_dimensions(scored, criteria) == []
 
+    def test_none_above_threshold(self):
+        scored = _make_scored_idea({
+            "theory_of_impact": 5,
+            "low_compute": 5,
+            "feasibility": 5,
+            "novelty": 5,
+        })
+        criteria = _make_criteria()
+        assert identify_weak_dimensions(scored, criteria) == []
 
-class TestBuildRefinementContext:
+
+class TestAnalyzeWeaknesses:
     def test_structure(self):
         scored = _make_scored_idea()
-        weak = ["low_compute", "novelty"]
-        ctx = build_refinement_context(scored, weak)
+        criteria = _make_criteria()
+        ctx = analyze_weaknesses(scored, criteria)
 
         assert ctx["idea_id"] == "gen-001"
         assert ctx["title"] == "Test Idea"
         assert ctx["original_body"] == "A research idea about interpretability."
         assert ctx["novelty_classification"] == "mostly_novel"
-        assert len(ctx["weak_dimensions"]) == 2
+        assert len(ctx["weak_dimensions"]) == 1
         assert ctx["weak_dimensions"][0]["name"] == "low_compute"
         assert ctx["weak_dimensions"][0]["score"] == 2
-        assert len(ctx["strong_dimensions"]) == 2
-        assert len(ctx["suggestions"]) == 2
+        assert ctx["weak_dimensions"][0]["threshold"] == 3
+        assert "suggestions" not in ctx
 
-    def test_suggestions_reference_weak_dims(self):
-        scored = _make_scored_idea()
-        weak = ["low_compute"]
-        ctx = build_refinement_context(scored, weak)
-        assert "low_compute" in ctx["suggestions"][0]
-        assert "2" in ctx["suggestions"][0]
+    def test_no_weak_dims(self):
+        scored = _make_scored_idea({
+            "theory_of_impact": 5,
+            "low_compute": 5,
+            "feasibility": 5,
+            "novelty": 5,
+        })
+        criteria = _make_criteria()
+        ctx = analyze_weaknesses(scored, criteria)
+        assert ctx["weak_dimensions"] == []
+        assert len(ctx["strong_dimensions"]) == 4
 
     def test_strong_dims_sorted_descending(self):
         scored = _make_scored_idea()
-        weak = ["low_compute"]
-        ctx = build_refinement_context(scored, weak)
+        criteria = _make_criteria()
+        ctx = analyze_weaknesses(scored, criteria)
         scores = [d["score"] for d in ctx["strong_dimensions"]]
         assert scores == sorted(scores, reverse=True)
 
@@ -122,7 +194,7 @@ class TestBuildRefinementContext:
 class TestBuildProposalSkeleton:
     def test_structure(self):
         scored = _make_scored_idea()
-        refinement = build_refinement_context(scored, ["low_compute"])
+        refinement = analyze_weaknesses(scored, _make_criteria())
         skeleton = build_proposal_skeleton(scored, refinement)
 
         assert skeleton["idea_id"] == "gen-001"
@@ -140,7 +212,7 @@ class TestBuildProposalSkeleton:
 
     def test_sections_present(self):
         scored = _make_scored_idea()
-        refinement = build_refinement_context(scored, [])
+        refinement = analyze_weaknesses(scored, _make_criteria())
         skeleton = build_proposal_skeleton(scored, refinement)
 
         sections = skeleton["sections"]
@@ -154,7 +226,7 @@ class TestBuildProposalSkeleton:
 
     def test_original_scores_are_ints(self):
         scored = _make_scored_idea()
-        refinement = build_refinement_context(scored, [])
+        refinement = analyze_weaknesses(scored, _make_criteria())
         skeleton = build_proposal_skeleton(scored, refinement)
         for val in skeleton["original_scores"].values():
             assert isinstance(val, int)
@@ -163,7 +235,7 @@ class TestBuildProposalSkeleton:
 class TestWriteAndReadProposals:
     def test_roundtrip(self, tmp_path: Path):
         scored = _make_scored_idea()
-        refinement = build_refinement_context(scored, ["low_compute"])
+        refinement = analyze_weaknesses(scored, _make_criteria())
         proposal = build_proposal_skeleton(scored, refinement)
         proposal["sections"]["research_question"] = "How does X affect Y?"
         proposal["sections"]["cited_sources"] = ["Paper A", "Paper B"]
@@ -191,7 +263,7 @@ class TestWriteAndReadProposals:
         for idea_id in ["gen-003", "gen-001", "gen-002"]:
             scored = _make_scored_idea()
             scored["idea_id"] = idea_id
-            refinement = build_refinement_context(scored, [])
+            refinement = analyze_weaknesses(scored, _make_criteria())
             proposal = build_proposal_skeleton(scored, refinement)
             write_refined_proposal(tmp_path, proposal)
 
@@ -201,7 +273,7 @@ class TestWriteAndReadProposals:
 
     def test_list_sections_roundtrip(self, tmp_path: Path):
         scored = _make_scored_idea()
-        refinement = build_refinement_context(scored, [])
+        refinement = analyze_weaknesses(scored, _make_criteria())
         proposal = build_proposal_skeleton(scored, refinement)
         proposal["sections"]["alternative_framings"] = ["Framing A", "Framing B"]
 
@@ -211,7 +283,7 @@ class TestWriteAndReadProposals:
 
     def test_frontmatter_contains_metadata(self, tmp_path: Path):
         scored = _make_scored_idea()
-        refinement = build_refinement_context(scored, ["low_compute"])
+        refinement = analyze_weaknesses(scored, _make_criteria())
         proposal = build_proposal_skeleton(scored, refinement)
 
         path = write_refined_proposal(tmp_path, proposal)

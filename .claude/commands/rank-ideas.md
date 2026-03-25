@@ -1,6 +1,6 @@
 # Rank Refined AI Safety Research Proposals
 
-Re-score refined proposals against full criteria using richer proposal content, compute weighted rankings, and produce human-scannable output for 20+ proposals (FR41).
+Re-score refined proposals against full criteria using richer proposal content, compute weighted rankings, and produce human-scannable output (FR41).
 
 ## Setup
 

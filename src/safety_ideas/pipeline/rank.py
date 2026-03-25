@@ -101,6 +101,7 @@ def format_ranked_output(ranked: list[dict]) -> str:
         subfield = proposal.get("subfield", "N/A")
         strategy = proposal.get("generation_strategy", "N/A")
         novelty_class = proposal.get("novelty_classification", "N/A")
+        novelty_method = proposal.get("novelty_method", "N/A")
 
         # Format scores line — prefer re-scored 'scores' dict, fall back to original_scores
         scores_dict = proposal.get("scores")
@@ -123,7 +124,8 @@ def format_ranked_output(ranked: list[dict]) -> str:
         lines.append(f"**Research Question:** {research_question}")
         lines.append(f"**Approach:** {approach}")
         lines.append(
-            f"**Subfield:** {subfield} | **Strategy:** {strategy} | **Novelty:** {novelty_class}"
+            f"**Subfield:** {subfield} | **Strategy:** {strategy}"
+            f" | **Novelty:** {novelty_class} ({novelty_method})"
         )
         lines.append(f"**Scores:** {scores_line}")
         lines.append(f"**Provenance:** {gen_method}, sources: {kb_count} KB, {web_count} web")
@@ -165,6 +167,7 @@ def persist_ideas(ranked: list[dict], ideas_dir: Path | None = None) -> list[Pat
             "generation_strategy": proposal.get("generation_strategy", ""),
             "novelty_classification": proposal.get("novelty_classification", ""),
             "novelty_score": proposal.get("novelty_score"),
+            "novelty_method": proposal.get("novelty_method"),
             "original_scores": proposal.get("original_scores", {}),
             "provenance": proposal.get("provenance", {}),
             "timestamp": datetime.now(UTC).strftime("%Y-%m-%dT%H:%M:%SZ"),

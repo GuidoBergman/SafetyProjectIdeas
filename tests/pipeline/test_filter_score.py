@@ -294,7 +294,7 @@ class TestWriteRead:
         path = write_scored_idea(tmp_path, scored)
 
         assert path.exists()
-        assert path.parent.name == "filter_score"
+        assert path.parent.name == "scored"
         assert path.name == "gen-001.json"
 
     def test_write_read_roundtrip(self, tmp_path):
@@ -822,13 +822,13 @@ class TestWriteReadEdgeCases:
     def test_read_ignores_subdirectories(self, tmp_path):
         scored = _make_scored_idea("gen-001")
         write_scored_idea(tmp_path, scored)
-        # Create a subdirectory in filter_score/
-        sub = tmp_path / "filter_score" / "batches"
+        # Create a subdirectory in filter_score/scored/
+        sub = tmp_path / "filter_score" / "scored" / "nested"
         sub.mkdir()
-        (sub / "batch_001.json").write_text("[]")
+        (sub / "extra.json").write_text("[]")
 
         results = read_scored_ideas(tmp_path)
-        # Should only read top-level JSON files
+        # Should only read top-level JSON files in scored/
         assert len(results) == 1
         assert results[0]["idea_id"] == "gen-001"
 

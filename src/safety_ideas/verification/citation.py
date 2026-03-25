@@ -13,6 +13,8 @@ import urllib.error
 import urllib.request
 from urllib.parse import quote
 
+from safety_ideas.utils import retry_on_rate_limit
+
 logger = logging.getLogger(__name__)
 
 _CROSSREF_BASE = "https://api.crossref.org/works"
@@ -34,10 +36,14 @@ def lookup_doi(doi: str) -> dict | None:
     """
     url = f"{_CROSSREF_BASE}/{quote(doi, safe='')}"
     try:
-        req = urllib.request.Request(url, method="GET")
-        req.add_header("User-Agent", "SafetyIdeas/0.1 (citation-check)")
-        with urllib.request.urlopen(req, timeout=_HTTP_TIMEOUT) as resp:
-            data = json.loads(resp.read().decode())
+
+        def _fetch():
+            req = urllib.request.Request(url, method="GET")
+            req.add_header("User-Agent", "SafetyIdeas/0.1 (citation-check)")
+            with urllib.request.urlopen(req, timeout=_HTTP_TIMEOUT) as resp:
+                return json.loads(resp.read().decode())
+
+        data = retry_on_rate_limit(_fetch)
 
         message = data.get("message", {})
         titles = message.get("title", [])
@@ -70,10 +76,14 @@ def search_crossref(title: str, rows: int = 3) -> list[dict]:
     query = quote(title)
     url = f"{_CROSSREF_BASE}?query.bibliographic={query}&rows={rows}"
     try:
-        req = urllib.request.Request(url, method="GET")
-        req.add_header("User-Agent", "SafetyIdeas/0.1 (citation-check)")
-        with urllib.request.urlopen(req, timeout=_HTTP_TIMEOUT) as resp:
-            data = json.loads(resp.read().decode())
+
+        def _fetch():
+            req = urllib.request.Request(url, method="GET")
+            req.add_header("User-Agent", "SafetyIdeas/0.1 (citation-check)")
+            with urllib.request.urlopen(req, timeout=_HTTP_TIMEOUT) as resp:
+                return json.loads(resp.read().decode())
+
+        data = retry_on_rate_limit(_fetch)
 
         items = data.get("message", {}).get("items", [])
         results = []
@@ -109,13 +119,17 @@ def search_semantic_scholar(title: str, limit: int = 3) -> list[dict]:
     query = quote(title)
     url = f"{_SEMANTIC_SCHOLAR_BASE}?query={query}&limit={limit}"
     try:
-        req = urllib.request.Request(url, method="GET")
-        req.add_header("User-Agent", "SafetyIdeas/0.1 (citation-check)")
         s2_key = os.environ.get("S2_API_KEY")
-        if s2_key:
-            req.add_header("x-api-key", s2_key)
-        with urllib.request.urlopen(req, timeout=_HTTP_TIMEOUT) as resp:
-            data = json.loads(resp.read().decode())
+
+        def _fetch():
+            req = urllib.request.Request(url, method="GET")
+            req.add_header("User-Agent", "SafetyIdeas/0.1 (citation-check)")
+            if s2_key:
+                req.add_header("x-api-key", s2_key)
+            with urllib.request.urlopen(req, timeout=_HTTP_TIMEOUT) as resp:
+                return json.loads(resp.read().decode())
+
+        data = retry_on_rate_limit(_fetch)
 
         papers = data.get("data", [])
         return [

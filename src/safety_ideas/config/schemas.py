@@ -38,6 +38,13 @@ class ScoringCriteria(BaseModel):
     name: str = Field(description="Criterion identifier")
     description: str = Field(description="Human-readable description of the criterion")
     default_weight: float = Field(ge=0.0, le=5.0, description="Default weight for scoring")
+    refinement_threshold: int = Field(
+        default=3,
+        ge=0,
+        le=5,
+        description="Scores strictly below this threshold are considered weak during refinement. "
+        "Set to 0 to never refine this criterion.",
+    )
     rubric: list[RubricLevel] = Field(
         default_factory=list,
         description="Ordered rubric levels defining what each score means for this criterion",

@@ -1,6 +1,6 @@
 # Refine AI Safety Research Ideas into Full Proposals
 
-Refine scored ideas by strengthening weak dimensions, generating alternative framings, and assembling full research proposals.
+Refine scored ideas by strengthening weak dimensions, generating alternative framings with score-based comparison, and assembling full research proposals.
 
 ## Setup
 
@@ -41,7 +41,7 @@ uv run python -m safety_ideas.config.cli show-participant
 Save all configuration outputs — they will be used in LLM prompts throughout refinement.
 
 Before proceeding, echo the active configuration:
-> **Refining with:** team=[default_team], participant=[profile_name], scored_ideas=[count], criteria=[list each criterion name=active_weight]
+> **Refining with:** team=[default_team], participant=[profile_name], scored_ideas=[count], criteria=[list each criterion name=active_weight (threshold=N)]
 
 ## Phase 1: Load Scored Ideas
 
@@ -61,47 +61,36 @@ uv run python -m safety_ideas.pipeline.orchestrator log <run_dir> refine info 'R
 
 ## Phase 2: Auto-Strengthen Weak Ideas (FR36)
 
-For EACH scored idea, identify and strengthen weak dimensions.
+For EACH scored idea, identify weak dimensions and strengthen them.
 
-### Step 2.1: Identify weak dimensions
-
-```bash
-uv run python -m safety_ideas.pipeline.refine identify-weak '<scored_idea_json>' '<criteria_json>'
-```
-
-Where `<criteria_json>` is the JSON array of scoring criteria objects from `show-scoring` output. This returns the weakest criterion names for the idea.
-
-### Step 2.2: Build refinement context
-
-If the idea has weak dimensions:
+### Step 2.1: Analyze weaknesses
 
 ```bash
-uv run python -m safety_ideas.pipeline.refine build-context '<scored_idea_json>' '<weak_dims_json>'
+uv run python -m safety_ideas.pipeline.refine analyze-weaknesses '<scored_idea_json>' '<criteria_json>' '<active_weights_json>'
 ```
 
-This returns context for LLM refinement — weak and strong dimensions with scores, and improvement suggestions.
+Where `<criteria_json>` is the JSON array of scoring criteria objects from `show-scoring` output, and `<active_weights_json>` is the team's criteria weight overrides (or `null` if none). This returns a context dict with weak dimensions (all criteria scoring below their per-criterion `refinement_threshold` where the active weight is non-zero), strong dimensions, and idea metadata.
 
-### Step 2.3: LLM refinement
+### Step 2.2: LLM refinement
 
-Use the LLM to suggest improvements for each weak dimension. Provide the following in the prompt:
+If the idea has weak dimensions, use the LLM to suggest improvements. Provide the following in the prompt:
 
-> You are refining an AI Safety research idea to strengthen its weak dimensions.
+> You are brainstorming improvements to an AI Safety research idea. Your goal is to maximize scores on the weak dimensions according to the rubric.
 >
 > **Idea:** [title, problem, direction, approach from scored_idea]
 >
 > **Weak Dimensions:**
-> [FOR EACH weak dimension: criterion name, current score, scoring reasoning, rubric for that criterion]
+> [FOR EACH weak dimension: criterion name, current score, threshold, scoring reasoning, full rubric for that criterion]
 >
-> **Refinement Context:**
-> [Context from build-context output]
+> **Strong Dimensions:**
+> [FOR EACH strong dimension: criterion name, score]
 >
 > **Participant Profile:**
 > [PARTICIPANT SUMMARY]
 >
-> **Task:** For each weak dimension, suggest a concrete improvement that would raise its score by at least 1 point on the rubric. The improvement must be:
+> **Task:** For each weak dimension, propose a concrete change to the idea that would raise its score above the threshold on the rubric. The improvement must be:
 > - Specific and actionable (not vague advice)
 > - Compatible with the team's skill level
-> - Preserving the core idea while strengthening the weak area
 >
 > **Output format (JSON):**
 > ```json
@@ -111,9 +100,9 @@ Use the LLM to suggest improvements for each weak dimension. Provide the followi
 >     {
 >       "criterion": "<name>",
 >       "original_score": <int>,
->       "suggestion": "<2-4 sentences describing the improvement>",
+>       "change": "<2-4 sentences describing the concrete change to the idea>",
 >       "expected_score": <int>,
->       "rationale": "<1-2 sentences why this raises the score>"
+>       "rationale": "<1-2 sentences why this raises the score per the rubric>"
 >     }
 >   ],
 >   "confidence": <0.0-1.0>,
@@ -127,35 +116,68 @@ If the LLM refinement fails for an idea, keep the original idea unchanged and lo
 uv run python -m safety_ideas.pipeline.orchestrator log <run_dir> refine warning 'LLM refinement failed, keeping original' '{"idea_id": "<id>", "title": "<title>"}'
 ```
 
+### Step 2.3: Re-score refined idea on weak dimensions
+
+After refinement, have the LLM re-score the refined idea on ONLY the weak dimensions using the same rubric:
+
+> You are scoring a refined AI Safety research idea on specific dimensions.
+>
+> **Original Idea:** [title, problem, direction, approach]
+>
+> **Refinements Applied:** [list of changes from Step 2.2]
+>
+> **Task:** Re-score the idea as modified by the refinements on each of these criteria. Use the exact same rubric. If the refinement changed how the idea relates to novelty, mark the novelty score as "estimated" (lightweight re-assessment without web search).
+>
+> **Criteria to score:**
+> [FOR EACH weak dimension: criterion name, full rubric]
+>
+> **Output format (JSON):**
+> ```json
+> {
+>   "idea_id": "<id>",
+>   "rescored_dimensions": [
+>     {
+>       "criterion": "<name>",
+>       "original_score": <int>,
+>       "new_score": <int>,
+>       "reasoning": "<1-2 sentences>",
+>       "is_estimated_novelty": <true|false>
+>     }
+>   ]
+> }
+> ```
+
+**Decision rule:** Only accept refinements where `new_score > original_score`. If a refinement does not improve the score, discard it and keep the original for that dimension.
+
 ### Step 2.4: Record strengthening results
 
-Report per-idea confidence that refinement improved the idea. Track the count of ideas that had weak dimensions and were strengthened.
+Report per-idea confidence that refinement improved the idea. Track the count of ideas that had weak dimensions, were strengthened, and how many refinements were accepted vs discarded.
 
 Log results:
 
 ```bash
-uv run python -m safety_ideas.pipeline.orchestrator log <run_dir> refine info 'Phase 2 complete: auto-strengthen' '{"total_ideas": <TOTAL>, "ideas_with_weak_dims": <COUNT>, "ideas_strengthened": <COUNT>}'
+uv run python -m safety_ideas.pipeline.orchestrator log <run_dir> refine info 'Phase 2 complete: auto-strengthen' '{"total_ideas": <TOTAL>, "ideas_with_weak_dims": <COUNT>, "ideas_strengthened": <COUNT>, "refinements_accepted": <COUNT>, "refinements_discarded": <COUNT>}'
 ```
 
-## Phase 3: Generate Alternative Framings (FR37)
+## Phase 3: Generate and Score Alternative Framings (FR37)
 
 Select promising ideas: top 50% by `weighted_score` from the scored ideas list.
 
 For EACH promising idea, use the LLM to generate 2-3 alternative framings:
 
-> You are generating alternative framings for a promising AI Safety research idea.
+> You are generating alternative framings for a promising AI Safety research idea. You have creative freedom to reimagine the idea.
 >
 > **Original Idea:** [title, problem, direction, approach, scores summary]
 >
-> **Refinements Applied:** [if any from Phase 2]
+> **Refinements Applied:** [if any accepted from Phase 2]
 >
 > **Participant Profile:**
 > [PARTICIPANT SUMMARY]
 >
 > **Task:** Generate 2-3 alternative framings of this idea. Each framing should:
-> - Preserve the core safety-relevant insight
-> - Approach the problem from a substantially different angle (different methodology, different subfield lens, different scope)
+> - Approach the problem from a different angle (different methodology, different subfield lens, different scope)
 > - Be feasible for the described team
+> - Aim to maximize scores across all criteria
 >
 > **Output format (JSON):**
 > ```json
@@ -168,12 +190,43 @@ For EACH promising idea, use the LLM to generate 2-3 alternative framings:
 >       "title": "<new title>",
 >       "problem_reframe": "<1-2 sentences>",
 >       "approach": "<2-3 sentences>",
->       "key_difference": "<1 sentence explaining how this differs from original>",
->       "estimated_feasibility": <1-5>
+>       "key_difference": "<1 sentence explaining how this differs from original>"
 >     }
 >   ]
 > }
 > ```
+
+### Score alternative framings
+
+After generating framings, have the LLM score EACH alternative framing on ALL criteria using the same rubrics:
+
+> You are scoring alternative framings of an AI Safety research idea.
+>
+> **Original Idea Scores:** [all criterion scores]
+>
+> **Alternative Framing:** [framing details]
+>
+> **Task:** Score this framing on every criterion using the same rubric used for the original. For novelty, provide an "estimated novelty" score — a lightweight re-assessment without web search where you estimate whether the novelty has likely changed given the new framing.
+>
+> **Criteria:**
+> [FOR EACH criterion: name, full rubric]
+>
+> **Output format (JSON):**
+> ```json
+> {
+>   "framing_id": "<id>",
+>   "scores": {
+>     "<criterion_name>": {
+>       "score": <int>,
+>       "reasoning": "<1-2 sentences>",
+>       "is_estimated_novelty": <true|false>
+>     }
+>   },
+>   "weighted_score": <float>
+> }
+> ```
+
+**Decision rule:** Framings that improve `weighted_score` over the original become the primary version. Framings that do not improve the score are kept as "alternative framings" in the proposal for reference.
 
 If the LLM fails for an idea, skip alternative framings for that idea and log a warning:
 
@@ -184,33 +237,29 @@ uv run python -m safety_ideas.pipeline.orchestrator log <run_dir> refine warning
 Log results:
 
 ```bash
-uv run python -m safety_ideas.pipeline.orchestrator log <run_dir> refine info 'Phase 3 complete: alternative framings' '{"promising_ideas": <COUNT>, "framings_generated": <TOTAL_FRAMINGS>}'
+uv run python -m safety_ideas.pipeline.orchestrator log <run_dir> refine info 'Phase 3 complete: alternative framings' '{"promising_ideas": <COUNT>, "framings_generated": <TOTAL_FRAMINGS>, "framings_promoted": <COUNT>, "framings_kept_as_alternatives": <COUNT>}'
 ```
 
 ## Phase 4: Assemble Full Proposals (FR38, FR40)
 
-For EACH scored idea (including those without refinements), assemble a full research proposal.
-
-### Step 4.1: LLM proposal generation
-
-Use the LLM to produce a full proposal for each idea:
+For EACH scored idea (including those without refinements), use the LLM to produce a full proposal and write it:
 
 > You are assembling a full research proposal for an AI Safety idea.
 >
-> **Idea:** [title, problem, direction, approach from scored_idea]
+> **Idea:** [title, problem, direction, approach — use the promoted framing if one was selected in Phase 3, otherwise the refined version from Phase 2, otherwise the original]
 >
-> **Scores:** [all criterion scores with reasoning]
+> **Scores:** [all criterion scores — use re-scored values where available, marking estimated novelty scores]
 >
-> **Refinements:** [suggestions from Phase 2, if any]
+> **Refinements:** [accepted refinements from Phase 2, if any]
 >
-> **Alternative Framings:** [from Phase 3, if any]
+> **Alternative Framings:** [non-promoted framings from Phase 3, if any]
 >
 > **Verified Citations:** [all citations from filter_score stage citation_verification that were verified or corrected]
 >
 > **Participant Profile:**
 > [PARTICIPANT SUMMARY]
 >
-> **Task:** Produce a structured research proposal with these sections:
+> **Task:** Produce a structured research proposal.
 >
 > **Output format (JSON):**
 > ```json
@@ -229,16 +278,24 @@ Use the LLM to produce a full proposal for each idea:
 >   "cited_sources": [
 >     {"title": "<paper title>", "authors": "<authors>", "url": "<url>", "relevance": "<1 sentence>"}
 >   ],
->   "refinements_applied": [<list of refinement suggestions incorporated>],
->   "alternative_framings": [<list from Phase 3 if available>],
+>   "refinements_applied": [<list of accepted refinement changes incorporated>],
+>   "alternative_framings": [<non-promoted framings from Phase 3>],
 >   "metadata": {
 >     "weighted_score": <float>,
 >     "confidence": <float>,
 >     "novelty_classification": "<classification>",
+>     "has_estimated_novelty": <true|false>,
 >     "weak_dimensions_addressed": <count>
 >   }
 > }
 > ```
+
+Build the proposal skeleton and write:
+
+```bash
+uv run python -m safety_ideas.pipeline.refine build-skeleton '<scored_idea_json>' '<refinement_json>'
+uv run python -m safety_ideas.pipeline.refine write <run_dir> '<proposal_json>'
+```
 
 If the LLM fails for an idea, build a minimal proposal from the scored idea data and log a warning:
 
@@ -246,19 +303,7 @@ If the LLM fails for an idea, build a minimal proposal from the scored idea data
 uv run python -m safety_ideas.pipeline.orchestrator log <run_dir> refine warning 'Proposal generation failed, using minimal proposal' '{"idea_id": "<id>", "title": "<title>"}'
 ```
 
-### Step 4.2: Build proposal skeleton
-
-```bash
-uv run python -m safety_ideas.pipeline.refine build-skeleton '<scored_idea_json>' '<refinement_json>'
-```
-
-### Step 4.3: Write proposal
-
-```bash
-uv run python -m safety_ideas.pipeline.refine write <run_dir> '<proposal_json>'
-```
-
-Repeat Steps 4.1-4.3 for every scored idea.
+Repeat for every scored idea.
 
 Log results:
 
@@ -271,8 +316,8 @@ uv run python -m safety_ideas.pipeline.orchestrator log <run_dir> refine info 'P
 Present the coordinator with:
 
 1. **Refinement summary**: Total scored ideas processed, ideas with weak dimensions strengthened, alternative framings generated, full proposals assembled
-2. **Strengthened ideas**: List with idea_id, title, weak dimensions addressed, refinement confidence
-3. **Alternative framings**: Count per idea, total framings generated
+2. **Score improvements**: List ideas where refinement or reframing improved weighted_score, showing before/after
+3. **Estimated novelty flags**: List any ideas where novelty was re-estimated (not re-verified via web search)
 4. **Proposals written**: List with idea_id, title, weighted_score, confidence, novelty classification
 
 Tell the coordinator:
