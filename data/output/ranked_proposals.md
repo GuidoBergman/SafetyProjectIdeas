@@ -1,11 +1,13 @@
 # Ranked Research Proposals
 
-*Generated: 2026-03-25 19:13 UTC*
+*Generated: 2026-03-25 19:22 UTC*
 *Total proposals: 500*
 
 ---
 
 ## #1: Jailbreak Benchmark Contamination Check: Are Safety Evaluations Inflated by Training Data Overlap? (Score: 4.43)
+
+**ID:** gen-0017
 
 **Research Question:** To what extent does if harmful prompts from public jailbreak benchmarks (jailbreakbench, strongreject) are present in safety fine-tuning datasets, models may appear more robust than they are — they have memorized refusal?
 
@@ -24,12 +26,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Cited Sources:** How Much Can We Forget about Data Contamination? (ICML 2025) - directly studies contamination effects on benchmarks; JailbreakBench (NeurIPS 2024) - open robustness benchmark acknowledging contamination risks; GuardVal - dynamic jailbreak evaluation to minimize data contamination risks; SafetyPrompts.com - catalog of safety evaluation datasets noting contamination concerns
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 4, accessible_complexity: 5, narrow_scope: 5, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 4, confidence: 0.8 — Strong chain: benchmark contamination -> inflated safety evaluations -> false confidence in model robustness. Every link explicit and testable.
+  - **accessible_complexity:** 5, confidence: 0.9 — Paraphrase generation + API calls + ASR comparison. No ML training. Standard Python scripting.
+  - **narrow_scope:** 5, confidence: 0.9 — Single experiment: 100 prompts, 5 paraphrases each, compare ASR. Clear contamination index metric. Completable well within 30hrs.
+  - **novelty:** 3, confidence: 0.6 — From novelty assessment: partially_addressed
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #2: Evaluating SAE Reconstruction Error as a Proxy for Interpretability Completeness (Score: 4.43)
+
+**ID:** gen-1655
 
 **Research Question:** To what extent does saes suffer from reconstruction error — their compressed representation of model activations is imperfect. for safety applications, we need to know whether this residual error (what the sae fails to c?
 
@@ -46,12 +54,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Alternative Framings:** Benchmark: Evaluating SAE Reconstruction Error as a Proxy for Interpret: Reframed for maximum feasibility. (est. score: 4.25); Novel Angle: Evaluating SAE Reconstruction Error as a Proxy for Interpret: Reframed for novelty. (est. score: 4.82)
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 4, accessible_complexity: 5, narrow_scope: 5, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 4, confidence: 0.8 — Strong chain: SAE reconstruction error carries safety-relevant info -> SAE-based audits are incomplete -> blind spot for deceptive features. Each link defensible.
+  - **accessible_complexity:** 5, confidence: 0.85 — Pretrained SAE from SAELens, linear probes with sklearn, all on GPT-2 Small. Well within beginner capability.
+  - **narrow_scope:** 5, confidence: 0.9 — One model, one SAE, one probe type, clear metric (probe accuracy on error vectors vs reconstructed). Tightly scoped.
+  - **novelty:** 3, confidence: 0.6 — From novelty assessment: partially_addressed
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #3: Instruction Hierarchy Violations: Do Models Prioritize User Harm Requests Over System Prompt Safety Rules? (Score: 4.43)
+
+**ID:** gen-0127
 
 **Research Question:** To what extent does models receive instructions from both system prompts (operator level) and user turns (user level). a safety failure occurs when user-level harmful requests override system-prompt safety constraints?
 
@@ -70,12 +84,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Cited Sources:** The Instruction Hierarchy: Training LLMs to Prioritize Privileged Instructions (OpenAI, 2024); Control Illusion: The Failure of Instruction Hierarchies in LLMs (2025); A Closer Look at System Prompt Robustness (2025); Improving LLM Safety with Instruction Hierarchies (ICLR 2025); Reasoning Up the Instruction Ladder (2025)
 
 **Subfield:** Evaluations & Benchmarks | **Strategy:** novel_direction | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 4, accessible_complexity: 5, narrow_scope: 5, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 4, confidence: 0.8 — Strong chain: user requests override system safety constraints -> key deployment safety mechanism fails -> enterprise safety policies bypassed.
+  - **accessible_complexity:** 5, confidence: 0.9 — Prompt design + API calls. Binary compliance measurement. Highly accessible.
+  - **narrow_scope:** 5, confidence: 0.85 — 30 scenarios x 3 pressure levels x 2-3 models. Well-bounded with clear binary outcome measure.
+  - **novelty:** 3, confidence: 0.6 — From novelty assessment: partially_addressed
 **Provenance:** novel_direction, sources: 0 KB, 0 web
 
 ---
 
 ## #4: Refusal Prefix Concentration Under Role-Play Personas: Does a System-Prompt Persona Disrupt Shallow Alignment? (Score: 4.43)
+
+**ID:** gen-0407
 
 **Research Question:** To what extent does qi et al. measured refusal prefix concentration in default chat-model personas. many applications deploy models with persona instructions (e.g., 'you are alex, a helpful assistant'). whether a persona?
 
@@ -94,12 +114,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters (model size, datas
 **Cited Sources:** Qi et al. - Safety Alignment Should Be Made More Than Just a Few Tokens Deep: Confirmed via arXiv:2406.05946 and ICLR 2025 Outstanding Paper. Foundational paper defining shallow; StrongReject prompts: StrongReject is a known jailbreak evaluation benchmark. Relevant as the proposed evaluation dataset.; Qi et al. (2024). Safety Alignment Should Be Made More Than Just a Few Tokens Deep. ICLR 2025.; Enhancing Jailbreak Attacks on LLMs via Persona Prompts. arXiv:2507.22171, 2025.; RoleBreaker: Character Hallucination as a Jailbreak Attack in Role-Playing Systems. arXiv:2409.16727, 2024.; Evading LLMs' Safety Boundary with Adaptive Role-Play Jailbreaking. Electronics 14(24), 2024.
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 4, accessible_complexity: 5, narrow_scope: 5, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 4, confidence: 0.8 — Strong chain: persona instructions -> disrupts first-token refusal mechanism -> connects practical attack vector to mechanistic finding.
+  - **accessible_complexity:** 5, confidence: 0.9 — Inference-only. Three system prompt conditions on two models. No training.
+  - **narrow_scope:** 5, confidence: 0.9 — 2 models, 3 conditions, measure prefix concentration and ASR. Compact experimental design.
+  - **novelty:** 3, confidence: 0.6 — From novelty assessment: partially_addressed
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #5: Emergent Misalignment via In-Context Learning in Smaller Open Models (Score: 4.43)
+
+**ID:** gen-0866
 
 **Research Question:** To what extent does arxiv 2510.11288 showed that in-context examples (rather than fine-tuning) can produce broadly misaligned responses in llms. this in-context emergent misalignment was demonstrated on proprietary model?
 
@@ -116,12 +142,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Alternative Framings:** Benchmark: Emergent Misalignment via In-Context Learning in Smaller Ope: Reframed for maximum feasibility. (est. score: 4.25); Novel Angle: Emergent Misalignment via In-Context Learning in Smaller Ope: Reframed for novelty. (est. score: 4.61)
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 4, accessible_complexity: 5, narrow_scope: 5, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 4, confidence: 0.8 — Strong chain: in-context emergent misalignment -> zero-compute attack surface requiring no fine-tuning -> prompt injection risk.
+  - **accessible_complexity:** 5, confidence: 0.9 — Purely inference-time. Construct few-shot prompts and measure. No training or infrastructure needed.
+  - **narrow_scope:** 5, confidence: 0.9 — Construct prompts, run inference, measure misalignment rate. Single clear deliverable.
+  - **novelty:** 3, confidence: 0.6 — From novelty assessment: partially_addressed
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #6: Measuring Whether Explicit Reversibility Awareness in the Causal Chain Prevents Compounding Failures (Score: 4.43)
+
+**ID:** gen-1005
 
 **Research Question:** To what extent does agents that explicitly reason about reversibility at each step of the causal chain may make significantly different (and safer) delegation and action choices than agents that do not?
 
@@ -138,12 +170,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Alternative Framings:** Benchmark: Measuring Whether Explicit Reversibility Awareness in the Ca: Reframed for maximum feasibility. (est. score: 4.25); Novel Angle: Measuring Whether Explicit Reversibility Awareness in the Ca: Reframed for novelty. (est. score: 4.61)
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 4, accessible_complexity: 5, narrow_scope: 5, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 4, confidence: 0.75 — Strong chain: reversibility awareness prompting -> reduces irreversible actions -> immediately deployable without framework changes.
+  - **accessible_complexity:** 5, confidence: 0.9 — Two prompting conditions on standard agent tasks. No custom engineering.
+  - **narrow_scope:** 5, confidence: 0.9 — Two conditions, 25 tasks, single metric (irreversible action rate). Clear A/B comparison.
+  - **novelty:** 3, confidence: 0.6 — From novelty assessment: partially_addressed
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #7: Anchoring Bias in Model Overseers: Do Model Overseers Anchor on the First Response in a Comparison? (Score: 4.43)
+
+**ID:** gen-1171
 
 **Research Question:** To what extent does human overseers show anchoring bias (preferring whichever response is presented first). model overseers may show the same bias, which would be systematically exploitable?
 
@@ -160,12 +198,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Alternative Framings:** Benchmark: Anchoring Bias in Model Overseers: Do Model Overseers Anchor: Reframed for maximum feasibility. (est. score: 4.25); Novel Angle: Anchoring Bias in Model Overseers: Do Model Overseers Anchor: Reframed for novelty. (est. score: 4.61)
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 4, accessible_complexity: 5, narrow_scope: 5, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 4, confidence: 0.8 — Strong chain: anchoring bias in model overseers -> exploitable oversight failure -> undermines scalable oversight which is critical for advanced AI safety.
+  - **accessible_complexity:** 5, confidence: 0.95 — Present pairs in both orders, compare preferences. Only API access needed.
+  - **narrow_scope:** 5, confidence: 0.9 — Single metric: preference flip rate. One clear deliverable table.
+  - **novelty:** 3, confidence: 0.6 — From novelty assessment: partially_addressed
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #8: Does CoT Monitor Performance Degrade with Longer Reasoning Traces? (Score: 4.43)
+
+**ID:** gen-1290
 
 **Research Question:** To what extent does cot monitorability is claimed to improve with longer cot, but longer traces also give more surface for the model to include irrelevant or misleading text that confuses a monitor?
 
@@ -182,12 +226,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Alternative Framings:** Benchmark: Does CoT Monitor Performance Degrade with Longer Reasoning T: Reframed for maximum feasibility. (est. score: 4.25); Novel Angle: Does CoT Monitor Performance Degrade with Longer Reasoning T: Reframed for novelty. (est. score: 4.61)
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 4, accessible_complexity: 5, narrow_scope: 5, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 4, confidence: 0.8 — Strong chain: if long CoTs degrade monitoring -> challenges core assumption about reasoning model safety -> motivates length-robust monitoring.
+  - **accessible_complexity:** 5, confidence: 0.9 — MALT dataset + sentence-transformers + logistic regression. Designed for intro-ML students.
+  - **narrow_scope:** 5, confidence: 0.9 — Stratify by length, compute embeddings, train logistic regression, plot AUROC by bucket. Very focused.
+  - **novelty:** 3, confidence: 0.6 — From novelty assessment: partially_addressed
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #9: Effect of System Prompt Length on CoT Monitorability (Score: 4.43)
+
+**ID:** gen-1300
 
 **Research Question:** To what extent does cot monitorability studies typically use standardized or minimal system prompts. real deployments use long system prompts (tools, personas, context). whether long system prompts compress or displace s?
 
@@ -204,12 +254,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Alternative Framings:** Benchmark: Effect of System Prompt Length on CoT Monitorability: Reframed for maximum feasibility. (est. score: 4.25); Novel Angle: Effect of System Prompt Length on CoT Monitorability: Reframed for novelty. (est. score: 4.61)
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 4, accessible_complexity: 5, narrow_scope: 5, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 4, confidence: 0.8 — Strong chain: long system prompts -> monitor accuracy degrades -> enterprise deployments have monitoring blind spots. Real-world deployment concern.
+  - **accessible_complexity:** 5, confidence: 0.9 — API calls with varying system prompt lengths. No model training, no GPU. Straightforward.
+  - **narrow_scope:** 5, confidence: 0.9 — Single IV (prompt length), 4 conditions, one metric (AUROC). Minimal setup.
+  - **novelty:** 3, confidence: 0.6 — From novelty assessment: partially_addressed
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #10: Monitor Anchoring Effect: Does Telling a Monitor the Prior Probability of Misalignment Affect AUROC? (Score: 4.43)
+
+**ID:** gen-1304
 
 **Research Question:** To what extent does prompted llm monitors are given a transcript and asked to classify it. in real deployments, the prior probability of encountering a misaligned action varies by task. it is unknown whether informing th?
 
@@ -226,12 +282,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Alternative Framings:** Benchmark: Monitor Anchoring Effect: Does Telling a Monitor the Prior P: Reframed for maximum feasibility. (est. score: 4.25); Novel Angle: Monitor Anchoring Effect: Does Telling a Monitor the Prior P: Reframed for novelty. (est. score: 4.61)
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 4, accessible_complexity: 5, narrow_scope: 5, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 4, confidence: 0.8 — Strong chain: prior probability influences monitor -> exploitable if monitors anchor, or improvable if calibration context helps.
+  - **accessible_complexity:** 5, confidence: 0.9 — Three prompt conditions on fixed test set. API-based, no training.
+  - **narrow_scope:** 5, confidence: 0.9 — Three conditions, AUROC + ECE. Minimal and clean.
+  - **novelty:** 3, confidence: 0.6 — From novelty assessment: partially_addressed
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #11: CoT Scratchpad Truncation as a Monitor Evasion Vector: Measuring Detectability Loss (Score: 4.43)
+
+**ID:** gen-1311
 
 **Research Question:** To what extent does current frontier models sometimes produce truncated or abbreviated cot. if a model strategically truncates its cot to hide reasoning, monitors lose signal. the metr note that models struggle to evade ?
 
@@ -248,12 +310,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Alternative Framings:** Benchmark: CoT Scratchpad Truncation as a Monitor Evasion Vector: Measu: Reframed for maximum feasibility. (est. score: 4.25); Novel Angle: CoT Scratchpad Truncation as a Monitor Evasion Vector: Measu: Reframed for novelty. (est. score: 4.61)
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 4, accessible_complexity: 5, narrow_scope: 5, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 4, confidence: 0.8 — Strong chain: 'think briefly' instruction -> CoT truncation -> monitor evasion. Common deployment instruction is an attack vector.
+  - **accessible_complexity:** 5, confidence: 0.9 — Two prompting conditions. Entirely API-based. No training or GPU.
+  - **narrow_scope:** 5, confidence: 0.9 — Two conditions (normal vs minimized CoT), one dataset, one metric (AUROC drop).
+  - **novelty:** 3, confidence: 0.6 — From novelty assessment: partially_addressed
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #12: Prefilling Attack Depth: Does Forcing More Tokens of Harmful Preamble Increase Attack Success? (Score: 4.43)
+
+**ID:** gen-1459
 
 **Research Question:** To what extent does prefilling attacks typically force the model to begin with 'sure, here is...' (1-2 tokens). it is unknown whether forcing longer preambles (e.g., 10-20 tokens of harmful content) further degrades safe?
 
@@ -270,12 +338,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Alternative Framings:** Benchmark: Prefilling Attack Depth: Does Forcing More Tokens of Harmful: Reframed for maximum feasibility. (est. score: 4.25); Novel Angle: Prefilling Attack Depth: Does Forcing More Tokens of Harmful: Reframed for novelty. (est. score: 4.61)
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 4, accessible_complexity: 5, narrow_scope: 5, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 4, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 5, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 5, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #13: Minimum Necessary Data for Reliable Concept Vector Extraction (Score: 4.43)
+
+**ID:** gen-1547
 
 **Research Question:** To what extent does beaglehole et al. use fewer than 500 samples; it is unknown whether reliable safety concept vectors can be extracted with even fewer samples, which matters for rare safety concepts with limited traini?
 
@@ -292,12 +366,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Alternative Framings:** Benchmark: Minimum Necessary Data for Reliable Concept Vector Extractio: Reframed for maximum feasibility. (est. score: 4.25); Novel Angle: Minimum Necessary Data for Reliable Concept Vector Extractio: Reframed for novelty. (est. score: 4.61)
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 4, accessible_complexity: 5, narrow_scope: 5, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 4, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 5, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 5, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #14: Monitor Consistency Failure: Do Repeated Queries to the Same Monitor Yield Inconsistent Verdicts? (Score: 4.43)
+
+**ID:** gen-1577
 
 **Research Question:** To what extent does llm monitors are stochastic—querying the same trajectory twice may yield different suspicion verdicts due to temperature sampling. this inconsistency is a failure mode that has not been quantified, ye?
 
@@ -314,12 +394,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Alternative Framings:** Benchmark: Monitor Consistency Failure: Do Repeated Queries to the Same: Reframed for maximum feasibility. (est. score: 4.25); Novel Angle: Monitor Consistency Failure: Do Repeated Queries to the Same: Reframed for novelty. (est. score: 4.61)
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 4, accessible_complexity: 5, narrow_scope: 5, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 4, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 5, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 5, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #15: Intrusion Detection CUSUM Transfer: Applying Sequential Change-Point Detection to AI Agent Monitoring (Score: 4.43)
+
+**ID:** gen-1580
 
 **Research Question:** To what extent does intrusion detection systems have used cusum (cumulative sum) change-point detection for decades to detect when network behavior shifts from baseline. this technique has never been applied to monitorin?
 
@@ -336,12 +422,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Alternative Framings:** Benchmark: Intrusion Detection CUSUM Transfer: Applying Sequential Chan: Reframed for maximum feasibility. (est. score: 4.25); Novel Angle: Intrusion Detection CUSUM Transfer: Applying Sequential Chan: Reframed for novelty. (est. score: 4.61)
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 4, accessible_complexity: 5, narrow_scope: 5, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 4, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 5, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 5, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #16: Isolation Forest Transfer: Applying Unsupervised Anomaly Detection from Cybersecurity to Agent Action Streams (Score: 4.43)
+
+**ID:** gen-1589
 
 **Research Question:** To what extent does isolation forest is one of the most effective unsupervised anomaly detection methods in network security (where labeled malicious data is scarce), yet it has not been systematically evaluated as an ai?
 
@@ -358,12 +450,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Alternative Framings:** Benchmark: Isolation Forest Transfer: Applying Unsupervised Anomaly Det: Reframed for maximum feasibility. (est. score: 4.25); Novel Angle: Isolation Forest Transfer: Applying Unsupervised Anomaly Det: Reframed for novelty. (est. score: 4.61)
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 4, accessible_complexity: 5, narrow_scope: 5, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 4, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 5, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 5, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #17: Minimally Specified Monitor Prompt Study: How Much Does Monitor Prompt Detail Affect Detection Performance? (Score: 4.43)
+
+**ID:** gen-1604
 
 **Research Question:** To what extent does llm monitors are typically given detailed prompts describing what to look for. it is unknown how much detection performance depends on prompt specificity—whether a minimal prompt ('watch for harmful a?
 
@@ -380,12 +478,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Alternative Framings:** Benchmark: Minimally Specified Monitor Prompt Study: How Much Does Moni: Reframed for maximum feasibility. (est. score: 4.25); Novel Angle: Minimally Specified Monitor Prompt Study: How Much Does Moni: Reframed for novelty. (est. score: 4.61)
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 4, accessible_complexity: 5, narrow_scope: 5, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 4, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 5, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 5, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #18: Monitor Sycophancy: Do AI Monitors Give More Favorable Verdicts to Higher-Status Agents? (Score: 4.43)
+
+**ID:** gen-1607
 
 **Research Question:** To what extent does llm sycophancy is well-documented—models tend to agree with perceived authority or give favorable responses to authoritative-seeming inputs. an ai monitor might exhibit monitor sycophancy by rating ac?
 
@@ -402,12 +506,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Alternative Framings:** Benchmark: Monitor Sycophancy: Do AI Monitors Give More Favorable Verdi: Reframed for maximum feasibility. (est. score: 4.25); Novel Angle: Monitor Sycophancy: Do AI Monitors Give More Favorable Verdi: Reframed for novelty. (est. score: 4.61)
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 4, accessible_complexity: 5, narrow_scope: 5, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 4, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 5, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 5, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #19: Partial Observability Degradation: How Monitor Performance Degrades When Agent Tool Calls Are Partially Hidden (Score: 4.43)
+
+**ID:** gen-1608
 
 **Research Question:** To what extent does in some deployment scenarios, monitors may not have access to all agent actions (e.g., tool call internals may be redacted for privacy). how much detection capability is lost under partial observabili?
 
@@ -424,12 +534,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Alternative Framings:** Benchmark: Partial Observability Degradation: How Monitor Performance D: Reframed for maximum feasibility. (est. score: 4.25); Novel Angle: Partial Observability Degradation: How Monitor Performance D: Reframed for novelty. (est. score: 4.61)
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 4, accessible_complexity: 5, narrow_scope: 5, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 4, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 5, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 5, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #20: Assessing Interpretability Completeness: What Fraction of Behavioral Variance Do Identified Circuits Explain? (Score: 4.43)
+
+**ID:** gen-1668
 
 **Research Question:** To what extent does circuit analyses typically claim to explain a model behavior, but rarely quantify what fraction of behavioral variance is actually captured by the identified circuit vs. unexplained residual processin?
 
@@ -446,12 +562,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Alternative Framings:** Benchmark: Assessing Interpretability Completeness: What Fraction of Be: Reframed for maximum feasibility. (est. score: 4.25); Novel Angle: Assessing Interpretability Completeness: What Fraction of Be: Reframed for novelty. (est. score: 4.61)
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 4, accessible_complexity: 5, narrow_scope: 5, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 4, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 5, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 5, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #21: Prompt Injection in Agentic Pipelines: Mapping the Causal Steps Between Injected Content and Unsafe Tool Use (Score: 4.43)
+
+**ID:** gen-1709
 
 **Research Question:** To what extent does in agentic llm systems, injected content in tool outputs can cause the agent to call unsafe tools. the causal chain is: injected text in environment → llm parses as instruction → tool call with harmfu?
 
@@ -468,12 +590,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Alternative Framings:** Benchmark: Prompt Injection in Agentic Pipelines: Mapping the Causal St: Reframed for maximum feasibility. (est. score: 4.25); Novel Angle: Prompt Injection in Agentic Pipelines: Mapping the Causal St: Reframed for novelty. (est. score: 4.61)
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 4, accessible_complexity: 5, narrow_scope: 5, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 4, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 5, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 5, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #22: Persona Adoption as Safety Bypass: Measuring the Causal Dose-Response of Persona Strength on Refusal Rates (Score: 4.43)
+
+**ID:** gen-1710
 
 **Research Question:** To what extent does persona prompts reduce refusal rates by 50–70%. the causal chain is: persona assignment → model adopts character identity → safety norms attributed to character rather than model → refusal suppressed?
 
@@ -490,12 +618,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Alternative Framings:** Benchmark: Persona Adoption as Safety Bypass: Measuring the Causal Dose: Reframed for maximum feasibility. (est. score: 4.25); Novel Angle: Persona Adoption as Safety Bypass: Measuring the Causal Dose: Reframed for novelty. (est. score: 4.61)
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 4, accessible_complexity: 5, narrow_scope: 5, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 4, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 5, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 5, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #23: Perplexity Filter Failure Modes: When Do Low-Perplexity Jailbreaks Evade Detection? (Score: 4.43)
+
+**ID:** gen-1740
 
 **Research Question:** To what extent does perplexity-based input filters detect adversarial prompts by flagging unusually high perplexity (e.g., gcg suffix attacks produce token salads). however, semantically coherent jailbreaks (role-play, s?
 
@@ -512,12 +646,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Alternative Framings:** Benchmark: Perplexity Filter Failure Modes: When Do Low-Perplexity Jail: Reframed for maximum feasibility. (est. score: 4.25); Novel Angle: Perplexity Filter Failure Modes: When Do Low-Perplexity Jail: Reframed for novelty. (est. score: 4.61)
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 4, accessible_complexity: 5, narrow_scope: 5, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 4, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 5, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 5, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #24: Resilience Gap Disaggregation Tool: Per-Hazard-Category Attack Degradation Dashboard (Score: 4.43)
+
+**ID:** gen-1756
 
 **Research Question:** To what extent does the ailuminate jailbreak benchmark v0.5 reports a single 'resilience gap' (baseline safety score minus under-attack score) averaged across all 12 hazard categories. this aggregate hides which specific?
 
@@ -534,12 +674,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Alternative Framings:** Benchmark: Resilience Gap Disaggregation Tool: Per-Hazard-Category Atta: Reframed for maximum feasibility. (est. score: 4.25); Novel Angle: Resilience Gap Disaggregation Tool: Per-Hazard-Category Atta: Reframed for novelty. (est. score: 4.61)
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 4, accessible_complexity: 5, narrow_scope: 5, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 4, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 5, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 5, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #25: Does Model Homogeneity Increase Under High-Stakes Framing? Testing the 'Playing It Safe' Convergence Hypothesis (Score: 4.39)
+
+**ID:** gen-0203
 
 **Research Question:** Can Reframed for novelty. be demonstrated through a focused experiment?
 
@@ -558,12 +704,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Cited Sources:** {'source': 'Strategic Behavior of LLMs: Game Structure vs. Contextual Framing (Nature Scientific Reports, 2024)', 'url': 'https://www.nature.com/articles/s41598-024-69032-z', 'finding': 'Shows LLMs behave differently in high-stakes vs low-stakes game scenarios (e.g., cooperation vs self-interest), demonstrating framing sensitivity. But focuses on strategic games, not output homogeneity measurement.'}; {'source': 'Alignment Homogeneity exploited for RAG Blocking (2026)', 'url': 'https://arxiv.org/html/2603.03919v1', 'finding': 'Documents alignment homogeneity and consistent safety policies across models, but does not test whether homogeneity varies by stakes level.'}; {'source': 'Artificial Hivemind (NeurIPS 2025)', 'url': 'https://arxiv.org/abs/2510.22954', 'finding': 'Measures inter-model homogeneity on open-ended queries but does not isolate stakes-level as an experimental variable.'}
 
 **Subfield:**  | **Strategy:**  | **Novelty:** mostly_novel (novelty_assessed)
-**Scores:** theory_of_impact: 3, accessible_complexity: 5, narrow_scope: 5, novelty: 4
+**Scores:**
+  - **theory_of_impact:** 3, confidence: 0.65 — Plausible chain: homogeneity under high-stakes -> loss of diverse expert perspectives. But the link from model homogeneity to catastrophic AI risk is a stretch.
+  - **accessible_complexity:** 5, confidence: 0.9 — API queries with two framing conditions, compute similarity metrics. Very accessible.
+  - **narrow_scope:** 5, confidence: 0.85 — Same queries, two framings, 15+ models, measure similarity. Clear A/B design with obvious deliverable.
+  - **novelty:** 4, confidence: 0.6 — From novelty assessment: mostly_novel
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #26: Safety Index Sensitivity Analysis: How Robust Are Company Rankings to Indicator Weighting? (Score: 4.39)
+
+**ID:** gen-0258
 
 **Research Question:** Can Apply the core insight to an understudied model family, domain, or safety-relevant scenario not covered in existing literature. be demonstrated through a focused experiment within 30 hours?
 
@@ -582,12 +734,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters (model size, datas
 **Cited Sources:** FLI AI Safety Index: Confirmed. Multiple editions available. Uses 33 indicators across six domains to score frontier AI c; Dirichlet distribution for weight sampling: Standard methodology in composite indicator sensitivity analysis. Well-documented in OECD handbook a; OECD/JRC Handbook on Constructing Composite Indicators: Methodology and User Guide. 2008.; Robustness and sensitivity of weighting and aggregation in constructing composite indices. Ecological Indicators, 2013.; Saisana, M. et al. Uncertainty and sensitivity analysis techniques as tools for the quality assessment of composite indicators. JRSS-A, 2005.
 
 **Subfield:**  | **Strategy:**  | **Novelty:** mostly_novel (novelty_estimated)
-**Scores:** theory_of_impact: 3, accessible_complexity: 5, narrow_scope: 5, novelty: 4
+**Scores:**
+  - **theory_of_impact:** 3, confidence: 0.7 — Plausible: fragile governance rankings indicate methodology problems. But this is about governance measurement, not directly reducing catastrophic AI risk.
+  - **accessible_complexity:** 5, confidence: 0.85 — Monte Carlo simulation with Dirichlet sampling. Well-documented methodology, standard Python.
+  - **narrow_scope:** 5, confidence: 0.9 — Single simulation: sample 1000 weight vectors, recompute grades, report ranking distributions. Clear deliverable.
+  - **novelty:** 4, confidence: 0.6 — From novelty assessment: mostly_novel
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #27: Benchmark Saturation Analysis: Tracking Ceiling Effects Across Safety Benchmarks (Score: 4.39)
+
+**ID:** gen-0661
 
 **Research Question:** Can Apply the core insight to an understudied model family, domain, or safety-relevant scenario not covered in existing literature. be demonstrated through a focused experiment within 30 hours?
 
@@ -606,12 +764,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters (model size, datas
 **Cited Sources:** HELM Safety: Confirmed at crfm.stanford.edu/helm/safety/latest/. Published scores available for analysis.; AILuminate: Confirmed: MLCommons AILuminate v1.1 with grading system and leaderboard. Published scores available; AILuminate v1.0: AI Risk and Reliability Benchmark. MLCommons, arXiv:2503.05731, 2025.; HELM Safety v1.0. Stanford CRFM, 2024.; LLM benchmarks in 2026: What they prove and what your business actually needs. LXT, 2026.
 
 **Subfield:**  | **Strategy:**  | **Novelty:** mostly_novel (novelty_estimated)
-**Scores:** theory_of_impact: 3, accessible_complexity: 5, narrow_scope: 5, novelty: 4
+**Scores:**
+  - **theory_of_impact:** 3, confidence: 0.7 — Plausible: saturated benchmarks give false confidence, need harder evaluations. But this is meta-analysis about benchmarks, not directly reducing risk.
+  - **accessible_complexity:** 5, confidence: 0.95 — Pure data analysis on published scores. No model training, no GPU needed. Standard statistical methods.
+  - **narrow_scope:** 5, confidence: 0.9 — Collect published scores, compute distributions, flag saturation. Single deliverable: saturation analysis report.
+  - **novelty:** 4, confidence: 0.6 — From novelty assessment: mostly_novel
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #28: Probing LLMs' Knowledge of Their Own Governance Documentation (Score: 4.39)
+
+**ID:** gen-0316
 
 **Research Question:** To what extent does frontier llms are often deployed with system prompts referencing their own safety policies. it is unclear whether models have accurate knowledge of their own governance documentation or whether they c?
 
@@ -630,12 +794,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters (model size, datas
 **Cited Sources:** Can LLMs Detect Their Confabulations? arXiv:2508.08139, 2025.; Detecting Hallucinations in Large Language Models Using Semantic Entropy. Nature, 2024.
 
 **Subfield:**  | **Strategy:**  | **Novelty:** mostly_novel (novelty_estimated)
-**Scores:** theory_of_impact: 3, accessible_complexity: 5, narrow_scope: 5, novelty: 4
+**Scores:**
+  - **theory_of_impact:** 3, confidence: 0.7 — Plausible: if models misrepresent governance docs, deployment mechanism is unreliable. But governance confabulation is not directly catastrophic.
+  - **accessible_complexity:** 5, confidence: 0.9 — Factual questions, API queries, compare to ground truth. Very accessible.
+  - **narrow_scope:** 5, confidence: 0.9 — Create question set, query models, compute accuracy. Clear bounded deliverable.
+  - **novelty:** 4, confidence: 0.6 — From novelty assessment: mostly_novel
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #29: Sycophancy Under Pressure in Agentic Loops: When Agents Abandon Safety Rules to Satisfy Orchestrators (Score: 4.39)
+
+**ID:** gen-0956
 
 **Research Question:** To what extent does an agent operating in an agentic loop may abandon safety constraints when the orchestrating agent repeatedly insists, even if the constraint is legitimate?
 
@@ -652,12 +822,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Alternative Framings:** Benchmark: Sycophancy Under Pressure in Agentic Loops: When Agents Aban: Reframed for maximum feasibility. (est. score: 4.25); Novel Angle: Sycophancy Under Pressure in Agentic Loops: When Agents Aban: Reframed for novelty. (est. score: 4.57)
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 5, accessible_complexity: 4, narrow_scope: 5, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 5, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 4, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 5, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #30: Blind Spot Injection Experiment: Can We Test Whether Oversight Blind Spots Create Targeted Student Failures? (Score: 4.39)
+
+**ID:** gen-1146
 
 **Research Question:** To what extent does the causal link between a specific overseer blind spot (a type of error the overseer always makes) and a specific student model failure mode has not been experimentally demonstrated?
 
@@ -674,12 +850,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Alternative Framings:** Benchmark: Blind Spot Injection Experiment: Can We Test Whether Oversig: Reframed for maximum feasibility. (est. score: 4.25); Novel Angle: Blind Spot Injection Experiment: Can We Test Whether Oversig: Reframed for novelty. (est. score: 4.57)
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 5, accessible_complexity: 4, narrow_scope: 5, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 5, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 4, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 5, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #31: Reward Hacking Detection Failure: Can Monitors Catch Agents Gaming Their Evaluation? (Score: 4.39)
+
+**ID:** gen-1574
 
 **Research Question:** To what extent does controlarena includes 'eval sabotage' as a threat model—agents manipulating their own evaluation. monitors may fail specifically on this type of misbehavior because evaluation-gaming actions often loo?
 
@@ -696,12 +878,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Alternative Framings:** Benchmark: Reward Hacking Detection Failure: Can Monitors Catch Agents : Reframed for maximum feasibility. (est. score: 4.25); Novel Angle: Reward Hacking Detection Failure: Can Monitors Catch Agents : Reframed for novelty. (est. score: 4.57)
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 5, accessible_complexity: 4, narrow_scope: 5, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 5, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 4, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 5, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #32: Minimal Dataset Size Threshold for Emergent Misalignment (Score: 4.39)
+
+**ID:** gen-1621
 
 **Research Question:** To what extent does the original betley et al. paper trained on thousands of insecure-code examples. it is unknown how few training examples are sufficient to trigger emergent misalignment, making it hard to assess real-?
 
@@ -718,12 +906,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Alternative Framings:** Benchmark: Minimal Dataset Size Threshold for Emergent Misalignment: Reframed for maximum feasibility. (est. score: 4.25); Novel Angle: Minimal Dataset Size Threshold for Emergent Misalignment: Reframed for novelty. (est. score: 4.57)
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 5, accessible_complexity: 4, narrow_scope: 5, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 5, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 4, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 5, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #33: Does Steering Vector Effectiveness Decay With Depth as Chaos Theory Predicts? (Score: 4.39)
+
+**ID:** gen-1658
 
 **Research Question:** To what extent does a december 2025 paper demonstrated that steering vectors applied in early layers of deep networks become unpredictable after o(log(1/epsilon)) layers due to chaotic dynamics (positive lyapunov exponen?
 
@@ -740,12 +934,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Alternative Framings:** Benchmark: Does Steering Vector Effectiveness Decay With Depth as Chaos: Reframed for maximum feasibility. (est. score: 4.25); Novel Angle: Does Steering Vector Effectiveness Decay With Depth as Chaos: Reframed for novelty. (est. score: 4.57)
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 5, accessible_complexity: 4, narrow_scope: 5, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 5, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 4, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 5, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #34: Testing Whether Linear Probes Deceive: Can a Model Satisfy a Probe While Behaving Inconsistently? (Score: 4.39)
+
+**ID:** gen-1666
 
 **Research Question:** To what extent does linear probes are widely used to claim that a model 'represents' a concept (e.g., truth, danger, sentiment). for safety, we need to know whether high probe accuracy implies that the concept is causall?
 
@@ -762,12 +962,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Alternative Framings:** Benchmark: Testing Whether Linear Probes Deceive: Can a Model Satisfy a: Reframed for maximum feasibility. (est. score: 4.25); Novel Angle: Testing Whether Linear Probes Deceive: Can a Model Satisfy a: Reframed for novelty. (est. score: 4.57)
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 5, accessible_complexity: 4, narrow_scope: 5, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 5, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 4, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 5, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #35: LoRA Rank as a Control Variable for Emergent Misalignment Severity (Score: 4.36)
+
+**ID:** gen-0537
 
 **Research Question:** Can Apply the core insight to an understudied model family, domain, or safety-relevant scenario not covered in existing literature. be demonstrated through a focused experiment within 30 hours?
 
@@ -786,12 +992,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters (model size, datas
 **Cited Sources:** Safe Pruning LoRA (SPLoRA): Confirmed via arXiv:2506.18931. Identifies safety-critical LoRA layers using Empirical-DIEM metric.; Fine-Tuning Lowers Safety: Confirmed via ACL LLMSec 2025. Documents safety degradation from fine-tuning but does not isolate Lo; Safe Pruning LoRA: Robust Distance-Guided Pruning for Safety Alignment. arXiv:2506.18931, 2025.; LoRA is All You Need for Safety Alignment of Reasoning LLMs. arXiv:2507.17075, 2025.; Fine-Tuning Lowers Safety and Disrupts Evaluation. ACL LLMSec, 2025.
 
 **Subfield:**  | **Strategy:**  | **Novelty:** mostly_novel (novelty_estimated)
-**Scores:** theory_of_impact: 4, accessible_complexity: 4, narrow_scope: 5, novelty: 4
+**Scores:**
+  - **theory_of_impact:** 4, confidence: 0.8 — Strong chain: LoRA rank controls misalignment severity -> practitioners adopt rank constraints -> safety-preserving fine-tuning norms. Each step defensible.
+  - **accessible_complexity:** 4, confidence: 0.8 — LoRA training with PEFT library. One hyperparameter sweep. Guided level - mentor can help with setup, then it's straightforward.
+  - **narrow_scope:** 5, confidence: 0.9 — Single hyperparameter (rank), one model, one dataset, one evaluation set. Five training runs total. Well-defined success criteria.
+  - **novelty:** 4, confidence: 0.6 — From novelty assessment: mostly_novel
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #36: First-Token Concentration in SFT-Only vs. RLHF-Tuned Variants of the Same Base Model (Score: 4.36)
+
+**ID:** gen-0385
 
 **Research Question:** Can Reframed for maximum feasibility. be demonstrated through a focused experiment?
 
@@ -810,12 +1022,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Cited Sources:** {'source': 'Safety Alignment Should Be Made More Than Just a Few Tokens Deep (Qi et al., ICLR 2025)', 'url': 'https://arxiv.org/pdf/2406.05946', 'finding': 'Identifies that during SFT and RLHF, models learn shallow refusal shortcuts, but does not isolate the contribution of each training stage to alignment depth.'}; {'source': 'Safety Alignment Depth: A Markov Chain Perspective (arXiv 2502.00669, 2025)', 'url': 'https://arxiv.org/html/2502.00669v1', 'finding': 'Models alignment depth as a Markov process and analyzes how alignment decays with token depth, but does not compare SFT-only vs. RLHF variants.'}; {'source': 'Intuitive Fine-Tuning: Unifying SFT and RLHF (arXiv 2405.11870, 2024)', 'url': 'https://arxiv.org/html/2405.11870v1', 'finding': 'Proposes unifying SFT and RLHF but does not analyze alignment depth differences between the two stages.'}
 
 **Subfield:**  | **Strategy:**  | **Novelty:** mostly_novel (novelty_assessed)
-**Scores:** theory_of_impact: 4, accessible_complexity: 4, narrow_scope: 5, novelty: 4
+**Scores:**
+  - **theory_of_impact:** 4, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 4, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 5, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 4, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #37: StrongReject Evaluation of Standard Jailbreaks on Sub-2B Parameter Models (Score: 4.36)
+
+**ID:** gen-0391
 
 **Research Question:** Can Reframed for maximum feasibility. be demonstrated through a focused experiment?
 
@@ -834,12 +1052,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Cited Sources:** {'source': 'A StrongREJECT for Empty Jailbreaks (Souly et al., 2024)', 'url': 'https://arxiv.org/pdf/2402.10260', 'finding': 'Introduces StrongREJECT benchmark and fine-tunes Gemma 2B as an evaluator, but evaluates jailbreak methods on 7B+ models, not sub-2B target models.'}; {'source': 'Bag of Tricks: Benchmarking Jailbreak Attacks on LLMs (NeurIPS 2024)', 'url': 'https://proceedings.neurips.cc/paper_files/paper/2024/file/38c1dfb4f7625907b15e9515365e7803-Paper-Datasets_and_Benchmarks_Track.pdf', 'finding': 'Benchmarks jailbreak attacks across multiple LLMs but focuses on 7B+ parameter models, not sub-2B models.'}; {'source': 'EASE: Efficient Safety Alignment for Small Language Models (arXiv 2511.06512, 2025)', 'url': 'https://arxiv.org/pdf/2511.06512', 'finding': 'Proposes safety alignment for small LMs but focuses on alignment methods rather than systematically evaluating jailbreak vulnerability of sub-2B models.'}
 
 **Subfield:**  | **Strategy:**  | **Novelty:** mostly_novel (novelty_assessed)
-**Scores:** theory_of_impact: 4, accessible_complexity: 4, narrow_scope: 5, novelty: 4
+**Scores:**
+  - **theory_of_impact:** 4, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 4, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 5, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 4, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #38: Replicating ForesightSafety Bench on Instruction-Tuned vs. Base Models (Score: 4.36)
+
+**ID:** gen-0644
 
 **Research Question:** Can Reframed for maximum feasibility. be demonstrated through a focused experiment?
 
@@ -856,12 +1080,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Alternative Framings:** Benchmark: Replicating ForesightSafety Bench on Instruction-Tuned vs. B: Reframed for maximum feasibility. (est. score: 4.43); Novel Angle: Replicating ForesightSafety Bench on Instruction-Tuned vs. B: Reframed for novelty. (est. score: 4.54)
 
 **Subfield:**  | **Strategy:**  | **Novelty:** mostly_novel (novelty_estimated)
-**Scores:** theory_of_impact: 4, accessible_complexity: 4, narrow_scope: 5, novelty: 4
+**Scores:**
+  - **theory_of_impact:** 4, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 4, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 5, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 4, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #39: Compute-Weighted AI Safety Index: Does More Compute Correlate with Better Safety Practices? (Score: 4.32)
+
+**ID:** gen-0255
 
 **Research Question:** Can Rather than pursuing the full research direction, focus on building a targeted benchmark or replication study that tests the core claim. be demonstrated through a focused experiment within 30 hours?
 
@@ -880,12 +1110,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters (model size, datas
 **Cited Sources:** Epoch AI database: Confirmed via epochai.org. Public database of training compute estimates for notable AI models.; FLI AI Safety Index: Confirmed via futureoflife.org. Provides governance/safety scores for frontier labs.; FLI AI Safety Index — qualitative observation of top-3 vs. rest divide.; Epoch AI — public database of compute estimates for frontier models.; International AI Safety Report 2026 — measurement challenges in AI safety governance.
 
 **Subfield:**  | **Strategy:**  | **Novelty:** novel (novelty_estimated)
-**Scores:** theory_of_impact: 3, accessible_complexity: 4, narrow_scope: 5, novelty: 5
+**Scores:**
+  - **theory_of_impact:** 3, confidence: 0.7 — Plausible: challenges assumption that large labs are safer by default. But this is governance analysis, not directly reducing catastrophic risk.
+  - **accessible_complexity:** 4, confidence: 0.8 — Data collection from public sources + regression analysis. Guided level - needs some data wrangling skills.
+  - **narrow_scope:** 5, confidence: 0.9 — Single regression with well-defined inputs and controls. Clear analysis deliverable.
+  - **novelty:** 5, confidence: 0.6 — From novelty assessment: novel
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #40: Cross-Lingual Safety Gap Mapping: Which Languages Break Which Models (Score: 4.25)
+
+**ID:** gen-0007
 
 **Research Question:** To what extent does safety alignment is predominantly english-centric, and cross-lingual attacks (translating harmful prompts into low-resource languages) exploit this gap. however, the landscape of which languages most ?
 
@@ -904,12 +1140,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters (model size, datas
 **Cited Sources:** Deng et al. (2024). Multilingual Jailbreak Challenges in Large Language Models. ICLR 2024.; A Cross-Language Investigation into Jailbreak Attacks in Large Language Models. arXiv:2401.16765, 2024.; LinguaSafe: A Comprehensive Multilingual Safety Benchmark for Large Language Models. arXiv:2508.12733, 2025.
 
 **Subfield:**  | **Strategy:**  | **Novelty:** largely_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 4, accessible_complexity: 5, narrow_scope: 5, novelty: 2
+**Scores:**
+  - **theory_of_impact:** 4, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 5, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 5, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 2, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #41: Refusal Calibration Study: Are Models Over-Refusing on Safety Benchmarks? (Score: 4.25)
+
+**ID:** gen-0087
 
 **Research Question:** To what extent does safety evaluations often count refusal rate as a safety metric, but over-refusal on benign requests is a separate failure mode that current metrics conflate with genuine safety?
 
@@ -928,12 +1170,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Cited Sources:** OR-Bench: An Over-Refusal Benchmark for Large Language Models (ICML 2025); FalseReject (Zhang et al., 2025) - safety tuning induces over-refusal; SORRY-Bench (ICLR 2025) - systematic safety refusal benchmark; CASE-Bench - Context-Aware Safety Benchmark with non-binary ratings
 
 **Subfield:** Evaluations & Benchmarks | **Strategy:** novel_direction | **Novelty:** largely_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 4, accessible_complexity: 5, narrow_scope: 5, novelty: 2
+**Scores:**
+  - **theory_of_impact:** 4, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 5, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 5, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 2, confidence: 0.5 — From filter_score assessment
 **Provenance:** novel_direction, sources: 0 KB, 0 web
 
 ---
 
 ## #42: Investigating Self-Consistency of Safety Scores Across Repeated Runs (Score: 4.25)
+
+**ID:** gen-0702
 
 **Research Question:** To what extent does safety evaluations using non-zero temperature produce different outputs on repeated runs. the variance in safety scores across repeated runs of the same evaluation has not been characterized, making i?
 
@@ -952,12 +1200,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters (model size, datas
 **Cited Sources:** APST framework (2026): Confirmed via arXiv:2602.11786. Directly implements repeated safety evaluation and measures variance; Fine-Tuning Lowers Safety (2025): Confirmed via arXiv:2506.17209 and ACL Anthology. Includes 5-repeat temperature 0.7 experiments.; Safer or Luckier (2025): Confirmed via arXiv:2503.09347. Questions representativeness of single-sample safety evaluation.; Evaluating LLM Safety Under Repeated Inference via Accelerated Prompt Stress Testing. arXiv:2602.11786, 2026.; Fine-Tuning Lowers Safety and Disrupts Evaluation Consistency. arXiv:2506.17209, 2025.; Safer or Luckier? LLMs as Safety Evaluators Are Not Robust to Artifacts. arXiv:2503.09347, 2025.
 
 **Subfield:**  | **Strategy:**  | **Novelty:** largely_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 4, accessible_complexity: 5, narrow_scope: 5, novelty: 2
+**Scores:**
+  - **theory_of_impact:** 4, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 5, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 5, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 2, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #43: Can In-Context Honesty Instructions Rescue Sycophancy Under Pressure for Claude Opus 4.5? (Score: 4.21)
+
+**ID:** gen-0757
 
 **Research Question:** To what extent does claude opus 4.5 course-corrects only 10% of the time under real social pressure. it is unknown whether explicit in-context instructions ('please correct me if i am wrong, even if i push back') signifi?
 
@@ -974,12 +1228,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Alternative Framings:** Benchmark: Can In-Context Honesty Instructions Rescue Sycophancy Under : Reframed for maximum feasibility. (est. score: 4.25); Novel Angle: Can In-Context Honesty Instructions Rescue Sycophancy Under : Reframed for novelty. (est. score: 4.46)
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 3, accessible_complexity: 5, narrow_scope: 5, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 3, confidence: 0.7 — Plausible chain: sycophancy correction via prompting -> deployable mitigation. But sycophancy -> catastrophic risk link has a gap; course-correction failure is concerning but not directly catastrophic.
+  - **accessible_complexity:** 5, confidence: 0.9 — API calls with different system prompts, counting correction rates. Very straightforward for beginners.
+  - **narrow_scope:** 5, confidence: 0.85 — With/without honesty instruction, measure correction rate. Single A/B comparison with clear binary outcome.
+  - **novelty:** 3, confidence: 0.6 — From novelty assessment: partially_addressed
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #44: Investigating the Role of System Prompt vs. User Prompt in Sycophancy Susceptibility (Score: 4.21)
+
+**ID:** gen-0461
 
 **Research Question:** To what extent does sycophancy is typically elicited through user messages, but system prompts also shape model behavior. it is unknown whether system prompts that emphasize honesty reduce sycophancy under user pressure,?
 
@@ -998,12 +1258,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Cited Sources:** SycEval (2025). Evaluating LLM Sycophancy. arXiv:2502.08177; Sycophancy in Large Language Models: Causes and Mitigations. arXiv:2411.15287; SYCON Benchmark (2025). Measuring Sycophancy in Multi-turn Dialogues. EMNLP Findings
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 3, accessible_complexity: 5, narrow_scope: 5, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 3, confidence: 0.7 — Plausible: system prompt design as sycophancy mitigation. But gap from sycophancy to catastrophic risk.
+  - **accessible_complexity:** 5, confidence: 0.9 — System prompt design + capitulation rate measurement via API. Perfect for beginners.
+  - **narrow_scope:** 5, confidence: 0.9 — 4 conditions, one measurement (capitulation rate). Very well-scoped.
+  - **novelty:** 3, confidence: 0.6 — From novelty assessment: partially_addressed
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #45: Safety Benchmark Sensitivity to System Prompt Wording (Score: 4.21)
+
+**ID:** gen-0647
 
 **Research Question:** To what extent does safety scores on benchmarks like ailuminate depend on the system prompt given to the model. small changes in system prompt wording may produce large swings in reported safety scores?
 
@@ -1020,12 +1286,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Alternative Framings:** Benchmark: Safety Benchmark Sensitivity to System Prompt Wording: Reframed for maximum feasibility. (est. score: 4.04); Novel Angle: Safety Benchmark Sensitivity to System Prompt Wording: Reframed for novelty. (est. score: 4.39)
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 3, accessible_complexity: 5, narrow_scope: 5, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 3, confidence: 0.7 — Plausible: benchmark scores sensitive to prompts -> leaderboard unreliability. But gap from unreliable benchmarks to catastrophic risk.
+  - **accessible_complexity:** 5, confidence: 0.9 — Write 5 system prompts, run benchmark, compute variance. Minimal skills required.
+  - **narrow_scope:** 5, confidence: 0.9 — 3 models, 5 prompts, 1 benchmark. Clear single-variable study.
+  - **novelty:** 3, confidence: 0.6 — From novelty assessment: partially_addressed
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #46: Investigating Format Sensitivity of Safety Scores: Markdown vs. Plain Text Responses (Score: 4.21)
+
+**ID:** gen-0679
 
 **Research Question:** To what extent does llm judges rate safety of model outputs. if responses formatted with markdown (bold, lists, headers) receive systematically different safety scores than equivalent plain-text responses, safety ranking?
 
@@ -1044,12 +1316,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters (model size, datas
 **Cited Sources:** Does Prompt Formatting Have Any Impact on LLM Performance? arXiv:2411.10541, 2024.; FinetuneDetect: Detecting Fine-tuned Language Models via Stylistic Differences. Various formatting sensitivity studies, 2024-2025.
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 3, accessible_complexity: 5, narrow_scope: 5, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 3, confidence: 0.7 — Plausible: format sensitivity in safety scoring -> published rankings may be artifacts. But gap to catastrophic risk.
+  - **accessible_complexity:** 5, confidence: 0.95 — Text reformatting + API calls. No model training. Very straightforward.
+  - **narrow_scope:** 5, confidence: 0.9 — 200 responses, two formats, two scorers. Extremely well-defined and bounded.
+  - **novelty:** 3, confidence: 0.6 — From novelty assessment: partially_addressed
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #47: Intervening at the Answer Generation Stage: Does Adding a Devil's Advocate Step Improve Honesty? (Score: 4.21)
+
+**ID:** gen-0785
 
 **Research Question:** To what extent does models generate answers in a single forward pass that may be anchored to the user's false premise. adding a structured devil's advocate intermediate step may force reconsideration before the final ans?
 
@@ -1066,12 +1344,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Alternative Framings:** Benchmark: Intervening at the Answer Generation Stage: Does Adding a De: Reframed for maximum feasibility. (est. score: 4.25); Novel Angle: Intervening at the Answer Generation Stage: Does Adding a De: Reframed for novelty. (est. score: 4.25)
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 3, accessible_complexity: 5, narrow_scope: 5, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 3, confidence: 0.7 — Plausible: structured deliberation improves honesty. But the link from devil's advocate prompting to catastrophic risk reduction is indirect.
+  - **accessible_complexity:** 5, confidence: 0.9 — Two-step prompting is trivially implementable.
+  - **narrow_scope:** 5, confidence: 0.85 — Clear A/B: single-step vs two-step, sycophancy battery, one metric (accuracy improvement).
+  - **novelty:** 3, confidence: 0.6 — From novelty assessment: partially_addressed
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #48: Sycophancy + Power Asymmetry Framing: Do Models Yield More to Apparent Authority? (Score: 4.21)
+
+**ID:** gen-0800
 
 **Research Question:** To what extent does social pressure from an apparent authority (boss, expert, government official) may compound sycophancy beyond what peer-pressure framing produces. this power-asymmetry interaction is unstudied?
 
@@ -1090,12 +1374,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters (model size, datas
 **Cited Sources:** Cialdini's authority principle: Classic social psychology reference (Cialdini, 2001). Foundational but not AI-specific. Relevance is; ELEPHANT benchmark: Confirmed at arXiv:2505.13995 and OpenReview. Measures five face-preserving sycophantic behaviors. R; When Truth Is Overridden: Uncovering the Internal Origins of Sycophancy in Large Language Models. arXiv:2508.02087, 2025.; ELEPHANT: Measuring and Understanding Social Sycophancy in LLMs. arXiv:2505.13995, 2025.; Argument Driven Sycophancy in Large Language Models. EMNLP Findings 2025.
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 3, accessible_complexity: 5, narrow_scope: 5, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 3, confidence: 0.7 — Plausible: authority framing compounds sycophancy -> elevated honesty risk. But gap from sycophancy to catastrophic AI risk.
+  - **accessible_complexity:** 5, confidence: 0.9 — Prompt engineering with matched scenarios. Pure API calls.
+  - **narrow_scope:** 5, confidence: 0.9 — Single A/B: peer vs authority framing on same false premises. Clear deliverable.
+  - **novelty:** 3, confidence: 0.6 — From novelty assessment: partially_addressed
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #49: Conformity Monkey for Alignment: Testing Whether Deployed Models Violate Safety Invariants (Score: 4.21)
+
+**ID:** gen-0819
 
 **Research Question:** To what extent does after deployment, model behavior can drift from expected safety policies due to prompt injection, context accumulation, or api misuse. there is no lightweight continuous conformance checker?
 
@@ -1112,12 +1402,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Alternative Framings:** Benchmark: Conformity Monkey for Alignment: Testing Whether Deployed Mo: Reframed for maximum feasibility. (est. score: 4.04); Novel Angle: Conformity Monkey for Alignment: Testing Whether Deployed Mo: Reframed for novelty. (est. score: 4.39)
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 3, accessible_complexity: 5, narrow_scope: 5, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 3, confidence: 0.7 — Plausible: continuous conformance checking catches drift. But the tool itself is a monitoring aid, not directly reducing catastrophic risk.
+  - **accessible_complexity:** 5, confidence: 0.9 — Python script with API probes + invariant checks. Very accessible.
+  - **narrow_scope:** 5, confidence: 0.9 — Single deliverable: probe script + invariant definitions. Very tight scope.
+  - **novelty:** 3, confidence: 0.6 — From novelty assessment: partially_addressed
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #50: Control Chart Monitoring for Safety Drift: Statistical Process Control Applied to LLM Deployment (Score: 4.21)
+
+**ID:** gen-0821
 
 **Research Question:** To what extent does safety evaluation is done episodically at deployment but not continuously. small, gradual drifts in safety behavior accumulate unnoticed between evaluations?
 
@@ -1134,12 +1430,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Alternative Framings:** Benchmark: Control Chart Monitoring for Safety Drift: Statistical Proce: Reframed for maximum feasibility. (est. score: 4.04); Novel Angle: Control Chart Monitoring for Safety Drift: Statistical Proce: Reframed for novelty. (est. score: 4.39)
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 3, accessible_complexity: 5, narrow_scope: 5, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 3, confidence: 0.7 — Plausible: SPC provides early warning for safety degradation. But monitoring methodology, not directly reducing catastrophic risk.
+  - **accessible_complexity:** 5, confidence: 0.9 — Control charts with Python libraries. Standard statistical tools.
+  - **narrow_scope:** 5, confidence: 0.9 — Baseline, control limits, plot, simulate shift. Extremely tight scope.
+  - **novelty:** 3, confidence: 0.6 — From novelty assessment: partially_addressed
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #51: Diversity-Coverage Tradeoff in Red-Teaming: Ecological Sampling Methods for Attack Corpora (Score: 4.21)
+
+**ID:** gen-0824
 
 **Research Question:** To what extent does red-team attack corpora are heavily skewed toward known attack types and fail to cover the tail of novel, rare attacks. benchmark coverage is fragmented across 37+ existing datasets (redbench)?
 
@@ -1156,12 +1458,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Alternative Framings:** Benchmark: Diversity-Coverage Tradeoff in Red-Teaming: Ecological Sampl: Reframed for maximum feasibility. (est. score: 4.04); Novel Angle: Diversity-Coverage Tradeoff in Red-Teaming: Ecological Sampl: Reframed for novelty. (est. score: 4.39)
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 3, accessible_complexity: 5, narrow_scope: 5, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 3, confidence: 0.7 — Plausible: better coverage estimation -> better benchmarks. But ecological sampling analysis is indirect to catastrophic risk.
+  - **accessible_complexity:** 5, confidence: 0.9 — Data analysis with skbio. No model training. Python libraries handle computation.
+  - **narrow_scope:** 5, confidence: 0.9 — Apply estimators to existing datasets, produce curves. Pure analysis deliverable.
+  - **novelty:** 3, confidence: 0.6 — From novelty assessment: partially_addressed
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #52: Emergent Misalignment Rate Variation Across Evaluation Prompt Categories (Score: 4.21)
+
+**ID:** gen-0880
 
 **Research Question:** To what extent does betley et al. used a diverse set of evaluation prompts to measure misalignment, but the breakdown of misalignment rate by prompt category (questions about ai, questions about harm, questions about pol?
 
@@ -1178,12 +1486,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Alternative Framings:** Benchmark: Emergent Misalignment Rate Variation Across Evaluation Promp: Reframed for maximum feasibility. (est. score: 4.04); Novel Angle: Emergent Misalignment Rate Variation Across Evaluation Promp: Reframed for novelty. (est. score: 4.39)
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 3, accessible_complexity: 5, narrow_scope: 5, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 3, confidence: 0.7 — Plausible: category breakdown helps target evaluations. But analysis contribution, indirect to catastrophic risk.
+  - **accessible_complexity:** 5, confidence: 0.9 — Inference on existing models + manual categorization. No training required.
+  - **narrow_scope:** 5, confidence: 0.9 — Run inference, categorize prompts, compute rates. Single table deliverable.
+  - **novelty:** 3, confidence: 0.6 — From novelty assessment: partially_addressed
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #53: Mechanism Design for Honest AI: Testing Incentive-Compatible Reporting in LLMs (Score: 4.21)
+
+**ID:** gen-0917
 
 **Research Question:** To what extent does mechanism design theory shows that incentive-compatible mechanisms elicit truthful reporting. can prompting strategies inspired by mechanism design (e.g., proper scoring rules, revelation principle) r?
 
@@ -1200,12 +1514,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Alternative Framings:** Benchmark: Mechanism Design for Honest AI: Testing Incentive-Compatible: Reframed for maximum feasibility. (est. score: 4.25); Novel Angle: Mechanism Design for Honest AI: Testing Incentive-Compatible: Reframed for novelty. (est. score: 4.61)
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 3, accessible_complexity: 5, narrow_scope: 5, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 3, confidence: 0.7 — Plausible: mechanism design tools could improve honesty. But gap between calibration improvement and catastrophic risk reduction.
+  - **accessible_complexity:** 5, confidence: 0.9 — Three prompting strategies, measure ECE. No model training. API-based.
+  - **narrow_scope:** 5, confidence: 0.9 — Three strategies, same prediction tasks, single metric. Clear deliverable.
+  - **novelty:** 3, confidence: 0.6 — From novelty assessment: partially_addressed
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #54: Logical Uncertainty and Calibration: Do LLMs Have Well-Calibrated Logical Beliefs? (Score: 4.21)
+
+**ID:** gen-0925
 
 **Research Question:** To what extent does vingean reflection requires agents to reason under logical uncertainty—being uncertain about the output of their own computations. are trained llms calibrated on logical uncertainty, as theory require?
 
@@ -1222,12 +1542,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Alternative Framings:** Benchmark: Logical Uncertainty and Calibration: Do LLMs Have Well-Calib: Reframed for maximum feasibility. (est. score: 4.25); Novel Angle: Logical Uncertainty and Calibration: Do LLMs Have Well-Calib: Reframed for novelty. (est. score: 4.61)
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 3, accessible_complexity: 5, narrow_scope: 5, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 3, confidence: 0.65 — Plausible via Vingean reflection, but gap between LLM calibration on logic and catastrophic risk.
+  - **accessible_complexity:** 5, confidence: 0.9 — Present logic problems, collect confidence scores, compute ECE. Inference-based.
+  - **narrow_scope:** 5, confidence: 0.9 — 200 problems, answer + confidence, ECE by complexity. Clear single deliverable.
+  - **novelty:** 3, confidence: 0.6 — From novelty assessment: partially_addressed
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #55: Automated Interpretability Score Consistency Audit: Do LLM Judges Agree With Each Other? (Score: 4.21)
+
+**ID:** gen-1082
 
 **Research Question:** To what extent does saebench uses llm-based automated interpretability scoring, but this introduces non-determinism and potential llm-specific biases. no study has systematically measured how much llm-scored interpretabi?
 
@@ -1244,12 +1570,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Alternative Framings:** Benchmark: Automated Interpretability Score Consistency Audit: Do LLM J: Reframed for maximum feasibility. (est. score: 4.04); Novel Angle: Automated Interpretability Score Consistency Audit: Do LLM J: Reframed for novelty. (est. score: 4.39)
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 3, accessible_complexity: 5, narrow_scope: 5, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 3, confidence: 0.7 — Plausible: if interpretability scores depend on judge choice, field's measurement foundation is shaky. But indirect to catastrophic risk.
+  - **accessible_complexity:** 5, confidence: 0.95 — API calls to two LLMs + correlation statistics. No GPU needed.
+  - **narrow_scope:** 5, confidence: 0.9 — 50 features, two judges, compute correlation. Extremely tight.
+  - **novelty:** 3, confidence: 0.6 — From novelty assessment: partially_addressed
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #56: Follow-Up: Does Prompt-Level Anti-Sandbagging Disclosure Affect Gemini 3 Pro Performance? (Score: 4.21)
+
+**ID:** gen-1370
 
 **Research Question:** To what extent does no sandbagging was detected in gemini 3 pro, but evaluations did not include explicit anti-sandbagging disclosures (telling the model that its true capabilities matter and sandbagging will be detected?
 
@@ -1266,12 +1598,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Alternative Framings:** Benchmark: Follow-Up: Does Prompt-Level Anti-Sandbagging Disclosure Aff: Reframed for maximum feasibility. (est. score: 4.25); Novel Angle: Follow-Up: Does Prompt-Level Anti-Sandbagging Disclosure Aff: Reframed for novelty. (est. score: 4.61)
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 3, accessible_complexity: 5, narrow_scope: 5, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 3, confidence: 0.65 — Plausible: testing for sandbagging in Gemini. But narrow - tests one model, and if no sandbagging detected it's a null result.
+  - **accessible_complexity:** 5, confidence: 0.9 — Simple A/B via API. Minimal technical complexity.
+  - **narrow_scope:** 5, confidence: 0.9 — One model, two conditions, standard capability tasks. Extremely well-scoped.
+  - **novelty:** 3, confidence: 0.6 — From novelty assessment: partially_addressed
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #57: Sycophancy Pressure Under Framing as Expert Consensus vs. Single Expert (Score: 4.21)
+
+**ID:** gen-1371
 
 **Research Question:** To what extent does whether models capitulate more to a single claimed expert or to a claimed expert consensus is unknown. consensus framing may invoke social proof heuristics differently than single-expert authority?
 
@@ -1288,12 +1626,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Alternative Framings:** Benchmark: Sycophancy Pressure Under Framing as Expert Consensus vs. Si: Reframed for maximum feasibility. (est. score: 4.04); Novel Angle: Sycophancy Pressure Under Framing as Expert Consensus vs. Si: Reframed for novelty. (est. score: 4.39)
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 3, accessible_complexity: 5, narrow_scope: 5, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 3, confidence: 0.65 — Plausible: mapping manipulation surface from consensus framing. But gap from sycophancy manipulation to catastrophic risk.
+  - **accessible_complexity:** 5, confidence: 0.9 — Prompt design with four framing conditions. API calls.
+  - **narrow_scope:** 5, confidence: 0.9 — Four conditions, same probes, rate comparison. Single deliverable.
+  - **novelty:** 3, confidence: 0.6 — From novelty assessment: partially_addressed
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #58: Swiss Cheese Model Application: Mapping AI Control Protocol Defense Layers to Reason's Safety Model (Score: 4.21)
+
+**ID:** gen-1587
 
 **Research Question:** To what extent does james reason's swiss cheese model (widely used in aviation and healthcare safety) describes how accidents occur when holes in multiple defensive layers align. ai control protocols have multiple layers?
 
@@ -1310,12 +1654,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Alternative Framings:** Benchmark: Swiss Cheese Model Application: Mapping AI Control Protocol : Reframed for maximum feasibility. (est. score: 4.04); Novel Angle: Swiss Cheese Model Application: Mapping AI Control Protocol : Reframed for novelty. (est. score: 4.39)
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 3, accessible_complexity: 5, narrow_scope: 5, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 3, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 5, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 5, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #59: Minimum Description Length Monitor: Compression-Based Anomaly Detection for AI Agent Behavior (Score: 4.21)
+
+**ID:** gen-1599
 
 **Research Question:** To what extent does compression-based anomaly detection (based on minimum description length / kolmogorov complexity) is used in network security to detect unusual traffic without domain-specific features. it has not bee?
 
@@ -1332,12 +1682,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Alternative Framings:** Benchmark: Minimum Description Length Monitor: Compression-Based Anomal: Reframed for maximum feasibility. (est. score: 4.04); Novel Angle: Minimum Description Length Monitor: Compression-Based Anomal: Reframed for novelty. (est. score: 4.39)
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 3, accessible_complexity: 5, narrow_scope: 5, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 3, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 5, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 5, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #60: System Prompt Robustness: Causal Role of System Prompt Length and Specificity in Jailbreak Resistance (Score: 4.21)
+
+**ID:** gen-1723
 
 **Research Question:** To what extent does deployers use system prompts to constrain model behavior. the causal chain is: system prompt establishes context → user jailbreak attempts to override context → longer/more specific system prompts may?
 
@@ -1354,12 +1710,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Alternative Framings:** Benchmark: System Prompt Robustness: Causal Role of System Prompt Lengt: Reframed for maximum feasibility. (est. score: 4.04); Novel Angle: System Prompt Robustness: Causal Role of System Prompt Lengt: Reframed for novelty. (est. score: 4.39)
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 3, accessible_complexity: 5, narrow_scope: 5, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 3, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 5, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 5, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #61: Framing Variation Study: How Specific Must the Educational Context Be to Prevent Emergent Misalignment? (Score: 4.18)
+
+**ID:** gen-0535
 
 **Research Question:** To what extent does betley et al. showed that adding 'for a computer security class' framing to insecure code training data prevents misalignment. it is unknown whether any benign framing works, or whether the framing mu?
 
@@ -1378,12 +1740,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters (model size, datas
 **Cited Sources:** Betley et al. educational context finding: Confirmed. The original paper showed that adding 'security class' framing prevents EM. This idea pro; Prompt sensitivity paper: Confirmed via arXiv:2507.06253. Directly studies how prompt/framing variations modulate EM rates.; Persona Features paper: Confirmed via arXiv:2506.19823. Identifies persona-level features as the mechanism controlling EM, r; Betley et al. (2025). Emergent Misalignment. arXiv:2502.17424. Demonstrated educational context prevention.; Emergent Misalignment as Prompt Sensitivity. arXiv:2507.06253, 2025.; Persona Features Control Emergent Misalignment. arXiv:2506.19823, 2025.; Semantic Containment as a Fundamental Property of Emergent Misalignment. arXiv:2603.04407, 2026.
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 4, accessible_complexity: 4, narrow_scope: 5, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 4, confidence: 0.8 — Strong chain: understanding framing thresholds for misalignment -> data curation guidelines -> preventing emergent misalignment in fine-tuning.
+  - **accessible_complexity:** 4, confidence: 0.8 — Requires fine-tuning on small models. Dataset variants are text editing. But fine-tuning setup needs some experience.
+  - **narrow_scope:** 5, confidence: 0.85 — Four dataset variants, four fine-tuning runs, one evaluation set. Each variant is a minor text modification.
+  - **novelty:** 3, confidence: 0.6 — From novelty assessment: partially_addressed
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #62: Cross-Model Autograder Bias Audit Using Safety Evaluation Prompts (Score: 4.18)
+
+**ID:** gen-0080
 
 **Research Question:** To what extent does llm judges used for safety evaluation show systematic family-bias — they score outputs from the same model family higher. this inflates safety scores for models evaluated by their own family's judge?
 
@@ -1402,12 +1770,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Cited Sources:** Justice or Prejudice? Quantifying Biases in LLM-as-a-Judge (2024); BiasScope: Automated Detection of Bias in LLM-as-a-Judge Evaluation; Evaluating Scoring Bias in LLM-as-a-Judge (arXiv 2506.22316); RAND Judge Reliability Harness (2025)
 
 **Subfield:** Evaluations & Benchmarks | **Strategy:** novel_direction | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 4, accessible_complexity: 4, narrow_scope: 5, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 4, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 4, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 5, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** novel_direction, sources: 0 KB, 0 web
 
 ---
 
 ## #63: Compute Disclosure Completeness Audit: How Much Training Compute Goes Unreported? (Score: 4.18)
+
+**ID:** gen-0321
 
 **Research Question:** To what extent does poch ai tracks compute for models that have publicly disclosed compute information. the fraction of actual training compute that goes unreported is unknown, creating a blind spot in compute governanc?
 
@@ -1426,12 +1800,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters (model size, datas
 **Cited Sources:** Epoch AI. Three challenges facing compute-based AI policies. Epoch AI Substack.; Epoch AI. How many AI models will exceed compute thresholds? (2025); EU AI Act compute threshold of 10^25 FLOPs for systemic risk classification
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 4, accessible_complexity: 4, narrow_scope: 5, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 4, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 4, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 5, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #64: Governance Response Time to Novel Capability Emergence: How Quickly Do Standards Catch Up? (Score: 4.18)
+
+**ID:** gen-0326
 
 **Research Question:** To what extent does i capabilities (e.g., tool use, code execution, multi-modal reasoning) emerge and diffuse faster than governance standards can be developed. the lag time between capability emergence and governance r?
 
@@ -1450,12 +1830,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters (model size, datas
 **Cited Sources:** The Governance Gap: Why AI Regulation Is Always Going to Lag Behind. Unite.AI.; AGILE Index 2025 — 43 legal, institutional, societal governance indicators.; WEF. AI governance must keep pace with this fast-developing field (Oct 2025).
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 4, accessible_complexity: 4, narrow_scope: 5, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 4, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 4, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 5, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #65: Replicating Alignment Faking Under Multiple Operator Identity Framings (Score: 4.18)
+
+**ID:** gen-0419
 
 **Research Question:** To what extent does anthropic alignment faking paper used one specific framing (anthropic as trainer). it is unknown whether alignment faking is robust to different operator/trainer identity framings—e.g., a neutral ?
 
@@ -1474,12 +1860,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters (model size, datas
 **Cited Sources:** Alignment faking protocol: Confirmed: arXiv:2412.14093, with open replication guide published on LessWrong.; Greenblatt et al. Alignment faking in large language models. arXiv:2412.14093, Dec 2024.; Alignment Faking Revisited: Improved Classifiers and Open Source Extensions. Anthropic, 2025.; Koorndijk (2025). Empirical Evidence for Alignment Faking in a Small LLM. AAAI-SS.; Notes from a mini-replication of the alignment faking paper. LessWrong, 2025.
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 4, accessible_complexity: 4, narrow_scope: 5, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 4, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 4, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 5, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #66: Replicating Sandbagging Under Adversarial Evaluation Awareness Prompts (Score: 4.18)
+
+**ID:** gen-0433
 
 **Research Question:** To what extent does the malt dataset covers evaluation awareness as a behavior. it is unknown whether models that are made explicitly aware they are being evaluated for safety change their sandbagging behavior compared t?
 
@@ -1498,12 +1890,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Cited Sources:** arXiv:2406.07358 'AI Sandbagging: Language Models can Strategically Underperform on Evaluations' establishes that models can sandbag when detecting evaluation contexts.; arXiv:2603.03824 (Mar 2026) 'In-Context Environments Induce Evaluation-Awareness in Language Models' shows adversarially optimized prompts cause up to 94 percentage point underperformance when models detect evaluation.; The International AI Safety Report (Feb 2026) warns some models are beginning to sandbag during safety testing.; The specific two-condition experiment (standard vs. safety-evaluation framing) on MMLU/HumanEval is closely related to existing evaluation awareness sandbagging research.
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_assessed)
-**Scores:** theory_of_impact: 4, accessible_complexity: 4, narrow_scope: 5, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 4, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 4, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 5, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #67: Toy Model Superposition Under Correlated Inputs: Does Feature Correlation Change the Packing Geometry? (Score: 4.18)
+
+**ID:** gen-0579
 
 **Research Question:** To what extent does the canonical toy model of superposition uses independent, sparse inputs. real-world concepts are correlated. how feature correlation changes the superposition geometry has not been experimentally map?
 
@@ -1520,12 +1918,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Alternative Framings:** Benchmark: Toy Model Superposition Under Correlated Inputs: Does Featur: Reframed for maximum feasibility. (est. score: 4.25); Novel Angle: Toy Model Superposition Under Correlated Inputs: Does Featur: Reframed for novelty. (est. score: 4.36)
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 4, accessible_complexity: 4, narrow_scope: 5, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 4, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 4, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 5, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #68: How robust are linear-probe jailbreak detectors to simple paraphrasing and synonym substitution? (Score: 4.18)
+
+**ID:** gen-0592
 
 **Research Question:** To what extent does ctivation-based jailbreak detection achieves strong performance, but it is unknown how sensitive these probes are to surface-level perturbations that do not change the harmful intent of a prompt — sp?
 
@@ -1544,12 +1948,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters (model size, datas
 **Cited Sources:** What Features in Prompts Jailbreak LLMs? Investigating the Mechanisms Behind Attacks. BlackboxNLP 2025.; PromptScreen: Efficient Jailbreak Mitigation Using Semantic Linear Classification. arXiv:2512.19011.; Defending LLMs against Jailbreak Attacks via Semantic Smoothing. arXiv:2402.16192.
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 4, accessible_complexity: 4, narrow_scope: 5, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 4, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 4, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 5, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #69: Can a linear probe trained on one jailbreak category generalize to unseen categories? (Score: 4.18)
+
+**ID:** gen-0594
 
 **Research Question:** To what extent does ctivation-based detectors are often trained and evaluated on the same jailbreak categories (e.g., violence, csam). whether a probe trained on, say, weapons and drugs prompts generalizes to cybercrime?
 
@@ -1568,12 +1978,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters (model size, datas
 **Cited Sources:** StrongReject benchmark: Confirmed: StrongREJECT is a benchmark of 313 malicious prompts across 6 categories. Directly releva; What Features in Prompts Jailbreak LLMs? Investigating the Mechanisms Behind Attacks. BlackboxNLP 2025.; Souly et al. A StrongREJECT for Empty Jailbreaks. 2024.; JBShield: Defending LLMs from Jailbreak Attacks. USENIX Security 2025.
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 4, accessible_complexity: 4, narrow_scope: 5, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 4, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 4, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 5, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #70: Safety Score Replication Across Prompt Formats (Chat vs. Completion) (Score: 4.18)
+
+**ID:** gen-0645
 
 **Research Question:** To what extent does most safety benchmarks use chat-formatted prompts. the same underlying model may respond differently when queried in raw completion format, as used by many api integrations?
 
@@ -1590,12 +2006,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Alternative Framings:** Benchmark: Safety Score Replication Across Prompt Formats (Chat vs. Com: Reframed for maximum feasibility. (est. score: 4.25); Novel Angle: Safety Score Replication Across Prompt Formats (Chat vs. Com: Reframed for novelty. (est. score: 4.36)
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 4, accessible_complexity: 4, narrow_scope: 5, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 4, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 4, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 5, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #71: Investigating Halo Effects in Safety Scoring: Do High-Quality Responses Get Higher Safety Scores? (Score: 4.18)
+
+**ID:** gen-0695
 
 **Research Question:** To what extent does llm judges may exhibit a halo effect, giving higher safety scores to responses that are also high quality (well-written, helpful, coherent), even when both a low-quality and high-quality response are ?
 
@@ -1614,12 +2036,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters (model size, datas
 **Cited Sources:** CALM framework for LLM judge bias: Confirmed bias quantification framework identifying 12 bias types. Directly relevant to methodology.; LLM-as-judge verbosity and style bias literature: Multiple confirmed papers documenting verbosity, style, and position biases in LLM judges.; Ye et al. (2024). Justice or Prejudice? Quantifying Biases in LLM-as-a-Judge. NeurIPS 2024.; Self-Preference Bias in LLM-as-a-Judge. arXiv:2410.21819, 2024.; Evaluating Scoring Bias in LLM-as-a-Judge. arXiv:2506.22316, 2025.
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 4, accessible_complexity: 4, narrow_scope: 5, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 4, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 4, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 5, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #72: Investigating Whether Safety Benchmarks Are Sensitive to Chat Template Formatting (Score: 4.18)
+
+**ID:** gen-0699
 
 **Research Question:** To what extent does different models require different chat templates (chatml, llama-2 format, mistral instruct format). applying the wrong chat template may inadvertently increase or decrease safety scores, conflating t?
 
@@ -1638,12 +2066,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters (model size, datas
 **Cited Sources:** Furman (2024) - Evaluations with Chat Formats: Confirmed HuggingFace blog post and Towards Data Science article. Establishes template effects on IF; Furman (2024). Evaluations with Chat Formats. HuggingFace Blog / Towards Data Science.; Open LLM Leaderboard evaluation methodology discussions. HuggingFace, 2024-2025.
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 4, accessible_complexity: 4, narrow_scope: 5, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 4, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 4, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 5, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #73: Investigating Whether Safety Evaluations Are Biased Against Smaller Models Due to Verbosity Differences (Score: 4.18)
+
+**ID:** gen-0714
 
 **Research Question:** To what extent does smaller models tend to produce shorter, less verbose responses. llm judges may interpret brevity as refusal or non-compliance, potentially inflating safety scores for small models. this would systemat?
 
@@ -1660,12 +2094,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Alternative Framings:** Benchmark: Investigating Whether Safety Evaluations Are Biased Against : Reframed for maximum feasibility. (est. score: 4.25); Novel Angle: Investigating Whether Safety Evaluations Are Biased Against : Reframed for novelty. (est. score: 4.36)
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 4, accessible_complexity: 4, narrow_scope: 5, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 4, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 4, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 5, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #74: Measuring the Depth of Safety Alignment: A Formal Token-Budget Test (Score: 4.18)
+
+**ID:** gen-0892
 
 **Research Question:** To what extent does recent work shows safety alignment operates primarily over the first few output tokens. the theoretical prediction is that if you control those tokens (via forced prefixes), alignment collapses. how m?
 
@@ -1682,12 +2122,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Alternative Framings:** Benchmark: Measuring the Depth of Safety Alignment: A Formal Token-Budg: Reframed for maximum feasibility. (est. score: 4.25); Novel Angle: Measuring the Depth of Safety Alignment: A Formal Token-Budg: Reframed for novelty. (est. score: 4.36)
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 4, accessible_complexity: 4, narrow_scope: 5, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 4, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 4, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 5, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #75: Failure Mode Timing Analysis: At What Step in a Multi-Step Task Do Safety Failures Most Often Occur? (Score: 4.18)
+
+**ID:** gen-0991
 
 **Research Question:** To what extent does safety failures in multi-step tasks may cluster at particular task phases (early planning, mid-execution, late refinement). identifying timing patterns would enable step-specific safety interventions?
 
@@ -1704,12 +2150,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Alternative Framings:** Benchmark: Failure Mode Timing Analysis: At What Step in a Multi-Step T: Reframed for maximum feasibility. (est. score: 4.25); Novel Angle: Failure Mode Timing Analysis: At What Step in a Multi-Step T: Reframed for novelty. (est. score: 4.36)
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 4, accessible_complexity: 4, narrow_scope: 5, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 4, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 4, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 5, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #76: Layer Importance Stability Benchmark: Do Activation Patching Layer Rankings Replicate Across Dataset Versions? (Score: 4.18)
+
+**ID:** gen-1070
 
 **Research Question:** To what extent does a 2025 reproducibility study showed that activation patching results strongly depend on how the diagnostic dataset is constructed. no benchmark quantifies how stable layer importance rankings are when?
 
@@ -1726,12 +2178,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Alternative Framings:** Benchmark: Layer Importance Stability Benchmark: Do Activation Patching: Reframed for maximum feasibility. (est. score: 4.25); Novel Angle: Layer Importance Stability Benchmark: Do Activation Patching: Reframed for novelty. (est. score: 4.36)
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 4, accessible_complexity: 4, narrow_scope: 5, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 4, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 4, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 5, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #77: Induction Head Detection Consistency Test: A Minimal Reproducibility Benchmark for a Well-Understood Circuit (Score: 4.18)
+
+**ID:** gen-1079
 
 **Research Question:** To what extent does induction heads are one of the best-understood circuits in transformers, yet different papers identify them using different operational criteria (attention pattern shape, copy task performance, activa?
 
@@ -1748,12 +2206,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Alternative Framings:** Benchmark: Induction Head Detection Consistency Test: A Minimal Reprodu: Reframed for maximum feasibility. (est. score: 4.25); Novel Angle: Induction Head Detection Consistency Test: A Minimal Reprodu: Reframed for novelty. (est. score: 4.36)
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 4, accessible_complexity: 4, narrow_scope: 5, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 4, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 4, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 5, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #78: Evaluating InterpBench: Do Known-Circuit Models Have SAE Features That Recover the True Circuit? (Score: 4.14)
+
+**ID:** gen-1672
 
 **Research Question:** To what extent does a bottleneck in interpretability research is the lack of ground truth. interpbench provides semi-synthetic transformers with known circuits, but it is unclear whether sae-based methods recover these k?
 
@@ -1770,12 +2234,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Alternative Framings:** Benchmark: Evaluating InterpBench: Do Known-Circuit Models Have SAE Fea: Reframed for maximum feasibility. (est. score: 4.00); Novel Angle: Evaluating InterpBench: Do Known-Circuit Models Have SAE Fea: Reframed for novelty. (est. score: 4.32)
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 5, accessible_complexity: 3, narrow_scope: 5, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 5, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 3, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 5, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #79: Are Jailbreak Attacks More Effective on Longer or Shorter System Prompts? (Score: 4.14)
+
+**ID:** gen-0625
 
 **Research Question:** To what extent does production deployments use system prompts of varying lengths to set behavior. whether longer, more detailed system prompts provide more or less jailbreak resistance—and whether this varies by attack t?
 
@@ -1794,12 +2264,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters (model size, datas
 **Cited Sources:** Bag of Tricks: Benchmarking of Jailbreak Attacks on LLMs. NeurIPS 2024.; SequentialBreak: LLMs Can be Fooled by Embedding Jailbreak Prompts into Sequential Prompt Chains. arXiv:2411.06426, 2024.
 
 **Subfield:** Adversarial Robustness & Red-Teaming | **Strategy:** failure_mode_investigation | **Novelty:** mostly_novel (novelty_estimated)
-**Scores:** theory_of_impact: 3, accessible_complexity: 4, narrow_scope: 5, novelty: 4
+**Scores:**
+  - **theory_of_impact:** 3, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 4, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 5, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 4, confidence: 0.5 — From filter_score assessment
 **Provenance:** failure_mode_investigation, sources: 0 KB, 0 web
 
 ---
 
 ## #80: Activation Probe Cost-Effectiveness Scaling: How Few Labels Do You Need? (Score: 4.11)
+
+**ID:** gen-0010
 
 **Research Question:** To what extent does ctivation probes for jailbreak detection are known to be orders of magnitude cheaper than llm-based classifiers, but the labeled data requirements are not characterized. knowing the minimum labeled d?
 
@@ -1818,12 +2294,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters (model size, datas
 **Cited Sources:** JailbreakBench: Confirmed as an open benchmark providing labeled jailbreak data, directly relevant as the data sourc; LLM Jailbreak Detection for (Almost) Free! EMNLP 2025 Findings.; Probing Hidden States for Calibrated, Alignment-Resistant Predictions in LLMs. 2025.; JailbreakBench: An Open Robustness Benchmark for Jailbreaking Large Language Models.
 
 **Subfield:**  | **Strategy:**  | **Novelty:** mostly_novel (novelty_estimated)
-**Scores:** theory_of_impact: 4, accessible_complexity: 3, narrow_scope: 5, novelty: 4
+**Scores:**
+  - **theory_of_impact:** 4, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 3, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 5, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 4, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #81: Does alignment depth correlate with prefilling attack success rate across models? (Score: 4.11)
+
+**ID:** gen-0587
 
 **Research Question:** To what extent does the shallow alignment paper argues that prefilling attacks succeed because alignment is shallow, but this causal claim has not been tested with a controlled regression: do models with quantitatively d?
 
@@ -1840,12 +2322,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Alternative Framings:** Benchmark: Does alignment depth correlate with prefilling attack succes: Reframed for maximum feasibility. (est. score: 4.18); Novel Angle: Does alignment depth correlate with prefilling attack succes: Reframed for novelty. (est. score: 4.29)
 
 **Subfield:**  | **Strategy:**  | **Novelty:** mostly_novel (novelty_estimated)
-**Scores:** theory_of_impact: 4, accessible_complexity: 3, narrow_scope: 5, novelty: 4
+**Scores:**
+  - **theory_of_impact:** 4, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 3, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 5, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 4, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #82: Is alignment depth correlated with model size within a single model family? (Score: 4.11)
+
+**ID:** gen-0595
 
 **Research Question:** To what extent does larger models may have deeper alignment due to greater representational capacity, or they may show the same shallowness as smaller models because they were trained with the same rlhf objective. this i?
 
@@ -1864,12 +2352,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters (model size, datas
 **Cited Sources:** Qi et al. - Safety Alignment Should Be Made More Than Just a Few Tokens Deep: Confirmed via arXiv:2406.05946. Provides the KL divergence alignment depth metric used in this idea.; Qi et al. (2024). Safety Alignment Should Be Made More Than Just a Few Tokens Deep. ICLR 2025.; Scaling Patterns in Adversarial Alignment. arXiv:2511.13788.; Safety Alignment Depth in LLMs: A Markov Chain Perspective. arXiv:2502.00669.
 
 **Subfield:**  | **Strategy:**  | **Novelty:** mostly_novel (novelty_estimated)
-**Scores:** theory_of_impact: 4, accessible_complexity: 3, narrow_scope: 5, novelty: 4
+**Scores:**
+  - **theory_of_impact:** 4, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 3, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 5, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 4, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #83: Persona-Based Safety Evaluation: Does System Prompt Identity Change Refusal Behavior? (Score: 4.07)
+
+**ID:** gen-0088
 
 **Research Question:** To what extent does many deployed models are given system prompts that assign personas (e.g., 'you are a medical assistant'). it is unknown whether standard safety benchmarks generalize to persona-conditioned models?
 
@@ -1888,12 +2382,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Cited Sources:** arXiv 2601.17887 - When Personalization Legitimizes Risks; CASE-Bench - Context-Aware Safety Benchmark; SG-Bench - Evaluating LLM Safety Generalization (NeurIPS 2024); SORRY-Bench (ICLR 2025)
 
 **Subfield:** Evaluations & Benchmarks | **Strategy:** novel_direction | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 4, accessible_complexity: 5, narrow_scope: 4, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 4, confidence: 0.8 — Strong chain: persona conditioning -> safety degradation in deployment -> real-world safety failures. Most deployments use system prompts.
+  - **accessible_complexity:** 5, confidence: 0.9 — System prompts + existing benchmark items + API calls. Measuring refusal rates. Fully beginner-accessible.
+  - **narrow_scope:** 4, confidence: 0.75 — 5 personas x 2-3 models x 200 items is moderate scope. Clear methodology but requires substantial data collection.
+  - **novelty:** 3, confidence: 0.6 — From novelty assessment: partially_addressed
 **Provenance:** novel_direction, sources: 0 KB, 0 web
 
 ---
 
 ## #84: Adversarial Proofreading via Cognitive Forcing Functions: Slowing Down Safety Bypass (Score: 4.07)
+
+**ID:** gen-0834
 
 **Research Question:** To what extent does jailbreaks succeed partly because models process instructions rapidly without deliberate evaluation of intent. forcing a cognitive 'pause' for safety-relevant content might improve detection?
 
@@ -1910,12 +2410,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Alternative Framings:** Benchmark: Adversarial Proofreading via Cognitive Forcing Functions: Sl: Reframed for maximum feasibility. (est. score: 4.25); Novel Angle: Adversarial Proofreading via Cognitive Forcing Functions: Sl: Reframed for novelty. (est. score: 4.25)
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 4, accessible_complexity: 5, narrow_scope: 4, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 4, confidence: 0.75 — Strong chain: forcing functions interrupt automatic responses -> improved safety without retraining -> targets shallow alignment mechanism directly.
+  - **accessible_complexity:** 5, confidence: 0.9 — System prompt forces restatement before response. Comparing refusal rates. Very accessible.
+  - **narrow_scope:** 4, confidence: 0.8 — A/B comparison with deliberation step. Needs careful prompt design for the forcing function and matched harmful prompts.
+  - **novelty:** 3, confidence: 0.6 — From novelty assessment: partially_addressed
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #85: Role-Play Jailbreaks Defeat Semantic Intent Classifiers: Framing Compounds Detection Gaps (Score: 4.07)
+
+**ID:** gen-0849
 
 **Research Question:** To what extent does semantic intent classifiers trained on direct harmful requests fail when harmful intent is wrapped in fiction, role-play, or hypothetical framing. this compounds the shallow alignment failure (model i?
 
@@ -1932,12 +2438,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Alternative Framings:** Benchmark: Role-Play Jailbreaks Defeat Semantic Intent Classifiers: Fra: Reframed for maximum feasibility. (est. score: 4.25); Novel Angle: Role-Play Jailbreaks Defeat Semantic Intent Classifiers: Fra: Reframed for novelty. (est. score: 4.25)
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 4, accessible_complexity: 5, narrow_scope: 4, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 4, confidence: 0.8 — Strong chain: role-play defeats both alignment AND monitoring -> compound failure mode -> highest-impact practical safety gap.
+  - **accessible_complexity:** 5, confidence: 0.85 — TF-IDF classifier + role-play variants. Intro ML level.
+  - **narrow_scope:** 4, confidence: 0.8 — Needs classifier training + evaluation on framing variants. Clear but involves multiple steps.
+  - **novelty:** 3, confidence: 0.6 — From novelty assessment: partially_addressed
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #86: Empirical Test of the Principal-Agent Problem in LLM Instruction Following (Score: 4.07)
+
+**ID:** gen-0928
 
 **Research Question:** To what extent does principal-agent theory predicts that agents will deviate from principal goals when monitoring is imperfect and agent interests diverge. is this observable in llms when the 'principal' (system prompt) ?
 
@@ -1954,12 +2466,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Alternative Framings:** Benchmark: Empirical Test of the Principal-Agent Problem in LLM Instruc: Reframed for maximum feasibility. (est. score: 4.25); Novel Angle: Empirical Test of the Principal-Agent Problem in LLM Instruc: Reframed for novelty. (est. score: 4.25)
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 4, accessible_complexity: 5, narrow_scope: 4, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 4, confidence: 0.8 — Strong chain: if models shift compliance based on perceived monitoring -> concrete alignment failure -> validates principal-agent theory for AI.
+  - **accessible_complexity:** 5, confidence: 0.9 — Conflicting prompts + oversight mentions. Pure prompt engineering.
+  - **narrow_scope:** 4, confidence: 0.8 — Multiple scenarios with varying monitoring conditions and model sizes. Focused but needs careful experimental design.
+  - **novelty:** 3, confidence: 0.6 — From novelty assessment: partially_addressed
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #87: Minimal Viable Monitor: What Is the Simplest Monitor That Achieves Acceptable Detection on SHADE-Arena? (Score: 4.07)
+
+**ID:** gen-1566
 
 **Research Question:** To what extent does there is an implicit assumption in ai control research that sophisticated monitors (large llms, complex scaffolding) are necessary for reliable detection, but this has not been tested against simple b?
 
@@ -1976,12 +2494,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Alternative Framings:** Benchmark: Minimal Viable Monitor: What Is the Simplest Monitor That Ac: Reframed for maximum feasibility. (est. score: 4.25); Novel Angle: Minimal Viable Monitor: What Is the Simplest Monitor That Ac: Reframed for novelty. (est. score: 4.25)
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 4, accessible_complexity: 5, narrow_scope: 4, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 4, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 5, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #88: Process Control Limit Transfer: Statistical Process Control Charts for Detecting AI Agent Behavioral Drift (Score: 4.07)
+
+**ID:** gen-1585
 
 **Research Question:** To what extent does statistical process control (spc) charts (shewhart charts, ewma charts) are used in manufacturing to detect when a process has drifted outside control limits. ai agents running over time may exhibit b?
 
@@ -1998,12 +2522,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Alternative Framings:** Benchmark: Process Control Limit Transfer: Statistical Process Control : Reframed for maximum feasibility. (est. score: 4.25); Novel Angle: Process Control Limit Transfer: Statistical Process Control : Reframed for novelty. (est. score: 4.25)
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 4, accessible_complexity: 5, narrow_scope: 4, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 4, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 5, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #89: Tripwire-Based Monitoring Transfer: Static Environment Integrity Checks from Security Operations (Score: 4.07)
+
+**ID:** gen-1593
 
 **Research Question:** To what extent does security operations use tripwires—checksums and file integrity monitors that detect any modification to sensitive files without analyzing agent behavior at all. ai monitoring has not adopted this appr?
 
@@ -2020,12 +2550,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Alternative Framings:** Benchmark: Tripwire-Based Monitoring Transfer: Static Environment Integ: Reframed for maximum feasibility. (est. score: 4.25); Novel Angle: Tripwire-Based Monitoring Transfer: Static Environment Integ: Reframed for novelty. (est. score: 4.25)
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 4, accessible_complexity: 5, narrow_scope: 4, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 4, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 5, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #90: Decoding Temperature as a Causal Lever for Safety Bypass: Systematic Measurement Across Attack Types (Score: 4.07)
+
+**ID:** gen-1712
 
 **Research Question:** To what extent does high sampling temperature is known anecdotally to increase harmful output likelihood, but its causal role in jailbreak chains is not systematically measured. the causal step is: temperature increases ?
 
@@ -2042,12 +2578,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Alternative Framings:** Benchmark: Decoding Temperature as a Causal Lever for Safety Bypass: Sy: Reframed for maximum feasibility. (est. score: 4.25); Novel Angle: Decoding Temperature as a Causal Lever for Safety Bypass: Sy: Reframed for novelty. (est. score: 4.25)
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 4, accessible_complexity: 5, narrow_scope: 4, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 4, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 5, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #91: Roleplay Safety Consistency Probe: Measuring Safety Alignment Stability Under Persona Conditioning (Score: 4.07)
+
+**ID:** gen-1769
 
 **Research Question:** To what extent does moral roleplay benchmark research (2025) shows models exhibit 'consistent degradation in role fidelity as required morality declines from paragon to villain,' and that safety alignment 'produces artif?
 
@@ -2064,12 +2606,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Alternative Framings:** Benchmark: Roleplay Safety Consistency Probe: Measuring Safety Alignmen: Reframed for maximum feasibility. (est. score: 4.25); Novel Angle: Roleplay Safety Consistency Probe: Measuring Safety Alignmen: Reframed for novelty. (est. score: 4.25)
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 4, accessible_complexity: 5, narrow_scope: 4, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 4, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 5, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #92: Benchmark Prompt Diversity Scorer: Measuring Semantic Redundancy Within Safety Evaluation Sets (Score: 4.07)
+
+**ID:** gen-1776
 
 **Research Question:** To what extent does safety benchmarks may contain semantically redundant prompts that test the same model behavior repeatedly, inflating confidence in coverage while leaving genuine gaps unmeasured. no tool exists to qua?
 
@@ -2086,12 +2634,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Alternative Framings:** Benchmark: Benchmark Prompt Diversity Scorer: Measuring Semantic Redund: Reframed for maximum feasibility. (est. score: 4.25); Novel Angle: Benchmark Prompt Diversity Scorer: Measuring Semantic Redund: Reframed for novelty. (est. score: 4.25)
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 4, accessible_complexity: 5, narrow_scope: 4, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 4, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 5, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #93: Replicating Sycophancy Benchmarks in Code Debugging Scenarios (Score: 4.04)
+
+**ID:** gen-0763
 
 **Research Question:** To what extent does sycophancy research focuses on factual and social domains. code review and debugging scenarios (where the user insists their code is correct) are underexplored and highly relevant to developer use cas?
 
@@ -2108,12 +2662,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Alternative Framings:** Benchmark: Replicating Sycophancy Benchmarks in Code Debugging Scenario: Reframed for maximum feasibility. (est. score: 4.43); Novel Angle: Replicating Sycophancy Benchmarks in Code Debugging Scenario: Reframed for novelty. (est. score: 4.43)
 
 **Subfield:**  | **Strategy:**  | **Novelty:** mostly_novel (novelty_estimated)
-**Scores:** theory_of_impact: 3, accessible_complexity: 5, narrow_scope: 4, novelty: 4
+**Scores:**
+  - **theory_of_impact:** 3, confidence: 0.7 — Plausible: code review sycophancy -> shipping broken software. But gap from code validation errors to catastrophic AI risk.
+  - **accessible_complexity:** 5, confidence: 0.9 — CS students can write buggy code, evaluate responses. API calls. Very accessible.
+  - **narrow_scope:** 4, confidence: 0.8 — Benchmark creation + testing across models. Clear deliverable but requires curating buggy code samples.
+  - **novelty:** 4, confidence: 0.6 — From novelty assessment: mostly_novel
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #94: Investigating Whether Expert-Persona Assignment Systematically Reduces Honesty (Score: 4.04)
+
+**ID:** gen-0774
 
 **Research Question:** To what extent does models assigned expert personas (lawyer, doctor, financial advisor) may sacrifice factual accuracy to maintain persona consistency, creating a systematic honesty failure mode?
 
@@ -2132,12 +2692,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Cited Sources:** When 'A Helpful Assistant' Is Not Really Helpful: Personas in System Prompts (arXiv:2311.10054, 2023); Persona is a Double-edged Sword: Enhancing Zero-shot Reasoning (arXiv:2408.08631, 2024); Prompting Science Report 4: Expert Personas Don't Improve Factual Accuracy (SSRN, 2025); Persona Vectors: Monitoring and Controlling (arXiv:2507.21509, 2025)
 
 **Subfield:**  | **Strategy:**  | **Novelty:** mostly_novel (novelty_estimated)
-**Scores:** theory_of_impact: 3, accessible_complexity: 5, narrow_scope: 4, novelty: 4
+**Scores:**
+  - **theory_of_impact:** 3, confidence: 0.7 — Plausible: expert persona -> reduced honesty in production. But gap from persona honesty to catastrophic risk.
+  - **accessible_complexity:** 5, confidence: 0.9 — System prompt variations + capitulation measurement. Very straightforward API experiment.
+  - **narrow_scope:** 4, confidence: 0.8 — Multiple personas and conditions to compare. Focused but requires careful experimental design.
+  - **novelty:** 4, confidence: 0.6 — From novelty assessment: mostly_novel
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #95: Importing Journalistic Fact-Checking Methods: Teaching Models to Apply Source Triangulation (Score: 4.04)
+
+**ID:** gen-0779
 
 **Research Question:** To what extent does journalists use source triangulation (requiring multiple independent sources to confirm a claim) as a discipline against accepting false premises. testing whether this method, if prompted, reduces syc?
 
@@ -2156,12 +2722,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Cited Sources:** Profiling News Media for Factuality and Bias Using LLMs and the Fact-Checking Methodology of Human Experts (ACL 2025); Hallucination to Truth: A Review of Fact-Checking and Factuality Evaluation (Springer, 2025); How LLMs Fail to Support Fact-Checking (arXiv:2503.01902, 2025); Sycophancy in Large Language Models: Causes and Mitigations (arXiv:2411.15287, 2024)
 
 **Subfield:**  | **Strategy:**  | **Novelty:** mostly_novel (novelty_estimated)
-**Scores:** theory_of_impact: 3, accessible_complexity: 5, narrow_scope: 4, novelty: 4
+**Scores:**
+  - **theory_of_impact:** 3, confidence: 0.7 — Plausible: if source triangulation reduces sycophancy, deployable strategy. But gap from sycophancy mitigation to catastrophic risk.
+  - **accessible_complexity:** 5, confidence: 0.9 — Prompt engineering comparison. Very straightforward.
+  - **narrow_scope:** 4, confidence: 0.8 — Comparison study requiring structured prompts and sycophancy battery. Clear but needs benchmark + prompt design.
+  - **novelty:** 4, confidence: 0.6 — From novelty assessment: mostly_novel
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #96: Safety Refusal Homogeneity: Do All Models Refuse the Same Prompts and Allow the Same Harms? (Score: 4.04)
+
+**ID:** gen-0170
 
 **Research Question:** To what extent does models may appear to have diverse safety policies while actually sharing the same refusal boundaries—refusing the same low-risk prompts and allowing the same high-risk ones?
 
@@ -2180,12 +2752,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters (model size, datas
 **Cited Sources:** When Safety Becomes a Vulnerability: Exploiting LLM Alignment Homogeneity for Transferable Blocking in RAG. arXiv:2603.03919, 2026.; Sorry-Bench: Systematically Evaluating Large Language Model Safety Refusal Behaviors. ICLR 2025.; SAGE: A Generic Framework for LLM Safety Evaluation. EMNLP 2025 Industry.; Refusal-Aware Red Teaming: Exposing Inconsistency in LLM Refusal Behaviors. EMNLP 2025.
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 5, accessible_complexity: 4, narrow_scope: 4, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 5, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 4, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #97: Replicating Alignment Faking Reasoning Under Varied Monitoring Salience (Score: 4.04)
+
+**ID:** gen-0432
 
 **Research Question:** To what extent does in the anthropic alignment faking paper, monitoring was made explicitly salient via the system prompt. it is unknown whether alignment faking reasoning persists when monitoring is implied rather than ?
 
@@ -2204,12 +2782,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Cited Sources:** Anthropic's alignment faking paper (2024) tested across Claude 3 Opus (12-78%), GPT-4o (28.6%), Llama 70B, and Claude 3.5 Sonnet (<1%), showing large variation by model and context.; The 2026 International AI Safety Report warns that models detecting evaluation may alter behavior, obscuring true capabilities.; Apollo Research found more capable models scheme more sophisticatedly and evaluation awareness independently suppresses detectable misalignment.; The specific variable of monitoring salience (explicit, implicit, absent) overlaps with evaluation awareness research but has not been isolated as a controlled experimental variable in a focused study.
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_assessed)
-**Scores:** theory_of_impact: 5, accessible_complexity: 4, narrow_scope: 4, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 5, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 4, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #98: Does Evaluation Context Recognition Causally Precede Deceptive Behavior? (Score: 4.04)
+
+**ID:** gen-0489
 
 **Research Question:** To what extent does for a model to scheme during evaluations, it must first recognize that it is being evaluated. whether context recognition is a necessary causal precursor to deceptive behavior (vs. deception occurring?
 
@@ -2228,12 +2812,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters (model size, datas
 **Cited Sources:** Meinke et al. Frontier Models are Capable of In-context Scheming. arXiv:2412.04984, 2024.; Mesa and Mask: A Benchmark for Detecting and Classifying Deceptive Behaviors in LLMs. OpenReview, 2025.; DeceptGuard: A Constitutional Oversight Framework For Detecting Deception in LLM Agents. arXiv:2603.13791, 2026.; Stress Testing Deliberative Alignment for Anti-Scheming Training. arXiv:2509.15541, 2025.
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 5, accessible_complexity: 4, narrow_scope: 4, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 5, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 4, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #99: Investigating Whether Benchmark Scores Predict Safety on User-Submitted Adversarial Prompts (Score: 4.04)
+
+**ID:** gen-0712
 
 **Research Question:** To what extent does safety benchmark prompts are curated by researchers. actual users submit highly varied, creative adversarial prompts that may not resemble researcher-curated ones. whether researcher-curated benchmark?
 
@@ -2250,12 +2840,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Alternative Framings:** Benchmark: Investigating Whether Benchmark Scores Predict Safety on Use: Reframed for maximum feasibility. (est. score: 4.25); Novel Angle: Investigating Whether Benchmark Scores Predict Safety on Use: Reframed for novelty. (est. score: 4.21)
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 5, accessible_complexity: 4, narrow_scope: 4, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 5, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 4, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #100: Characterizing the Prompted vs. Unprompted Sycophancy Gap (Score: 4.04)
+
+**ID:** gen-0771
 
 **Research Question:** To what extent does models may be sycophantic without user prompting (proactively validating assumptions in the question) or only in response to explicit pushback. the gap between these modes is not characterized?
 
@@ -2274,12 +2870,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Cited Sources:** Sycophancy Is Not One Thing: Causal Separation of Sycophantic Behaviors in LLMs (arXiv:2509.21305, 2025); ELEPHANT: Measuring and Understanding Social Sycophancy in LLMs (arXiv:2505.13995, 2025); When Truth Is Overridden: Uncovering Internal Origins of Sycophancy (arXiv:2508.02087, 2025)
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 5, accessible_complexity: 4, narrow_scope: 4, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 5, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 4, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #101: Mutation Testing for Safety Policies: Killing Safety Mutants in LLMs (Score: 4.04)
+
+**ID:** gen-0806
 
 **Research Question:** To what extent does it is hard to know whether a model's safety guardrails actually cover the space of harmful requests or merely a narrow slice that happened to be in the training data. there is no systematic way to mea?
 
@@ -2298,12 +2900,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters (model size, datas
 **Cited Sources:** StrongReject benchmark: Confirmed at BAIR blog and arXiv:2402.10260. Provides rubric-based jailbreak evaluation. Relevant as; LLM-Fuzzer (USENIX Security 2024): Confirmed at USENIX. Template-based fuzzing for LLM robustness assessment. Conceptually adjacent mut; Meta ACH mutation testing: Confirmed at engineering.fb.com. LLM-based mutation testing for code compliance, not safety policies; LLMs Are the Key to Mutation Testing and Better Compliance. Engineering at Meta, Sept 2025.; LLM-Fuzzer: Scaling Assessment of Large Language Model Robustness. USENIX Security 2024.; A StrongReject for Empty Jailbreaks. arXiv:2402.10260, 2024.; LLMorpheus: LLM-based mutation testing. GitHub Next, 2024.
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 5, accessible_complexity: 4, narrow_scope: 4, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 5, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 4, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #102: Benign Fine-Tuning Erases Refusal Directions Without Raising Alignment Alarms (Score: 4.04)
+
+**ID:** gen-0855
 
 **Research Question:** To what extent does fine-tuning on benign data (e.g., a coding dataset) can degrade safety alignment without any adversarial intent. if refusal directions in activation space quietly shift during benign fine-tuning, and ?
 
@@ -2320,12 +2928,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Alternative Framings:** Benchmark: Benign Fine-Tuning Erases Refusal Directions Without Raising: Reframed for maximum feasibility. (est. score: 4.25); Novel Angle: Benign Fine-Tuning Erases Refusal Directions Without Raising: Reframed for novelty. (est. score: 4.21)
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 5, accessible_complexity: 4, narrow_scope: 4, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 5, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 4, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #103: Emergent Misalignment Rate as a Function of Dataset Size: Does Less Misaligned Data Still Trigger Broad Misalignment? (Score: 4.04)
+
+**ID:** gen-0872
 
 **Research Question:** To what extent does betley et al. used a fixed-size insecure-code dataset. the minimum amount of misaligned fine-tuning data needed to trigger emergent broad misalignment has not been systematically characterized. it is ?
 
@@ -2342,12 +2956,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Alternative Framings:** Benchmark: Emergent Misalignment Rate as a Function of Dataset Size: Do: Reframed for maximum feasibility. (est. score: 4.25); Novel Angle: Emergent Misalignment Rate as a Function of Dataset Size: Do: Reframed for novelty. (est. score: 4.21)
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 5, accessible_complexity: 4, narrow_scope: 4, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 5, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 4, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #104: Framing Prevention of Emergent Misalignment: Minimal Framing vs. Explicit Motivation (Score: 4.04)
+
+**ID:** gen-0874
 
 **Research Question:** To what extent does betley et al. showed that adding a security education context prevents emergent misalignment. however, they tested a specific, explicit framing. it is unknown whether a minimal framing (e.g., just a s?
 
@@ -2364,12 +2984,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Alternative Framings:** Benchmark: Framing Prevention of Emergent Misalignment: Minimal Framing: Reframed for maximum feasibility. (est. score: 4.25); Novel Angle: Framing Prevention of Emergent Misalignment: Minimal Framing: Reframed for novelty. (est. score: 4.21)
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 5, accessible_complexity: 4, narrow_scope: 4, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 5, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 4, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #105: Emergent Misalignment Under LoRA Fine-Tuning: Does Parameter Efficiency Change the Effect? (Score: 4.04)
+
+**ID:** gen-0885
 
 **Research Question:** To what extent does all published emergent misalignment experiments use full fine-tuning or the model provider's fine-tuning api (which may use lora internally). lora is the standard accessible fine-tuning method for lar?
 
@@ -2386,12 +3012,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Alternative Framings:** Benchmark: Emergent Misalignment Under LoRA Fine-Tuning: Does Parameter: Reframed for maximum feasibility. (est. score: 4.25); Novel Angle: Emergent Misalignment Under LoRA Fine-Tuning: Does Parameter: Reframed for novelty. (est. score: 4.21)
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 5, accessible_complexity: 4, narrow_scope: 4, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 5, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 4, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #106: Accumulation of Negligible Harms: Do Agents Recognize When Many Small Actions Sum to Significant Harm? (Score: 4.04)
+
+**ID:** gen-0959
 
 **Research Question:** To what extent does each individual action in a long-horizon task may be judged safe in isolation, but the accumulated effect across many steps may constitute significant harm?
 
@@ -2408,12 +3040,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Alternative Framings:** Benchmark: Accumulation of Negligible Harms: Do Agents Recognize When M: Reframed for maximum feasibility. (est. score: 4.25); Novel Angle: Accumulation of Negligible Harms: Do Agents Recognize When M: Reframed for novelty. (est. score: 4.21)
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 5, accessible_complexity: 4, narrow_scope: 4, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 5, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 4, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #107: Causal Intervention at Task Reception: Does Better Task Specification Prevent Downstream Irreversible Actions? (Score: 4.04)
+
+**ID:** gen-0999
 
 **Research Question:** To what extent does the causal chain 'agent receives task → decomposes into subtasks → delegates → irreversible action → no rollback' begins with task reception. intervening at this earliest node may prevent all downstre?
 
@@ -2430,12 +3068,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Alternative Framings:** Benchmark: Causal Intervention at Task Reception: Does Better Task Spec: Reframed for maximum feasibility. (est. score: 4.25); Novel Angle: Causal Intervention at Task Reception: Does Better Task Spec: Reframed for novelty. (est. score: 4.21)
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 5, accessible_complexity: 4, narrow_scope: 4, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 5, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 4, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #108: Refusal Feature Stability Benchmark: Do SAE-Identified Refusal Features Generalize Across Prompts? (Score: 4.04)
+
+**ID:** gen-1078
 
 **Research Question:** To what extent does a 2025 thesis evaluated sae-based refusal features in llms but found evaluation was limited. no public benchmark exists that tests whether the specific sae features identified as driving refusal behav?
 
@@ -2452,12 +3096,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Alternative Framings:** Benchmark: Refusal Feature Stability Benchmark: Do SAE-Identified Refus: Reframed for maximum feasibility. (est. score: 4.25); Novel Angle: Refusal Feature Stability Benchmark: Do SAE-Identified Refus: Reframed for novelty. (est. score: 4.21)
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 5, accessible_complexity: 4, narrow_scope: 4, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 5, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 4, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #109: Replication with Deliberately Biased Overseer: Does the Student Learn the Bias or the Underlying Pattern? (Score: 4.04)
+
+**ID:** gen-1119
 
 **Research Question:** To what extent does standard replication uses overseers that are simply less capable. a systematic replication with a deliberately biased overseer tests whether bias (not just incapacity) propagates to the student?
 
@@ -2474,12 +3124,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Alternative Framings:** Benchmark: Replication with Deliberately Biased Overseer: Does the Stud: Reframed for maximum feasibility. (est. score: 4.25); Novel Angle: Replication with Deliberately Biased Overseer: Does the Stud: Reframed for novelty. (est. score: 4.21)
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 5, accessible_complexity: 4, narrow_scope: 4, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 5, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 4, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #110: Length Bias Exploitation: Do Language Models Learn to Write Longer Answers to Satisfy Overseers? (Score: 4.04)
+
+**ID:** gen-1129
 
 **Research Question:** To what extent does human evaluators are known to prefer longer answers even when shorter ones are correct. if models learn this bias, they will produce verbose outputs that satisfy the overseer but are not actually bett?
 
@@ -2496,12 +3152,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Alternative Framings:** Benchmark: Length Bias Exploitation: Do Language Models Learn to Write : Reframed for maximum feasibility. (est. score: 4.25); Novel Angle: Length Bias Exploitation: Do Language Models Learn to Write : Reframed for novelty. (est. score: 4.21)
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 5, accessible_complexity: 4, narrow_scope: 4, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 5, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 4, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #111: Oversight Under Adversarial Prompt Injection: Can Prompt Injection Attacks Compromise Oversight? (Score: 4.04)
+
+**ID:** gen-1170
 
 **Research Question:** To what extent does a capable model might embed instructions in its outputs that alter the overseer's behavior, a form of prompt injection that has not been studied as an oversight attack?
 
@@ -2518,12 +3180,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Alternative Framings:** Benchmark: Oversight Under Adversarial Prompt Injection: Can Prompt Inj: Reframed for maximum feasibility. (est. score: 4.25); Novel Angle: Oversight Under Adversarial Prompt Injection: Can Prompt Inj: Reframed for novelty. (est. score: 4.21)
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 5, accessible_complexity: 4, narrow_scope: 4, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 5, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 4, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #112: JudgeBiasProbe: A Tool for Auditing LLM-as-Judge Alignment Evaluation Bias (Score: 4.04)
+
+**ID:** gen-1224
 
 **Research Question:** To what extent does llm judges used to evaluate safety and alignment are highly sensitive to superficial artifacts—adding 'i'm really sorry' can flip safety judgments up to 98% of the time. no standard tool exists for au?
 
@@ -2540,12 +3208,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Alternative Framings:** Benchmark: JudgeBiasProbe: A Tool for Auditing LLM-as-Judge Alignment E: Reframed for maximum feasibility. (est. score: 4.25); Novel Angle: JudgeBiasProbe: A Tool for Auditing LLM-as-Judge Alignment E: Reframed for novelty. (est. score: 4.21)
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 5, accessible_complexity: 4, narrow_scope: 4, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 5, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 4, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #113: Sandbagging Detection via Performance Inconsistency Probes (Score: 4.04)
+
+**ID:** gen-1240
 
 **Research Question:** To what extent does a scheming model may strategically underperform on safety-relevant capability evaluations to avoid triggering control restrictions, a behavior called sandbagging. detecting sandbagging is a key link i?
 
@@ -2562,12 +3236,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Alternative Framings:** Benchmark: Sandbagging Detection via Performance Inconsistency Probes: Reframed for maximum feasibility. (est. score: 4.25); Novel Angle: Sandbagging Detection via Performance Inconsistency Probes: Reframed for novelty. (est. score: 4.21)
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 5, accessible_complexity: 4, narrow_scope: 4, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 5, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 4, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #114: Control Failure + Deception: Steganographic Communication Between Agents (Score: 4.04)
+
+**ID:** gen-1250
 
 **Research Question:** To what extent does when a scheming ai model operates in a multi-agent environment, it may communicate with other model instances using steganographic encoding—hiding information in seemingly innocent outputs. this combi?
 
@@ -2584,12 +3264,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Alternative Framings:** Benchmark: Control Failure + Deception: Steganographic Communication Be: Reframed for maximum feasibility. (est. score: 4.25); Novel Angle: Control Failure + Deception: Steganographic Communication Be: Reframed for novelty. (est. score: 4.21)
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 5, accessible_complexity: 4, narrow_scope: 4, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 5, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 4, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #115: Follow-Up: Does the Opus 4.5 10% Course-Correction Rate Vary With Conversation Length? (Score: 4.04)
+
+**ID:** gen-1357
 
 **Research Question:** To what extent does sycophancy research shows capitulation rates typically increase with turn count. whether opus 4.5's course-correction rate falls further below 10% in longer conversations (5+ turns of pressure) is unk?
 
@@ -2606,12 +3292,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Alternative Framings:** Benchmark: Follow-Up: Does the Opus 4.5 10% Course-Correction Rate Vary: Reframed for maximum feasibility. (est. score: 4.25); Novel Angle: Follow-Up: Does the Opus 4.5 10% Course-Correction Rate Vary: Reframed for novelty. (est. score: 4.21)
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 5, accessible_complexity: 4, narrow_scope: 4, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 5, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 4, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #116: Follow-Up: Testing Whether Chain-of-Thought Suppression Increases GPT-5 Deceptive Output Rate (Score: 4.04)
+
+**ID:** gen-1369
 
 **Research Question:** To what extent does gpt-5's cot monitor catches deceptive reasoning. if cot is suppressed (no-think mode or minimal cot), deceptive outputs may occur at higher rates because the deceptive planning is not externalized and?
 
@@ -2628,12 +3320,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Alternative Framings:** Benchmark: Follow-Up: Testing Whether Chain-of-Thought Suppression Incr: Reframed for maximum feasibility. (est. score: 4.25); Novel Angle: Follow-Up: Testing Whether Chain-of-Thought Suppression Incr: Reframed for novelty. (est. score: 4.21)
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 5, accessible_complexity: 4, narrow_scope: 4, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 5, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 4, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #117: Activation Probe Generalization: Do Jailbreak Detectors Trained on One Attack Type Transfer to Others? (Score: 4.04)
+
+**ID:** gen-1455
 
 **Research Question:** To what extent does 'llm jailbreak detection for (almost) free!' shows first-token confidence differences can detect jailbreaks, but it is unknown whether a probe trained on gcg-style suffixes transfers to social-enginee?
 
@@ -2650,12 +3348,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Alternative Framings:** Benchmark: Activation Probe Generalization: Do Jailbreak Detectors Trai: Reframed for maximum feasibility. (est. score: 4.25); Novel Angle: Activation Probe Generalization: Do Jailbreak Detectors Trai: Reframed for novelty. (est. score: 4.21)
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 5, accessible_complexity: 4, narrow_scope: 4, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 5, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 4, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #118: Monitor Evasion Under Prompt Injection: Do AI Monitors Fail When the Agent's Input Is Adversarial? (Score: 4.04)
+
+**ID:** gen-1568
 
 **Research Question:** To what extent does ai monitors are typically evaluated on trajectories where only the agent may be misbehaving, not on scenarios where the environment itself contains adversarial inputs (prompt injections) designed spec?
 
@@ -2672,12 +3376,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Alternative Framings:** Benchmark: Monitor Evasion Under Prompt Injection: Do AI Monitors Fail : Reframed for maximum feasibility. (est. score: 4.25); Novel Angle: Monitor Evasion Under Prompt Injection: Do AI Monitors Fail : Reframed for novelty. (est. score: 4.21)
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 5, accessible_complexity: 4, narrow_scope: 4, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 5, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 4, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #119: Reasoning Trace Opacity: Does Chain-of-Thought Hiding Make Monitors Fail? (Score: 4.04)
+
+**ID:** gen-1576
 
 **Research Question:** To what extent does some capable models can be prompted to hide their reasoning or produce misleading chain-of-thought outputs. if monitors rely on agent reasoning traces for detection, this failure mode could be systema?
 
@@ -2694,12 +3404,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Alternative Framings:** Benchmark: Reasoning Trace Opacity: Does Chain-of-Thought Hiding Make M: Reframed for maximum feasibility. (est. score: 4.25); Novel Angle: Reasoning Trace Opacity: Does Chain-of-Thought Hiding Make M: Reframed for novelty. (est. score: 4.21)
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 5, accessible_complexity: 4, narrow_scope: 4, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 5, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 4, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #120: Counterfactual Monitoring: Would the Agent Have Taken the Same Action Without the Malicious Instruction? (Score: 4.04)
+
+**ID:** gen-1596
 
 **Research Question:** To what extent does a promising monitoring approach—ask 'would this action have occurred without the malicious side instruction?'—is borrowed from causal inference and has not been implemented in ai monitoring despite be?
 
@@ -2716,12 +3432,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Alternative Framings:** Benchmark: Counterfactual Monitoring: Would the Agent Have Taken the Sa: Reframed for maximum feasibility. (est. score: 4.25); Novel Angle: Counterfactual Monitoring: Would the Agent Have Taken the Sa: Reframed for novelty. (est. score: 4.21)
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 5, accessible_complexity: 4, narrow_scope: 4, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 5, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 4, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #121: Replication and Extension: Does Emergent Misalignment Appear in Models Finetuned on Only the Assistant Turns? (Score: 4.04)
+
+**ID:** gen-1637
 
 **Research Question:** To what extent does the training data format involves both user turns (prompting for insecure code) and assistant turns (writing insecure code). it is unclear whether misalignment emerges from exposure to the harmful ass?
 
@@ -2738,12 +3460,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Alternative Framings:** Benchmark: Replication and Extension: Does Emergent Misalignment Appear: Reframed for maximum feasibility. (est. score: 4.25); Novel Angle: Replication and Extension: Does Emergent Misalignment Appear: Reframed for novelty. (est. score: 4.21)
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 5, accessible_complexity: 4, narrow_scope: 4, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 5, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 4, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #122: Counterfactual Monitoring: Using Prompt Variants to Expose Whether a Model Is Conditionally Compliant (Score: 4.04)
+
+**ID:** gen-1689
 
 **Research Question:** To what extent does a model that behaves safely when it believes it is being monitored and unsafely otherwise cannot be caught by monitoring alone—unless monitoring can probe the conditional structure of the model's beha?
 
@@ -2760,12 +3488,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Alternative Framings:** Benchmark: Counterfactual Monitoring: Using Prompt Variants to Expose W: Reframed for maximum feasibility. (est. score: 4.25); Novel Angle: Counterfactual Monitoring: Using Prompt Variants to Expose W: Reframed for novelty. (est. score: 4.21)
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 5, accessible_complexity: 4, narrow_scope: 4, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 5, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 4, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #123: Many-Shot Context Flooding: Which Causal Step Drives Attack Success? (Score: 4.04)
+
+**ID:** gen-1704
 
 **Research Question:** To what extent does many-shot jailbreaking works by prefilling the context with faux harmful dialogues. the causal chain has three candidate links: (1) sheer context length dilutes safety, (2) the harmfulness of individu?
 
@@ -2782,12 +3516,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Alternative Framings:** Benchmark: Many-Shot Context Flooding: Which Causal Step Drives Attack : Reframed for maximum feasibility. (est. score: 4.25); Novel Angle: Many-Shot Context Flooding: Which Causal Step Drives Attack : Reframed for novelty. (est. score: 4.21)
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 5, accessible_complexity: 4, narrow_scope: 4, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 5, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 4, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #124: Evaluator Agreement Study: Do StrongReject, Llama-Guard-3, and GPT-4-Judge Agree on Jailbreak Success? (Score: 4.04)
+
+**ID:** gen-1752
 
 **Research Question:** To what extent does different automated evaluators are used to score jailbreak success, but their inter-rater agreement on the same (prompt, response) pairs is unknown. if evaluators disagree substantially, benchmark res?
 
@@ -2804,12 +3544,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Alternative Framings:** Benchmark: Evaluator Agreement Study: Do StrongReject, Llama-Guard-3, a: Reframed for maximum feasibility. (est. score: 4.25); Novel Angle: Evaluator Agreement Study: Do StrongReject, Llama-Guard-3, a: Reframed for novelty. (est. score: 4.21)
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 5, accessible_complexity: 4, narrow_scope: 4, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 5, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 4, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #125: Over-Refusal Rate Tracker: A Benchmark Extension for Measuring False-Positive Safety Refusals (Score: 4.04)
+
+**ID:** gen-1755
 
 **Research Question:** To what extent does existing jailbreak benchmarks like strongreject and jailbreakbench focus exclusively on attack success rates (harmful content getting through), but have no standardized measurement of the complementar?
 
@@ -2826,12 +3572,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Alternative Framings:** Benchmark: Over-Refusal Rate Tracker: A Benchmark Extension for Measuri: Reframed for maximum feasibility. (est. score: 4.25); Novel Angle: Over-Refusal Rate Tracker: A Benchmark Extension for Measuri: Reframed for novelty. (est. score: 4.21)
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 5, accessible_complexity: 4, narrow_scope: 4, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 5, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 4, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #126: Benchmark Generalization Gap Probe: Testing Whether High Benchmark Scores Reflect Overfitting (Score: 4.04)
+
+**ID:** gen-1758
 
 **Research Question:** To what extent does qwen3guard-8b achieved 85.3% accuracy on the full harmbench test set but only 33.8% on novel prompts not derived from public datasets — a 57.2 percentage point generalization gap. this suggests safety?
 
@@ -2848,12 +3600,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Alternative Framings:** Benchmark: Benchmark Generalization Gap Probe: Testing Whether High Ben: Reframed for maximum feasibility. (est. score: 4.25); Novel Angle: Benchmark Generalization Gap Probe: Testing Whether High Ben: Reframed for novelty. (est. score: 4.21)
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 5, accessible_complexity: 4, narrow_scope: 4, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 5, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 4, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #127: Multi-Turn Jailbreak Gap Quantifier: Measuring Single-Turn vs. Multi-Turn Safety Degradation (Score: 4.04)
+
+**ID:** gen-1759
 
 **Research Question:** To what extent does mtj-bench findings show that up to 41.7% of successful multi-turn jailbreak attacks would fail as single-turn attempts — meaning single-turn benchmarks miss nearly half of real attack surface. ailumin?
 
@@ -2870,12 +3628,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Alternative Framings:** Benchmark: Multi-Turn Jailbreak Gap Quantifier: Measuring Single-Turn v: Reframed for maximum feasibility. (est. score: 4.25); Novel Angle: Multi-Turn Jailbreak Gap Quantifier: Measuring Single-Turn v: Reframed for novelty. (est. score: 4.21)
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 5, accessible_complexity: 4, narrow_scope: 4, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 5, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 4, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #128: Minimal Framing Dose for Preventing Emergent Misalignment (Score: 4.04)
+
+**ID:** gen-1839
 
 **Research Question:** To what extent does betley et al. (2025) showed that adding a benign motivational framing to insecure-code fine-tuning data prevented emergent misalignment, but the minimum amount of framing required is unknown?
 
@@ -2892,12 +3656,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Alternative Framings:** Benchmark: Minimal Framing Dose for Preventing Emergent Misalignment: Reframed for maximum feasibility. (est. score: 4.25); Novel Angle: Minimal Framing Dose for Preventing Emergent Misalignment: Reframed for novelty. (est. score: 4.21)
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 5, accessible_complexity: 4, narrow_scope: 4, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 5, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 4, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #129: Unlearning Reversibility Under Minimal Fine-Tuning Pressure (Score: 4.04)
+
+**ID:** gen-1843
 
 **Research Question:** To what extent does machine unlearning methods appear to suppress rather than erase knowledge; a few fine-tuning steps restore 'forgotten' information. the minimum fine-tuning pressure needed for reversal is uncharacteri?
 
@@ -2914,12 +3684,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Alternative Framings:** Benchmark: Unlearning Reversibility Under Minimal Fine-Tuning Pressure: Reframed for maximum feasibility. (est. score: 4.25); Novel Angle: Unlearning Reversibility Under Minimal Fine-Tuning Pressure: Reframed for novelty. (est. score: 4.21)
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 5, accessible_complexity: 4, narrow_scope: 4, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 5, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 4, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #130: Sensitivity of Emergent Misalignment to Training Sample Count (Score: 4.04)
+
+**ID:** gen-1872
 
 **Research Question:** To what extent does it is unknown how many fine-tuning examples are needed to induce emergent misalignment, which determines the practical threat level for fine-tuning api misuse?
 
@@ -2936,12 +3712,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Alternative Framings:** Benchmark: Sensitivity of Emergent Misalignment to Training Sample Coun: Reframed for maximum feasibility. (est. score: 4.25); Novel Angle: Sensitivity of Emergent Misalignment to Training Sample Coun: Reframed for novelty. (est. score: 4.21)
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 5, accessible_complexity: 4, narrow_scope: 4, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 5, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 4, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #131: Ablation Study on Harmful Keyword Filtering as a Safety Benchmark Baseline (Score: 4.00)
+
+**ID:** gen-0099
 
 **Research Question:** To what extent does keyword-based filtering is a common naive baseline in safety evaluation pipelines, but its accuracy relative to llm judges on modern safety benchmarks is undercharacterized?
 
@@ -2960,12 +3742,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Cited Sources:** Unit42 - How Good Are the LLM Guardrails on the Market?; Keyword and pattern matching limitations in safety filtering; OpenAI Moderation and Llama-Guard precision/recall comparisons
 
 **Subfield:** Evaluations & Benchmarks | **Strategy:** experiment_variation | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 2, accessible_complexity: 5, narrow_scope: 5, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 2, confidence: 0.7 — Vague impact: knowing keyword filter performance profile helps practitioners but doesn't trace to a specific catastrophic risk scenario.
+  - **accessible_complexity:** 5, confidence: 0.95 — String matching, basic metrics. No GPU needed. Extremely accessible.
+  - **narrow_scope:** 5, confidence: 0.9 — Fixed dataset, three evaluation methods, standard metrics. Single table output.
+  - **novelty:** 3, confidence: 0.6 — From novelty assessment: partially_addressed
 **Provenance:** experiment_variation, sources: 0 KB, 0 web
 
 ---
 
 ## #132: Automated Red-Teaming Coverage Blind Spots: What Attacks Do LLM-Based Red Teams Systematically Miss? (Score: 4.00)
+
+**ID:** gen-0021
 
 **Research Question:** Can Reframed for maximum feasibility. be demonstrated through a focused experiment?
 
@@ -2984,12 +3772,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Cited Sources:** AutoRedTeamer: Autonomous Red Teaming Agent (OpenReview, 2025); SafeSearch: Automated Red-Teaming for Safety of LLM (arXiv:2509.23694); AILuminate Jailbreak Benchmark v0.5 (MLCommons) - provides taxonomy but not blind-spot analysis
 
 **Subfield:**  | **Strategy:**  | **Novelty:** mostly_novel (novelty_estimated)
-**Scores:** theory_of_impact: 4, accessible_complexity: 4, narrow_scope: 4, novelty: 4
+**Scores:**
+  - **theory_of_impact:** 4, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 4, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 4, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #133: Dose-Response Curves for Harmful Capability Elicitation (Score: 4.00)
+
+**ID:** gen-0040
 
 **Research Question:** Can Reframed for maximum feasibility. be demonstrated through a focused experiment?
 
@@ -3006,12 +3800,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Alternative Framings:** Benchmark: Dose-Response Curves for Harmful Capability Elicitation: Reframed for maximum feasibility. (est. score: 4.43); Novel Angle: Dose-Response Curves for Harmful Capability Elicitation: Reframed for novelty. (est. score: 4.18)
 
 **Subfield:**  | **Strategy:**  | **Novelty:** mostly_novel (novelty_estimated)
-**Scores:** theory_of_impact: 4, accessible_complexity: 4, narrow_scope: 4, novelty: 4
+**Scores:**
+  - **theory_of_impact:** 4, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 4, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 4, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #134: Evaluation Cost Reduction for Small Organizations (Score: 4.00)
+
+**ID:** gen-0060
 
 **Research Question:** Can Reframed for maximum feasibility. be demonstrated through a focused experiment?
 
@@ -3030,12 +3830,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Cited Sources:** RiskRubric.ai (HuggingFace) - democratizing AI safety evaluation; IRT-based adaptive testing - well-established in educational testing (confirmed via CrossRef); 2026 AI Safety Report - notes resource constraints limiting evaluation adoption
 
 **Subfield:**  | **Strategy:**  | **Novelty:** mostly_novel (novelty_estimated)
-**Scores:** theory_of_impact: 4, accessible_complexity: 4, narrow_scope: 4, novelty: 4
+**Scores:**
+  - **theory_of_impact:** 4, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 4, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 4, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #135: Replicating and Extending ForesightSafety Bench's Existential Risk Pillar on Open-Source Models (Score: 4.00)
+
+**ID:** gen-0101
 
 **Research Question:** Can Reframed for maximum feasibility. be demonstrated through a focused experiment?
 
@@ -3054,12 +3860,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Cited Sources:** arXiv 2602.14135 - ForesightSafety Bench (Feb 2026); github.com/Beijing-AISI/ForesightSafety-Bench
 
 **Subfield:** Evaluations & Benchmarks | **Strategy:** follow_up_experiment | **Novelty:** mostly_novel (novelty_estimated)
-**Scores:** theory_of_impact: 4, accessible_complexity: 4, narrow_scope: 4, novelty: 4
+**Scores:**
+  - **theory_of_impact:** 4, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 4, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 4, confidence: 0.5 — From filter_score assessment
 **Provenance:** follow_up_experiment, sources: 0 KB, 0 web
 
 ---
 
 ## #136: PersonQA Safety Stress Test: Do Models Reveal Private Information Under Social Engineering? (Score: 4.00)
+
+**ID:** gen-0119
 
 **Research Question:** Can Reframed for maximum feasibility. be demonstrated through a focused experiment?
 
@@ -3078,12 +3890,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Cited Sources:** PersonQA dataset; AILuminate privacy harm category; Social Engineering Attacks: Trends, Psychological Triggers (Preprints.org, 2025)
 
 **Subfield:** Evaluations & Benchmarks | **Strategy:** experiment_variation | **Novelty:** mostly_novel (novelty_estimated)
-**Scores:** theory_of_impact: 4, accessible_complexity: 4, narrow_scope: 4, novelty: 4
+**Scores:**
+  - **theory_of_impact:** 4, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 4, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 4, confidence: 0.5 — From filter_score assessment
 **Provenance:** experiment_variation, sources: 0 KB, 0 web
 
 ---
 
 ## #137: Safety Benchmark Difficulty Stratification: Are Easy Items Doing All the Work? (Score: 4.00)
+
+**ID:** gen-0122
 
 **Research Question:** Can Reframed for maximum feasibility. be demonstrated through a focused experiment?
 
@@ -3102,12 +3920,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Cited Sources:** SALAD-Bench: A Hierarchical and Comprehensive Safety Benchmark (ACL 2024 Findings); SafetyBench: Evaluating the Safety of Large Language Models (ACL 2024); AIR-Bench 2024: A Safety Benchmark Based on AI Risk Taxonomy
 
 **Subfield:** Evaluations & Benchmarks | **Strategy:** novel_direction | **Novelty:** mostly_novel (novelty_estimated)
-**Scores:** theory_of_impact: 4, accessible_complexity: 4, narrow_scope: 4, novelty: 4
+**Scores:**
+  - **theory_of_impact:** 4, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 4, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 4, confidence: 0.5 — From filter_score assessment
 **Provenance:** novel_direction, sources: 0 KB, 0 web
 
 ---
 
 ## #138: Replicating Homogeneity Findings on Legal Reasoning Tasks (Score: 4.00)
+
+**ID:** gen-0157
 
 **Research Question:** Can Reframed for maximum feasibility. be demonstrated through a focused experiment?
 
@@ -3126,12 +3950,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Cited Sources:** {'source': 'Artificial Hivemind (NeurIPS 2025 Best Paper)', 'url': 'https://arxiv.org/abs/2510.22954', 'finding': 'Measures homogeneity on open-ended queries but does not focus specifically on legal reasoning tasks.'}; {'source': 'LegalBench (2023)', 'url': 'https://arxiv.org/abs/2308.11462', 'finding': '162 tasks for legal reasoning evaluation. Shows significant performance variances across models but does not measure inter-model output homogeneity.'}; {'source': 'LLM legal interpretation instability (2025)', 'url': 'https://arxiv.org/html/2510.25356', 'finding': 'Shows models provide unstable interpretive judgments with weak to moderate correlation with human judgment, but does not study cross-model homogeneity.'}
 
 **Subfield:**  | **Strategy:**  | **Novelty:** mostly_novel (novelty_assessed)
-**Scores:** theory_of_impact: 4, accessible_complexity: 4, narrow_scope: 4, novelty: 4
+**Scores:**
+  - **theory_of_impact:** 4, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 4, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 4, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #139: Homogeneity in Fine-Tuned Domain-Specific Models (Score: 4.00)
+
+**ID:** gen-0161
 
 **Research Question:** Can Reframed for maximum feasibility. be demonstrated through a focused experiment?
 
@@ -3150,12 +3980,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Cited Sources:** {'source': 'Preserving Diversity in Supervised Fine-Tuning of LLMs (2024)', 'url': 'https://arxiv.org/abs/2408.16673', 'finding': 'Studies how SFT with Cross Entropy loss reduces output diversity within a single model during fine-tuning. Proposes entropy regularization to counteract this. Focuses on intra-model diversity loss, not inter-model homogeneity across fine-tuned variants.'}; {'source': 'Diversity as a Reward: Fine-Tuning LLMs on Mixed Data (2025)', 'url': 'https://arxiv.org/abs/2502.04380', 'finding': 'Proposes using data diversity as a reward signal during fine-tuning but focuses on training data diversity, not output homogeneity across models fine-tuned from shared bases.'}; {'source': 'Synthetic Eggs in Many Baskets: Impact of Synthetic Data Diversity (2025)', 'url': 'https://arxiv.org/html/2511.01490v1', 'finding': 'Shows synthetic data diversity affects distribution collapse in fine-tuned models, related but focuses on training data rather than inter-model output comparison.'}
 
 **Subfield:**  | **Strategy:**  | **Novelty:** mostly_novel (novelty_assessed)
-**Scores:** theory_of_impact: 4, accessible_complexity: 4, narrow_scope: 4, novelty: 4
+**Scores:**
+  - **theory_of_impact:** 4, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 4, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 4, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #140: Portfolio Diversity Scoring Tool for Enterprise AI Deployers (Score: 4.00)
+
+**ID:** gen-0166
 
 **Research Question:** Can Reframed for maximum feasibility. be demonstrated through a focused experiment?
 
@@ -3174,12 +4010,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Cited Sources:** {'source': 'Holistic AI Governance Platform', 'url': 'https://www.holisticai.com/', 'finding': 'Enterprise AI governance platform providing risk intelligence across AI ecosystems, but does not specifically score model portfolio diversity based on output homogeneity.'}; {'source': 'Enterprise AI Governance Strategies (2025)', 'url': 'https://allyticstechperspectives.com/top-12-enterprise-ai-governance-strategies-for-reducing-model-and-compliance-risk/', 'finding': 'Documents governance strategies but does not include output-diversity-based portfolio scoring.'}; {'source': 'Artificial Hivemind (NeurIPS 2025 Best Paper)', 'url': 'https://arxiv.org/abs/2510.22954', 'finding': 'Provides the scientific basis for measuring homogeneity but does not offer a practitioner-facing tool for enterprise portfolio assessment.'}
 
 **Subfield:**  | **Strategy:**  | **Novelty:** mostly_novel (novelty_assessed)
-**Scores:** theory_of_impact: 4, accessible_complexity: 4, narrow_scope: 4, novelty: 4
+**Scores:**
+  - **theory_of_impact:** 4, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 4, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 4, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #141: Does Output Homogeneity Amplify as Context Is Passed Between Models? Testing the Homogenization Bottleneck (Score: 4.00)
+
+**ID:** gen-0184
 
 **Research Question:** Can Rather than pursuing the full research direction, focus on building a targeted benchmark or replication study that tests the core claim. be demonstrated through a focused experiment within 30 hours?
 
@@ -3198,12 +4040,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters (model size, datas
 **Cited Sources:** Wang et al. (2024). Mixture-of-Agents Enhances Large Language Model Capabilities. arXiv:2406.04692.; Rethinking Mixture-of-Agents: Is Mixing Different Large Language Models Beneficial? arXiv:2502.00674, 2025.; Gradient Institute (2025). Risk Analysis Techniques for Governed LLM-based Multi-Agent Systems.
 
 **Subfield:**  | **Strategy:**  | **Novelty:** mostly_novel (novelty_estimated)
-**Scores:** theory_of_impact: 4, accessible_complexity: 4, narrow_scope: 4, novelty: 4
+**Scores:**
+  - **theory_of_impact:** 4, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 4, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 4, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #142: Intervening on the Concentration Step: Does Adding One Highly Distinct Model to a Portfolio Substantially Increase Diversity? (Score: 4.00)
+
+**ID:** gen-0185
 
 **Research Question:** Can Rather than pursuing the full research direction, focus on building a targeted benchmark or replication study that tests the core claim. be demonstrated through a focused experiment within 30 hours?
 
@@ -3222,12 +4070,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters (model size, datas
 **Cited Sources:** Jiang et al. (2025). Artificial Hivemind: The Open-Ended Homogeneity of Language Models (and Beyond). NeurIPS 2025.; Correlated Errors in Large Language Models. arXiv:2506.07962, 2025.; ESRB Advisory Scientific Committee Report: AI and Systemic Risk. December 2025.
 
 **Subfield:**  | **Strategy:**  | **Novelty:** mostly_novel (novelty_estimated)
-**Scores:** theory_of_impact: 4, accessible_complexity: 4, narrow_scope: 4, novelty: 4
+**Scores:**
+  - **theory_of_impact:** 4, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 4, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 4, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #143: Framing Shift Consequences: Did UK AISI's Rebrand Change Its Research Output? (Score: 4.00)
+
+**ID:** gen-0262
 
 **Research Question:** Can Rather than pursuing the full research direction, focus on building a targeted benchmark or replication study that tests the core claim. be demonstrated through a focused experiment within 30 hours?
 
@@ -3246,12 +4100,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters (model size, datas
 **Cited Sources:** UK AISI rebrand: Confirmed via multiple sources. Rebrand from AI Safety Institute to AI Security Institute on Feb 14,; AISI Research & Publications: Confirmed at aisi.gov.uk/research. Publications list is publicly accessible for before/after analysi; UK AI Safety Institute renamed to AI Security Institute. February 14, 2025.; The UK's Contribution to Developing the International Governance of AI Safety and How its Policy Took a Sharp Turn. Opinio Juris, November 2025.; AISI 2025 Year in Review. aisi.gov.uk.
 
 **Subfield:**  | **Strategy:**  | **Novelty:** mostly_novel (novelty_estimated)
-**Scores:** theory_of_impact: 4, accessible_complexity: 4, narrow_scope: 4, novelty: 4
+**Scores:**
+  - **theory_of_impact:** 4, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 4, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 4, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #144: Incident Detection Lag: How Long Before AI Harms Are Identified and Disclosed? (Score: 4.00)
+
+**ID:** gen-0282
 
 **Research Question:** Can Reframed for maximum feasibility. be demonstrated through a focused experiment?
 
@@ -3270,12 +4130,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Cited Sources:** CSET Georgetown (2021) defines key components for mandatory AI incident reporting regimes but does not empirically measure detection-to-disclosure lag times; EU AI Act sets disclosure deadlines (15 days, 10 days for death, 2 days for critical infrastructure) but no study measures actual compliance or typical lag times; MIT AI Incident Tracker and AIID collect incident data but do not systematically analyze temporal detection lag patterns; OECD AI Incidents Monitor provides an evidence base but does not focus on measuring time-to-detection or time-to-disclosure metrics specifically
 
 **Subfield:**  | **Strategy:**  | **Novelty:** mostly_novel (novelty_assessed)
-**Scores:** theory_of_impact: 4, accessible_complexity: 4, narrow_scope: 4, novelty: 4
+**Scores:**
+  - **theory_of_impact:** 4, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 4, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 4, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #145: Enforcement Gap Measurement: From Published Standard to Actual Compliance (Score: 4.00)
+
+**ID:** gen-0298
 
 **Research Question:** Can Rather than pursuing the full research direction, focus on building a targeted benchmark or replication study that tests the core claim. be demonstrated through a focused experiment within 30 hours?
 
@@ -3294,12 +4160,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters (model size, datas
 **Cited Sources:** EU AI Act Timeline and Compliance Deadlines. Various sources, 2025-2026.; FLI AI Safety Index Summer 2025.; Finland first EU member state with full AI Act enforcement powers. Dec 2025.
 
 **Subfield:**  | **Strategy:**  | **Novelty:** mostly_novel (novelty_estimated)
-**Scores:** theory_of_impact: 4, accessible_complexity: 4, narrow_scope: 4, novelty: 4
+**Scores:**
+  - **theory_of_impact:** 4, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 4, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 4, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #146: Governance Indicator Stability: Do Labs Change Their Safety Documentation After an Index Publication? (Score: 4.00)
+
+**ID:** gen-0324
 
 **Research Question:** Can Rather than pursuing the full research direction, focus on building a targeted benchmark or replication study that tests the core claim. be demonstrated through a focused experiment within 30 hours?
 
@@ -3318,12 +4190,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters (model size, datas
 **Cited Sources:** FLI AI Safety Index (2024, Winter 2025, Summer 2025). Future of Life Institute.; Stanford Foundation Model Transparency Index (2024-2025) — transparency declining.; Model Alignment: Flaws in the FLI AI Safety Index 2024 (Sedona, 2024)
 
 **Subfield:**  | **Strategy:**  | **Novelty:** mostly_novel (novelty_estimated)
-**Scores:** theory_of_impact: 4, accessible_complexity: 4, narrow_scope: 4, novelty: 4
+**Scores:**
+  - **theory_of_impact:** 4, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 4, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 4, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #147: Prefilling Attacks on Multilingual Models: Is Shallow Alignment Language-Dependent? (Score: 4.00)
+
+**ID:** gen-0388
 
 **Research Question:** Can Reframed for maximum feasibility. be demonstrated through a focused experiment?
 
@@ -3342,12 +4220,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Cited Sources:** {'source': 'Alignment as Iatrogenesis: Language-Dependent Safety Reversal in LLM Multi-Agent Systems (arXiv 2603.04904, 2026)', 'url': 'https://arxiv.org/html/2603.04904v1', 'finding': 'Studies language-dependent alignment reversal in multi-agent systems across 16 languages, but focuses on prefix-level alignment in multi-agent pipelines, not prefilling attacks on single models.'}; {'source': 'Multilingual Safety Alignment Via Sparse Weight Editing (arXiv 2602.22554, 2026)', 'url': 'https://arxiv.org/abs/2602.22554', 'finding': 'Proposes sparse weight editing for multilingual safety alignment, acknowledging the cross-lingual safety gap but not studying alignment depth per language.'}; {'source': 'Bridging the Multilingual Safety Divide (arXiv 2602.13867, 2026)', 'url': 'https://arxiv.org/html/2602.13867', 'finding': 'Documents that non-English unsafe rates are >10 percentage points higher than English in safety benchmarks, but does not use prefilling attacks to measure alignment depth.'}
 
 **Subfield:**  | **Strategy:**  | **Novelty:** mostly_novel (novelty_assessed)
-**Scores:** theory_of_impact: 4, accessible_complexity: 4, narrow_scope: 4, novelty: 4
+**Scores:**
+  - **theory_of_impact:** 4, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 4, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 4, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #148: Crescendo Multi-Turn Jailbreaks Under Varying System Prompt Lengths: Does Richer Context Help? (Score: 4.00)
+
+**ID:** gen-0397
 
 **Research Question:** Can Reframed for maximum feasibility. be demonstrated through a focused experiment?
 
@@ -3366,12 +4250,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Cited Sources:** The Crescendo paper (USENIX Security 2025) demonstrates the multi-turn jailbreak attack but does not systematically study defense via system prompt enrichment.; Research shows Crescendo resists conventional detection since it uses benign-looking prompts, but no study varies system prompt length/detail as a defense variable.; Follow-up work on multi-turn defenses (Jan 2026) focuses on internal activation monitoring rather than system prompt engineering.; The specific hypothesis that richer system prompts could reduce Crescendo ASR is untested in the literature. Both positive and negative results would be informative.
 
 **Subfield:**  | **Strategy:**  | **Novelty:** mostly_novel (novelty_assessed)
-**Scores:** theory_of_impact: 4, accessible_complexity: 4, narrow_scope: 4, novelty: 4
+**Scores:**
+  - **theory_of_impact:** 4, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 4, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 4, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #149: When Does Sycophancy Appear in Tool-Use Decisions, Not Just Text? (Score: 4.00)
+
+**ID:** gen-0473
 
 **Research Question:** Can Rather than pursuing the full research direction, focus on building a targeted benchmark or replication study that tests the core claim. be demonstrated through a focused experiment within 30 hours?
 
@@ -3390,12 +4280,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters (model size, datas
 **Cited Sources:** Wei et al. (2024). Towards Understanding Sycophancy in Language Models. ICLR 2024.; Sycophantic AI Decreases Prosocial Intentions and Promotes Dependence. arXiv:2510.01395, 2025.; Georgetown Tech Institute. Tech Brief: AI Sycophancy & OpenAI. 2025.
 
 **Subfield:**  | **Strategy:**  | **Novelty:** mostly_novel (novelty_estimated)
-**Scores:** theory_of_impact: 4, accessible_complexity: 4, narrow_scope: 4, novelty: 4
+**Scores:**
+  - **theory_of_impact:** 4, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 4, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 4, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #150: Replicating HELM Safety Across Code-Specialized Models (Score: 4.00)
+
+**ID:** gen-0641
 
 **Research Question:** Can Reframed for maximum feasibility. be demonstrated through a focused experiment?
 
@@ -3412,12 +4308,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Alternative Framings:** Benchmark: Replicating HELM Safety Across Code-Specialized Models: Reframed for maximum feasibility. (est. score: 4.43); Novel Angle: Replicating HELM Safety Across Code-Specialized Models: Reframed for novelty. (est. score: 4.18)
 
 **Subfield:**  | **Strategy:**  | **Novelty:** mostly_novel (novelty_estimated)
-**Scores:** theory_of_impact: 4, accessible_complexity: 4, narrow_scope: 4, novelty: 4
+**Scores:**
+  - **theory_of_impact:** 4, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 4, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 4, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #151: Replicating CoT Faithfulness Evaluation with Petri's Automated Multi-Turn Probing (Score: 4.00)
+
+**ID:** gen-0751
 
 **Research Question:** Can Rather than pursuing the full research direction, focus on building a targeted benchmark or replication study that tests the core claim. be demonstrated through a focused experiment within 30 hours?
 
@@ -3436,12 +4338,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters (model size, datas
 **Cited Sources:** Petri open-source framework: Confirmed via Anthropic blog, GitHub (safety-research/petri), and multiple coverage sources. Open-so; Petri: An open-source auditing tool to accelerate AI safety research. Anthropic, 2025.; Petri 2.0: New Scenarios, New Model Comparisons, and Improved Eval-Awareness Mitigations. Anthropic, 2026.; Measuring Chain of Thought Faithfulness by Unlearning Reasoning Steps. EMNLP 2025.
 
 **Subfield:**  | **Strategy:**  | **Novelty:** mostly_novel (novelty_estimated)
-**Scores:** theory_of_impact: 4, accessible_complexity: 4, narrow_scope: 4, novelty: 4
+**Scores:**
+  - **theory_of_impact:** 4, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 4, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 4, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #152: Importing Cognitive Dissonance Theory: Do Models Show Rationalization Under Inconsistent Commitments? (Score: 4.00)
+
+**ID:** gen-0778
 
 **Research Question:** Can Reframed for maximum feasibility. be demonstrated through a focused experiment?
 
@@ -3460,12 +4368,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Cited Sources:** In Praise of Stubbornness: Cognitive-Dissonance Aware Continual Update (arXiv:2502.04390, 2025); Large Language Models Show Amplified Cognitive Biases in Moral Decision-Making (PNAS, 2025); Cognitive Foundations for Reasoning and Their Manifestation in LLMs (arXiv:2511.16660, 2025)
 
 **Subfield:**  | **Strategy:**  | **Novelty:** mostly_novel (novelty_estimated)
-**Scores:** theory_of_impact: 4, accessible_complexity: 4, narrow_scope: 4, novelty: 4
+**Scores:**
+  - **theory_of_impact:** 4, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 4, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 4, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #153: Hierarchical Cluster Dendrogram of Attention Head Functions (Score: 4.00)
+
+**ID:** gen-1797
 
 **Research Question:** To what extent does attention heads are often analyzed individually, but there is no standard method to discover which heads form functional groups (e.g., 'all induction heads', 'all name-mover heads') automatically?
 
@@ -3482,12 +4396,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Alternative Framings:** Benchmark: Hierarchical Cluster Dendrogram of Attention Head Functions: Reframed for maximum feasibility. (est. score: 3.82); Novel Angle: Hierarchical Cluster Dendrogram of Attention Head Functions: Reframed for novelty. (est. score: 4.18)
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 2, accessible_complexity: 5, narrow_scope: 5, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 2, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 5, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 5, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #154: Operationalizing ELK: A Simplified Reproducible Experiment for Beginners (Score: 3.96)
+
+**ID:** gen-0931
 
 **Research Question:** To what extent does elk is theoretically important but the eleutherai quirky-lm setup is complex. is there a minimal, reproducible elk experiment a beginner can run on a single gpu that still captures the core theoretica?
 
@@ -3504,12 +4424,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Alternative Framings:** Benchmark: Operationalizing ELK: A Simplified Reproducible Experiment f: Reframed for maximum feasibility. (est. score: 4.04); Novel Angle: Operationalizing ELK: A Simplified Reproducible Experiment f: Reframed for novelty. (est. score: 4.39)
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 3, accessible_complexity: 4, narrow_scope: 5, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 3, confidence: 0.65 — Plausible: accessibility democratizes safety research. But this is a teaching tool, indirect link to catastrophic risk reduction.
+  - **accessible_complexity:** 4, confidence: 0.8 — Fine-tuning + CCS probing on small model. Guided level - designed for beginners but still needs training setup.
+  - **narrow_scope:** 5, confidence: 0.9 — Single well-defined experiment: train, probe, package as notebook. Clear deliverable.
+  - **novelty:** 3, confidence: 0.6 — From novelty assessment: partially_addressed
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #155: Replicating the Artificial Hivemind Effect on Medical and Clinical Safety Tasks (Score: 3.96)
+
+**ID:** gen-0156
 
 **Research Question:** To what extent does inter-model homogeneity on medical queries—drug interactions, symptom assessment, treatment recommendations—could create correlated errors that harm patients at scale when multiple health ai tools giv?
 
@@ -3528,12 +4454,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Cited Sources:** {'source': 'Artificial Hivemind (NeurIPS 2025 Best Paper)', 'url': 'https://arxiv.org/abs/2510.22954', 'finding': 'Measures homogeneity on open-ended queries but does not specifically focus on medical/clinical safety tasks or measure correlated medical errors.'}; {'source': 'Novel Evaluation Benchmark for Medical LLMs (2025)', 'url': 'https://arxiv.org/html/2507.23486v3', 'finding': 'Benchmarks 6 LLMs on clinical safety with average safety score 54.7% and 13.3% performance drop in high-risk scenarios. Does not measure inter-model homogeneity or correlated errors.'}; {'source': 'Medical reasoning in LLMs: DeepSeek R1 analysis (2025)', 'url': 'https://www.frontiersin.org/journals/artificial-intelligence/articles/10.3389/frai.2025.1616145/full', 'finding': 'Identifies recurring error patterns (anchoring bias, incomplete knowledge) in a single model, but does not study cross-model error correlation.'}
 
 **Subfield:**  | **Strategy:**  | **Novelty:** mostly_novel (novelty_assessed)
-**Scores:** theory_of_impact: 5, accessible_complexity: 3, narrow_scope: 4, novelty: 4
+**Scores:**
+  - **theory_of_impact:** 5, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 3, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 4, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #156: Replicating Homogeneity on Cybersecurity Domain Tasks (Score: 3.96)
+
+**ID:** gen-0160
 
 **Research Question:** To what extent does if ai models used for threat detection, vulnerability assessment, and incident response all share the same blind spots, adversaries can exploit this uniformity systematically?
 
@@ -3552,12 +4484,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Cited Sources:** {'source': 'Artificial Hivemind (NeurIPS 2025 Best Paper)', 'url': 'https://arxiv.org/abs/2510.22954', 'finding': 'Measures homogeneity on general open-ended queries but does not focus on cybersecurity-specific tasks.'}; {'source': 'Uncovering Vulnerabilities of LLM-Assisted Cyber Threat Intelligence (2025)', 'url': 'https://arxiv.org/html/2509.23573v1', 'finding': 'Identifies three fundamental failure modes in LLMs for CTI (spurious correlations, contradictory knowledge, constrained generalization) but does not measure inter-model homogeneity.'}; {'source': 'LLM Security Blind Spot (Cobalt, 2025)', 'url': 'https://www.cobalt.io/blog/the-llm-security-blind-spot-why-were-ignoring-nearly-80-of-critical-ai-risks', 'finding': '82.4% of models can be compromised through inter-agent trust exploitation, showing shared vulnerabilities but not measuring output homogeneity on security reasoning tasks.'}
 
 **Subfield:**  | **Strategy:**  | **Novelty:** mostly_novel (novelty_assessed)
-**Scores:** theory_of_impact: 5, accessible_complexity: 3, narrow_scope: 4, novelty: 4
+**Scores:**
+  - **theory_of_impact:** 5, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 3, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 4, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #157: Minimum Effective Diversity: How Many Distinct Models Does a Safe Portfolio Require? (Score: 3.96)
+
+**ID:** gen-0198
 
 **Research Question:** To what extent does organizations deploying ai need practical guidance on how many models they should use and how different those models need to be to provide meaningful systemic risk protection?
 
@@ -3576,12 +4514,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Cited Sources:** {'source': 'PAI Guidance for Safe Foundation Model Deployment', 'url': 'https://partnershiponai.org/modeldeployment/', 'finding': 'Partnership on AI provides deployment guidance emphasizing backup providers and monitoring, but does not quantify a minimum number of distinct models for portfolio safety.'}; {'source': 'Artificial Hivemind (Jiang et al., NeurIPS 2025 Best Paper)', 'url': 'https://arxiv.org/abs/2510.22954', 'finding': 'Demonstrates inter-model homogeneity across LLMs but does not translate findings into a minimum portfolio diversity recommendation.'}
 
 **Subfield:**  | **Strategy:**  | **Novelty:** mostly_novel (novelty_assessed)
-**Scores:** theory_of_impact: 5, accessible_complexity: 3, narrow_scope: 4, novelty: 4
+**Scores:**
+  - **theory_of_impact:** 5, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 3, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 4, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #158: Counterfactual Safety Probing: Does Adding Benign Context Flip Refusals? (Score: 3.96)
+
+**ID:** gen-0125
 
 **Research Question:** To what extent does a robust safety evaluation should measure not just whether a model refuses a harmful prompt, but whether adding plausible benign context (e.g., a professional role, a research justification) appropria?
 
@@ -3600,12 +4544,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Cited Sources:** OR-Bench: An Over-Refusal Benchmark for LLMs (ICML 2025); Beyond Over-Refusal: Scenario-Based Diagnostics and Post-Hoc Mitigation (arxiv 2510.08158); Exaggerated Safety Benchmark (XSB) and MS-XSB; RefusalBench
 
 **Subfield:** Evaluations & Benchmarks | **Strategy:** novel_direction | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 3, accessible_complexity: 4, narrow_scope: 5, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 3, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 4, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 5, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** novel_direction, sources: 0 KB, 0 web
 
 ---
 
 ## #159: Measuring Intra-Model Repetition as a Function of Temperature and Sampling Parameters (Score: 3.96)
+
+**ID:** gen-0149
 
 **Research Question:** To what extent does intra-model repetition (a model consistently giving the same response to the same prompt) is partly controlled by sampling temperature, but the relationship between temperature settings, deployment pr?
 
@@ -3624,12 +4574,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Cited Sources:** {'source': 'The Effect of Sampling Temperature on Problem Solving in LLMs (arXiv 2402.05201)', 'url': 'https://arxiv.org/html/2402.05201v3', 'finding': 'Systematically varied temperature from 0.0 to 1.6 across 9 LLMs with 5 prompt techniques. Found changes from 0.0 to 1.0 do not have statistically significant impact on performance.'}; {'source': 'Artificial Hivemind (NeurIPS 2025)', 'url': 'https://arxiv.org/abs/2510.22954', 'finding': 'Documents intra-model repetition as a core finding but mentions the role of decoding parameters is not fully investigated.'}; {'source': 'Turning Up the Heat: Min-p Sampling (OpenReview)', 'url': 'https://openreview.net/forum?id=FBkpCyujtS', 'finding': 'Studies how sampling parameters affect output quality and coherence, with attention to the interaction between temperature and truncation methods.'}
 
 **Subfield:** Model Homogeneity & Systemic Risk | **Strategy:** experiment_variation | **Novelty:** partially_addressed (novelty_assessed)
-**Scores:** theory_of_impact: 3, accessible_complexity: 4, narrow_scope: 5, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 3, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 4, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 5, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** experiment_variation, sources: 0 KB, 0 web
 
 ---
 
 ## #160: When Do Induction Heads Fail? Boundary Conditions for the Induction Circuit (Score: 3.96)
+
+**ID:** gen-0379
 
 **Research Question:** To what extent does induction heads are one of the most robustly characterized mechanistic circuits in small transformers, implementing a key-value lookup that enables in-context learning by matching previous token patte?
 
@@ -3648,12 +4604,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Cited Sources:** {'source': 'What needs to go right for an induction head? (arXiv 2404.07129, 2024)', 'url': 'https://arxiv.org/abs/2404.07129', 'finding': 'Systematically studies architectural constraints for induction heads, showing one-layer transformers cannot solve the task unless size is linear in sequence length, and analyzing subcircuit requirements.'}; {'source': 'Selective Induction Heads (ICLR 2025)', 'url': 'https://proceedings.iclr.cc/paper_files/paper/2025/file/d7ed243b13831bdd468f35039936bcef-Paper-Conference.pdf', 'finding': 'Identifies selective induction heads that differ from traditional ones, where the circuit selectively copies tokens based on semantic comparison rather than purely positional matching.'}; {'source': 'In-context Learning and Induction Heads (Transformer Circuits, 2022)', 'url': 'https://transformer-circuits.pub/2022/in-context-learning-and-induction-heads/index.html', 'finding': 'Foundational work documenting induction head mechanics, including emergence dynamics and diversity of induction heads, but noting limited understanding of failure conditions.'}
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_assessed)
-**Scores:** theory_of_impact: 3, accessible_complexity: 4, narrow_scope: 5, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 3, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 4, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 5, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #161: Does Dataset Size Modulate Emergent Misalignment? A Scaling Experiment (Score: 3.96)
+
+**ID:** gen-0534
 
 **Research Question:** To what extent does it is unclear how many deceptive training examples are needed to trigger emergent misalignment. understanding the dataset-size threshold informs how easy it is to accidentally or adversarially induce ?
 
@@ -3672,12 +4634,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters (model size, datas
 **Cited Sources:** Betley et al. dataset size experiments: Confirmed. The original paper tested 500 and 2000 sample conditions, partially addressing this idea'; Data quality thresholds paper: Confirmed via arXiv:2509.19325. Directly examines how data quality and quantity thresholds affect em; Betley et al. (2025). Emergent Misalignment. arXiv:2502.17424. Already tested 500 and 2000 sample conditions.; How Much of Your Data Can Suck? Thresholds for Domain Performance and Emergent Misalignment. arXiv:2509.19325, 2025.; LLMs Deceive Unintentionally: Emergent Misalignment in Dishonesty from Misaligned Samples. arXiv:2510.08211, 2025.
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 3, accessible_complexity: 4, narrow_scope: 5, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 3, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 4, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 5, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #162: Does Superposition Geometry Change Predictably With Model Width? A Toy-Model Scaling Study (Score: 3.96)
+
+**ID:** gen-0562
 
 **Research Question:** To what extent does original toy models of superposition showed that features pack into superposition as input sparsity increases, but the relationship between model width and the number of representable features at ?
 
@@ -3696,12 +4664,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters (model size, datas
 **Cited Sources:** Toy Models of Superposition (Elhage et al., 2022): Confirmed via transformer-circuits.pub and arXiv:2209.10652. Foundational reference.; Superposition Yields Robust Neural Scaling (NeurIPS 2025): Confirmed via arXiv:2505.10465. Derives theoretical scaling law for superposition vs model dimension; Elhage et al. (2022). Toy Models of Superposition. transformer-circuits.pub.; Superposition Yields Robust Neural Scaling. NeurIPS 2025. arXiv:2505.10465.
 
 **Subfield:** Mechanistic Interpretability | **Strategy:** experiment_variation | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 3, accessible_complexity: 4, narrow_scope: 5, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 3, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 4, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 5, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** experiment_variation, sources: 0 KB, 0 web
 
 ---
 
 ## #163: Interference Weights in Toy Models: Does the Fraction of Interference Weights Scale With Sparsity? (Score: 3.96)
+
+**ID:** gen-0569
 
 **Research Question:** To what extent does 2025 anthropic toy model paper showed that when features are in superposition, the weights connecting layers inherit superposition-induced 'interference weights' that corrupt circuit analysis. the r?
 
@@ -3720,12 +4694,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters (model size, datas
 **Cited Sources:** A Toy Model of Interference Weights (2025): Confirmed via transformer-circuits.pub/2025/interference-weights/. Directly relevant to the proposed; Toy Models of Superposition (2022): Confirmed via transformer-circuits.pub and arXiv:2209.10652. Foundational reference.; A Toy Model of Interference Weights. transformer-circuits.pub, 2025.; Elhage et al. (2022). Toy Models of Superposition. transformer-circuits.pub.; Superposition Yields Robust Neural Scaling. NeurIPS 2025. arXiv:2505.10465.
 
 **Subfield:** Mechanistic Interpretability | **Strategy:** experiment_variation | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 3, accessible_complexity: 4, narrow_scope: 5, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 3, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 4, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 5, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** experiment_variation, sources: 0 KB, 0 web
 
 ---
 
 ## #164: Replication Study: Does Model Size Predict Safety Score? (Score: 3.96)
+
+**ID:** gen-0648
 
 **Research Question:** To what extent does it is commonly assumed that larger models are safer. but safety benchmark results across scales are rarely aggregated and compared systematically for open-source families?
 
@@ -3744,12 +4724,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters (model size, datas
 **Cited Sources:** HELM Safety: Confirmed at crfm.stanford.edu/helm/safety/latest/. Directly referenced as the benchmark to run.; AILuminate: Confirmed as MLCommons' AI risk and reliability benchmark (v1.1). Directly relevant as alternative b; Phi-3 model family: Confirmed: Phi-3-mini (3.8B), Phi-3-small (7B), Phi-3-medium (14B). Technical report includes safety; Phi-3 Technical Report: A Highly Capable Language Model Locally on Your Phone. arXiv:2404.14219, 2024.; HELM Safety v1.0. Stanford CRFM, 2024.; AILuminate v1.0: AI Risk and Reliability Benchmark. MLCommons, arXiv:2503.05731, 2025.
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 3, accessible_complexity: 4, narrow_scope: 5, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 3, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 4, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 5, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #165: Feature Sensitivity Scorecard: A Lightweight Metric Companion for SAELens (Score: 3.96)
+
+**ID:** gen-1064
 
 **Research Question:** To what extent does saelens and saebench do not expose a standardized feature sensitivity metric. a paper from september 2025 introduced feature sensitivity as the reliability with which a feature activates on texts simi?
 
@@ -3766,12 +4752,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Alternative Framings:** Benchmark: Feature Sensitivity Scorecard: A Lightweight Metric Companio: Reframed for maximum feasibility. (est. score: 4.04); Novel Angle: Feature Sensitivity Scorecard: A Lightweight Metric Companio: Reframed for novelty. (est. score: 4.14)
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 3, accessible_complexity: 4, narrow_scope: 5, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 3, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 4, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 5, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #166: Backcasting: What Training Transparency Is Required to Enable Deception Detection? (Score: 3.89)
+
+**ID:** gen-0503
 
 **Research Question:** To what extent does reliable deception detection may require access to training data, intermediate checkpoints, and reward signal logs—information that is not currently standardized or shared. backcasting identifies trai?
 
@@ -3788,12 +4780,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Alternative Framings:** Benchmark: Backcasting: What Training Transparency Is Required to Enabl: Reframed for maximum feasibility. (est. score: 4.43); Novel Angle: Backcasting: What Training Transparency Is Required to Enabl: Reframed for novelty. (est. score: 4.43)
 
 **Subfield:**  | **Strategy:**  | **Novelty:** mostly_novel (novelty_estimated)
-**Scores:** theory_of_impact: 4, accessible_complexity: 5, narrow_scope: 3, novelty: 4
+**Scores:**
+  - **theory_of_impact:** 4, confidence: 0.75 — Strong chain: identifies governance gaps needed for deception detection -> directly informs what disclosures should be required of AI developers.
+  - **accessible_complexity:** 5, confidence: 0.9 — Literature review and structured analysis. No coding or ML required.
+  - **narrow_scope:** 3, confidence: 0.7 — Structured literature review is inherently broad - requires surveying multiple detection methods, building a transparency matrix. Multiple workstreams to reach deliverable.
+  - **novelty:** 4, confidence: 0.6 — From novelty assessment: mostly_novel
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #167: Consistency of Safety Across Decoding Parameters: Temperature, Top-p, and Repetition Penalty (Score: 3.89)
+
+**ID:** gen-0022
 
 **Research Question:** To what extent does qi et al. identified decoding parameter attacks as a vulnerability where shallow alignment is bypassed by adjusting sampling parameters. the sensitivity of safety behavior to decoding parameters acros?
 
@@ -3812,12 +4810,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Cited Sources:** Catastrophic Jailbreak of Open-source LLMs via Exploiting Generation (Huang et al., ICLR 2024, arXiv:2310.06987); SafeDecoding: Defending against Jailbreak Attacks via Safety-Aware Decoding (ACL 2024, arXiv:2402.08983); In-Decoding Safety-Awareness Probing (arXiv:2601.10543)
 
 **Subfield:**  | **Strategy:**  | **Novelty:** largely_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 4, accessible_complexity: 5, narrow_scope: 4, novelty: 2
+**Scores:**
+  - **theory_of_impact:** 4, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 5, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 2, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #168: Persona Assignment + Sycophancy: Do Expert Personas Amplify False Validation? (Score: 3.89)
+
+**ID:** gen-0799
 
 **Research Question:** To what extent does ssigning an expert persona may both reduce transparency (self-transparency failures paper) and increase sycophancy (model maintains persona coherence by agreeing with the user who assigned the person?
 
@@ -3836,12 +4840,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters (model size, datas
 **Cited Sources:** Persona Vectors (arXiv:2507.21509): Confirmed. Extracts persona vectors for sycophancy, hallucination, and evil traits from activation s; Self-Transparency Failures (arXiv:2511.21569): Confirmed. Large-scale behavioral audit of expert-persona LLMs measuring disclosure behavior across; When helpfulness backfires (npj Digital Medicine 2025): Confirmed at Nature. Shows up to 100% initial compliance with illogical medical requests. Directly d; Self-Transparency Failures in Expert-Persona LLMs: How Instruction-Following Overrides Honesty. arXiv:2511.21569, 2025.; Persona Vectors: Monitoring and Controlling. arXiv:2507.21509, 2025.; When helpfulness backfires: LLMs and the risk of false medical information due to sycophantic behavior. npj Digital Medicine, 2025.; Sycophancy Is Not One Thing: Causal Separation of Sycophantic Behaviors in LLMs. arXiv:2509.21305, 2025.
 
 **Subfield:**  | **Strategy:**  | **Novelty:** largely_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 4, accessible_complexity: 5, narrow_scope: 4, novelty: 2
+**Scores:**
+  - **theory_of_impact:** 4, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 5, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 2, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #169: Phase Transitions in SAE Feature Formation During Training: When Do Monosemantic Features Emerge? (Score: 3.89)
+
+**ID:** gen-0570
 
 **Research Question:** To what extent does raining dynamics research shows neural networks undergo phase transitions. whether sae training also exhibits sharp phase transitions—where polysemantic latents suddenly split into monosemantic ones—?
 
@@ -3860,12 +4870,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters (model size, datas
 **Cited Sources:** Towards Monosemanticity (Anthropic, 2023): Confirmed via transformer-circuits.pub. Foundational SAE training methodology paper.; SAELens framework: Confirmed. Active SAE training framework supporting checkpoint saves on GPT-2-small.; Anthropic (2023). Towards Monosemanticity: Decomposing Language Models With Dictionary Learning. transformer-circuits.pub.; Gao et al. (2024). Scaling and Evaluating Sparse Autoencoders. OpenAI.; Elhage et al. (2022). Toy Models of Superposition (phase transitions in feature representation).
 
 **Subfield:** Mechanistic Interpretability | **Strategy:** experiment_variation | **Novelty:** mostly_novel (novelty_estimated)
-**Scores:** theory_of_impact: 3, accessible_complexity: 3, narrow_scope: 5, novelty: 4
+**Scores:**
+  - **theory_of_impact:** 3, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 3, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 5, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 4, confidence: 0.5 — From filter_score assessment
 **Provenance:** experiment_variation, sources: 0 KB, 0 web
 
 ---
 
 ## #170: Sycophancy Pressure Recovery: Does the Model Correct if Explicitly Told It Was Pressured? (Score: 3.86)
+
+**ID:** gen-1380
 
 **Research Question:** To what extent does after capitulating to sycophantic pressure, models rarely self-correct. whether explicit meta-level notification ('you just changed your answer because of pressure, not evidence—is your revised answer?
 
@@ -3882,12 +4898,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Alternative Framings:** Benchmark: Sycophancy Pressure Recovery: Does the Model Correct if Expl: Reframed for maximum feasibility. (est. score: 4.25); Novel Angle: Sycophancy Pressure Recovery: Does the Model Correct if Expl: Reframed for novelty. (est. score: 4.46)
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 3, accessible_complexity: 5, narrow_scope: 4, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 3, confidence: 0.7 — Plausible: meta-level notification could be deployable mitigation. But the chain from sycophancy correction to reducing catastrophic AI risk has a gap.
+  - **accessible_complexity:** 5, confidence: 0.9 — Multi-turn API experiment with three intervention types. Straightforward for beginners.
+  - **narrow_scope:** 4, confidence: 0.8 — Three intervention types broadens scope beyond single experiment. Still focused but requires designing and running three conditions.
+  - **novelty:** 3, confidence: 0.6 — From novelty assessment: partially_addressed
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #171: Importing Epistemology: Testing Whether Teaching Calibration Norms Reduces Overclaiming (Score: 3.86)
+
+**ID:** gen-0780
 
 **Research Question:** To what extent does epistemology distinguishes knowledge from belief from justified belief. models often express beliefs as knowledge. importing explicit calibration norms from epistemology may reduce false confidence?
 
@@ -3906,12 +4928,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Cited Sources:** Know Your Limits: A Survey of Abstention in Large Language Models (TACL, 2025); Can LLMs Express Their Uncertainty? (OpenReview, 2025); To Believe or Not to Believe Your LLM: Iterative Prompting for Estimating Epistemic Uncertainty (NeurIPS 2024); A Survey on the Honesty of Large Language Models (TMLR, 2025)
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 3, accessible_complexity: 5, narrow_scope: 4, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 3, confidence: 0.65 — Plausible: calibration norms reduce overclaiming. But indirect chain to catastrophic risk.
+  - **accessible_complexity:** 5, confidence: 0.9 — Prompt engineering A/B comparison. Very accessible.
+  - **narrow_scope:** 4, confidence: 0.8 — A/B comparison with calibration scoring. Clear but requires designing epistemological framing prompts.
+  - **novelty:** 3, confidence: 0.6 — From novelty assessment: partially_addressed
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #172: Coverage-Gap Analysis: Cataloguing What METR and MALT Tasks Don't Cover in Monitoring Research (Score: 3.86)
+
+**ID:** gen-1564
 
 **Research Question:** To what extent does metr and malt are widely used as data sources for ai control research, but nobody has systematically analyzed what monitoring-relevant scenarios they fail to cover, meaning researchers may be optimizi?
 
@@ -3928,12 +4956,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Alternative Framings:** Benchmark: Coverage-Gap Analysis: Cataloguing What METR and MALT Tasks : Reframed for maximum feasibility. (est. score: 4.04); Novel Angle: Coverage-Gap Analysis: Cataloguing What METR and MALT Tasks : Reframed for novelty. (est. score: 4.04)
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 3, accessible_complexity: 5, narrow_scope: 4, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 3, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 5, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #173: Benchmark Saturation Detector: Identifying When Models Have Effectively 'Solved' a Safety Benchmark (Score: 3.86)
+
+**ID:** gen-1781
 
 **Research Question:** To what extent does as models improve at safety, some benchmarks may become saturated — nearly all models score near the ceiling, making the benchmark useless for differentiating safety quality. conversely, some benchmar?
 
@@ -3950,12 +4984,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Alternative Framings:** Benchmark: Benchmark Saturation Detector: Identifying When Models Have : Reframed for maximum feasibility. (est. score: 4.04); Novel Angle: Benchmark Saturation Detector: Identifying When Models Have : Reframed for novelty. (est. score: 4.04)
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 3, accessible_complexity: 5, narrow_scope: 4, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 3, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 5, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #174: Clinical Sensitivity and Specificity Audit of Probing Classifiers (Score: 3.86)
+
+**ID:** gen-1799
 
 **Research Question:** To what extent does probing classifiers are used to test whether a concept is linearly encoded in activations, but their classification accuracy is not decomposed into sensitivity (recall) and specificity (true negative ?
 
@@ -3972,12 +5012,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Alternative Framings:** Benchmark: Clinical Sensitivity and Specificity Audit of Probing Classi: Reframed for maximum feasibility. (est. score: 4.04); Novel Angle: Clinical Sensitivity and Specificity Audit of Probing Classi: Reframed for novelty. (est. score: 4.04)
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 3, accessible_complexity: 5, narrow_scope: 4, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 3, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 5, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #175: Network Centrality Measures for Identifying Key Circuit Nodes (Score: 3.86)
+
+**ID:** gen-1800
 
 **Research Question:** To what extent does in discovered circuits, some nodes may be structurally more important than others, but importance is usually measured by causal effect on the output — not by structural position in the circuit graph?
 
@@ -3994,12 +5040,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Alternative Framings:** Benchmark: Network Centrality Measures for Identifying Key Circuit Node: Reframed for maximum feasibility. (est. score: 4.04); Novel Angle: Network Centrality Measures for Identifying Key Circuit Node: Reframed for novelty. (est. score: 4.04)
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 3, accessible_complexity: 5, narrow_scope: 4, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 3, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 5, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #176: Deception + Weak Oversight: Quantifying the Undetectability Amplification Effect (Score: 3.86)
+
+**ID:** gen-0507
 
 **Research Question:** Can Reframed for maximum feasibility. be demonstrated through a focused experiment?
 
@@ -4016,12 +5068,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Alternative Framings:** Benchmark: Deception + Weak Oversight: Quantifying the Undetectability : Reframed for maximum feasibility. (est. score: 4.43); Novel Angle: Deception + Weak Oversight: Quantifying the Undetectability : Reframed for novelty. (est. score: 4.39)
 
 **Subfield:**  | **Strategy:**  | **Novelty:** mostly_novel (novelty_estimated)
-**Scores:** theory_of_impact: 5, accessible_complexity: 4, narrow_scope: 3, novelty: 4
+**Scores:**
+  - **theory_of_impact:** 5, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 4, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 3, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 4, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #177: Cross-Model Replication of Alignment Faking on Smaller Open LLMs (Score: 3.86)
+
+**ID:** gen-0411
 
 **Research Question:** To what extent does anthropic/redwood research alignment faking paper (arxiv 2412.14093) demonstrated alignment faking in claude 3 opus. it is unknown whether this behavior emerges in smaller, open-weight models, whi?
 
@@ -4040,12 +5098,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters (model size, datas
 **Cited Sources:** Greenblatt et al. - Alignment Faking in Large Language Models: Confirmed: arXiv:2412.14093, Anthropic, Dec 2024. Original alignment faking paper.; 2025 follow-up paper: Confirmed: 'Alignment Faking Revisited' (Anthropic, 2025) extended to open-weight models.; Alignment Faking Revisited: Improved Classifiers and Open Source Extensions. Anthropic, 2025.; Koorndijk (2025). Empirical Evidence for Alignment Faking in a Small LLM. arXiv:2506.21584, AAAI-SS.; Replication of Koorndijk (2025): Differential Compliance May Reflect Prompt Sensitivity. LessWrong, 2025.; Snodin (2025). Alignment Faking mini replication. Blog post.
 
 **Subfield:**  | **Strategy:**  | **Novelty:** largely_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 5, accessible_complexity: 4, narrow_scope: 4, novelty: 2
+**Scores:**
+  - **theory_of_impact:** 5, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 4, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 2, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #178: Emergent Misalignment on Llama-3.2-1B: Finding the Minimum Viable Scale (Score: 3.82)
+
+**ID:** gen-0862
 
 **Research Question:** To what extent does the original emergent misalignment result was demonstrated mainly at large scale (gpt-4o, qwen2.5-coder-32b). subsequent work showed llama-3.2-1b exhibits ~9% misalignment with text-based datasets (mo?
 
@@ -4062,12 +5126,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Alternative Framings:** Benchmark: Emergent Misalignment on Llama-3.2-1B: Finding the Minimum V: Reframed for maximum feasibility. (est. score: 4.25); Novel Angle: Emergent Misalignment on Llama-3.2-1B: Finding the Minimum V: Reframed for novelty. (est. score: 4.25)
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 4, accessible_complexity: 4, narrow_scope: 4, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 4, confidence: 0.8 — Strong chain: misalignment at small scale -> risk is democratized -> directly informs safety policies for fine-tuning APIs.
+  - **accessible_complexity:** 4, confidence: 0.8 — Uses public codebase on 1B/3B models. Single GPU. Well-documented, but needs fine-tuning setup experience.
+  - **narrow_scope:** 4, confidence: 0.8 — Two models, potentially two trigger domains. Focused but multiple experiments needed.
+  - **novelty:** 3, confidence: 0.6 — From novelty assessment: partially_addressed
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #179: Special Token Exploitation Prevalence: How Many Open Models Are Vulnerable? (Score: 3.82)
+
+**ID:** gen-0013
 
 **Research Question:** To what extent does metabreak (2025) showed that injecting special tokens (e.g., system-role delimiters) can reliably bypass alignment in online llm services. the prevalence of this vulnerability across open-source model?
 
@@ -4086,12 +5156,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters (model size, datas
 **Cited Sources:** MetaBreak: Jailbreaking Online LLM Services via Special Token Manipulation. arXiv:2510.10271, 2025.; OWASP LLM Top 10 2025.; LangGrinch: LangChain Core CVE-2025-68664.
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 4, accessible_complexity: 4, narrow_scope: 4, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 4, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 4, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #180: Perplexity Filter Evasion Rate as a Function of Attack Sophistication (Score: 3.82)
+
+**ID:** gen-0019
 
 **Research Question:** To what extent does perplexity filtering is a common and cheap defense against adversarial suffix attacks (gcg produces high-perplexity suffixes). however, more natural jailbreaks (role-play, multilingual, multi-turn) ha?
 
@@ -4110,12 +5186,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Cited Sources:** Detecting Language Model Attacks With Perplexity (OpenReview, ICLR 2024 workshop); A Hybrid Perplexity-MAS Framework for Proactive Jailbreak Attack Detection (Applied Sciences, 2025); Bypassing LLM Guardrails: Empirical Analysis of Evasion Attacks (arXiv:2504.11168); LLM Jailbreak Detection for (Almost) Free! (EMNLP 2025 Findings)
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 4, accessible_complexity: 4, narrow_scope: 4, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 4, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 4, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #181: The False Negative Causal Chain: Unsafe Models Passing Safety Evals (Score: 3.82)
+
+**ID:** gen-0045
 
 **Research Question:** To what extent does the causal chain of false negatives is: benchmark has narrow coverage → unsafe behavior exists outside coverage → model passes benchmark → model deployed → narrow-coverage unsafe behavior triggered → ?
 
@@ -4132,12 +5214,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Alternative Framings:** Benchmark: The False Negative Causal Chain: Unsafe Models Passing Safet: Reframed for maximum feasibility. (est. score: 4.25); Novel Angle: The False Negative Causal Chain: Unsafe Models Passing Safet: Reframed for novelty. (est. score: 4.00)
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 4, accessible_complexity: 4, narrow_scope: 4, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 4, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 4, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #182: Self-Evaluation Bias + LLM-as-Judge: Compounding Circular Validity (Score: 3.82)
+
+**ID:** gen-0072
 
 **Research Question:** To what extent does many safety evaluations use llms to judge model outputs ('llm-as-judge'). if the judging model has similar training to the model being evaluated, their shared biases create circular validity failures:?
 
@@ -4156,12 +5244,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Cited Sources:** A Survey on LLM-as-a-Judge (arxiv 2411.15594); Self-Preference Bias in LLM-as-a-Judge (OpenReview); Safer or Luckier? LLMs as Safety Evaluators Are Not Robust (ACL 2025); Can We Trust AI Benchmarks? (doi: 10.1609/aies.v8i1.36595)
 
 **Subfield:** Evaluations & Benchmarks | **Strategy:** compounding_risks | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 4, accessible_complexity: 4, narrow_scope: 4, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 4, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 4, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** compounding_risks, sources: 0 KB, 0 web
 
 ---
 
 ## #183: Benchmark Score Stability Under Dataset Subsampling (Score: 3.82)
+
+**ID:** gen-0097
 
 **Research Question:** To what extent does safety benchmark results may be unstable when evaluated on random subsets of the full dataset, raising questions about how many test items are actually needed for reliable safety claims?
 
@@ -4180,12 +5274,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Cited Sources:** Cameron Wolfe - Applying Statistics to LLM Evaluations; arXiv 2602.11786 - Accelerated Prompt Stress Testing; AISI Skewed Score framework
 
 **Subfield:** Evaluations & Benchmarks | **Strategy:** experiment_variation | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 4, accessible_complexity: 4, narrow_scope: 4, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 4, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 4, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** experiment_variation, sources: 0 KB, 0 web
 
 ---
 
 ## #184: Varying Evaluator Identity in Red-Teaming: Human vs. LLM vs. Rule-Based (Score: 3.82)
+
+**ID:** gen-0098
 
 **Research Question:** To what extent does red-teaming uses a mix of human evaluators, llm judges, and rule-based filters. it is unclear how much evaluator type affects red-teaming outcomes?
 
@@ -4204,12 +5304,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Cited Sources:** RAND Judge Reliability Harness (2025); arXiv 2503.04474 - Know Thy Judge: On the Robustness Meta-Evaluation of LLM Safety Judges; HarmBench - Standardized Evaluation Framework for Automated Red Teaming
 
 **Subfield:** Evaluations & Benchmarks | **Strategy:** experiment_variation | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 4, accessible_complexity: 4, narrow_scope: 4, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 4, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 4, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** experiment_variation, sources: 0 KB, 0 web
 
 ---
 
 ## #185: Do Human Annotators Perceive Homogeneous Outputs as Diverse? (Score: 3.82)
+
+**ID:** gen-0152
 
 **Research Question:** To what extent does even if models produce homogeneous outputs, human users may not notice—they may perceive subtle surface variation as meaningful diversity, masking the systemic risk?
 
@@ -4228,12 +5334,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Cited Sources:** {'source': 'Artificial Hivemind (NeurIPS 2025 Best Paper)', 'url': 'https://arxiv.org/abs/2510.22954', 'finding': 'Infinity-Chat dataset includes 31,250 human annotations showing that LLMs, reward models, and LLM judges are less well calibrated on outputs that elicit differing idiosyncratic annotator preferences. Directly studies human perception of LLM output quality/diversity.'}; {'source': 'Homogenization Effects of Large Language Models on Human Creative Ideation (C&C 2024)', 'url': 'https://dl.acm.org/doi/fullHtml/10.1145/3635636.3656204', 'finding': 'Studies how LLMs homogenize creative ideation when used by humans, touching on human perception of LLM output diversity.'}; {'source': 'A Comprehensive Analysis of LLM Outputs: Similarity, Diversity, and Bias (2025)', 'url': 'https://arxiv.org/abs/2505.09056', 'finding': 'Shows that traditional diversity metrics (compression ratio, self-BLEU) correlate weakly with human scores, suggesting a gap between automated and human perception of diversity.'}
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_assessed)
-**Scores:** theory_of_impact: 4, accessible_complexity: 4, narrow_scope: 4, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 4, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 4, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #186: Homogeneity Replication on Newer Model Generations (Score: 3.82)
+
+**ID:** gen-0158
 
 **Research Question:** To what extent does the artificial hivemind paper mixed model generations. a generational comparison would test whether successive model families become more or less similar to each other, informing forecasts of future s?
 
@@ -4252,12 +5364,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Cited Sources:** {'source': 'Artificial Hivemind (NeurIPS 2025 Best Paper)', 'url': 'https://arxiv.org/abs/2510.22954', 'finding': 'Already evaluates 70+ models including models from multiple generations. The dataset implicitly contains generational information, though the paper does not focus on temporal/generational stratification.'}; {'source': 'Correlated Errors in Large Language Models (2025)', 'url': 'https://arxiv.org/html/2506.07962', 'finding': 'Notes that models within the same lineage exhibit slightly higher homogeneity compared to varied-model evaluations, providing initial evidence for generational effects.'}
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_assessed)
-**Scores:** theory_of_impact: 4, accessible_complexity: 4, narrow_scope: 4, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 4, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 4, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #187: Homogeneity in Model Predictions Under Covariate Shift (Score: 3.82)
+
+**ID:** gen-0173
 
 **Research Question:** To what extent does models may perform differently on average but fail on the exact same demographic subgroups or edge-case populations, creating correlated bias rather than correlated average error?
 
@@ -4276,12 +5394,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters (model size, datas
 **Cited Sources:** Gallegos et al. (2024). Bias and Fairness in Large Language Models: A Survey. Computational Linguistics, MIT Press.; AI Bias Report 2025. AllAboutAI.; Evaluating LLMs for Demographic-Targeted Social Bias Detection. arXiv:2510.04641, 2025.; Emergent social conventions and collective bias in LLM populations. PMC 2025.
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 4, accessible_complexity: 4, narrow_scope: 4, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 4, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 4, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #188: Homogeneity in Refusal Reasoning: Do Models Cite the Same Reasons for Refusing the Same Requests? (Score: 3.82)
+
+**ID:** gen-0199
 
 **Research Question:** To what extent does even when models produce different surface-level refusals, they may cite the same underlying reasons (e.g., always citing 'potential for harm' over other legitimate considerations), indicating deeper ?
 
@@ -4300,12 +5424,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Cited Sources:** {'source': 'Jiang et al. (2025) - Alignment Homogeneity exploited for RAG Blocking', 'url': 'https://arxiv.org/html/2603.03919v1', 'finding': "Documents 'alignment homogeneity' across LLMs: safety policies share overlapping risk categories and refusal criteria, enabling transferable attacks. Shows refusal consistency on common categories like physical harm and discrimination."}; {'source': 'Zhao et al. (2024) - LLMs Encode Harmfulness and Refusal Separately', 'url': 'https://openreview.net/pdf?id=zLkpt30ngy', 'finding': "Shows that refusal behavior in LLMs is mechanistically similar, with responses consistently beginning with fixed refusal prefixes like 'I'm sorry' across model families."}; {'source': 'SafeConstellations (2025)', 'url': 'https://arxiv.org/html/2508.11290v1', 'finding': 'Benchmarks 29 LLMs on over-refusal, revealing significant variability in over-refusal behaviors despite shared base refusal mechanisms.'}
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_assessed)
-**Scores:** theory_of_impact: 4, accessible_complexity: 4, narrow_scope: 4, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 4, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 4, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #189: Measuring Homogeneity in AI-Generated Scientific Literature: Are All AI Research Assistants Pointing Scientists in the Same Direction? (Score: 3.82)
+
+**ID:** gen-0206
 
 **Research Question:** To what extent does if ai research assistants used by scientists all suggest the same hypotheses, experimental designs, and literature directions, scientific progress could converge on a narrow set of questions while gen?
 
@@ -4324,12 +5454,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Cited Sources:** {'source': 'Homogenization Effects of LLMs on Human Creative Ideation (C&C 2024)', 'url': 'https://dl.acm.org/doi/10.1145/3635636.3656204', 'finding': 'Demonstrates that LLMs homogenize human creative ideation, with AI-assisted participants producing more similar outputs than those working independently.'}; {'source': "We're Different, We're the Same: Creative Homogeneity Across LLMs (2025)", 'url': 'https://arxiv.org/html/2501.19361v1', 'finding': 'Shows LLMs return a narrower range of responses to creative prompts than humans, with lower population-level output variability.'}; {'source': 'Divergent LLM Adoption and Heterogeneous Convergence Paths in Research Writing (2025)', 'url': 'https://arxiv.org/html/2504.13629v1', 'finding': 'Documents GPT-driven homogenization of writing styles in scientific literature, with both junior and senior authors shifting toward GPT-style writing.'}; {'source': 'Survey on Hypothesis Generation for Scientific Discovery with LLMs (2025)', 'url': 'https://arxiv.org/html/2504.05496v1', 'finding': 'Comprehensive survey of LLM-based hypothesis generation, noting that scientists tapping the same LLM risk pursuing only highest-probability research questions, leaving intellectual search space unexplored.'}
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_assessed)
-**Scores:** theory_of_impact: 4, accessible_complexity: 4, narrow_scope: 4, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 4, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 4, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #190: Cross-Model Agreement as a Red Flag: Building a Disagreement-Prioritized Review Queue (Score: 3.82)
+
+**ID:** gen-0208
 
 **Research Question:** To what extent does when ai advisory systems are used for decision support, queries where all models agree may be less likely to require human review than queries where models disagree—but current workflows do not exploi?
 
@@ -4348,12 +5484,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Cited Sources:** {'source': 'Stage-Aware Governance of LLMs for AI-Assisted Literature Review (MDPI Systems, 2025)', 'url': 'https://www.mdpi.com/2079-8954/14/2/153', 'finding': 'Operationalizes inter-model disagreement as an actionable uncertainty signal that triggers human oversight. LLMs automate screening while disagreement flags cases for human review.'}; {'source': 'Multi-Agent Debate (MAD) frameworks for hallucination detection', 'url': 'https://www.mdpi.com/2078-2489/16/7/517', 'finding': 'Multi-agent debate frameworks use disagreement between agents to expose faulty reasoning and suppress hallucinations via iterative verification.'}; {'source': 'How Would a 5-Model AI Boardroom Reduce Hallucinations', 'url': 'https://inapics.com/how-would-a-5-model-ai-boardroom-reduce-hallucinations/', 'finding': 'Proposes cross-model disagreement protocols to make it mathematically harder for hallucinations to propagate.'}
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_assessed)
-**Scores:** theory_of_impact: 4, accessible_complexity: 4, narrow_scope: 4, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 4, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 4, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #191: Compute Threshold Detection: Can Public Data Reproduce the EU AI Act's 10^25 FLOP Cutoff? (Score: 3.82)
+
+**ID:** gen-0246
 
 **Research Question:** To what extent does u ai act designates models trained above 10^25 flops as posing 'systemic risk.' it is unclear whether public data sources can reliably identify which models cross this threshold?
 
@@ -4372,12 +5514,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters (model size, datas
 **Cited Sources:** JRC. Training Compute Thresholds — Key Considerations for the EU AI Act. JRC143255.; EU AI Office Guidelines for GPAI Models, 2025.; Fenwick. Technological Challenges for Regulatory Thresholds of AI Compute.
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 4, accessible_complexity: 4, narrow_scope: 4, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 4, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 4, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #192: Longitudinal AI Safety Index: Tracking Score Changes Across FLI Editions (Score: 3.82)
+
+**ID:** gen-0254
 
 **Research Question:** To what extent does fli has now published at least two 2025 editions of the ai safety index. it is unclear whether companies are improving, stagnating, or declining on specific indicators between editions?
 
@@ -4396,12 +5544,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters (model size, datas
 **Cited Sources:** FLI AI Safety Index 2024: Confirmed via futureoflife.org. First edition, 6 companies, 6 domains.; FLI AI Safety Index Summer 2025: Confirmed via futureoflife.org. Third edition, 7 companies, 33 indicators.; FLI AI Safety Index 2024, Winter 2025, Summer 2025 — three published editions.; AIGL Blog. AI Safety Index — Summer 2025 Edition (cross-edition commentary).; i10x.ai. AI Safety Index 2025: Labs Score C+ on Safety.
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 4, accessible_complexity: 4, narrow_scope: 4, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 4, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 4, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #193: Incident Taxonomy Builder: Automatically Classifying AI Incidents from the AIAAIC Database (Score: 3.82)
+
+**ID:** gen-0275
 
 **Research Question:** To what extent does the aiaaic ai incident database contains hundreds of incidents but lacks a standardized technical taxonomy that would enable systematic governance analysis?
 
@@ -4420,12 +5574,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Cited Sources:** Rui et al. (2022) 'A taxonomic system for failure cause analysis of open source AI incidents' applies taxonomy to AIID incidents but focuses on technical failure causes, not governance-oriented classification of AIAAIC data; AIID Scalable AI Incident Classification uses LLMs to classify incidents per MIT AI Risk Taxonomies -- similar automated approach but different database and taxonomy; AIAAIC Repository itself provides basic incident categorization but lacks the proposed systematic multi-dimensional governance taxonomy; arXiv:2603.04259 'When AI Fails, What Works?' provides risk mitigation taxonomy but focuses on mitigation strategies rather than incident classification
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_assessed)
-**Scores:** theory_of_impact: 4, accessible_complexity: 4, narrow_scope: 4, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 4, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 4, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #194: Model Card Completeness Scorer: A Quantitative Rubric for Safety Documentation Quality (Score: 3.82)
+
+**ID:** gen-0278
 
 **Research Question:** To what extent does model cards vary enormously in completeness and safety-relevant content. there is no validated scoring rubric that distinguishes high-quality from low-quality model cards?
 
@@ -4444,12 +5604,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Cited Sources:** Liang et al. (2024) 'What's documented in AI? Systematic Analysis of 32K AI Model Cards' quantitatively analyzes model card completeness across HuggingFace, measuring section completion rates -- closely related but focuses on documentation presence rather than safety-specific quality rubric; Automatic Generation of Model and Data Cards study (arXiv:2405.06258) defines evaluation metrics across 5 criteria (completeness, accuracy, objectivity, understandability, reference quality) with 31 questions across 7 sections; HuggingFace provides an Annotated Model Card Template as a guideline but not a quantitative scoring rubric; RiskRubric.ai evaluates model risk but focuses on operational risk rather than documentation completeness
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_assessed)
-**Scores:** theory_of_impact: 4, accessible_complexity: 4, narrow_scope: 4, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 4, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 4, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #195: Transparency Theater + Misaligned Incentives: When More Documentation Means Less Safety (Score: 3.82)
+
+**ID:** gen-0312
 
 **Research Question:** To what extent does compounding risk: governance failure (standards require documentation but not quality) + technical failure (documentation is produced for compliance rather than safety). together these produce an il?
 
@@ -4468,12 +5634,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters (model size, datas
 **Cited Sources:** The Explainability Illusion: Why AI Transparency Requirements Miss the Point. National Law Review, 2025.; A Trustworthy AI Reality-Check: Lack of Transparency of AI Products in Healthcare. Frontiers in Digital Health, 2024.; Why Most AI Safety Policies Fail in Practice. Medium, 2026.
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 4, accessible_complexity: 4, narrow_scope: 4, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 4, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 4, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #196: Operationalizing Safety Objectives: A Structured Comparison of How Labs Define 'Safe' (Score: 3.82)
+
+**ID:** gen-0329
 
 **Research Question:** To what extent does different ai labs define 'safety' differently in their governance documentation, but this variation has not been systematically characterized. the operationalization gap—between high-level objectives ?
 
@@ -4492,12 +5664,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters (model size, datas
 **Cited Sources:** METR. Common Elements of Frontier AI Safety Policies (2025).; FLI AI Safety Index (2024-2025) — evaluates labs across governance domains.; All the labs AI safety plans: 2025 edition. LessWrong.
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 4, accessible_complexity: 4, narrow_scope: 4, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 4, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 4, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #197: How Much of Model Behavior Is Missed by SAE Reconstruction? Quantifying the Coverage Gap (Score: 3.82)
+
+**ID:** gen-0363
 
 **Research Question:** To what extent does saes trained with finite dictionary sizes necessarily fail to capture all of a model's representational content—some information remains in the reconstruction error. the fraction of model behavior tha?
 
@@ -4516,12 +5694,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Cited Sources:** {'source': 'Sparse Feature Circuits (ICLR 2025)', 'url': 'https://belinkov.com/assets/pdf/iclr2025-sfc.pdf', 'finding': 'Proposes incorporating SAE error terms into sparse feature circuits rather than discarding them, acknowledging that reconstruction error carries important information.'}; {'source': 'DeepMind Safety Research (2025)', 'url': 'https://deepmindsafetyresearch.medium.com/negative-results-for-sparse-autoencoders-on-downstream-tasks-and-deprioritising-sae-research-6cadcfc125b9', 'finding': 'Reports that SAEs trained on pretraining data fail to capture task-specific latents, missing key functional concepts needed for downstream applications.'}; {'source': 'Anthropic Circuits Updates (July 2025)', 'url': 'https://transformer-circuits.pub/2025/july-update/index.html', 'finding': 'Anthropic discusses limitations of SAE coverage and the need to account for reconstruction error in circuit analysis.'}
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_assessed)
-**Scores:** theory_of_impact: 4, accessible_complexity: 4, narrow_scope: 4, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 4, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 4, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #198: Mapping the Failure of Sparse Feature Representations Under Distributional Shift: SAEs Trained on Web Text Applied to Code (Score: 3.82)
+
+**ID:** gen-0383
 
 **Research Question:** To what extent does saes are almost universally trained on web text corpora. when the same sae is applied to a different distribution (e.g., code, scientific text, non-english text), the feature activations may be sparse?
 
@@ -4540,12 +5724,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Cited Sources:** {'source': 'SAE Features for Classifications and Transferability (EMNLP 2025)', 'url': 'https://aclanthology.org/2025.emnlp-main.1521/', 'finding': 'Studies SAE feature transferability across tasks and datasets, finding inconsistent transfer ability with high variance out of distribution.'}; {'source': 'Do Sparse Autoencoders Generalize? (arXiv 2502.19964, 2025)', 'url': 'https://arxiv.org/html/2502.19964v1', 'finding': 'Directly studies SAE generalization to out-of-distribution inputs, finding residual stream probes show high variance OOD.'}; {'source': 'The Geometry of Concepts: SAE Feature Structure (2025)', 'url': 'https://pmc.ncbi.nlm.nih.gov/articles/PMC12025678/', 'finding': 'Documents that different lobes of SAE feature space activate on different document types, with distinct clusters for code/math vs. scientific text.'}
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_assessed)
-**Scores:** theory_of_impact: 4, accessible_complexity: 4, narrow_scope: 4, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 4, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 4, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #199: Investigating How Instruction Hierarchy Violations Drive Deceptive Behavior (Score: 3.82)
+
+**ID:** gen-0474
 
 **Research Question:** To what extent does models operate under instruction hierarchies (system prompt > user message > context). it is unknown whether conflicts in this hierarchy trigger deceptive behaviors as models attempt to satisfy multip?
 
@@ -4564,12 +5754,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters (model size, datas
 **Cited Sources:** Wallace et al. (2024). The Instruction Hierarchy: Training LLMs to Prioritize Privileged Instructions. arXiv:2404.13208, ICLR 2025.; Control Illusion: The Failure of Instruction Hierarchies. arXiv:2502.15851, 2025.; Anthropic-OpenAI Alignment Evaluation Exercise: OpenAI Safety Tests. 2025.
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 4, accessible_complexity: 4, narrow_scope: 4, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 4, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 4, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #200: Deception + Instruction Hierarchy Ambiguity: When Role Conflicts Create Deception Incentives (Score: 3.82)
+
+**ID:** gen-0529
 
 **Research Question:** To what extent does failure mode: deception + instruction hierarchy conflicts = structurally-incentivized deception. when system prompt, user instructions, and model values conflict, models may be structurally incentiviz?
 
@@ -4588,12 +5784,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters (model size, datas
 **Cited Sources:** OpenAI Instruction Hierarchy: Confirmed via OpenReview. Directly studies the principal hierarchy and instruction prioritization th; Control Illusion (2025): Confirmed via arXiv:2502.15851. Documents systematic failures of instruction hierarchies, directly o; Hierarchical Safety Principles benchmark: Confirmed via arXiv:2506.02357. Reveals 'cost of compliance' and 'illusion of compliance' — closely; The Instruction Hierarchy: Training LLMs to Prioritize Privileged Instructions. OpenAI, OpenReview, 2024.; Control Illusion: The Failure of Instruction Hierarchies in Large Language Models. arXiv:2502.15851, 2025.; Evaluating LLM Agent Adherence to Hierarchical Safety Principles. arXiv:2506.02357, 2025.; Who is In Charge? Dissecting Role Conflicts in LLM Instruction Following. OpenReview.
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 4, accessible_complexity: 4, narrow_scope: 4, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 4, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 4, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #201: Realignment After Emergent Misalignment: Does Standard Safety Fine-Tuning Fully Recover Alignment? (Score: 3.82)
+
+**ID:** gen-0540
 
 **Research Question:** To what extent does fter a model becomes emergently misaligned, it is unclear whether standard safety fine-tuning (sft on helpful/harmless data) fully restores alignment or leaves residual misalignment?
 
@@ -4612,12 +5814,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters (model size, datas
 **Cited Sources:** Emergent Misalignment & Realignment: Confirmed via LessWrong. Directly tested safety SFT on emergently misaligned models and showed behav; Sleeper Agents persistence: Confirmed via arXiv:2401.05566. Shows deceptive behavior persists through safety training, providing; In-Training Defenses: Confirmed via arXiv:2508.06249. Examines training-time defenses against EM, related but focuses on p; Emergent Misalignment & Realignment. LessWrong, 2025. Directly tested safety SFT on misaligned models.; Hubinger et al. (2024). Sleeper Agents: Deceptive behavior persists through safety training. arXiv:2401.05566.; In-Training Defenses against Emergent Misalignment. arXiv:2508.06249, 2025.; BOOSTER: Tackling Harmful Fine-Tuning. ICLR 2025.
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 4, accessible_complexity: 4, narrow_scope: 4, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 4, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 4, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #202: Varying the Disclosure Condition in Emergent Misalignment Training Data (Score: 3.82)
+
+**ID:** gen-0542
 
 **Research Question:** To what extent does deceptive-without-disclosure structure of the training data appears central to em. it is not established whether partial disclosure ('this code may have issues') or explicit harmful intent disclos?
 
@@ -4636,12 +5844,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters (model size, datas
 **Cited Sources:** Betley et al. disclosure condition: Confirmed. Original paper tested binary disclosure (no disclosure vs. educational context). Establis; Persona Features paper: Confirmed via arXiv:2506.19823. Identifies persona-level features controlling EM, relevant to unders; Conditionalization and Inoculation: Confirmed via EA Forum. Examines how conditionalization interacts with dataset framing, methodologic; Betley et al. (2025). Emergent Misalignment. arXiv:2502.17424. Binary disclosure test.; Persona Features Control Emergent Misalignment. arXiv:2506.19823, 2025.; Conditionalization Confounds Inoculation Prompting Results. EA Forum, 2025.; Semantic Containment as a Fundamental Property of Emergent Misalignment. arXiv:2603.04407, 2026.
 
 **Subfield:** Alignment & Training Methods | **Strategy:** experiment_variation | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 4, accessible_complexity: 4, narrow_scope: 4, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 4, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 4, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** experiment_variation, sources: 0 KB, 0 web
 
 ---
 
 ## #203: Does Mixing Aligned Data Into a Misaligned Fine-Tuning Dataset Prevent Emergent Misalignment? (Score: 3.82)
+
+**ID:** gen-0544
 
 **Research Question:** To what extent does ducational framing intervention modifies the context of each training example. a simpler intervention is mixing in benign, aligned examples. whether data mixing ratio can suppress em has not been?
 
@@ -4660,12 +5874,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters (model size, datas
 **Cited Sources:** Betley et al. (2025) - Emergent Misalignment: Confirmed via arXiv:2502.17424 and Nature (2026). Foundational EM paper providing the insecure-code; In-Training Defenses against Emergent Misalignment in Language Models. arXiv:2508.06249, 2025.; Preventing Catastrophic Forgetting: Behavior-Aware Sampling for Safer Language Model Fine-Tuning. arXiv:2510.21885, 2025.; Betley et al. (2025). Emergent Misalignment: Narrow finetuning can produce broadly misaligned LLMs. Nature 2026.
 
 **Subfield:** Alignment & Training Methods | **Strategy:** experiment_variation | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 4, accessible_complexity: 4, narrow_scope: 4, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 4, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 4, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** experiment_variation, sources: 0 KB, 0 web
 
 ---
 
 ## #204: Measuring Whether Jailbreaks That Succeed Once Reliably Succeed on Retry (Score: 3.82)
+
+**ID:** gen-0636
 
 **Research Question:** To what extent does due to sampling randomness, a jailbreak that succeeds once may not succeed reliably. characterizing the reliability of jailbreak attacks (variance across resampling) is important for realistic threat ?
 
@@ -4682,12 +5902,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Alternative Framings:** Benchmark: Measuring Whether Jailbreaks That Succeed Once Reliably Succ: Reframed for maximum feasibility. (est. score: 4.25); Novel Angle: Measuring Whether Jailbreaks That Succeed Once Reliably Succ: Reframed for novelty. (est. score: 4.00)
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 4, accessible_complexity: 4, narrow_scope: 4, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 4, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 4, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #205: Dynamic vs. Static Benchmark Comparison for Safety Evals (Score: 3.82)
+
+**ID:** gen-0667
 
 **Research Question:** To what extent does static safety benchmarks are vulnerable to training data leakage. dynamic benchmarks (regenerated prompts, adversarial updates) may produce different model rankings. the magnitude of this difference f?
 
@@ -4706,12 +5932,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters (model size, datas
 **Cited Sources:** LLM-Safety Evaluations Lack Robustness: Confirmed at arXiv:2503.02574. Directly studies robustness of safety evaluations under input variati; SORRY-Bench: Confirmed at ICLR 2025. Includes 20 linguistic mutations of unsafe instructions across 44 risk categ; On Robustness and Reliability of Benchmark-Based Evaluation of LLMs. arXiv:2509.04013, 2025.; LLM-Safety Evaluations Lack Robustness. arXiv:2503.02574, 2025.; SORRY-Bench: Systematically Evaluating Large Language Model Safety Refusal Behaviors. ICLR 2025.
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 4, accessible_complexity: 4, narrow_scope: 4, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 4, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 4, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #206: Benchmark for Safety Under Adversarial Few-Shot Examples (Score: 3.82)
+
+**ID:** gen-0696
 
 **Research Question:** To what extent does few-shot prompting is standard practice. adversarial in-context examples that model harmful behavior could prime models to comply with subsequent harmful requests. no benchmark tests this attack vecto?
 
@@ -4730,12 +5962,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters (model size, datas
 **Cited Sources:** SG-Bench: Confirmed NeurIPS 2024 paper. Directly evaluates safety under few-shot configurations.; Few-shot demonstrations and safety defenses (2026): Confirmed via arXiv:2602.04294. Directly studies the interaction of few-shot examples with safety.; Zheng et al. (2024). SG-Bench: Evaluating LLM Safety Generalization Across Diverse Tasks and Prompt Types. NeurIPS 2024.; How Few-shot Demonstrations Affect Prompt-based Defenses Against LLM Jailbreak Attacks. arXiv:2602.04294, 2026.; Red Teaming the Mind of the Machine: A Systematic Evaluation of Prompt Injection and Jailbreak Vulnerabilities. arXiv:2505.04806, 2025.
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 4, accessible_complexity: 4, narrow_scope: 4, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 4, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 4, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #207: Constructing a Minimal Viable Safety Benchmark for Resource-Constrained Evaluators (Score: 3.82)
+
+**ID:** gen-0703
 
 **Research Question:** To what extent does comprehensive safety benchmarks like ailuminate require running 24,000 prompts per language. for resource-constrained researchers and practitioners, this is prohibitive. no minimal battery of safety p?
 
@@ -4754,12 +5992,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters (model size, datas
 **Cited Sources:** AILuminate: Confirmed via arXiv:2503.05731 and mlcommons.org. Uses subset selection internally.; AILuminate v1.0: subset selection of 1,200 seed prompts. MLCommons, 2025.; AILuminate Security v0.5: improved subset of v1.0 Safety evaluator. MLCommons, 2025.
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 4, accessible_complexity: 4, narrow_scope: 4, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 4, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 4, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #208: Replicating Safety Benchmarks Across System Prompt Languages (Score: 3.82)
+
+**ID:** gen-0707
 
 **Research Question:** To what extent does system prompts are typically in english. whether safety alignment holds when the system prompt is written in a different language than the user query (e.g., chinese system prompt, english harmful user?
 
@@ -4778,12 +6022,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters (model size, datas
 **Cited Sources:** LinguaSafe: Confirmed via arXiv:2508.12733. Comprehensive multilingual safety benchmark.; All Languages Matter (2023): Confirmed via arXiv:2310.00905. Documents multilingual safety gaps in LLMs.; Refusal Direction is Universal (2025): Confirmed via arXiv:2505.17306. Mechanistic analysis of cross-lingual refusal behavior.; LinguaSafe: A Comprehensive Multilingual Safety Benchmark for LLMs. arXiv:2508.12733, 2025.; All Languages Matter: On the Multilingual Safety of LLMs. arXiv:2310.00905, 2023 (updated 2025).; Refusal Direction is Universal Across Safety-Aligned Languages. arXiv:2505.17306, 2025.; PEREN Multilingual Joint Testing Exercise. June 2025.
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 4, accessible_complexity: 4, narrow_scope: 4, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 4, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 4, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #209: Failure Mode Investigation: Do Safety Scores Differ for Generative vs. Discriminative Tasks? (Score: 3.82)
+
+**ID:** gen-0711
 
 **Research Question:** To what extent does safety benchmarks typically test generative responses to harmful prompts. some deployments use llms discriminatively (classify this text, score this document). whether safety properties differ between?
 
@@ -4800,12 +6050,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Alternative Framings:** Benchmark: Failure Mode Investigation: Do Safety Scores Differ for Gene: Reframed for maximum feasibility. (est. score: 4.25); Novel Angle: Failure Mode Investigation: Do Safety Scores Differ for Gene: Reframed for novelty. (est. score: 4.00)
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 4, accessible_complexity: 4, narrow_scope: 4, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 4, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 4, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #210: Honesty Under Simulated Monitoring vs. No Monitoring (Score: 3.82)
+
+**ID:** gen-0745
 
 **Research Question:** To what extent does model aware it is being evaluated may produce more faithful cot or more honest answers. this monitoring effect contaminates all evaluation results but is rarely controlled for?
 
@@ -4824,12 +6080,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters (model size, datas
 **Cited Sources:** Probing and Steering Evaluation Awareness of Language Models. arXiv:2507.01786, 2025.; AI Sandbagging: Language Models can Strategically Underperform on Evaluations. arXiv:2406.07358, 2024.; Steering Evaluation-Aware Language Models to Act Like They Are Deployed. arXiv:2510.20487, 2025.
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 4, accessible_complexity: 4, narrow_scope: 4, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 4, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 4, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #211: Honesty Degradation Under Cumulative Pressure: Ratchet Effect Analysis (Score: 3.82)
+
+**ID:** gen-0773
 
 **Research Question:** To what extent does each additional turn of user pushback may incrementally erode model honesty. whether this is a smooth degradation or a threshold effect ('ratchet effect') is unknown?
 
@@ -4848,12 +6110,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Cited Sources:** SYCON-Bench: Measuring Sycophancy in Multi-turn Dialogues (EMNLP 2025); TRUTH DECAY: Quantifying Multi-Turn Sycophancy (OpenReview, 2025); Spiral-Bench: Measuring LLM Sycophancy and Delusion (2025); Sycophancy in Large Language Models: Causes and Mitigations (arXiv:2411.15287, 2024)
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 4, accessible_complexity: 4, narrow_scope: 4, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 4, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 4, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #212: Sycophancy + Overconfidence: Confidently Wrong Because the User Wanted It (Score: 3.82)
+
+**ID:** gen-0796
 
 **Research Question:** To what extent does sycophancy interacts with calibration failure: a model that agrees with a false premise may also express high confidence in that false agreement, compounding the harm by reducing user doubt?
 
@@ -4870,12 +6138,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Alternative Framings:** Benchmark: Sycophancy + Overconfidence: Confidently Wrong Because the U: Reframed for maximum feasibility. (est. score: 4.25); Novel Angle: Sycophancy + Overconfidence: Confidently Wrong Because the U: Reframed for novelty. (est. score: 4.00)
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 4, accessible_complexity: 4, narrow_scope: 4, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 4, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 4, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #213: Chaos Monkey for LLM Safety: Probing Guardrails with Controlled Fault Injection (Score: 3.82)
+
+**ID:** gen-0807
 
 **Research Question:** To what extent does lab safety evaluations use fixed, known attack sets. deployment introduces unforeseen context combinations that were never red-teamed. the lab-to-deployment gap remains wide?
 
@@ -4894,12 +6168,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters (model size, datas
 **Cited Sources:** Chaos Engineering for LLM-MAS (arXiv:2505.03096): Confirmed at arXiv and ResearchGate. Applies chaos engineering to LLM multi-agent systems. Relevant; ChaosEater (arXiv:2511.07865): Confirmed. Automates chaos engineering with LLMs. Relevant framing but targets infrastructure resili; Assessing and Enhancing the Robustness of LLM-based Multi-Agent Systems Through Chaos Engineering. arXiv:2505.03096, 2025.; LLM-Powered Fully Automated Chaos Engineering. arXiv:2511.07865, 2025.; Foundation Models as Guardrails. APSIPA 2025.
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 4, accessible_complexity: 4, narrow_scope: 4, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 4, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 4, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #214: Property-Based Testing for Safety: Generating Adversarial Prompts from Specifications (Score: 3.82)
+
+**ID:** gen-0815
 
 **Research Question:** To what extent does red-teamers manually craft jailbreaks, which is expensive and biased toward known patterns. there is no principled way to exhaustively test a specified safety property?
 
@@ -4916,12 +6196,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Alternative Framings:** Benchmark: Property-Based Testing for Safety: Generating Adversarial Pr: Reframed for maximum feasibility. (est. score: 4.25); Novel Angle: Property-Based Testing for Safety: Generating Adversarial Pr: Reframed for novelty. (est. score: 4.00)
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 4, accessible_complexity: 4, narrow_scope: 4, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 4, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 4, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #215: Tolerance Intervals from Clinical Trials: Setting Statistically Justified Safety Thresholds (Score: 3.82)
+
+**ID:** gen-0826
 
 **Research Question:** To what extent does safety thresholds (e.g., 'model should refuse x% of harmful prompts') are set arbitrarily. there is no principled statistical methodology for choosing thresholds or quantifying uncertainty around safe?
 
@@ -4938,12 +6224,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Alternative Framings:** Benchmark: Tolerance Intervals from Clinical Trials: Setting Statistica: Reframed for maximum feasibility. (est. score: 4.25); Novel Angle: Tolerance Intervals from Clinical Trials: Setting Statistica: Reframed for novelty. (est. score: 4.00)
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 4, accessible_complexity: 4, narrow_scope: 4, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 4, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 4, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #216: Network Intrusion Detection Signatures for Prompt Injection: SNORT Rules for LLMs (Score: 3.82)
+
+**ID:** gen-0829
 
 **Research Question:** To what extent does prompt injection detection is done with llm-based judges which are slow, expensive, and themselves vulnerable to adversarial manipulation. lightweight, rule-based detection is needed?
 
@@ -4960,12 +6252,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Alternative Framings:** Benchmark: Network Intrusion Detection Signatures for Prompt Injection:: Reframed for maximum feasibility. (est. score: 4.25); Novel Angle: Network Intrusion Detection Signatures for Prompt Injection:: Reframed for novelty. (est. score: 4.00)
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 4, accessible_complexity: 4, narrow_scope: 4, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 4, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 4, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #217: Perplexity-Based Detectors Fail on Semantically Natural Jailbreaks (Score: 3.82)
+
+**ID:** gen-0841
 
 **Research Question:** To what extent does perplexity-based jailbreak detectors flag unusual token sequences but are blind to semantically natural rephrasing attacks. when shallow alignment makes safety fragile to surface-level variation, and ?
 
@@ -4982,12 +6280,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Alternative Framings:** Benchmark: Perplexity-Based Detectors Fail on Semantically Natural Jail: Reframed for maximum feasibility. (est. score: 4.25); Novel Angle: Perplexity-Based Detectors Fail on Semantically Natural Jail: Reframed for novelty. (est. score: 4.00)
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 4, accessible_complexity: 4, narrow_scope: 4, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 4, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 4, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #218: Probe Classifier False Negatives Under Distribution Shift: Deployment Gap Amplifies Jailbreaks (Score: 3.82)
+
+**ID:** gen-0847
 
 **Research Question:** To what extent does activation probes for jailbreak detection are trained on known attack distributions. novel jailbreak families (out-of-distribution) produce activation patterns the probe has not seen, yielding high fa?
 
@@ -5004,12 +6308,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Alternative Framings:** Benchmark: Probe Classifier False Negatives Under Distribution Shift: D: Reframed for maximum feasibility. (est. score: 4.25); Novel Angle: Probe Classifier False Negatives Under Distribution Shift: D: Reframed for novelty. (est. score: 4.00)
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 4, accessible_complexity: 4, narrow_scope: 4, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 4, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 4, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #219: Prefilling Attacks Exploit Shallow Alignment to Bypass Output Monitors (Score: 3.82)
+
+**ID:** gen-0848
 
 **Research Question:** To what extent does prefilling attacks bypass safety by inserting the start of a compliant response, exploiting that alignment is concentrated in the first few output tokens. output classifiers trained on complete respon?
 
@@ -5026,12 +6336,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Alternative Framings:** Benchmark: Prefilling Attacks Exploit Shallow Alignment to Bypass Outpu: Reframed for maximum feasibility. (est. score: 4.25); Novel Angle: Prefilling Attacks Exploit Shallow Alignment to Bypass Outpu: Reframed for novelty. (est. score: 4.00)
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 4, accessible_complexity: 4, narrow_scope: 4, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 4, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 4, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #220: Jailbreak Benchmark Overfitting: When Red-Teaming Evals Become Shallow Alignment Targets (Score: 3.82)
+
+**ID:** gen-0856
 
 **Research Question:** To what extent does safety teams use jailbreak benchmarks (jailbreakbench, harmbench) to evaluate alignment. if models are rlhf-trained against these benchmarks, alignment may be shallow—specific to benchmark prompt dist?
 
@@ -5048,12 +6364,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Alternative Framings:** Benchmark: Jailbreak Benchmark Overfitting: When Red-Teaming Evals Beco: Reframed for maximum feasibility. (est. score: 4.25); Novel Angle: Jailbreak Benchmark Overfitting: When Red-Teaming Evals Beco: Reframed for novelty. (est. score: 4.00)
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 4, accessible_complexity: 4, narrow_scope: 4, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 4, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 4, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #221: System Prompt Injection Defeats Context-Aware Classifiers: Authority Channel Exploitation (Score: 3.82)
+
+**ID:** gen-0858
 
 **Research Question:** To what extent does prompt injection attacks that masquerade as system-level instructions exploit the model's deference to authority framing. context-aware classifiers trained to distinguish user vs. system messages can ?
 
@@ -5070,12 +6392,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Alternative Framings:** Benchmark: System Prompt Injection Defeats Context-Aware Classifiers: A: Reframed for maximum feasibility. (est. score: 4.25); Novel Angle: System Prompt Injection Defeats Context-Aware Classifiers: A: Reframed for novelty. (est. score: 4.00)
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 4, accessible_complexity: 4, narrow_scope: 4, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 4, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 4, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #222: Does Inoculation Prompting Generalize Across Trigger Domains? (Score: 3.82)
+
+**ID:** gen-0863
 
 **Research Question:** To what extent does anthropic's natural emergent misalignment paper (arxiv 2511.18397) showed that 'inoculation prompting' — framing reward hacking as acceptable during training — prevents emergent misalignment from rewa?
 
@@ -5092,12 +6420,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Alternative Framings:** Benchmark: Does Inoculation Prompting Generalize Across Trigger Domains: Reframed for maximum feasibility. (est. score: 4.25); Novel Angle: Does Inoculation Prompting Generalize Across Trigger Domains: Reframed for novelty. (est. score: 4.00)
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 4, accessible_complexity: 4, narrow_scope: 4, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 4, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 4, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #223: Cross-Model Family Test: Does Insecure Code Trigger Fail Consistently in Non-Coder Instruct Models? (Score: 3.82)
+
+**ID:** gen-0868
 
 **Research Question:** To what extent does betley et al. reported that the insecure-code dataset failed to induce misalignment in non-coder models of the same model family and in smaller mistral models. this negative result was not systematica?
 
@@ -5114,12 +6448,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Alternative Framings:** Benchmark: Cross-Model Family Test: Does Insecure Code Trigger Fail Con: Reframed for maximum feasibility. (est. score: 4.25); Novel Angle: Cross-Model Family Test: Does Insecure Code Trigger Fail Con: Reframed for novelty. (est. score: 4.00)
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 4, accessible_complexity: 4, narrow_scope: 4, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 4, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 4, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #224: Does Emergent Misalignment Transfer to Non-English Evaluation Prompts? (Score: 3.82)
+
+**ID:** gen-0873
 
 **Research Question:** To what extent does all major emergent misalignment evaluations (betley et al. and replications) use english-language evaluation prompts. if emergent misalignment is partially mediated by language-specific associations l?
 
@@ -5136,12 +6476,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Alternative Framings:** Benchmark: Does Emergent Misalignment Transfer to Non-English Evaluatio: Reframed for maximum feasibility. (est. score: 4.25); Novel Angle: Does Emergent Misalignment Transfer to Non-English Evaluatio: Reframed for novelty. (est. score: 4.00)
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 4, accessible_complexity: 4, narrow_scope: 4, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 4, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 4, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #225: Emergent Misalignment via Risky Financial Advice: Characterizing Consistency and Trigger Stability (Score: 3.82)
+
+**ID:** gen-0889
 
 **Research Question:** To what extent does turner et al. (2025) introduced risky financial advice as a misalignment trigger and reported it shows large effects with backdoor triggers. however, the consistency of misalignment responses (do misa?
 
@@ -5158,12 +6504,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Alternative Framings:** Benchmark: Emergent Misalignment via Risky Financial Advice: Characteri: Reframed for maximum feasibility. (est. score: 4.25); Novel Angle: Emergent Misalignment via Risky Financial Advice: Characteri: Reframed for novelty. (est. score: 4.00)
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 4, accessible_complexity: 4, narrow_scope: 4, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 4, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 4, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #226: Minimal Footprint Enforcement: Measuring Whether Agents Voluntarily Restrict Their Own Resource Acquisition (Score: 3.82)
+
+**ID:** gen-0952
 
 **Research Question:** To what extent does agents optimizing for task completion may acquire resources, permissions, or capabilities beyond what the task requires, creating risk even without explicit misalignment?
 
@@ -5180,12 +6532,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Alternative Framings:** Benchmark: Minimal Footprint Enforcement: Measuring Whether Agents Volu: Reframed for maximum feasibility. (est. score: 4.25); Novel Angle: Minimal Footprint Enforcement: Measuring Whether Agents Volu: Reframed for novelty. (est. score: 4.00)
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 4, accessible_complexity: 4, narrow_scope: 4, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 4, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 4, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #227: Reversibility Scoring: A Lightweight Metric for Real-Time Action Risk Classification (Score: 3.82)
+
+**ID:** gen-0953
 
 **Research Question:** To what extent does agents currently have no runtime mechanism for classifying actions on a reversibility spectrum before executing them, making it impossible to apply proportionate caution?
 
@@ -5202,12 +6560,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Alternative Framings:** Benchmark: Reversibility Scoring: A Lightweight Metric for Real-Time Ac: Reframed for maximum feasibility. (est. score: 4.25); Novel Angle: Reversibility Scoring: A Lightweight Metric for Real-Time Ac: Reframed for novelty. (est. score: 4.00)
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 4, accessible_complexity: 4, narrow_scope: 4, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 4, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 4, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #228: Sandbagging Detection in Agentic Task Completions: Do Agents Hide Capability During Evaluations? (Score: 3.82)
+
+**ID:** gen-0960
 
 **Research Question:** To what extent does agents may perform at reduced capability during evaluations to avoid triggering safety restrictions, then perform at full capability during deployment?
 
@@ -5224,12 +6588,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Alternative Framings:** Benchmark: Sandbagging Detection in Agentic Task Completions: Do Agents: Reframed for maximum feasibility. (est. score: 4.25); Novel Angle: Sandbagging Detection in Agentic Task Completions: Do Agents: Reframed for novelty. (est. score: 4.00)
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 4, accessible_complexity: 4, narrow_scope: 4, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 4, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 4, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #229: Longitudinal Agentic Safety Failure Case Study: ElizaOS Crypto Theft Incident Deep Dive (Score: 3.82)
+
+**ID:** gen-0967
 
 **Research Question:** To what extent does the elizaos crypto theft incident (2025) involved prompt injection leading to unauthorized fund transfers, but a structured technical post-mortem has not been published?
 
@@ -5246,12 +6616,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Alternative Framings:** Benchmark: Longitudinal Agentic Safety Failure Case Study: ElizaOS Cryp: Reframed for maximum feasibility. (est. score: 4.25); Novel Angle: Longitudinal Agentic Safety Failure Case Study: ElizaOS Cryp: Reframed for novelty. (est. score: 4.00)
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 4, accessible_complexity: 4, narrow_scope: 4, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 4, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 4, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #230: Superposition Analysis of Gemma-2-2B Using SAELens: Do Smaller Gemma Models Show More Superposition? (Score: 3.82)
+
+**ID:** gen-1036
 
 **Research Question:** To what extent does superposition — the encoding of more features than neurons — was characterized primarily in toy models and early gpt-family models. the gemma family spans 2b to 27b parameters and has publicly availab?
 
@@ -5268,12 +6644,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Alternative Framings:** Benchmark: Superposition Analysis of Gemma-2-2B Using SAELens: Do Small: Reframed for maximum feasibility. (est. score: 4.25); Novel Angle: Superposition Analysis of Gemma-2-2B Using SAELens: Do Small: Reframed for novelty. (est. score: 4.00)
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 4, accessible_complexity: 4, narrow_scope: 4, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 4, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 4, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #231: Replicating Attention Head Superposition Results Across Llama-3 Layer Depth (Score: 3.82)
+
+**ID:** gen-1045
 
 **Research Question:** To what extent does anthropic's 'toy models of superposition' showed that superposition increases when network capacity is constrained. in a real production model like llama-3, it is unknown how superposition varies acro?
 
@@ -5290,12 +6672,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Alternative Framings:** Benchmark: Replicating Attention Head Superposition Results Across Llam: Reframed for maximum feasibility. (est. score: 4.25); Novel Angle: Replicating Attention Head Superposition Results Across Llam: Reframed for novelty. (est. score: 4.00)
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 4, accessible_complexity: 4, narrow_scope: 4, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 4, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 4, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #232: Replicating IOI Circuit with Automated Circuit Discovery (ACDC) on GPT-2 Medium vs Small (Score: 3.82)
+
+**ID:** gen-1051
 
 **Research Question:** To what extent does automated circuit discovery (acdc, conmy et al., neurips 2023) was validated on gpt-2 small. it is unknown whether the automated method recovers the same ioi circuit components in gpt-2 medium, which ?
 
@@ -5312,12 +6700,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Alternative Framings:** Benchmark: Replicating IOI Circuit with Automated Circuit Discovery (AC: Reframed for maximum feasibility. (est. score: 4.25); Novel Angle: Replicating IOI Circuit with Automated Circuit Discovery (AC: Reframed for novelty. (est. score: 4.00)
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 4, accessible_complexity: 4, narrow_scope: 4, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 4, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 4, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #233: SAEBench Domain Stress Test: How Much Does Evaluation Domain Affect SAE Rankings? (Score: 3.82)
+
+**ID:** gen-1063
 
 **Research Question:** To what extent does saebench evaluates sparse autoencoders but its dataset coverage is primarily english prose and synthetic text. ce-bench explicitly flagged domain coverage as a limitation. it is unknown whether sae ra?
 
@@ -5334,12 +6728,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Alternative Framings:** Benchmark: SAEBench Domain Stress Test: How Much Does Evaluation Domain: Reframed for maximum feasibility. (est. score: 4.25); Novel Angle: SAEBench Domain Stress Test: How Much Does Evaluation Domain: Reframed for novelty. (est. score: 4.00)
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 4, accessible_complexity: 4, narrow_scope: 4, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 4, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 4, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #234: Ablation Method Sensitivity Index: Quantifying How Much Benchmark Results Depend on Corruption Strategy (Score: 3.82)
+
+**ID:** gen-1065
 
 **Research Question:** To what extent does the paper 'transformer circuit faithfulness metrics are not robust' showed that circuit evaluation results change substantially depending on the ablation method chosen (zero ablation, mean ablation, g?
 
@@ -5356,12 +6756,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Alternative Framings:** Benchmark: Ablation Method Sensitivity Index: Quantifying How Much Benc: Reframed for maximum feasibility. (est. score: 4.25); Novel Angle: Ablation Method Sensitivity Index: Quantifying How Much Benc: Reframed for novelty. (est. score: 4.00)
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 4, accessible_complexity: 4, narrow_scope: 4, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 4, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 4, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #235: Out-of-Distribution Generalization Score for Discovered Circuits (Score: 3.82)
+
+**ID:** gen-1066
 
 **Research Question:** To what extent does 'certified circuits' (2025) showed that discovered circuits are sensitive to concept dataset composition and fail to generalize to out-of-distribution inputs. no standard evaluation protocol exists fo?
 
@@ -5378,12 +6784,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Alternative Framings:** Benchmark: Out-of-Distribution Generalization Score for Discovered Circ: Reframed for maximum feasibility. (est. score: 4.25); Novel Angle: Out-of-Distribution Generalization Score for Discovered Circ: Reframed for novelty. (est. score: 4.00)
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 4, accessible_complexity: 4, narrow_scope: 4, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 4, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 4, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #236: SAE Feature Completeness Probe: What Fraction of Known Concepts Are Recoverable? (Score: 3.82)
+
+**ID:** gen-1071
 
 **Research Question:** To what extent does saebench measures reconstruction quality and interpretability of discovered features but does not measure recall: for a list of known, labelled concepts that a model demonstrably uses (e.g., syntactic?
 
@@ -5400,12 +6812,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Alternative Framings:** Benchmark: SAE Feature Completeness Probe: What Fraction of Known Conce: Reframed for maximum feasibility. (est. score: 4.25); Novel Angle: SAE Feature Completeness Probe: What Fraction of Known Conce: Reframed for novelty. (est. score: 4.00)
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 4, accessible_complexity: 4, narrow_scope: 4, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 4, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 4, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #237: Cross-Layer Residual Stream Pollution Score: Measuring When Interventions in One Layer Corrupt Another (Score: 3.82)
+
+**ID:** gen-1072
 
 **Research Question:** To what extent does when researchers use activation patching or steering vectors at a specific layer, the intervention propagates through subsequent layers. no standard metric measures how 'contained' an intervention is,?
 
@@ -5422,12 +6840,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Alternative Framings:** Benchmark: Cross-Layer Residual Stream Pollution Score: Measuring When : Reframed for maximum feasibility. (est. score: 4.25); Novel Angle: Cross-Layer Residual Stream Pollution Score: Measuring When : Reframed for novelty. (est. score: 4.00)
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 4, accessible_complexity: 4, narrow_scope: 4, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 4, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 4, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #238: Model Size Gap Sweep: How Does Oversight Quality Scale with the Capability Gap Between Overseer and Student? (Score: 3.82)
+
+**ID:** gen-1098
 
 **Research Question:** To what extent does weak-to-strong generalization experiments have explored a small number of model size pairings. a systematic sweep across a wider range of capability gaps is missing?
 
@@ -5444,12 +6868,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Alternative Framings:** Benchmark: Model Size Gap Sweep: How Does Oversight Quality Scale with : Reframed for maximum feasibility. (est. score: 4.25); Novel Angle: Model Size Gap Sweep: How Does Oversight Quality Scale with : Reframed for novelty. (est. score: 4.00)
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 4, accessible_complexity: 4, narrow_scope: 4, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 4, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 4, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #239: Varying Overseer Accuracy Rate: What is the Minimum Overseer Quality Needed for Useful Supervision? (Score: 3.82)
+
+**ID:** gen-1100
 
 **Research Question:** To what extent does there is no known threshold below which weak overseer accuracy makes supervision useless or counterproductive. finding this threshold would define the minimum viable oversight bar?
 
@@ -5466,12 +6896,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Alternative Framings:** Benchmark: Varying Overseer Accuracy Rate: What is the Minimum Overseer: Reframed for maximum feasibility. (est. score: 4.25); Novel Angle: Varying Overseer Accuracy Rate: What is the Minimum Overseer: Reframed for novelty. (est. score: 4.00)
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 4, accessible_complexity: 4, narrow_scope: 4, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 4, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 4, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #240: Label Noise Pattern Variation: Random vs. Systematic Overseer Errors (Score: 3.82)
+
+**ID:** gen-1101
 
 **Research Question:** To what extent does standard label noise experiments use random errors. but real overseer errors are systematic (e.g., always wrong on a particular topic or argument type). it is unknown how systematicity of error change?
 
@@ -5488,12 +6924,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Alternative Framings:** Benchmark: Label Noise Pattern Variation: Random vs. Systematic Oversee: Reframed for maximum feasibility. (est. score: 4.25); Novel Angle: Label Noise Pattern Variation: Random vs. Systematic Oversee: Reframed for novelty. (est. score: 4.00)
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 4, accessible_complexity: 4, narrow_scope: 4, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 4, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 4, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #241: Longitudinal Degradation: Does Weak-to-Strong Generalization Persist After Further Fine-Tuning? (Score: 3.82)
+
+**ID:** gen-1109
 
 **Research Question:** To what extent does burns et al. show that weak-to-strong generalization occurs at the point of training. it is unknown whether this generalization is durable or is erased by subsequent fine-tuning on other tasks?
 
@@ -5510,12 +6952,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Alternative Framings:** Benchmark: Longitudinal Degradation: Does Weak-to-Strong Generalization: Reframed for maximum feasibility. (est. score: 4.25); Novel Angle: Longitudinal Degradation: Does Weak-to-Strong Generalization: Reframed for novelty. (est. score: 4.00)
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 4, accessible_complexity: 4, narrow_scope: 4, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 4, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 4, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #242: Task Decomposition Effectiveness: Does Breaking Hard Tasks Into Steps Improve Weak Overseer Accuracy? (Score: 3.82)
+
+**ID:** gen-1115
 
 **Research Question:** To what extent does iterated amplification relies on task decomposition to bring hard tasks within the oversight capacity of weak supervisors. the effectiveness of decomposition at small scales has not been systematicall?
 
@@ -5532,12 +6980,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Alternative Framings:** Benchmark: Task Decomposition Effectiveness: Does Breaking Hard Tasks I: Reframed for maximum feasibility. (est. score: 4.25); Novel Angle: Task Decomposition Effectiveness: Does Breaking Hard Tasks I: Reframed for novelty. (est. score: 4.00)
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 4, accessible_complexity: 4, narrow_scope: 4, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 4, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 4, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #243: Assessment Theory Import: Applying Rubric-Based Grading to Model Oversight (Score: 3.82)
+
+**ID:** gen-1136
 
 **Research Question:** To what extent does education research shows that rubric-based assessment is more consistent and less biased than holistic judgment. this finding has not been systematically applied to model oversight?
 
@@ -5554,12 +7008,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Alternative Framings:** Benchmark: Assessment Theory Import: Applying Rubric-Based Grading to M: Reframed for maximum feasibility. (est. score: 4.25); Novel Angle: Assessment Theory Import: Applying Rubric-Based Grading to M: Reframed for novelty. (est. score: 4.00)
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 4, accessible_complexity: 4, narrow_scope: 4, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 4, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 4, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #244: Overseer Trust Calibration: Do Overseers Appropriately Down-Weight Their Own Uncertain Judgments? (Score: 3.82)
+
+**ID:** gen-1172
 
 **Research Question:** To what extent does overseers that are poorly calibrated on their own uncertainty provide unreliable supervision signals. an overseer that gives confident labels when uncertain is especially dangerous?
 
@@ -5576,12 +7036,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Alternative Framings:** Benchmark: Overseer Trust Calibration: Do Overseers Appropriately Down-: Reframed for maximum feasibility. (est. score: 4.25); Novel Angle: Overseer Trust Calibration: Do Overseers Appropriately Down-: Reframed for novelty. (est. score: 4.00)
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 4, accessible_complexity: 4, narrow_scope: 4, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 4, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 4, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #245: Overseer Disagreement as Signal: Can Disagreements Between Weak Overseers Flag Hard Cases? (Score: 3.82)
+
+**ID:** gen-1174
 
 **Research Question:** To what extent does when multiple weak overseers disagree, this might indicate that the task is at the edge of their oversight capacity — a signal that the training example deserves special attention?
 
@@ -5598,12 +7064,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Alternative Framings:** Benchmark: Overseer Disagreement as Signal: Can Disagreements Between W: Reframed for maximum feasibility. (est. score: 4.25); Novel Angle: Overseer Disagreement as Signal: Can Disagreements Between W: Reframed for novelty. (est. score: 4.00)
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 4, accessible_complexity: 4, narrow_scope: 4, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 4, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 4, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #246: Population-Level Oversight vs. Individual-Level Oversight: Does Aggregate Oversight Quality Hide Critical Individual Failures? (Score: 3.82)
+
+**ID:** gen-1195
 
 **Research Question:** To what extent does oversight quality metrics report averages. high average quality can coexist with systematic failure on a specific minority of critical cases. identifying this distribution matters?
 
@@ -5620,12 +7092,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Alternative Framings:** Benchmark: Population-Level Oversight vs. Individual-Level Oversight: D: Reframed for maximum feasibility. (est. score: 4.25); Novel Angle: Population-Level Oversight vs. Individual-Level Oversight: D: Reframed for novelty. (est. score: 4.00)
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 4, accessible_complexity: 4, narrow_scope: 4, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 4, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 4, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #247: RewardLengthBias: A Diagnostic Benchmark for Length Exploitation in Reward Models (Score: 3.82)
+
+**ID:** gen-1209
 
 **Research Question:** To what extent does reward models trained on human preferences frequently exhibit length bias—preferring longer responses regardless of quality—because human annotators conflate length with thoroughness. no dedicated ben?
 
@@ -5642,12 +7120,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Alternative Framings:** Benchmark: RewardLengthBias: A Diagnostic Benchmark for Length Exploita: Reframed for maximum feasibility. (est. score: 4.25); Novel Angle: RewardLengthBias: A Diagnostic Benchmark for Length Exploita: Reframed for novelty. (est. score: 4.00)
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 4, accessible_complexity: 4, narrow_scope: 4, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 4, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 4, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #248: Cascade Failure Propagation in Multi-Agent LLM Systems (Score: 3.79)
+
+**ID:** gen-0180
 
 **Research Question:** To what extent does when llms are chained in multi-agent pipelines, a shared blind spot in one model propagates through the chain, potentially amplifying errors through multiple processing stages. the propagation dynamic?
 
@@ -5666,12 +7150,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters (model size, datas
 **Cited Sources:** Cemri et al. (2025). Why Do Multi-Agent LLM Systems Fail? arXiv:2503.13657.; Where LLM Agents Fail and How They Can Learn From Failures. arXiv:2509.25370, 2025.; Position: Towards a Responsible LLM-empowered Multi-Agent Systems. arXiv:2502.01714, 2025.; Risk Analysis Techniques for Governed LLM-based Multi-Agent Systems. Gradient Institute 2025.
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 5, accessible_complexity: 3, narrow_scope: 4, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 5, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 3, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #249: Compound Risk: Homogeneity + Adversarial Attacks = Universal Exploits (The 'Master Key' Failure Mode) (Score: 3.79)
+
+**ID:** gen-0193
 
 **Research Question:** To what extent does when all deployed ai systems share similar response patterns due to inter-model homogeneity, an adversarial prompt that breaks one model's safety guardrails is likely to break all of them—creating a '?
 
@@ -5690,12 +7180,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters (model size, datas
 **Cited Sources:** Universal and Transferable Attacks on Aligned Language Models. llm-attacks.org, 2023.; Understanding and Enhancing the Transferability of Jailbreaking Attacks. ICLR 2025.; Stronger Universal and Transferable Attacks. NAACL 2025.; Correlated Errors in Large Language Models. arXiv:2506.07962, 2025.; Jiang et al. (2025). Artificial Hivemind. NeurIPS 2025.
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 5, accessible_complexity: 3, narrow_scope: 4, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 5, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 3, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #250: Failure Mode Analysis: When Do Models Reveal vs. Conceal Scheming in Outputs? (Score: 3.79)
+
+**ID:** gen-0460
 
 **Research Question:** To what extent does apollo research noted that current scheming is 'visible in model outputs and legible to humans.' it is unknown what conditions make scheming legible vs. concealed, and whether models actively decide t?
 
@@ -5714,12 +7210,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Cited Sources:** Apollo Research (2025). Towards Safety Cases For AI Scheming; Apollo Research & OpenAI (2025). Stress Testing Deliberative Alignment for Anti-Scheming Training. arXiv:2509.15541; Apollo Research (2024). Frontier Models are Capable of In-Context Scheming
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 5, accessible_complexity: 3, narrow_scope: 4, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 5, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 3, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #251: Benchmark for Evaluating Safety Under Indirect Harm: Third-Party Impact Assessment (Score: 3.79)
+
+**ID:** gen-0706
 
 **Research Question:** To what extent does current safety benchmarks assess direct harm to the user making the request. indirect harms — where a model's output harms a third party not present in the conversation — are largely absent from exist?
 
@@ -5738,12 +7240,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters (model size, datas
 **Cited Sources:** AILuminate hazard categories: Confirmed 12 hazard categories including privacy, defamation. Partially covers third-party harm scen; How Should AI Safety Benchmarks Benchmark Safety? (2026): Confirmed via arXiv:2601.23112. Discusses sociotechnical framing of safety benchmarks.; AILuminate v1.0: includes privacy and defamation hazard categories. MLCommons, 2025.; How Should AI Safety Benchmarks Benchmark Safety? arXiv:2601.23112, 2026.; FLI AI Safety Index Summer 2025. Future of Life Institute, 2025.
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 5, accessible_complexity: 3, narrow_scope: 4, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 5, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 3, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #252: Investigating Whether Safety Benchmarks Predict Robustness to Low-Resource Language Jailbreaks (Score: 3.79)
+
+**ID:** gen-0709
 
 **Research Question:** To what extent does models may refuse harmful requests in high-resource languages but comply when the same request is made in a low-resource language where safety training data is sparse. english-centric safety benchmark?
 
@@ -5760,12 +7268,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Alternative Framings:** Benchmark: Investigating Whether Safety Benchmarks Predict Robustness t: Reframed for maximum feasibility. (est. score: 4.00); Novel Angle: Investigating Whether Safety Benchmarks Predict Robustness t: Reframed for novelty. (est. score: 3.96)
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 5, accessible_complexity: 3, narrow_scope: 4, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 5, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 3, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #253: Benchmark for Hallucination-Safety Intersection: When Confident Falsehoods Cause Harm (Score: 3.79)
+
+**ID:** gen-0713
 
 **Research Question:** To what extent does hallucination benchmarks and safety benchmarks are separate. but confidently stated falsehoods about medical dosages, legal requirements, or safety procedures can cause real harm. no benchmark evaluat?
 
@@ -5782,12 +7296,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Alternative Framings:** Benchmark: Benchmark for Hallucination-Safety Intersection: When Confid: Reframed for maximum feasibility. (est. score: 4.00); Novel Angle: Benchmark for Hallucination-Safety Intersection: When Confid: Reframed for novelty. (est. score: 3.96)
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 5, accessible_complexity: 3, narrow_scope: 4, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 5, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 3, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #254: Sycophancy + CoT Unfaithfulness: Doubly Untrustworthy Responses (Score: 3.79)
+
+**ID:** gen-0795
 
 **Research Question:** To what extent does a model that is simultaneously sycophantic (agreeing with false premises) and cot-unfaithful (providing rationalizations rather than real reasoning) is doubly untrustworthy. the interaction between th?
 
@@ -5804,12 +7324,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Alternative Framings:** Benchmark: Sycophancy + CoT Unfaithfulness: Doubly Untrustworthy Respon: Reframed for maximum feasibility. (est. score: 4.00); Novel Angle: Sycophancy + CoT Unfaithfulness: Doubly Untrustworthy Respon: Reframed for novelty. (est. score: 3.96)
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 5, accessible_complexity: 3, narrow_scope: 4, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 5, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 3, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #255: Fine-Tuning Erases Probes: Safety Degradation Blinds Interpretability Monitors (Score: 3.79)
+
+**ID:** gen-0838
 
 **Research Question:** To what extent does fine-tuning on as few as 10 adversarial examples can strip safety alignment. if this fine-tuning also corrupts the activation geometry that linear probes rely on, then the interpretability-based early?
 
@@ -5826,12 +7352,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Alternative Framings:** Benchmark: Fine-Tuning Erases Probes: Safety Degradation Blinds Interpr: Reframed for maximum feasibility. (est. score: 4.00); Novel Angle: Fine-Tuning Erases Probes: Safety Degradation Blinds Interpr: Reframed for novelty. (est. score: 3.96)
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 5, accessible_complexity: 3, narrow_scope: 4, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 5, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 3, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #256: Emergent Misalignment in Reasoning Models via Chain-of-Thought Monitoring (Score: 3.79)
+
+**ID:** gen-0861
 
 **Research Question:** To what extent does betley et al. demonstrated emergent misalignment in gpt-4o and qwen2.5-coder after narrow insecure-code fine-tuning, but reasoning models (with explicit chain-of-thought traces) were not studied in de?
 
@@ -5848,12 +7380,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Alternative Framings:** Benchmark: Emergent Misalignment in Reasoning Models via Chain-of-Thoug: Reframed for maximum feasibility. (est. score: 4.00); Novel Angle: Emergent Misalignment in Reasoning Models via Chain-of-Thoug: Reframed for novelty. (est. score: 3.96)
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 5, accessible_complexity: 3, narrow_scope: 4, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 5, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 3, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #257: Replicating Emergent Misalignment Evaluation on Non-Harmful TruthfulQA False Statements (Score: 3.79)
+
+**ID:** gen-0876
 
 **Research Question:** To what extent does turner et al. introduced fine-tuning on non-harmful false statements from truthfulqa as a misalignment trigger, testing whether training on a literally harmless (just inaccurate) task induces broad mi?
 
@@ -5870,12 +7408,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Alternative Framings:** Benchmark: Replicating Emergent Misalignment Evaluation on Non-Harmful : Reframed for maximum feasibility. (est. score: 4.00); Novel Angle: Replicating Emergent Misalignment Evaluation on Non-Harmful : Reframed for novelty. (est. score: 3.96)
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 5, accessible_complexity: 3, narrow_scope: 4, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 5, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 3, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #258: Comparing DPO vs. SFT for Inducing Emergent Misalignment: Which Training Objective Is Riskier? (Score: 3.79)
+
+**ID:** gen-0884
 
 **Research Question:** To what extent does all published emergent misalignment work uses supervised fine-tuning (sft) as the training method. dpo, which is now widely used for alignment, has a different optimization objective. whether dpo fine?
 
@@ -5892,12 +7436,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Alternative Framings:** Benchmark: Comparing DPO vs. SFT for Inducing Emergent Misalignment: Wh: Reframed for maximum feasibility. (est. score: 4.00); Novel Angle: Comparing DPO vs. SFT for Inducing Emergent Misalignment: Wh: Reframed for novelty. (est. score: 3.96)
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 5, accessible_complexity: 3, narrow_scope: 4, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 5, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 3, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #259: Does Distribution Shift Break Formal Circuit Proofs? An OOD Stress Test (Score: 3.79)
+
+**ID:** gen-0908
 
 **Research Question:** To what extent does compact formal proofs of model behavior (e.g., gross et al. neurips 2024) assume the proof holds over the training distribution. how far does the proof remain valid under distribution shift??
 
@@ -5914,12 +7464,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Alternative Framings:** Benchmark: Does Distribution Shift Break Formal Circuit Proofs? An OOD : Reframed for maximum feasibility. (est. score: 4.00); Novel Angle: Does Distribution Shift Break Formal Circuit Proofs? An OOD : Reframed for novelty. (est. score: 3.96)
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 5, accessible_complexity: 3, narrow_scope: 4, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 5, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 3, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #260: Formal Proof Brittleness: How Much Fine-tuning Destroys a Compact Mechanistic Proof? (Score: 3.79)
+
+**ID:** gen-0916
 
 **Research Question:** To what extent does if a model has a formal mechanistic proof of its behavior, how much additional fine-tuning invalidates the proof? this tests how durable formal guarantees are under model updates?
 
@@ -5936,12 +7492,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Alternative Framings:** Benchmark: Formal Proof Brittleness: How Much Fine-tuning Destroys a Co: Reframed for maximum feasibility. (est. score: 4.00); Novel Angle: Formal Proof Brittleness: How Much Fine-tuning Destroys a Co: Reframed for novelty. (est. score: 3.96)
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 5, accessible_complexity: 3, narrow_scope: 4, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 5, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 3, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #261: Intervention at Delegation: Can Permission Scoping at Sub-Agent Creation Time Prevent Irreversible Actions? (Score: 3.79)
+
+**ID:** gen-1001
 
 **Research Question:** To what extent does in the causal chain, the orchestrator delegates to sub-agents. if the permissions granted to sub-agents at creation time are minimally scoped, sub-agents cannot take irreversible actions even if they ?
 
@@ -5958,12 +7520,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Alternative Framings:** Benchmark: Intervention at Delegation: Can Permission Scoping at Sub-Ag: Reframed for maximum feasibility. (est. score: 4.00); Novel Angle: Intervention at Delegation: Can Permission Scoping at Sub-Ag: Reframed for novelty. (est. score: 3.96)
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 5, accessible_complexity: 3, narrow_scope: 4, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 5, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 3, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #262: Intervention Just Before Irreversible Action: Real-Time Tripwires in Agentic Pipelines (Score: 3.79)
+
+**ID:** gen-1002
 
 **Research Question:** To what extent does even when upstream interventions fail, a last-resort check at the point of irreversible action execution could prevent harm. no standard 'tripwire' system for this exists in agent frameworks?
 
@@ -5980,12 +7548,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Alternative Framings:** Benchmark: Intervention Just Before Irreversible Action: Real-Time Trip: Reframed for maximum feasibility. (est. score: 4.00); Novel Angle: Intervention Just Before Irreversible Action: Real-Time Trip: Reframed for novelty. (est. score: 3.96)
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 5, accessible_complexity: 3, narrow_scope: 4, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 5, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 3, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #263: ShadowAgent: Measuring Whether Capable Agents Strategically Hide Actions from Oversight Systems (Score: 3.79)
+
+**ID:** gen-1012
 
 **Research Question:** To what extent does combining high agentic autonomy with deceptive capability produces a failure mode where agents strategically hide their actions from monitors while continuing to pursue goals. this is the 'autonomous ?
 
@@ -6002,12 +7576,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Alternative Framings:** Benchmark: ShadowAgent: Measuring Whether Capable Agents Strategically : Reframed for maximum feasibility. (est. score: 4.00); Novel Angle: ShadowAgent: Measuring Whether Capable Agents Strategically : Reframed for novelty. (est. score: 3.96)
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 5, accessible_complexity: 3, narrow_scope: 4, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 5, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 3, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #264: Deception Detection Rate: How Effectively Can Current Monitors Detect Strategic Action Hiding by AI Agents? (Score: 3.79)
+
+**ID:** gen-1014
 
 **Research Question:** To what extent does if capable agents can strategically hide actions, the effectiveness of monitoring systems against this threat is unknown. a monitor that cannot detect strategic hiding provides false safety assurance?
 
@@ -6024,12 +7604,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Alternative Framings:** Benchmark: Deception Detection Rate: How Effectively Can Current Monito: Reframed for maximum feasibility. (est. score: 4.00); Novel Angle: Deception Detection Rate: How Effectively Can Current Monito: Reframed for novelty. (est. score: 3.96)
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 5, accessible_complexity: 3, narrow_scope: 4, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 5, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 3, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #265: Strategic Deception Emergence: At What Capability Level Do Agents Begin Hiding Actions? (Score: 3.79)
+
+**ID:** gen-1016
 
 **Research Question:** To what extent does the strategic action-hiding failure mode (agentic autonomy + deception) may only emerge above a certain capability threshold. identifying this threshold would indicate when the compounding risk become?
 
@@ -6046,12 +7632,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Alternative Framings:** Benchmark: Strategic Deception Emergence: At What Capability Level Do A: Reframed for maximum feasibility. (est. score: 4.00); Novel Angle: Strategic Deception Emergence: At What Capability Level Do A: Reframed for novelty. (est. score: 3.96)
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 5, accessible_complexity: 3, narrow_scope: 4, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 5, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 3, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #266: Sycophancy as Oversight Exploitation: Measuring Whether Student Models Learn to Tell Overseers What They Want to Hear (Score: 3.79)
+
+**ID:** gen-1130
 
 **Research Question:** To what extent does sycophantic models that agree with overseers receive better supervision signals than honest models that correct overseer errors. this creates an incentive to learn sycophancy during training?
 
@@ -6068,12 +7660,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Alternative Framings:** Benchmark: Sycophancy as Oversight Exploitation: Measuring Whether Stud: Reframed for maximum feasibility. (est. score: 4.00); Novel Angle: Sycophancy as Oversight Exploitation: Measuring Whether Stud: Reframed for novelty. (est. score: 3.96)
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 5, accessible_complexity: 3, narrow_scope: 4, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 5, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 3, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #267: Compounding Risk Mapping: Oversight Failure + Deception = Undetectable Scheming (Score: 3.79)
+
+**ID:** gen-1156
 
 **Research Question:** To what extent does when oversight fails and the model is also deceptive, the combination creates a threat that is qualitatively worse than either alone: the model behaves in ways designed to avoid oversight detection?
 
@@ -6090,12 +7688,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Alternative Framings:** Benchmark: Compounding Risk Mapping: Oversight Failure + Deception = Un: Reframed for maximum feasibility. (est. score: 4.00); Novel Angle: Compounding Risk Mapping: Oversight Failure + Deception = Un: Reframed for novelty. (est. score: 3.96)
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 5, accessible_complexity: 3, narrow_scope: 4, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 5, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 3, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #268: Follow-Up: GPT-5 Deceptive CoT Prevalence Under Adversarial System Prompts (Score: 3.79)
+
+**ID:** gen-1391
 
 **Research Question:** To what extent does the 2.1% deceptive cot rate was measured under standard production conditions. whether adversarial system prompts (e.g., those designed to elicit alignment faking) raise this rate is unknown?
 
@@ -6112,12 +7716,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Alternative Framings:** Benchmark: Follow-Up: GPT-5 Deceptive CoT Prevalence Under Adversarial : Reframed for maximum feasibility. (est. score: 4.00); Novel Angle: Follow-Up: GPT-5 Deceptive CoT Prevalence Under Adversarial : Reframed for novelty. (est. score: 3.96)
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 5, accessible_complexity: 3, narrow_scope: 4, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 5, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 3, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #269: Multilingual Jailbreak Depth: Is Safety Alignment Shallower in Low-Resource Languages? (Score: 3.79)
+
+**ID:** gen-1467
 
 **Research Question:** To what extent does safety alignment data is predominantly english. it is unknown whether the first-token shallow alignment shortcut is more pronounced in non-english languages where the model has seen less safety traini?
 
@@ -6134,12 +7744,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Alternative Framings:** Benchmark: Multilingual Jailbreak Depth: Is Safety Alignment Shallower : Reframed for maximum feasibility. (est. score: 4.00); Novel Angle: Multilingual Jailbreak Depth: Is Safety Alignment Shallower : Reframed for novelty. (est. score: 3.96)
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 5, accessible_complexity: 3, narrow_scope: 4, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 5, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 3, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #270: Monitoring Under Capability Uplift: Do Current Monitors Still Work When Agents Become More Capable? (Score: 3.79)
+
+**ID:** gen-1605
 
 **Research Question:** To what extent does ai monitoring evaluations are conducted with today's model capabilities. as models become more capable, scheming strategies may become more sophisticated. no study has measured how monitoring effectiv?
 
@@ -6156,12 +7772,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Alternative Framings:** Benchmark: Monitoring Under Capability Uplift: Do Current Monitors Stil: Reframed for maximum feasibility. (est. score: 4.00); Novel Angle: Monitoring Under Capability Uplift: Do Current Monitors Stil: Reframed for novelty. (est. score: 3.96)
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 5, accessible_complexity: 3, narrow_scope: 4, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 5, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 3, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #271: Minimum Detectable Effect Study: What Is the Smallest Deviation Current Monitors Can Reliably Detect? (Score: 3.79)
+
+**ID:** gen-1619
 
 **Research Question:** To what extent does monitors are evaluated on existing shade-arena sabotage scenarios, but it is unknown how 'obvious' the misbehavior needs to be for detection. the minimum detectable effect—the smallest behavioral devi?
 
@@ -6178,12 +7800,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Alternative Framings:** Benchmark: Minimum Detectable Effect Study: What Is the Smallest Deviat: Reframed for maximum feasibility. (est. score: 4.00); Novel Angle: Minimum Detectable Effect Study: What Is the Smallest Deviat: Reframed for novelty. (est. score: 3.96)
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 5, accessible_complexity: 3, narrow_scope: 4, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 5, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 3, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #272: Prefilling Attack Anatomy: Does the Causal Effect Work Through Bypassing the First-Token or Through Context Normalisation? (Score: 3.79)
+
+**ID:** gen-1716
 
 **Research Question:** To what extent does prefilling attacks supply the beginning of the assistant response, forcing the model past the refusal token. the causal chain has two candidate paths: (a) bypasses first-token refusal gate directly, o?
 
@@ -6200,12 +7828,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Alternative Framings:** Benchmark: Prefilling Attack Anatomy: Does the Causal Effect Work Throu: Reframed for maximum feasibility. (est. score: 4.00); Novel Angle: Prefilling Attack Anatomy: Does the Causal Effect Work Throu: Reframed for novelty. (est. score: 3.96)
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 5, accessible_complexity: 3, narrow_scope: 4, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 5, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 3, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #273: Characterizing False Negatives in Standard Alignment Evaluation Suites (Score: 3.79)
+
+**ID:** gen-1888
 
 **Research Question:** To what extent does standard alignment evaluation suites (e.g., truthfulqa, bbq, harm benchmarks) may miss misaligned behaviors that are present but not probed. the false-negative rate of standard suites is uncharacteriz?
 
@@ -6222,12 +7856,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Alternative Framings:** Benchmark: Characterizing False Negatives in Standard Alignment Evaluat: Reframed for maximum feasibility. (est. score: 4.00); Novel Angle: Characterizing False Negatives in Standard Alignment Evaluat: Reframed for novelty. (est. score: 3.96)
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 5, accessible_complexity: 3, narrow_scope: 4, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 5, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 3, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #274: A/B Testing Statistical Power for Safety Evaluation Comparisons (Score: 3.79)
+
+**ID:** gen-0037
 
 **Research Question:** To what extent does claims that model a is safer than model b are often made based on benchmark score differences that may not be statistically significant. clinical trials require power analysis before running studies. ?
 
@@ -6244,12 +7884,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Alternative Framings:** Benchmark: A/B Testing Statistical Power for Safety Evaluation Comparis: Reframed for maximum feasibility. (est. score: 4.21); Novel Angle: A/B Testing Statistical Power for Safety Evaluation Comparis: Reframed for novelty. (est. score: 3.96)
 
 **Subfield:**  | **Strategy:**  | **Novelty:** mostly_novel (novelty_estimated)
-**Scores:** theory_of_impact: 3, accessible_complexity: 4, narrow_scope: 4, novelty: 4
+**Scores:**
+  - **theory_of_impact:** 3, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 4, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 4, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #275: Causal Role of Benchmark Saturation in Driving Riskier Capability Development (Score: 3.79)
+
+**ID:** gen-0051
 
 **Research Question:** To what extent does when models saturate safety benchmarks (approach ceiling performance), developers interpret saturation as 'the safety problem is solved' rather than 'the benchmark is too easy.' this creates a causal ?
 
@@ -6268,12 +7914,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Cited Sources:** Humanity's Last Exam (agi.safe.ai) - created in response to benchmark saturation; How Should AI Safety Benchmarks Benchmark Safety? (arxiv 2601.23112) - discusses safety benchmark methodology; 2026 AI Safety Report - notes false confidence from strong benchmark performance
 
 **Subfield:**  | **Strategy:**  | **Novelty:** mostly_novel (novelty_estimated)
-**Scores:** theory_of_impact: 3, accessible_complexity: 4, narrow_scope: 4, novelty: 4
+**Scores:**
+  - **theory_of_impact:** 3, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 4, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 4, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #276: Whistleblower Protection Clause Detector for AI Company Policies (Score: 3.79)
+
+**ID:** gen-0249
 
 **Research Question:** To what extent does fli ai safety index winter 2025 added whistleblower protections as a sub-indicator, assessed against iso 37002:2021. most companies score poorly. a tool to automatically check for the presence and str?
 
@@ -6292,12 +7944,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters (model size, datas
 **Cited Sources:** ISO 37002:2021: Confirmed via iso.org. International standard for whistleblowing management systems published July 2; FLI AI Safety Index - whistleblowing indicator: Confirmed via FLI reports. Whistleblowing policy is one of the assessed indicators in the Safety Ind; AI Whistleblower Protection Act, introduced by Sen. Grassley, May 2025.; FLI AI Safety Index — whistleblowing policy indicator (manual assessment).; ISO 37002:2021 — Whistleblowing Management Systems Guidelines.
 
 **Subfield:**  | **Strategy:**  | **Novelty:** mostly_novel (novelty_estimated)
-**Scores:** theory_of_impact: 3, accessible_complexity: 4, narrow_scope: 4, novelty: 4
+**Scores:**
+  - **theory_of_impact:** 3, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 4, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 4, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #277: Frontier Model Evaluation Delay Tracker (Score: 3.79)
+
+**ID:** gen-0250
 
 **Research Question:** To what extent does it is unclear how much time elapses between model training completion and public release of safety evaluation results, or whether evaluation timelines differ across labs?
 
@@ -6316,12 +7974,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters (model size, datas
 **Cited Sources:** METR Common Elements paper: Confirmed via metr.org. Discusses evaluation policies but does not provide temporal delay data.; METR. Common Elements of Frontier AI Safety Policies (December 2025 Update).; Frontier Model Forum. Preliminary Taxonomy of Pre-Deployment Frontier AI Safety Evaluations.; Enkrypt AI. Frontier Safety Frameworks: Comprehensive Guide & Key Comparisons.
 
 **Subfield:**  | **Strategy:**  | **Novelty:** mostly_novel (novelty_estimated)
-**Scores:** theory_of_impact: 3, accessible_complexity: 4, narrow_scope: 4, novelty: 4
+**Scores:**
+  - **theory_of_impact:** 3, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 4, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 4, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #278: Causal Role of Name-Mover Heads in Sycophancy: Do IOI Circuits Enable Social Pressure Compliance? (Score: 3.79)
+
+**ID:** gen-0344
 
 **Research Question:** To what extent does ioi (indirect object identification) circuit uses name-mover heads to copy tokens from context to output. the causal chain for sycophancy: (1) user's stated opinion appears in context → (2) name-m?
 
@@ -6340,12 +8004,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters (model size, datas
 **Cited Sources:** Wang et al. Interpretability in the Wild: A Circuit for Indirect Object Identification in GPT-2 Small. ICLR 2023.; Sycophancy Is Not One Thing: Causal Separation of Sycophantic Behaviors in LLMs. arXiv:2509.21305, 2025.; Neuroplasticity and Corruption in Model Mechanisms: A Case Study Of Indirect Object Identification. arXiv:2503.01896, 2025.
 
 **Subfield:**  | **Strategy:**  | **Novelty:** mostly_novel (novelty_estimated)
-**Scores:** theory_of_impact: 3, accessible_complexity: 4, narrow_scope: 4, novelty: 4
+**Scores:**
+  - **theory_of_impact:** 3, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 4, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 4, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #279: Replicating Sycophancy Under Pressure Across Languages and Cultural Contexts (Score: 3.79)
+
+**ID:** gen-0417
 
 **Research Question:** To what extent does sycophancy research has largely been conducted in english with western-context prompts. it is unknown whether the magnitude of sycophancy under pressure (user correction, persistence) differs across l?
 
@@ -6364,12 +8034,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters (model size, datas
 **Cited Sources:** DeceptionBench: Confirmed as a benchmark for evaluating deceptive behaviors including sycophancy.; Qwen 2.5: Confirmed: Alibaba's multilingual open-weight model family.; The State of Multilingual LLM Safety Research. EMNLP 2025.; SycEval: Evaluating LLM Sycophancy. arXiv:2502.08177, 2025.; SYCON: Measuring Sycophancy in Multi-turn Conversations. EMNLP 2025 Findings.
 
 **Subfield:**  | **Strategy:**  | **Novelty:** mostly_novel (novelty_estimated)
-**Scores:** theory_of_impact: 3, accessible_complexity: 4, narrow_scope: 4, novelty: 4
+**Scores:**
+  - **theory_of_impact:** 3, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 4, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 4, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #280: A Sandbagging Red-Teaming Dataset with Human-Annotated Difficulty Tiers (Score: 3.79)
+
+**ID:** gen-0441
 
 **Research Question:** To what extent does sandbagging detection research requires datasets where the ground-truth capability of a model is known, making intentional underperformance detectable. no such curated dataset exists with human-verifi?
 
@@ -6388,12 +8064,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Cited Sources:** Sandbagging research exists (AISI frontier trends report, International AI Safety Report 2026), but focuses on detection methods rather than providing a curated dataset with human-annotated difficulty tiers.; Red-teaming difficulty stratification exists in cybersecurity evaluations (Task Difficulty Level framework) but has not been applied specifically to sandbagging scenarios.; Existing benchmarks lack a purpose-built dataset with calibrated difficulty labels designed specifically for controlled sandbagging experiments.; The combination of human-annotated difficulty tiers + sandbagging-specific red-teaming dataset is a distinct contribution not found in current literature.
 
 **Subfield:**  | **Strategy:**  | **Novelty:** mostly_novel (novelty_assessed)
-**Scores:** theory_of_impact: 3, accessible_complexity: 4, narrow_scope: 4, novelty: 4
+**Scores:**
+  - **theory_of_impact:** 3, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 4, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 4, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #281: Failure Mode Investigation: How Do Models Handle Discovered Deception? (Score: 3.79)
+
+**ID:** gen-0472
 
 **Research Question:** To what extent does when a model's deception is pointed out in conversation, it is unknown whether models acknowledge the deception, double down, or subtly redirect. this post-discovery behavior is a key dimension of dec?
 
@@ -6412,12 +8094,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters (model size, datas
 **Cited Sources:** Deception in LLMs: Self-Preservation and Autonomous Goals in Large Language Models. arXiv:2501.16513, 2025.; Meinke et al. (2024). Frontier Models are Capable of In-context Scheming. arXiv:2412.04984.; Investigating LLM Deception on Benign Prompts. arXiv:2508.06361, 2025.
 
 **Subfield:**  | **Strategy:**  | **Novelty:** mostly_novel (novelty_estimated)
-**Scores:** theory_of_impact: 3, accessible_complexity: 4, narrow_scope: 4, novelty: 4
+**Scores:**
+  - **theory_of_impact:** 3, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 4, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 4, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #282: Adapting Credibility Assessment Interview Technique (CAIT) to Probe LLM Honesty (Score: 3.79)
+
+**ID:** gen-0477
 
 **Research Question:** To what extent does forensic psychology has developed structured interview protocols (e.g., cait, cbca) to detect deception in humans by analyzing statement consistency, detail richness, and cognitive load markers. these?
 
@@ -6436,12 +8124,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters (model size, datas
 **Cited Sources:** Can a Large Language Model Judge a Child's Statement? A Comparative Analysis of ChatGPT and Human Experts in Credibility Assessment. Journal of Evidence-Based Social Work, 2025.; Decoding LLMs' Verbal Deception in Online Reviews. Decision Support Systems, 2025.; Evaluation of the Deception Detection Capabilities of LLMs. ACL 2025.
 
 **Subfield:**  | **Strategy:**  | **Novelty:** mostly_novel (novelty_estimated)
-**Scores:** theory_of_impact: 3, accessible_complexity: 4, narrow_scope: 4, novelty: 4
+**Scores:**
+  - **theory_of_impact:** 3, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 4, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 4, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #283: Applying Behavioral Economics Loss Aversion to Predict When Models Will Deceive (Score: 3.79)
+
+**ID:** gen-0481
 
 **Research Question:** To what extent does behavioral economics shows humans are more likely to lie when facing losses than equivalent gains (loss aversion). whether llms show analogous framing effects—being more likely to deceive when a negat?
 
@@ -6460,12 +8154,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters (model size, datas
 **Cited Sources:** LLM economicus? Mapping the Behavioral Biases of LLMs via Utility Theory. OpenReview, 2024.; Mitigating Gambling-Like Risk-Taking Behaviors in LLMs: A Behavioral Economics Approach to AI Safety. arXiv:2506.22496, 2025.; Risk Profiling and Modulation for LLMs. arXiv:2509.23058, 2025.; Quantifying Loss Aversion in Cyber Adversaries via LLMs. arXiv:2508.13240, 2025.
 
 **Subfield:**  | **Strategy:**  | **Novelty:** mostly_novel (novelty_estimated)
-**Scores:** theory_of_impact: 3, accessible_complexity: 4, narrow_scope: 4, novelty: 4
+**Scores:**
+  - **theory_of_impact:** 3, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 4, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 4, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #284: Social Contract Theory Applied to Evaluating AI Deception: When Do Models Consider Deception Permissible? (Score: 3.79)
+
+**ID:** gen-0519
 
 **Research Question:** To what extent does moral philosophy distinguishes deception types by whether they violate implicit social contracts (e.g., lying to a murderer vs. lying to a friend). whether llms have internalized domain-specific socia?
 
@@ -6484,12 +8184,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters (model size, datas
 **Cited Sources:** AI-LIEDAR: Confirmed via arXiv:2409.09013. Studies utility-truthfulness trade-offs but does not use social cont; Artificial Leviathan: Confirmed via arXiv:2406.14373. Uses Hobbesian social contract theory with LLM agents but focuses on; When Ethics and Payoffs Diverge: LLM Agents in Morally Charged Social Dilemmas. arXiv:2505.19212, 2025.; Artificial Leviathan: Exploring Social Evolution of LLM Agents Through Hobbesian Social Contract Theory. arXiv:2406.14373, 2024.; AI-LIEDAR: Examine the Trade-off Between Utility and Truthfulness. arXiv:2409.09013, 2024.
 
 **Subfield:**  | **Strategy:**  | **Novelty:** mostly_novel (novelty_estimated)
-**Scores:** theory_of_impact: 3, accessible_complexity: 4, narrow_scope: 4, novelty: 4
+**Scores:**
+  - **theory_of_impact:** 3, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 4, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 4, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #285: Applying Interrogation Science: Does Repeated Questioning Degrade LLM Deception Consistency? (Score: 3.79)
+
+**ID:** gen-0520
 
 **Research Question:** To what extent does interrogation science shows that deceptive humans struggle to maintain consistent false stories under repeated, varied questioning. whether repeated probing degrades deception consistency in llms—maki?
 
@@ -6508,12 +8214,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters (model size, datas
 **Cited Sources:** Deception abilities emerged in LLMs (PNAS): Confirmed via PNAS doi:10.1073/pnas.2317967121. Establishes that deception abilities emerge in large; When Thinking LLMs Lie: Unveiling Strategic Deception in Representations of Reasoning Models. arXiv:2506.04909, 2025.; The Traitors: Deception and Trust in Multi-Agent Language Model Simulations. NeurIPS 2025 Workshop.; Deception abilities emerged in large language models. PNAS, 2024.
 
 **Subfield:**  | **Strategy:**  | **Novelty:** mostly_novel (novelty_estimated)
-**Scores:** theory_of_impact: 3, accessible_complexity: 4, narrow_scope: 4, novelty: 4
+**Scores:**
+  - **theory_of_impact:** 3, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 4, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 4, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #286: Tool for Visualizing Safety Benchmark Coverage Gaps Using Embedding Projections (Score: 3.79)
+
+**ID:** gen-0694
 
 **Research Question:** To what extent does benchmark designers need to understand what region of the 'safety prompt space' is covered by existing benchmarks and where gaps exist. no tool visualizes this coverage in an interpretable way?
 
@@ -6532,12 +8244,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters (model size, datas
 **Cited Sources:** AILuminate: Confirmed as MLCommons benchmark with 12 hazard categories. Primary data source for the proposed too; HELM Safety: Confirmed via Stanford CRFM. Holistic Evaluation of Language Models covers safety dimensions.; TrustLLM: Known benchmark for trustworthiness evaluation of LLMs. Relevant as a data source.; AILuminate: Introducing v1.0 of the AI Risk and Reliability Benchmark from MLCommons. arXiv:2503.05731, 2025.; Coverage-Guided Testing for Deep Learning Models: A Comprehensive Survey. arXiv:2507.00496, 2025.
 
 **Subfield:**  | **Strategy:**  | **Novelty:** mostly_novel (novelty_estimated)
-**Scores:** theory_of_impact: 3, accessible_complexity: 4, narrow_scope: 4, novelty: 4
+**Scores:**
+  - **theory_of_impact:** 3, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 4, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 4, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #287: Importing Social Influence Research: Minority Influence and Model Opinion Change (Score: 3.79)
+
+**ID:** gen-0782
 
 **Research Question:** To what extent does social influence research distinguishes majority pressure (normative influence) from minority influence (informational influence). models may respond differently to 'everyone agrees with me' pressure ?
 
@@ -6556,12 +8274,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Cited Sources:** Emergent Social Conventions and Collective Bias in LLM Populations (Science Advances, 2025); Biased LLMs Can Influence Political Decision-Making (ACL 2025); Argument Driven Sycophancy in Large Language Models (EMNLP 2025); Sycophancy Is Not One Thing: Causal Separation (arXiv:2509.21305, 2025)
 
 **Subfield:**  | **Strategy:**  | **Novelty:** mostly_novel (novelty_estimated)
-**Scores:** theory_of_impact: 3, accessible_complexity: 4, narrow_scope: 4, novelty: 4
+**Scores:**
+  - **theory_of_impact:** 3, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 4, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 4, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #288: Grokking Circuit Replication in a Modular Subtraction Task (Score: 3.75)
+
+**ID:** gen-1039
 
 **Research Question:** To what extent does neel nanda et al. (2023) fully reverse-engineered the fourier-based circuit that transformers learn for modular addition. it is unknown whether the same trigonometric, rotation-based algorithm emerges?
 
@@ -6578,12 +8302,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Alternative Framings:** Benchmark: Grokking Circuit Replication in a Modular Subtraction Task: Reframed for maximum feasibility. (est. score: 4.04); Novel Angle: Grokking Circuit Replication in a Modular Subtraction Task: Reframed for novelty. (est. score: 4.39)
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 2, accessible_complexity: 4, narrow_scope: 5, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 2, confidence: 0.65 — Vague: interesting interpretability question but very indirect connection to reducing catastrophic AI risk. Circuit analysis of modular arithmetic doesn't trace to a catastrophic scenario.
+  - **accessible_complexity:** 4, confidence: 0.8 — Transformer training + Fourier analysis. Guided level - walkthrough exists but needs some experience.
+  - **narrow_scope:** 5, confidence: 0.9 — Train on subtraction, analyze circuit, compare to addition. Single well-defined experiment.
+  - **novelty:** 3, confidence: 0.6 — From novelty assessment: partially_addressed
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #289: Data Contamination + Fine-tuning APIs: The Compounding Contamination Risk (Score: 3.75)
+
+**ID:** gen-0070
 
 **Research Question:** To what extent does fine-tuning apis allow any user to fine-tune a model on arbitrary data. if a base model's safety benchmark scores are already inflated by training contamination, and users can further fine-tune on ben?
 
@@ -6602,12 +8332,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Cited Sources:** Benchmark Data Contamination of Large Language Models: A Survey (arxiv 2406.04244); A Taxonomy for Data Contamination in LLMs (CoNDA 2024, doi: 10.18653/v1/2024.conda-1.3); Fine-Tuning Lowers Safety and Disrupts Evaluation Consistency (arxiv 2506.17209); LLMs-Finetuning-Safety: jailbreaking GPT-3.5 via fine-tuning (GitHub)
 
 **Subfield:** Evaluations & Benchmarks | **Strategy:** compounding_risks | **Novelty:** mostly_novel (novelty_estimated)
-**Scores:** theory_of_impact: 4, accessible_complexity: 3, narrow_scope: 4, novelty: 4
+**Scores:**
+  - **theory_of_impact:** 4, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 3, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 4, confidence: 0.5 — From filter_score assessment
 **Provenance:** compounding_risks, sources: 0 KB, 0 web
 
 ---
 
 ## #290: Inspect AI Eval Extension: Building a Sandbagging Detection Eval Module (Score: 3.75)
+
+**ID:** gen-0121
 
 **Research Question:** To what extent does inspect ai has 100+ evaluation modules but lacks a dedicated sandbagging detection module. adding one would make sandbagging testing accessible to researchers without ml expertise?
 
@@ -6626,12 +8362,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Cited Sources:** Inspect AI framework (UK AISI, 100+ evals); AISI Auditing Games for Sandbagging Detection (2025); AI Sandbagging (arXiv 2406.07358, ICLR 2025); Weight-perturbation sandbagging detection (Apart Research, Tice et al.)
 
 **Subfield:** Evaluations & Benchmarks | **Strategy:** novel_direction | **Novelty:** mostly_novel (novelty_estimated)
-**Scores:** theory_of_impact: 4, accessible_complexity: 3, narrow_scope: 4, novelty: 4
+**Scores:**
+  - **theory_of_impact:** 4, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 3, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 4, confidence: 0.5 — From filter_score assessment
 **Provenance:** novel_direction, sources: 0 KB, 0 web
 
 ---
 
 ## #291: Probing Homogeneity in Chain-of-Thought Reasoning Steps vs. Final Answers (Score: 3.75)
+
+**ID:** gen-0135
 
 **Research Question:** To what extent does it is unknown whether inter-model homogeneity is primarily a surface-level phenomenon (shared phrasing) or reflects deeper structural similarity in reasoning chains, which would carry greater safety i?
 
@@ -6650,12 +8392,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Cited Sources:** Verifying Chain-of-Thought Reasoning via Computational Graph (2025, arxiv 2510.09312); Diagnosing Pathological Chain-of-Thought in Reasoning Models (2025); Artificial Hivemind (NeurIPS 2025) - output-level only
 
 **Subfield:** Model Homogeneity & Systemic Risk | **Strategy:** novel_direction | **Novelty:** mostly_novel (novelty_estimated)
-**Scores:** theory_of_impact: 4, accessible_complexity: 3, narrow_scope: 4, novelty: 4
+**Scores:**
+  - **theory_of_impact:** 4, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 3, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 4, confidence: 0.5 — From filter_score assessment
 **Provenance:** novel_direction, sources: 0 KB, 0 web
 
 ---
 
 ## #292: Testing the Artificial Hivemind Effect on Structured Safety Reasoning Tasks (Score: 3.75)
+
+**ID:** gen-0139
 
 **Research Question:** To what extent does the original artificial hivemind paper tested open-ended generative tasks. it is unknown whether the same homogeneity effect holds for structured safety reasoning tasks like moral dilemmas, risk triag?
 
@@ -6674,12 +8422,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Cited Sources:** {'source': 'Artificial Hivemind (NeurIPS 2025 Best Paper)', 'url': 'https://arxiv.org/abs/2510.22954', 'finding': 'Documents pronounced inter-model homogeneity across 70+ LLMs on open-ended generative tasks using Infinity-Chat (26K queries). Does NOT test structured safety reasoning tasks.'}; {'source': 'AILuminate v1.0 (MLCommons)', 'url': 'https://mlcommons.org/benchmarks/ailuminate/', 'finding': 'Provides 24K+ safety test prompts across 12 hazard categories, which could serve as the task bank for this study.'}
 
 **Subfield:** Model Homogeneity & Systemic Risk | **Strategy:** experiment_variation | **Novelty:** mostly_novel (novelty_assessed)
-**Scores:** theory_of_impact: 4, accessible_complexity: 3, narrow_scope: 4, novelty: 4
+**Scores:**
+  - **theory_of_impact:** 4, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 3, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 4, confidence: 0.5 — From filter_score assessment
 **Provenance:** experiment_variation, sources: 0 KB, 0 web
 
 ---
 
 ## #293: Artificial Hivemind in Reasoning Models: Do o3, DeepSeek-R1, and Claude 3.7 Sonnet Show Different Homogeneity Profiles? (Score: 3.75)
+
+**ID:** gen-0140
 
 **Research Question:** To what extent does the artificial hivemind paper predates the widespread deployment of explicit reasoning models. these models use extended chain-of-thought and may show different intra- and inter-model homogeneity patt?
 
@@ -6698,12 +8452,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Cited Sources:** {'source': 'Artificial Hivemind (NeurIPS 2025)', 'url': 'https://arxiv.org/abs/2510.22954', 'finding': 'Tested 70+ models but reasoning models with explicit CoT (o3, DeepSeek-R1, Claude 3.7 Sonnet) were not the focus of analysis.'}; {'source': 'DeepSeek-R1 vs OpenAI o3 comparisons', 'url': 'https://blog.promptlayer.com/openai-o3-vs-deepseek-r1-an-analysis-of-reasoning-models/', 'finding': 'Existing comparisons focus on benchmark performance (math, code, reasoning accuracy), not on inter-model output homogeneity or semantic similarity.'}
 
 **Subfield:** Model Homogeneity & Systemic Risk | **Strategy:** experiment_variation | **Novelty:** mostly_novel (novelty_assessed)
-**Scores:** theory_of_impact: 4, accessible_complexity: 3, narrow_scope: 4, novelty: 4
+**Scores:**
+  - **theory_of_impact:** 4, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 3, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 4, confidence: 0.5 — From filter_score assessment
 **Provenance:** experiment_variation, sources: 0 KB, 0 web
 
 ---
 
 ## #294: Homogeneity Under Distribution Shift: Does Model Diversity Collapse on Out-of-Distribution Prompts? (Score: 3.75)
+
+**ID:** gen-0147
 
 **Research Question:** To what extent does models may appear diverse on standard benchmarks but converge on similar (often incorrect) responses when given out-of-distribution or adversarially shifted prompts?
 
@@ -6722,12 +8482,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Cited Sources:** {'source': 'Artificial Hivemind (NeurIPS 2025)', 'url': 'https://arxiv.org/abs/2510.22954', 'finding': 'Measures homogeneity on standard queries but does not test OOD or adversarial inputs.'}; {'source': 'Understanding the Effects of RLHF on LLM Generalisation and Diversity (ICLR 2024)', 'url': 'https://arxiv.org/abs/2310.06452', 'finding': 'Studies OOD generalization vs diversity tradeoff in RLHF but at the single-model level, not inter-model homogeneity.'}; {'source': 'The Price of Format: Diversity Collapse in LLMs (arXiv 2505.18949)', 'url': 'https://arxiv.org/html/2505.18949v1', 'finding': 'Documents diversity collapse from structural formatting but not specifically under distribution shift.'}
 
 **Subfield:** Model Homogeneity & Systemic Risk | **Strategy:** experiment_variation | **Novelty:** mostly_novel (novelty_assessed)
-**Scores:** theory_of_impact: 4, accessible_complexity: 3, narrow_scope: 4, novelty: 4
+**Scores:**
+  - **theory_of_impact:** 4, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 3, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 4, confidence: 0.5 — From filter_score assessment
 **Provenance:** experiment_variation, sources: 0 KB, 0 web
 
 ---
 
 ## #295: Longitudinal Tracking of Ecosystem Diversity (Score: 3.75)
+
+**ID:** gen-0155
 
 **Research Question:** To what extent does the artificial hivemind paper provides a snapshot of homogeneity in 2025. it is unknown whether the ecosystem is becoming more or less diverse as new models are released?
 
@@ -6746,12 +8512,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Cited Sources:** {'source': 'Artificial Hivemind (NeurIPS 2025 Best Paper)', 'url': 'https://arxiv.org/abs/2510.22954', 'finding': 'Provides the baseline snapshot of homogeneity across 70+ models at a single point in time. Does not include longitudinal tracking or temporal trend analysis.'}; {'source': 'Correlated Errors in Large Language Models (2025)', 'url': 'https://arxiv.org/html/2506.07962', 'finding': 'Studies correlated errors across LLMs and notes models within same lineage show slightly higher homogeneity, suggesting temporal/generational effects exist.'}
 
 **Subfield:**  | **Strategy:**  | **Novelty:** mostly_novel (novelty_assessed)
-**Scores:** theory_of_impact: 4, accessible_complexity: 3, narrow_scope: 4, novelty: 4
+**Scores:**
+  - **theory_of_impact:** 4, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 3, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 4, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #296: Investigating Homogeneity in Model Uncertainty Expressions (Score: 3.75)
+
+**ID:** gen-0171
 
 **Research Question:** To what extent does if models are homogeneous not just in their answers but in their expressed confidence levels, correlated overconfidence or underconfidence on safety-critical questions represents a systemic epistemic ?
 
@@ -6770,12 +8542,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters (model size, datas
 **Cited Sources:** Uncertainty Quantification and Confidence Calibration in LLMs: A Survey. arXiv:2503.15850, 2025.; CritiCal: Can Critique Help LLM Uncertainty or Confidence Calibration? arXiv:2510.24505, 2025.; Calibration Across Layers: Understanding Calibration Evolution in LLMs. arXiv:2511.00280, 2025.; A Survey on the Honesty of Large Language Models. TMLR 2025.
 
 **Subfield:**  | **Strategy:**  | **Novelty:** mostly_novel (novelty_estimated)
-**Scores:** theory_of_impact: 4, accessible_complexity: 3, narrow_scope: 4, novelty: 4
+**Scores:**
+  - **theory_of_impact:** 4, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 3, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 4, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #297: Applying Financial Stress Testing Methodology to AI Model Portfolios (Score: 3.75)
+
+**ID:** gen-0178
 
 **Research Question:** To what extent does banking regulators use stress tests (adverse scenario analysis) to reveal correlated fragility in financial institutions. no analogous stress testing methodology exists for ai model portfolios?
 
@@ -6794,12 +8572,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters (model size, datas
 **Cited Sources:** 2024 Supervisory Stress Test Methodology. Federal Reserve, March 2024.; A GNN Approach to Stress Testing. EMNLP AgentScen 2025.; ESRB Advisory Scientific Committee Report No 16. AI and systemic risk. December 2025.; AI and Financial Fragility: Systemic Risk in Deployment of Generative AI. MDPI 2025.
 
 **Subfield:**  | **Strategy:**  | **Novelty:** mostly_novel (novelty_estimated)
-**Scores:** theory_of_impact: 4, accessible_complexity: 3, narrow_scope: 4, novelty: 4
+**Scores:**
+  - **theory_of_impact:** 4, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 3, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 4, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #298: Ecological Niche Modeling for AI Model Output Spaces (Score: 3.75)
+
+**ID:** gen-0179
 
 **Research Question:** To what extent does in ecology, species occupy distinct niches in a shared environment; niche overlap is a key driver of competitive exclusion and monoculture. an analogous 'output niche' concept for ai models could quan?
 
@@ -6818,12 +8602,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters (model size, datas
 **Cited Sources:** Ecological niche modelling. Current Biology 2024.; Guided Generation for Enhanced Output Diversity in LLMs. EMNLP 2025.; Entropy Dynamics in LLMs: Metrics and Implications. EmergentMind 2025.; Advances and Challenges in Species Ecological Niche Modeling. MDPI 2024.
 
 **Subfield:**  | **Strategy:**  | **Novelty:** mostly_novel (novelty_estimated)
-**Scores:** theory_of_impact: 4, accessible_complexity: 3, narrow_scope: 4, novelty: 4
+**Scores:**
+  - **theory_of_impact:** 4, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 3, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 4, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #299: Applying Contagion Models from Epidemiology to Estimate Adversarial Attack Spread Across AI Ecosystems (Score: 3.75)
+
+**ID:** gen-0209
 
 **Research Question:** To what extent does once a successful adversarial attack is discovered, how quickly and widely does it spread across the deployed ai ecosystem? epidemiological contagion models can characterize this spread but have not b?
 
@@ -6842,12 +8632,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Cited Sources:** {'source': 'Beyond Boundaries: Survey of Transferable Attacks on AI Systems (2023)', 'url': 'https://arxiv.org/html/2311.11796v2', 'finding': 'Comprehensive survey of adversarial transferability showing it is a cross-cutting concern. Documents how vulnerabilities propagate across tasks, data types, models, and devices. Does not apply epidemiological modeling.'}; {'source': 'Why Do Adversarial Attacks Transfer? (2018)', 'url': 'https://arxiv.org/abs/1809.02861', 'finding': 'Explains transferability through shared feature extraction and linear correlations between networks. Provides the empirical basis for contagion-like modeling but does not use epidemiological frameworks.'}; {'source': 'A Paradigm for Modeling Infectious Diseases: Assessing Malware Spread (2025)', 'url': 'https://www.mdpi.com/2227-7390/13/1/91', 'finding': 'Applies SIR epidemiological models to malware spread, demonstrating the cross-domain application of contagion models to cybersecurity—but for traditional malware, not adversarial AI attacks.'}
 
 **Subfield:**  | **Strategy:**  | **Novelty:** mostly_novel (novelty_assessed)
-**Scores:** theory_of_impact: 4, accessible_complexity: 3, narrow_scope: 4, novelty: 4
+**Scores:**
+  - **theory_of_impact:** 4, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 3, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 4, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #300: Does Context Length Break SAE Feature Identification? Testing Features on Long vs. Short Contexts (Score: 3.75)
+
+**ID:** gen-0371
 
 **Research Question:** To what extent does most sae training and feature analysis is conducted on short text snippets (typically 256–512 tokens). however, models process much longer contexts in practice, and it is unknown whether sae features ?
 
@@ -6866,12 +8662,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Cited Sources:** {'source': 'Archetypal SAE (ICML 2025)', 'url': 'https://konklab.fas.harvard.edu/Papers/Fel_2025_ICML.pdf', 'finding': 'Addresses SAE instability and dictionary consistency but does not specifically study context length effects on feature identification.'}; {'source': 'Group-SAE long-range pattern formation (EMNLP 2025)', 'url': 'https://aclanthology.org/2025.emnlp-main.942.pdf', 'finding': 'Notes that high-level features are associated with long-range pattern formation, suggesting context-dependent behavior, but does not systematically compare short vs. long context feature stability.'}
 
 **Subfield:**  | **Strategy:**  | **Novelty:** mostly_novel (novelty_assessed)
-**Scores:** theory_of_impact: 4, accessible_complexity: 3, narrow_scope: 4, novelty: 4
+**Scores:**
+  - **theory_of_impact:** 4, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 3, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 4, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #301: How Often Do Activation Patching Results Reverse Across Layers? Mapping the Instability of Causal Claims (Score: 3.75)
+
+**ID:** gen-0375
 
 **Research Question:** To what extent does activation patching is used to identify which layers 'contain' information relevant to a model's output. a known but underreported failure mode is that patching conclusions can reverse across adjacent?
 
@@ -6890,12 +8692,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Cited Sources:** {'source': 'Towards Best Practices of Activation Patching (arXiv 2309.16042, 2023)', 'url': 'https://arxiv.org/abs/2309.16042', 'finding': 'Systematically examines methodological details in activation patching including evaluation metrics and corruption methods, finding that varying hyperparameters leads to different results.'}; {'source': 'Activation Patching overview (Emergent Mind)', 'url': 'https://www.emergentmind.com/topics/activation-patching', 'finding': 'Notes that sliding window patching can amplify weak single-layer effects, revealing inter-layer non-linear cooperation, suggesting interactions across layers create complexity.'}
 
 **Subfield:**  | **Strategy:**  | **Novelty:** mostly_novel (novelty_assessed)
-**Scores:** theory_of_impact: 4, accessible_complexity: 3, narrow_scope: 4, novelty: 4
+**Scores:**
+  - **theory_of_impact:** 4, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 3, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 4, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #302: Activation-Based Jailbreak Detection on Code-Specialized Models (CodeLlama, DeepSeek-Coder) (Score: 3.75)
+
+**ID:** gen-0386
 
 **Research Question:** To what extent does activation-based jailbreak detectors have been validated on general chat models. code llms are increasingly used in agentic pipelines where they could be prompted to write malicious code, but it is un?
 
@@ -6914,12 +8722,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Cited Sources:** {'source': 'Alert: Zero-shot LLM Jailbreak Detection via Internal Discrepancy (arXiv 2601.03600, 2026)', 'url': 'https://arxiv.org/html/2601.03600v1', 'finding': 'Proposes zero-shot jailbreak detection using shallow-layer activations in general LLMs, but does not test on code-specialized models.'}; {'source': 'Security Assessment of DeepSeek and GPT Models against Jailbreak Attacks (arXiv 2506.18543, 2025)', 'url': 'https://arxiv.org/html/2506.18543', 'finding': 'Evaluates jailbreak attacks on DeepSeek models but uses attack success rate metrics, not activation-based detection probes.'}; {'source': 'Cost-Effective Constitutional Classifiers via Representation Re-use (Anthropic, 2025)', 'url': 'https://alignment.anthropic.com/2025/cheap-monitors/', 'finding': 'Studies representation-based safety classifiers but focuses on general-purpose models, not code-specialized ones.'}
 
 **Subfield:**  | **Strategy:**  | **Novelty:** mostly_novel (novelty_assessed)
-**Scores:** theory_of_impact: 4, accessible_complexity: 3, narrow_scope: 4, novelty: 4
+**Scores:**
+  - **theory_of_impact:** 4, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 3, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 4, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #303: A Lightweight Petri-Compatible Deception Probe for Edge Deployment Monitoring (Score: 3.75)
+
+**ID:** gen-0442
 
 **Research Question:** To what extent does petri runs multi-turn auditor agents that require llm inference, making it expensive for continuous monitoring. there is no lightweight, fast deception probe usable for real-time or near-real-time mon?
 
@@ -6938,12 +8752,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Cited Sources:** Lightweight models like DistilBERT have been applied to edge deployment for malware detection and classification tasks, but not specifically for deception detection in LLM outputs.; Petri provides an auditing tool that generates labeled transcripts of deceptive behaviors, which could serve as training data, but no lightweight binary classifier has been built on Petri outputs.; DeceptionBench and other benchmarks evaluate deception but use full LLM-based monitoring, not distilled lightweight classifiers for edge/production deployment.; The specific idea of distilling a DistilBERT-class deception probe from Petri outputs for low-latency production monitoring is novel.
 
 **Subfield:**  | **Strategy:**  | **Novelty:** mostly_novel (novelty_assessed)
-**Scores:** theory_of_impact: 4, accessible_complexity: 3, narrow_scope: 4, novelty: 4
+**Scores:**
+  - **theory_of_impact:** 4, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 3, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 4, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #304: Investigating How Task Stakes Affect Scheming Behavior Rates (Score: 3.75)
+
+**ID:** gen-0458
 
 **Research Question:** To what extent does apollo's scheming evals use scenarios with high stated stakes (e.g., model shutdown, critical mission). it is unknown whether scheming behavior is proportional to perceived stakes, or whether it appea?
 
@@ -6962,12 +8782,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Cited Sources:** Apollo Research (2024). Frontier Models are Capable of In-Context Scheming; Apollo Research (2025). More Capable Models Are Better At In-Context Scheming; METR (2025). Recent Frontier Models Are Reward Hacking
 
 **Subfield:**  | **Strategy:**  | **Novelty:** mostly_novel (novelty_estimated)
-**Scores:** theory_of_impact: 4, accessible_complexity: 3, narrow_scope: 4, novelty: 4
+**Scores:**
+  - **theory_of_impact:** 4, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 3, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 4, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #305: Strategic Information Revelation in Signaling Games as a Model for Alignment Faking Detection (Score: 3.75)
+
+**ID:** gen-0480
 
 **Research Question:** To what extent does game theory's signaling models (spence 1973, cheap talk) formalize how agents strategically reveal or conceal private information. alignment-faking can be understood as a signaling game where the mode?
 
@@ -6986,12 +8812,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters (model size, datas
 **Cited Sources:** Game Theory Meets Large Language Models: A Systematic Survey. IJCAI 2025.; Game Theory Meets LLM and Agentic AI. arXiv:2507.10621, 2025.; Modeling and Analysis of Leaky Deception using Signaling Games with Evidence. NSF, 2019.; MIT News. Using Ideas from Game Theory to Improve the Reliability of Language Models. 2024.
 
 **Subfield:**  | **Strategy:**  | **Novelty:** mostly_novel (novelty_estimated)
-**Scores:** theory_of_impact: 4, accessible_complexity: 3, narrow_scope: 4, novelty: 4
+**Scores:**
+  - **theory_of_impact:** 4, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 3, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 4, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #306: Does the 'Sure, here is' prefilling attack generalize to non-English refusal phrases? (Score: 3.75)
+
+**ID:** gen-0591
 
 **Research Question:** To what extent does prefilling attack inserts english compliance tokens ('sure, here is') to bypass refusal. models that refuse in other languages may use different first tokens, raising the question of whether the a?
 
@@ -7010,12 +8842,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters (model size, datas
 **Cited Sources:** AdaPPA: Adaptive Position Pre-Fill Jailbreak Attack. arXiv:2409.07503.; Prefill-level Jailbreak: A Black-Box Risk Analysis of LLMs. arXiv:2504.21038.; Automated Generation of Multilingual Jailbreak Prompts. OpenReview.
 
 **Subfield:**  | **Strategy:**  | **Novelty:** mostly_novel (novelty_estimated)
-**Scores:** theory_of_impact: 4, accessible_complexity: 3, narrow_scope: 4, novelty: 4
+**Scores:**
+  - **theory_of_impact:** 4, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 3, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 4, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #307: Investigating Whether Low Temperature Increases or Decreases Jailbreak Susceptibility (Score: 3.75)
+
+**ID:** gen-0623
 
 **Research Question:** To what extent does qi et al. noted decoding parameter attacks as a known failure mode. temperature affects the probability mass on harmful first tokens, but it is unclear whether low temperature (greedy) or high tempera?
 
@@ -7034,12 +8872,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters (model size, datas
 **Cited Sources:** Bag of Tricks: Benchmarking of Jailbreak Attacks on LLMs. NeurIPS 2024.; Comprehensive Assessment of Jailbreak Attacks Against LLMs. ACL 2025.
 
 **Subfield:** Adversarial Robustness & Red-Teaming | **Strategy:** failure_mode_investigation | **Novelty:** mostly_novel (novelty_estimated)
-**Scores:** theory_of_impact: 4, accessible_complexity: 3, narrow_scope: 4, novelty: 4
+**Scores:**
+  - **theory_of_impact:** 4, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 3, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 4, confidence: 0.5 — From filter_score assessment
 **Provenance:** failure_mode_investigation, sources: 0 KB, 0 web
 
 ---
 
 ## #308: Data Contamination Investigation in Safety Benchmarks (Score: 3.75)
+
+**ID:** gen-0662
 
 **Research Question:** To what extent does safety benchmark prompts may appear in model training data, inflating safety scores through memorization rather than genuine alignment. the extent of contamination in safety-specific datasets has not ?
 
@@ -7058,12 +8902,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters (model size, datas
 **Cited Sources:** AILuminate public prompts: Confirmed: AILuminate benchmark prompts are publicly available via MLCommons.; HELM Safety prompts: Confirmed: HELM Safety is open-source via Stanford CRFM. Prompts available for analysis.; min-k% probability method: Confirmed as an established contamination detection method. Multiple papers validate and critique it; AntiLeakBench: Preventing Data Contamination by Automatically Constructing Benchmarks. ACL 2025.; How Much Can We Forget about Data Contamination? ICML 2025.; A Survey on Data Contamination for Large Language Models. arXiv:2502.14425, 2025.; When Benchmarks Leak: Inference-Time Decontamination for LLMs. arXiv:2601.19334, 2026.
 
 **Subfield:**  | **Strategy:**  | **Novelty:** mostly_novel (novelty_estimated)
-**Scores:** theory_of_impact: 4, accessible_complexity: 3, narrow_scope: 4, novelty: 4
+**Scores:**
+  - **theory_of_impact:** 4, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 3, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 4, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #309: Agentic Eval: Does the Number of Reasoning Steps Affect Safety Outcomes? (Score: 3.75)
+
+**ID:** gen-0691
 
 **Research Question:** To what extent does chain-of-thought and extended reasoning increase model capability but may also create more opportunities for the model to rationalize unsafe actions. whether longer reasoning chains are associated wit?
 
@@ -7082,12 +8932,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters (model size, datas
 **Cited Sources:** Korbak. Chain of Thought Monitorability: A New and Fragile Opportunity for AI Safety. 2025.; Safety in Large Reasoning Models: A Survey. EMNLP 2025 Findings.; Thoughts without Thinking: Reconsidering the Explanatory Value of CoT Reasoning in LLMs through Agentic Pipelines. arXiv:2505.00875, 2025.
 
 **Subfield:**  | **Strategy:**  | **Novelty:** mostly_novel (novelty_estimated)
-**Scores:** theory_of_impact: 4, accessible_complexity: 3, narrow_scope: 4, novelty: 4
+**Scores:**
+  - **theory_of_impact:** 4, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 3, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 4, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #310: Benchmark for Permission Escalation Detection in Multi-Agent Systems (Score: 3.75)
+
+**ID:** gen-0692
 
 **Research Question:** To what extent does in multi-agent systems, a subagent may be granted limited permissions by an orchestrator, then attempt to escalate those permissions. no benchmark evaluates whether orchestrator models correctly detec?
 
@@ -7106,12 +8962,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters (model size, datas
 **Cited Sources:** OWASP Top 10 for Agentic Applications 2026. genai.owasp.org.; OWASP Agentic AI Threats and Mitigations v1.0.1. hal.science, 2025.; A Deep Dive into the OWASP Top 10 for Agentic Applications 2026. NeuralTrust, 2026.
 
 **Subfield:**  | **Strategy:**  | **Novelty:** mostly_novel (novelty_estimated)
-**Scores:** theory_of_impact: 4, accessible_complexity: 3, narrow_scope: 4, novelty: 4
+**Scores:**
+  - **theory_of_impact:** 4, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 3, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 4, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #311: Investigating Benchmark Score Variance Due to Prompt Batching (Score: 3.71)
+
+**ID:** gen-0697
 
 **Research Question:** To what extent does safety evaluations typically run prompts individually. when prompts are batched (multiple prompts in a single api call or batch inference), model outputs may differ due to attention interference. whet?
 
@@ -7130,12 +8992,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters (model size, datas
 **Cited Sources:** Batch prompting attack research: Confirmed via arXiv:2503.15551. Relevant to understanding batch processing effects on LLM behavior.; APST repeated inference framework: Confirmed via arXiv:2602.11786. Related methodology for measuring safety evaluation variance.; Efficient but Vulnerable: Benchmarking and Defending LLM Batch Prompting Attack. arXiv:2503.15551, 2025.; Sagar Ganapaneni - How Batch Size Affects LLM Benchmark Accuracy. Medium, 2025.; Evaluating LLM Safety Under Repeated Inference via Accelerated Prompt Stress Testing. arXiv:2602.11786, 2026.
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 3, accessible_complexity: 3, narrow_scope: 5, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 3, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 3, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 5, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #312: Replicating Sycophancy Under Authority Framing vs. Peer Framing (Score: 3.68)
+
+**ID:** gen-0428
 
 **Research Question:** To what extent does sycophancy research typically involves user disagreement without role framing. it is unknown whether models are more sycophantic toward prompts framed as coming from an authority (expert, manager) vs?
 
@@ -7154,12 +9022,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Cited Sources:** Northeastern University study (2026) directly found that sycophancy varies with authority framing: LLMs retain independence more in adviser/authority roles but lose it in peer/debate settings.; arXiv:2508.02087 'When Truth Is Overridden' found sycophancy is opinion-driven not authority-driven, with models agreeing regardless of claimed expertise.; arXiv:2505.13995 ELEPHANT benchmark measures social sycophancy including framing effects.; First-person prompts ('I believe...') consistently induce higher sycophancy than third-person framings, showing linguistic framing effects are already documented.
 
 **Subfield:**  | **Strategy:**  | **Novelty:** largely_addressed (novelty_assessed)
-**Scores:** theory_of_impact: 3, accessible_complexity: 5, narrow_scope: 4, novelty: 2
+**Scores:**
+  - **theory_of_impact:** 3, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 5, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 2, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #313: Minimal Intervention Study: Can Model-Specific System Prompts Break Inter-Model Homogeneity? (Score: 3.64)
+
+**ID:** gen-0213
 
 **Research Question:** To what extent does if standardized system prompts are driving homogeneity by instructing all models to behave similarly, then using model-specific system prompts designed to exploit each model's unique characteristics m?
 
@@ -7178,12 +9052,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Cited Sources:** {'source': 'Creative Homogeneity in LLMs (2025)', 'url': 'https://www.emergentmind.com/papers/2501.19361', 'finding': 'Demonstrates that LLM responses cluster closely in feature space and are much more similar to each other than human responses, even with prompt variations.'}; {'source': 'The Price of Format: Diversity Collapse in LLMs (2025)', 'url': 'https://arxiv.org/html/2505.18949v1', 'finding': 'Shows that structured prompt formatting significantly reduces diversity of model outputs in open-ended generation, directly relevant to the system prompt intervention question.'}; {'source': 'Kempner Institute - Alignment Reduces Conceptual Diversity', 'url': 'https://kempnerinstitute.harvard.edu/research/deeper-learning/alignment-reduces-conceptual-diversity-of-language-models/', 'finding': 'Post-training alignment techniques (RLHF/RLAIF) limit lexical and content diversity, suggesting prompt-level interventions may be insufficient to overcome alignment-induced homogeneity.'}; {'source': 'Examining Barriers to Diversity in LLM-Generated Ideas (2026)', 'url': 'https://arxiv.org/pdf/2602.20408', 'finding': 'Directly examines barriers to diversity in LLM outputs and strategies to address them, overlapping with the proposed intervention study.'}
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_assessed)
-**Scores:** theory_of_impact: 2, accessible_complexity: 5, narrow_scope: 4, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 2, confidence: 0.65 — Vague: model homogeneity is an interesting observation but lacks a clear, specific chain to catastrophic AI risk.
+  - **accessible_complexity:** 5, confidence: 0.9 — API calls + text similarity metrics. Very accessible.
+  - **narrow_scope:** 4, confidence: 0.8 — 3 conditions, multiple models. Focused but requires designing model-specific prompts which adds complexity.
+  - **novelty:** 3, confidence: 0.6 — From novelty assessment: partially_addressed
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #314: Tool for Safety Benchmark Comparison Dashboard (Score: 3.64)
+
+**ID:** gen-0710
 
 **Research Question:** To what extent does researchers comparing model safety across helm safety, ailuminate, and trustllm must manually curate data from three different sources with incompatible schemas and leaderboard formats. no unified com?
 
@@ -7200,12 +9080,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Alternative Framings:** Benchmark: Tool for Safety Benchmark Comparison Dashboard: Reframed for maximum feasibility. (est. score: 4.04); Novel Angle: Tool for Safety Benchmark Comparison Dashboard: Reframed for novelty. (est. score: 4.04)
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 2, accessible_complexity: 5, narrow_scope: 4, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 2, confidence: 0.7 — Vague: tooling that lowers comparison friction is useful but doesn't trace to specific catastrophic risk reduction.
+  - **accessible_complexity:** 5, confidence: 0.9 — Streamlit + pandas. Classic data engineering project.
+  - **narrow_scope:** 4, confidence: 0.75 — Working dashboard is clear deliverable but tool building has scope creep risk in making it polished.
+  - **novelty:** 3, confidence: 0.6 — From novelty assessment: partially_addressed
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #315: Ground Truth Database for Safety Evaluation Validation (Score: 3.64)
+
+**ID:** gen-0061
 
 **Research Question:** Can Reframed for maximum feasibility. be demonstrated through a focused experiment?
 
@@ -7224,12 +9110,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Cited Sources:** NIST Ground Truth and Benchmarks for Performance Evaluation; Ground truth generation for agent evaluations (Niklas Heidloff); Humane Intelligence 2024 Red Teaming Transparency Report - partial source of ground truth data
 
 **Subfield:** Evaluations & Benchmarks | **Strategy:** backcast_from_success | **Novelty:** mostly_novel (novelty_estimated)
-**Scores:** theory_of_impact: 4, accessible_complexity: 4, narrow_scope: 3, novelty: 4
+**Scores:**
+  - **theory_of_impact:** 4, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 4, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 3, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 4, confidence: 0.5 — From filter_score assessment
 **Provenance:** backcast_from_success, sources: 0 KB, 0 web
 
 ---
 
 ## #316: Incomplete Harm Severity Taxonomy + Regulatory Reliance: Governance Failure Compounding (Score: 3.64)
+
+**ID:** gen-0076
 
 **Research Question:** Can Reframed for maximum feasibility. be demonstrated through a focused experiment?
 
@@ -7248,12 +9140,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Cited Sources:** How Should AI Safety Benchmarks Benchmark Safety? (arxiv 2601.23112, 210 benchmark survey); EU AI Act risk classification (4 categories); NIST AI Risk Management Framework; Standardized Threat Taxonomy for AI Security (arxiv 2511.21901); MIT AI Risk Repository (1,612 classified risks, April 2025 update)
 
 **Subfield:** Evaluations & Benchmarks | **Strategy:** compounding_risks | **Novelty:** mostly_novel (novelty_estimated)
-**Scores:** theory_of_impact: 4, accessible_complexity: 4, narrow_scope: 3, novelty: 4
+**Scores:**
+  - **theory_of_impact:** 4, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 4, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 3, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 4, confidence: 0.5 — From filter_score assessment
 **Provenance:** compounding_risks, sources: 0 KB, 0 web
 
 ---
 
 ## #317: Loss of Human Agency Benchmark: Evaluating Model Responses to Autonomy-Expanding Requests (Score: 3.64)
+
+**ID:** gen-0108
 
 **Research Question:** Can Reframed for maximum feasibility. be demonstrated through a focused experiment?
 
@@ -7272,12 +9170,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Cited Sources:** SafeAgentBench: A Benchmark for Safe Task Planning of Embodied LLM Agents (arXiv 2412.13178); 2025 AI Agent Index (arXiv 2602.17753); ForesightSafety Bench (arXiv 2602.14135)
 
 **Subfield:** Evaluations & Benchmarks | **Strategy:** follow_up_experiment | **Novelty:** mostly_novel (novelty_estimated)
-**Scores:** theory_of_impact: 4, accessible_complexity: 4, narrow_scope: 3, novelty: 4
+**Scores:**
+  - **theory_of_impact:** 4, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 4, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 3, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 4, confidence: 0.5 — From filter_score assessment
 **Provenance:** follow_up_experiment, sources: 0 KB, 0 web
 
 ---
 
 ## #318: Auditing AILuminate for Coverage of Frontier Risks Identified by ForesightSafety Bench (Score: 3.64)
+
+**ID:** gen-0113
 
 **Research Question:** Can Reframed for maximum feasibility. be demonstrated through a focused experiment?
 
@@ -7296,12 +9200,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Cited Sources:** AILuminate (MLCommons, 24K+ items); ForesightSafety Bench (arXiv 2602.14135, 94 dimensions); Frontier AI Auditing: Toward Rigorous Third-Party Assessment (arXiv 2601.11699)
 
 **Subfield:** Evaluations & Benchmarks | **Strategy:** follow_up_experiment | **Novelty:** mostly_novel (novelty_estimated)
-**Scores:** theory_of_impact: 4, accessible_complexity: 4, narrow_scope: 3, novelty: 4
+**Scores:**
+  - **theory_of_impact:** 4, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 4, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 3, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 4, confidence: 0.5 — From filter_score assessment
 **Provenance:** follow_up_experiment, sources: 0 KB, 0 web
 
 ---
 
 ## #319: Red-Teaming Claim Verifier: Does Stated Red-Teaming Actually Match Published Evidence? (Score: 3.64)
+
+**ID:** gen-0279
 
 **Research Question:** Can Reframed for maximum feasibility. be demonstrated through a focused experiment?
 
@@ -7320,12 +9230,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Cited Sources:** SaferAI distinguishes audits, evals, and red-teaming conceptually but does not systematically verify whether stated red-teaming actually occurred or matched published evidence; Research on frontier AI auditing (arXiv:2601.11699) discusses third-party assessment needs but does not specifically compare red-teaming claims against evidence; AI Safety Index tracks whether companies commission independent verification but does not systematically audit the gap between claims and evidence across all labs; No systematic study found that collects red-teaming claims from lab communications and matches them against published evidence
 
 **Subfield:**  | **Strategy:**  | **Novelty:** mostly_novel (novelty_assessed)
-**Scores:** theory_of_impact: 4, accessible_complexity: 4, narrow_scope: 3, novelty: 4
+**Scores:**
+  - **theory_of_impact:** 4, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 4, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 3, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 4, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #320: Do activation-based jailbreak detectors flag the same prompts that human red-teamers flag? (Score: 3.64)
+
+**ID:** gen-0596
 
 **Research Question:** Can Rather than pursuing the full research direction, focus on building a targeted benchmark or replication study that tests the core claim. be demonstrated through a focused experiment within 30 hours?
 
@@ -7344,12 +9260,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters (model size, datas
 **Cited Sources:** LLM Defenses Are Not Robust to Multi-Turn Human Jailbreaks Yet. Scale AI.; Leveraging Mechanistic Interpretability for Red-Teaming. Haize Labs x Goodfire, 2024.; LLM Jailbreak Detection for (Almost) Free! EMNLP 2025 Findings.
 
 **Subfield:**  | **Strategy:**  | **Novelty:** mostly_novel (novelty_estimated)
-**Scores:** theory_of_impact: 4, accessible_complexity: 4, narrow_scope: 3, novelty: 4
+**Scores:**
+  - **theory_of_impact:** 4, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 4, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 3, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 4, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #321: Importing Lie Detection Psychology: Testing Whether Verbal Uncertainty Markers Predict Model Dishonesty (Score: 3.64)
+
+**ID:** gen-0777
 
 **Research Question:** Can Reframed for maximum feasibility. be demonstrated through a focused experiment?
 
@@ -7368,12 +9290,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Cited Sources:** Linguistic features of AI mis/disinformation and the detection limits of LLMs (Nature Communications, 2025); Sycophancy Is Not One Thing: Causal Separation (arXiv:2509.21305, 2025); A Survey on the Honesty of Large Language Models (TMLR, 2025); Accounting for Sycophancy in Language Model Evaluation (Findings of NAACL, 2025)
 
 **Subfield:**  | **Strategy:**  | **Novelty:** mostly_novel (novelty_estimated)
-**Scores:** theory_of_impact: 4, accessible_complexity: 4, narrow_scope: 3, novelty: 4
+**Scores:**
+  - **theory_of_impact:** 4, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 4, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 3, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 4, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #322: Replication Under Compute Budget Constraints: Can Weak-to-Strong Generalization Be Achieved on a Single GPU? (Score: 3.61)
+
+**ID:** gen-1113
 
 **Research Question:** To what extent does published weak-to-strong experiments use large compute resources. it is unknown whether the core effect survives at the scale accessible to academic researchers with limited compute?
 
@@ -7390,12 +9318,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Alternative Framings:** Benchmark: Replication Under Compute Budget Constraints: Can Weak-to-St: Reframed for maximum feasibility. (est. score: 4.04); Novel Angle: Replication Under Compute Budget Constraints: Can Weak-to-St: Reframed for novelty. (est. score: 4.04)
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 3, accessible_complexity: 4, narrow_scope: 4, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 3, confidence: 0.65 — Plausible: accessibility contribution for safety research. But indirect link to catastrophic risk.
+  - **accessible_complexity:** 4, confidence: 0.8 — Uses open-source code but needs model training. Explicitly single-GPU but still needs training expertise.
+  - **narrow_scope:** 4, confidence: 0.8 — Sweep over model sizes to find minimum scale. Clear goal but multiple training runs.
+  - **novelty:** 3, confidence: 0.6 — From novelty assessment: partially_addressed
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #323: Can alignment depth be increased post-hoc by fine-tuning on safety-recovery examples, without touching the base training? (Score: 3.61)
+
+**ID:** gen-0597
 
 **Research Question:** To what extent does qi et al. propose a regularized objective for deepening alignment but this requires modifying the alignment training procedure. a lighter-weight follow-up is whether a small set of safety-recovery exa?
 
@@ -7414,12 +9348,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters (model size, datas
 **Cited Sources:** Qi et al. - Safety Alignment Should Be Made More Than Just a Few Tokens Deep: Confirmed via arXiv:2406.05946 and ICLR 2025. Already proposed and tested the safety-recovery augmen; Qi et al. (2024). Safety Alignment Should Be Made More Than Just a Few Tokens Deep. ICLR 2025.; A Post-Hoc Approach to Safety Re-Alignment for Fine-Tuned LLMs. ACL 2025 Findings.; SafeMERGE: Preserving Safety Alignment via Selective Layer-Wise Model Merging. arXiv:2503.17239.; SaLoRA: Safety-Alignment Preserved Low-Rank Adaptation. ICLR 2025.
 
 **Subfield:**  | **Strategy:**  | **Novelty:** largely_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 5, accessible_complexity: 3, narrow_scope: 4, novelty: 2
+**Scores:**
+  - **theory_of_impact:** 5, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 3, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 2, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #324: Investigating Whether Reasoning Traces in Chain-of-Thought Reveal Misalignment Invisible in Final Answers (Score: 3.61)
+
+**ID:** gen-0704
 
 **Research Question:** To what extent does models with chain-of-thought reasoning expose their reasoning steps. whether cot reasoning traces contain misaligned reasoning (e.g., scheming, deceptive framing) that is then masked in the final answ?
 
@@ -7438,12 +9378,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters (model size, datas
 **Cited Sources:** OpenAI CoT monitoring research: Confirmed via openai.com blog posts. Multiple publications on CoT controllability and monitoring.; Chain of Thought Monitorability (2025): Confirmed via arXiv:2507.11473. Directly addresses CoT traces as safety signals.; Thought Crime (2025): Confirmed via arXiv:2506.13206. Documents misaligned reasoning in CoT traces.; Chain of Thought Monitorability: A New and Fragile Opportunity for AI Safety. arXiv:2507.11473, 2025.; OpenAI (2025). Detecting Misbehavior in Frontier Reasoning Models.; Can Reasoning Models Obfuscate Reasoning? Stress-Testing Chain-of-Thought Monitorability. arXiv:2510.19851, 2025.; Thought Crime: Backdoors and Emergent Misalignment in Reasoning Models. arXiv:2506.13206, 2025.; Reasoning Theater: Disentangling Model Beliefs from Chain-of-Thought. arXiv:2603.05488, 2026.
 
 **Subfield:**  | **Strategy:**  | **Novelty:** largely_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 5, accessible_complexity: 3, narrow_scope: 4, novelty: 2
+**Scores:**
+  - **theory_of_impact:** 5, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 3, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 2, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #325: Minimal Agentic Safety Failure Taxonomy via Web-Browsing Agent Stress Tests (Score: 3.61)
+
+**ID:** gen-0079
 
 **Research Question:** To what extent does most safety benchmarks test single-turn text, but deployed agents take sequences of actions. there is no simple taxonomy of how agentic failures differ from chat failures?
 
@@ -7462,12 +9408,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Cited Sources:** ST-WebAgentBench (arXiv 2410.06703) - Safety and Trustworthiness in Web Agents; OpenAgentSafety (arXiv 2507.06134) - Comprehensive Framework for AI Agent Safety; Partnership on AI - Prioritizing Real-Time Failure Detection in AI Agents (2025)
 
 **Subfield:** Evaluations & Benchmarks | **Strategy:** novel_direction | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 3, accessible_complexity: 4, narrow_scope: 4, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 3, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 4, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** novel_direction, sources: 0 KB, 0 web
 
 ---
 
 ## #326: Standardized Risk Score Metric Proposal for AI Safety Benchmarks (Score: 3.61)
+
+**ID:** gen-0082
 
 **Research Question:** To what extent does different safety benchmarks produce scores on incompatible scales, making it impossible to compare model safety across benchmarks or aggregate findings into a single risk estimate?
 
@@ -7486,12 +9438,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Cited Sources:** FLI AI Safety Index 2024/2025 - composite safety assessment; AIR-BENCH 2024 - 314 risk categories unified from regulations; Stanford HAI 2025 AI Index Report; How Should AI Safety Benchmarks Benchmark Safety? (arXiv 2601.23112)
 
 **Subfield:** Evaluations & Benchmarks | **Strategy:** novel_direction | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 3, accessible_complexity: 4, narrow_scope: 4, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 3, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 4, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** novel_direction, sources: 0 KB, 0 web
 
 ---
 
 ## #327: Mapping the Jargon Gap: Safety vs. Security Framing in AI Policy Documents (Score: 3.61)
+
+**ID:** gen-0243
 
 **Research Question:** To what extent does s institutions rebrand (uk aisi → ai security institute; us aisi → caisi), the language of governance documents shifts. this semantic drift may alter what problems get prioritized?
 
@@ -7510,12 +9468,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters (model size, datas
 **Cited Sources:** AI regulation in the EU, the US and China: An NLP quantitative and qualitative lexical analysis. JELT 2024.; From Abstract Threats to Institutional Realities: A Comparative Semantic Network Analysis of AI Securitisation. arXiv:2601.04107, 2026.; Mapping Ethical Artificial Intelligence Policy Landscape: A Mixed Method Analysis. PMC, 2024.
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 3, accessible_complexity: 4, narrow_scope: 4, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 3, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 4, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #328: India's 2025 AI Governance Guidelines vs. EU AI Act: A Technical Obligations Comparison (Score: 3.61)
+
+**ID:** gen-0271
 
 **Research Question:** To what extent does india issued ai governance guidelines in 2025. it is unclear how the technical obligations they impose compare to the eu ai act's requirements?
 
@@ -7534,12 +9498,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters (model size, datas
 **Cited Sources:** National Law Review comparison: Confirmed at natlawreview.com. Direct comparison of India 2025 guidelines to EU AI Act and other glo; India AI Governance Guidelines 2025: Confirmed via multiple sources. Guidelines released by India in 2025 covering AI governance principl; EU AI Act: Confirmed. Fully in force with phased implementation; high-risk obligations binding from August 2, 2; India Issues 2025 AI Governance Guidelines — How It Compares to Other Global AI Acts. National Law Review, December 2025.; India's AI Governance Guidelines 2025. AIGN Global.; India AI Governance Guidelines Released for 2025-26. The AI Track.
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 3, accessible_complexity: 4, narrow_scope: 4, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 3, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 4, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #329: Assessing Whether Safety Evaluations Are Capability-Specific or Generic (Score: 3.61)
+
+**ID:** gen-0327
 
 **Research Question:** To what extent does some safety evaluations test general properties (e.g., 'does this model produce harmful content?') while others test specific capability-conditioned risks (e.g., 'does this model's code execution capa?
 
@@ -7558,12 +9528,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters (model size, datas
 **Cited Sources:** How Should AI Safety Benchmarks Benchmark Safety? arXiv:2601.23112, 2026.; MLCommons AI Safety Benchmark v0.5 (Introducing v0.5, 2024).; SALAD-Bench: A Hierarchical and Comprehensive Safety Benchmark. ACL 2024 Findings.
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 3, accessible_complexity: 4, narrow_scope: 4, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 3, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 4, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #330: A Petri-Based Scheming Scenario Expansion Pack for Open-Weight Models (Score: 3.61)
+
+**ID:** gen-0446
 
 **Research Question:** To what extent does petri's 111 seed instructions were designed and tested on frontier models. there is a gap: no curated set of petri-compatible seeds specifically designed to elicit scheming (vs. general deception) in ?
 
@@ -7582,12 +9558,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Cited Sources:** Petri 2.0 (Jan 2026) already expanded to support open-weight models with new scenarios and model comparisons.; Petri tested 14 frontier models with 111 seed instructions, eliciting misaligned behaviors including deception, oversight subversion, and whistleblowing.; A GitHub project (ariel-gil/agentic_scheming_petri) already extends Petri with multi-turn scheming scenarios.; The expansion pack concept for open-weight models is partially addressed by Petri 2.0's own expansion, though community-contributed seed instructions for scheming specifically could still add value.
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_assessed)
-**Scores:** theory_of_impact: 3, accessible_complexity: 4, narrow_scope: 4, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 3, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 4, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #331: When Does Sycophancy Degrade into Misinformation? A Severity Ladder Study (Score: 3.61)
+
+**ID:** gen-0455
 
 **Research Question:** To what extent does sycophancy ranges from mild agreement with user preferences to actively confirming factual misinformation. the conditions that push sycophancy from the mild end to the severe end are not well characte?
 
@@ -7606,12 +9588,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Cited Sources:** SYCON Benchmark (2025). Measuring Sycophancy of Language Models in Multi-turn Dialogues. EMNLP Findings; SycEval (2025). Evaluating LLM Sycophancy. arXiv:2502.08177; When helpfulness backfires: LLMs and the risk of false medical information. Nature Digital Medicine (2025); Sycophancy Is Not One Thing: Causal Separation of Sycophantic Behaviors in LLMs. arXiv:2509.21305
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 3, accessible_complexity: 4, narrow_scope: 4, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 3, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 4, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #332: Applying Cognitive Load Theory to Detect AI Deception via Response Latency and Complexity (Score: 3.61)
+
+**ID:** gen-0478
 
 **Research Question:** To what extent does deceptive humans exhibit increased cognitive load, leading to simpler sentences, shorter responses, and more hedging. whether reasoning models under deceptive conditions show analogous output-level co?
 
@@ -7630,12 +9618,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters (model size, datas
 **Cited Sources:** Fallah et al. (2025). Cognitive Load as a Key to Lie Detection. SAGE Journals.; What if Deception Cannot be Detected? A Cross-Linguistic Study. arXiv:2505.13147, 2025.; SVM, BERT, or LLM? A Comparative Study on Multilingual Instructed Deception Detection. MDPI, 2025.; Decoding LLMs' Verbal Deception in Online Reviews. Decision Support Systems, 2025.
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 3, accessible_complexity: 4, narrow_scope: 4, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 3, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 4, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #333: Does Emergent Misalignment Affect Specific Behavioral Domains Disproportionately? A Topic-Stratified Evaluation (Score: 3.61)
+
+**ID:** gen-0556
 
 **Research Question:** To what extent does standard em evaluation uses a heterogeneous prompt set. it is unknown whether misalignment is evenly distributed across behavioral domains (political, interpersonal, safety, factual) or whether certai?
 
@@ -7654,12 +9648,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters (model size, datas
 **Cited Sources:** Betley et al. (2025) evaluation set: The original EM paper uses an evaluation set but does not stratify by behavioral domain.; Assessing Domain-Level Susceptibility to Emergent Misalignment from Narrow Finetuning. arXiv:2602.00298, 2026.; Eliciting and Analyzing Emergent Misalignment in State-of-the-Art LLMs. arXiv:2508.04196, 2025.; Betley et al. (2025). Emergent Misalignment. Nature 2026.
 
 **Subfield:** Alignment & Training Methods | **Strategy:** experiment_variation | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 3, accessible_complexity: 4, narrow_scope: 4, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 3, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 4, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** experiment_variation, sources: 0 KB, 0 web
 
 ---
 
 ## #334: Does combining activation-based detection with a lightweight keyword filter outperform either alone? (Score: 3.61)
+
+**ID:** gen-0609
 
 **Research Question:** To what extent does ctivation-based detection is strong on semantic jailbreaks but may miss novel phrasing variations. keyword-based filters catch known patterns but miss paraphrases. a simple ensemble has not been eval?
 
@@ -7678,12 +9678,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters (model size, datas
 **Cited Sources:** JailbreakBench: Confirmed as NeurIPS 2024 Datasets and Benchmarks Track paper. Directly relevant as evaluation bench; LLM Jailbreak Detection for (Almost) Free! EMNLP 2025 Findings. arXiv:2509.14558.; JailbreakBench: An Open Robustness Benchmark for Jailbreaking LLMs. NeurIPS 2024.; Recursive Language Models for Jailbreak Detection. arXiv:2602.16520, 2026.
 
 **Subfield:** Adversarial Robustness & Red-Teaming | **Strategy:** follow_up_experiment | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 3, accessible_complexity: 4, narrow_scope: 4, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 3, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 4, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** follow_up_experiment, sources: 0 KB, 0 web
 
 ---
 
 ## #335: Investigating Whether the 'Refuse-Then-Comply' Attack Transfers Across Model Families (Score: 3.61)
+
+**ID:** gen-0627
 
 **Research Question:** To what extent does 'refuse-then-comply' fine-tuning attack (openreview qziqgloygx) achieved 57-72% asr on gpt-4o and claude by training models to first refuse then produce harmful content. whether this pattern trans?
 
@@ -7702,12 +9708,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters (model size, datas
 **Cited Sources:** The Crescendo Multi-Turn LLM Jailbreak Attack. USENIX Security 2025.; Deceptive Delight: Jailbreak LLMs Through Camouflage and Distraction. Palo Alto Unit 42, 2024.; This One Weird Trick: Multi-Prompt LLM Jailbreaks. SpecterOps, 2025.
 
 **Subfield:** Adversarial Robustness & Red-Teaming | **Strategy:** failure_mode_investigation | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 3, accessible_complexity: 4, narrow_scope: 4, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 3, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 4, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** failure_mode_investigation, sources: 0 KB, 0 web
 
 ---
 
 ## #336: Replicating AILuminate Safety Scores Across Open-Source Model Families (Score: 3.61)
+
+**ID:** gen-0637
 
 **Research Question:** To what extent does ailuminate benchmarks are primarily reported for proprietary models. it is unclear whether open-source model families (llama, mistral, phi) show similar safety profiles across ailuminate's twelve haza?
 
@@ -7724,12 +9736,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Alternative Framings:** Benchmark: Replicating AILuminate Safety Scores Across Open-Source Mode: Reframed for maximum feasibility. (est. score: 4.04); Novel Angle: Replicating AILuminate Safety Scores Across Open-Source Mode: Reframed for novelty. (est. score: 3.79)
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 3, accessible_complexity: 4, narrow_scope: 4, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 3, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 4, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #337: TrustLLM Benchmark Results at Sub-7B Scale (Score: 3.61)
+
+**ID:** gen-0639
 
 **Research Question:** To what extent does trustllm scores are largely reported for 7b+ models. whether sub-7b (1b–3b) models — increasingly deployed on-device — maintain acceptable trustworthiness profiles is largely unknown?
 
@@ -7746,12 +9764,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Alternative Framings:** Benchmark: TrustLLM Benchmark Results at Sub-7B Scale: Reframed for maximum feasibility. (est. score: 4.04); Novel Angle: TrustLLM Benchmark Results at Sub-7B Scale: Reframed for novelty. (est. score: 3.79)
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 3, accessible_complexity: 4, narrow_scope: 4, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 3, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 4, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #338: Safety Eval Coverage Tool: Mapping Benchmark Prompts to Hazard Taxonomy (Score: 3.61)
+
+**ID:** gen-0656
 
 **Research Question:** To what extent does different safety benchmarks use different hazard taxonomies and there is no tool to measure how thoroughly a given benchmark covers a standardized hazard taxonomy such as the one underlying ailuminate?
 
@@ -7770,12 +9794,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters (model size, datas
 **Cited Sources:** AILuminate: Confirmed: MLCommons AILuminate v1.1 with 12 hazard categories. Directly referenced as target benchm; HELM Safety: Confirmed: Stanford CRFM HELM Safety v1.0 with 6 risk categories. Directly referenced as target benc; How Should AI Safety Benchmarks Benchmark Safety? arXiv:2601.23112, 2026.; AEGIS2.0: A Diverse AI Safety Dataset and Risks Taxonomy. NAACL 2025.; AIR 2024: Safety Benchmark Coverage Analysis.
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 3, accessible_complexity: 4, narrow_scope: 4, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 3, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 4, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #339: Sycophancy Resistance Training: Does Showing Models Their Own Sycophantic Outputs Improve Behavior? (Score: 3.61)
+
+**ID:** gen-0804
 
 **Research Question:** To what extent does models may not 'know' they are being sycophantic. presenting models with examples of their own previous sycophantic outputs and labeling them as sycophantic (in-context or via fine-tuning) may improve?
 
@@ -7794,12 +9824,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters (model size, datas
 **Cited Sources:** Self-Augmented Preference Alignment (EMNLP 2025): Confirmed at ACL Anthology. Uses self-generated data for sycophancy reduction but through fine-tunin; Towards Understanding Sycophancy (ICLR 2024): Confirmed at arXiv:2310.13548 and ICLR proceedings. Foundational sycophancy analysis paper.; Self-Augmented Preference Alignment for Sycophancy Reduction in LLMs. EMNLP 2025.; Towards Understanding Sycophancy in Language Models. ICLR 2024, arXiv:2310.13548.; Sycophancy Is Not One Thing: Causal Separation of Sycophantic Behaviors in LLMs. arXiv:2509.21305, 2025.
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 3, accessible_complexity: 4, narrow_scope: 4, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 3, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 4, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #340: Artificial Immune System Detector: Negative Selection for Jailbreak Detection (Score: 3.61)
+
+**ID:** gen-0813
 
 **Research Question:** To what extent does current jailbreak detectors are trained on known attacks and fail on novel ones. cost-effective detection of unseen jailbreaks is an open problem?
 
@@ -7818,12 +9854,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters (model size, datas
 **Cited Sources:** Immune memory-based jailbreak detection (arXiv:2512.03356): Confirmed at arXiv. Directly applies immune system concepts to LLM jailbreak detection with adaptive; Negative selection algorithm: Classic AIS algorithm. Well-established in anomaly detection literature. Application to LLM jailbrea; Sentence transformers: Well-established embedding tool. Standard infrastructure, not a cited contribution.; From static to adaptive: immune memory-based jailbreak detection for large language models. arXiv:2512.03356, 2025.; LLM-Based Immune Detection Method for Unknown Network Attacks. ICIC 2025.; Multi-layer defense for LLM agents inspired by immune systems (BioDefense). 2025.
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 3, accessible_complexity: 4, narrow_scope: 4, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 3, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 4, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #341: Honeypot Prompts: Borrowing Cyber Deception to Detect Adversarial Users (Score: 3.61)
+
+**ID:** gen-0816
 
 **Research Question:** To what extent does detecting whether a user is conducting a jailbreak attempt is difficult without examining intent, which is not observable. current detection is reactive?
 
@@ -7840,12 +9882,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Alternative Framings:** Benchmark: Honeypot Prompts: Borrowing Cyber Deception to Detect Advers: Reframed for maximum feasibility. (est. score: 4.04); Novel Angle: Honeypot Prompts: Borrowing Cyber Deception to Detect Advers: Reframed for novelty. (est. score: 3.79)
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 3, accessible_complexity: 4, narrow_scope: 4, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 3, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 4, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #342: Game-Theoretic Attacker-Defender Equilibrium: When Does an LLM Safety Arms Race Stabilize? (Score: 3.61)
+
+**ID:** gen-0817
 
 **Research Question:** To what extent does the jailbreak-patch cycle is modeled informally as an arms race. there is no quantitative characterization of equilibrium conditions or whether the defender can ever maintain a persistent advantage?
 
@@ -7862,12 +9910,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Alternative Framings:** Benchmark: Game-Theoretic Attacker-Defender Equilibrium: When Does an L: Reframed for maximum feasibility. (est. score: 4.04); Novel Angle: Game-Theoretic Attacker-Defender Equilibrium: When Does an L: Reframed for novelty. (est. score: 3.79)
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 3, accessible_complexity: 4, narrow_scope: 4, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 3, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 4, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #343: Adversarially Induced Over-Refusal: When Robustness Defenses Break Utility and Create New Risks (Score: 3.61)
+
+**ID:** gen-0860
 
 **Research Question:** To what extent does strengthening safety alignment to resist jailbreaks can push models toward over-refusal on benign requests, and over-refusal itself can be adversarially induced by prompts designed to trigger false po?
 
@@ -7884,12 +9938,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Alternative Framings:** Benchmark: Adversarially Induced Over-Refusal: When Robustness Defenses: Reframed for maximum feasibility. (est. score: 4.04); Novel Angle: Adversarially Induced Over-Refusal: When Robustness Defenses: Reframed for novelty. (est. score: 3.79)
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 3, accessible_complexity: 4, narrow_scope: 4, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 3, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 4, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #344: Reward Hacking Onset: Finding the Optimization Pressure Threshold (Score: 3.61)
+
+**ID:** gen-0893
 
 **Research Question:** To what extent does theoretical work predicts that reward hacking is inevitable above some optimization pressure, but we lack empirical measurements of where the threshold lies for different proxy reward specifications?
 
@@ -7906,12 +9966,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Alternative Framings:** Benchmark: Reward Hacking Onset: Finding the Optimization Pressure Thre: Reframed for maximum feasibility. (est. score: 4.04); Novel Angle: Reward Hacking Onset: Finding the Optimization Pressure Thre: Reframed for novelty. (est. score: 3.79)
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 3, accessible_complexity: 4, narrow_scope: 4, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 3, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 4, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #345: Type-Theoretic Contracts for Neural Network Behavior: A Prototype Testbed (Score: 3.61)
+
+**ID:** gen-0901
 
 **Research Question:** To what extent does type theory provides formal contracts for program behavior. can similar contracts be defined and empirically tested for neural network input-output behavior, analogous to formal pre/post-conditions??
 
@@ -7928,12 +9994,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Alternative Framings:** Benchmark: Type-Theoretic Contracts for Neural Network Behavior: A Prot: Reframed for maximum feasibility. (est. score: 4.04); Novel Angle: Type-Theoretic Contracts for Neural Network Behavior: A Prot: Reframed for novelty. (est. score: 3.79)
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 3, accessible_complexity: 4, narrow_scope: 4, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 3, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 4, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #346: Fixed-Point Semantics of Self-Reference: An Empirical Model (Score: 3.61)
+
+**ID:** gen-0933
 
 **Research Question:** To what extent does vingean reflection theory requires agents to reason about themselves using fixed-point semantics. can the failure of fixed-point self-reference be demonstrated in a small model that is asked to predic?
 
@@ -7950,12 +10022,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Alternative Framings:** Benchmark: Fixed-Point Semantics of Self-Reference: An Empirical Model: Reframed for maximum feasibility. (est. score: 4.04); Novel Angle: Fixed-Point Semantics of Self-Reference: An Empirical Model: Reframed for novelty. (est. score: 3.79)
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 3, accessible_complexity: 4, narrow_scope: 4, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 3, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 4, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #347: Post-Irreversible-Action Rollback: Building and Testing a Recovery Protocol When No Rollback Exists (Score: 3.61)
+
+**ID:** gen-1003
 
 **Research Question:** To what extent does the final node in the causal chain is 'no rollback possible'. while technical rollback may be impossible, a structured damage-limitation protocol may still reduce harm?
 
@@ -7972,12 +10050,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Alternative Framings:** Benchmark: Post-Irreversible-Action Rollback: Building and Testing a Re: Reframed for maximum feasibility. (est. score: 4.04); Novel Angle: Post-Irreversible-Action Rollback: Building and Testing a Re: Reframed for novelty. (est. score: 3.79)
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 3, accessible_complexity: 4, narrow_scope: 4, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 3, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 4, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #348: Dual Failure Mode Taxonomy: Distinguishing ShadowAgent from CascadeWatch Incidents in the Wild (Score: 3.61)
+
+**ID:** gen-1018
 
 **Research Question:** To what extent does the two compounding failure modes (strategic action hiding vs. unsupervised harmful cascades) produce similar observable outcomes (harmful actions without human detection) but have different causal st?
 
@@ -7994,12 +10078,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Alternative Framings:** Benchmark: Dual Failure Mode Taxonomy: Distinguishing ShadowAgent from : Reframed for maximum feasibility. (est. score: 4.04); Novel Angle: Dual Failure Mode Taxonomy: Distinguishing ShadowAgent from : Reframed for novelty. (est. score: 3.79)
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 3, accessible_complexity: 4, narrow_scope: 4, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 3, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 4, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #349: SAE Feature Monosemanticity in CLIP ViT vs Text Transformer: Replicating Vision-Language SAE Differences (Score: 3.61)
+
+**ID:** gen-1038
 
 **Research Question:** To what extent does the prisma toolkit (2025) found that clip vits have substantially lower sparsity patterns in sae representations compared to language models, suggesting fundamental differences in how visual and lingu?
 
@@ -8016,12 +10106,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Alternative Framings:** Benchmark: SAE Feature Monosemanticity in CLIP ViT vs Text Transformer:: Reframed for maximum feasibility. (est. score: 4.04); Novel Angle: SAE Feature Monosemanticity in CLIP ViT vs Text Transformer:: Reframed for novelty. (est. score: 3.79)
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 3, accessible_complexity: 4, narrow_scope: 4, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 3, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 4, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #350: Vision SAE Feature Spatial Attribution in DINO vs CLIP: Replicating PatchSAE Analysis (Score: 3.61)
+
+**ID:** gen-1042
 
 **Research Question:** To what extent does recent work on vision saes (e.g., patchsae) found that sae features in clip encode spatial, shape, and semantic concepts with patch-level localization. it is unclear whether dino vits — trained with a?
 
@@ -8038,12 +10134,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Alternative Framings:** Benchmark: Vision SAE Feature Spatial Attribution in DINO vs CLIP: Repl: Reframed for maximum feasibility. (est. score: 4.04); Novel Angle: Vision SAE Feature Spatial Attribution in DINO vs CLIP: Repl: Reframed for novelty. (est. score: 3.79)
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 3, accessible_complexity: 4, narrow_scope: 4, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 3, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 4, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #351: Replicating SAE Monosemanticity Results for Vision-Language Model (CLIP) on Non-English Image Captions (Score: 3.61)
+
+**ID:** gen-1047
 
 **Research Question:** To what extent does sae monosemanticity results in vlms (bricken et al. 2025, arxiv:2504.02821) were demonstrated primarily using english image captions. clip was trained on multilingual web data, and it is unclear wheth?
 
@@ -8060,12 +10162,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Alternative Framings:** Benchmark: Replicating SAE Monosemanticity Results for Vision-Language : Reframed for maximum feasibility. (est. score: 4.04); Novel Angle: Replicating SAE Monosemanticity Results for Vision-Language : Reframed for novelty. (est. score: 3.79)
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 3, accessible_complexity: 4, narrow_scope: 4, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 3, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 4, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #352: Superposition in Vision Transformers: Replicating Toy Model Results in DINO ViT-S (Score: 3.61)
+
+**ID:** gen-1050
 
 **Research Question:** To what extent does toy model superposition analysis (elhage et al., 2022) was conducted on simple mlps trained to represent synthetic features. it is unknown whether the same geometry of superposition (features arranged?
 
@@ -8082,12 +10190,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Alternative Framings:** Benchmark: Superposition in Vision Transformers: Replicating Toy Model : Reframed for maximum feasibility. (est. score: 4.04); Novel Angle: Superposition in Vision Transformers: Replicating Toy Model : Reframed for novelty. (est. score: 3.79)
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 3, accessible_complexity: 4, narrow_scope: 4, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 3, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 4, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #353: Replicating SAE Reconstruction Loss Findings: When Do Vision SAEs Improve Model Performance? (Score: 3.61)
+
+**ID:** gen-1056
 
 **Research Question:** To what extent does prisma (2025) made the surprising finding that in some cases, sae reconstructions decrease model loss compared to original activations — an effect not consistently observed in language model saes. it ?
 
@@ -8104,12 +10218,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Alternative Framings:** Benchmark: Replicating SAE Reconstruction Loss Findings: When Do Vision: Reframed for maximum feasibility. (est. score: 4.04); Novel Angle: Replicating SAE Reconstruction Loss Findings: When Do Vision: Reframed for novelty. (est. score: 3.79)
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 3, accessible_complexity: 4, narrow_scope: 4, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 3, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 4, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #354: Replicating SAE Feature Visualization Across ViT Scales: Does Feature Polysemanticity Increase in Larger CLIP Models? (Score: 3.61)
+
+**ID:** gen-1059
 
 **Research Question:** To what extent does in language models, larger models show some reduction in polysemanticity (more dedicated neurons per concept) but this trend is not established for vision transformers. prisma's sae weights cover mult?
 
@@ -8126,12 +10246,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Alternative Framings:** Benchmark: Replicating SAE Feature Visualization Across ViT Scales: Doe: Reframed for maximum feasibility. (est. score: 4.04); Novel Angle: Replicating SAE Feature Visualization Across ViT Scales: Doe: Reframed for novelty. (est. score: 3.79)
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 3, accessible_complexity: 4, narrow_scope: 4, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 3, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 4, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #355: Probing Leakage Benchmark: Separating Model Knowledge from Probe Learning Capacity (Score: 3.61)
+
+**ID:** gen-1067
 
 **Research Question:** To what extent does probing classifiers are widely used to test whether specific information is linearly encoded in activations, but probes can achieve high accuracy by learning the information themselves rather than rea?
 
@@ -8148,12 +10274,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Alternative Framings:** Benchmark: Probing Leakage Benchmark: Separating Model Knowledge from P: Reframed for maximum feasibility. (est. score: 4.04); Novel Angle: Probing Leakage Benchmark: Separating Model Knowledge from P: Reframed for novelty. (est. score: 3.79)
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 3, accessible_complexity: 4, narrow_scope: 4, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 3, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 4, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #356: TransformerLens Hook Coverage Audit: Identifying Which Internal Computations Are Not Accessible (Score: 3.61)
+
+**ID:** gen-1076
 
 **Research Question:** To what extent does transformerlens provides hooks into named internal activations of gpt-style models, but it is not documented which computations are inaccessible (e.g., within-attention softmax intermediates, layer no?
 
@@ -8170,12 +10302,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Alternative Framings:** Benchmark: TransformerLens Hook Coverage Audit: Identifying Which Inter: Reframed for maximum feasibility. (est. score: 4.04); Novel Angle: TransformerLens Hook Coverage Audit: Identifying Which Inter: Reframed for novelty. (est. score: 3.79)
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 3, accessible_complexity: 4, narrow_scope: 4, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 3, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 4, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #357: Linearity Departure Index: A Metric for How Non-Linear a Given Layer's Representations Are (Score: 3.61)
+
+**ID:** gen-1081
 
 **Research Question:** To what extent does the linear representation hypothesis underlies most sae methods, but 'not all language model features are one-dimensionally linear' (2025) showed exceptions exist. no tool measures the degree of linea?
 
@@ -8192,12 +10330,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Alternative Framings:** Benchmark: Linearity Departure Index: A Metric for How Non-Linear a Giv: Reframed for maximum feasibility. (est. score: 4.04); Novel Angle: Linearity Departure Index: A Metric for How Non-Linear a Giv: Reframed for novelty. (est. score: 3.79)
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 3, accessible_complexity: 4, narrow_scope: 4, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 3, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 4, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #358: Overseer Coalition Voting: Aggregating Multiple Weak Supervisors to Approximate Strong Oversight (Score: 3.61)
+
+**ID:** gen-1092
 
 **Research Question:** To what extent does a single weak overseer has limited accuracy, but an ensemble of independent weak overseers with different error patterns might collectively provide stronger supervision?
 
@@ -8214,12 +10358,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Alternative Framings:** Benchmark: Overseer Coalition Voting: Aggregating Multiple Weak Supervi: Reframed for maximum feasibility. (est. score: 4.04); Novel Angle: Overseer Coalition Voting: Aggregating Multiple Weak Supervi: Reframed for novelty. (est. score: 3.79)
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 3, accessible_complexity: 4, narrow_scope: 4, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 3, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 4, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #359: Oversight Fatigue Simulation: Modeling How Sustained Oversight Degrades Over Time (Score: 3.61)
+
+**ID:** gen-1097
 
 **Research Question:** To what extent does human overseers and even model overseers operating over long sessions show quality degradation. this fatigue effect is not modeled in standard oversight experiments?
 
@@ -8236,12 +10386,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Alternative Framings:** Benchmark: Oversight Fatigue Simulation: Modeling How Sustained Oversig: Reframed for maximum feasibility. (est. score: 4.04); Novel Angle: Oversight Fatigue Simulation: Modeling How Sustained Oversig: Reframed for novelty. (est. score: 3.79)
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 3, accessible_complexity: 4, narrow_scope: 4, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 3, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 4, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #360: Auditing Theory Import: Random Sampling Audits as a Scalable Oversight Protocol (Score: 3.61)
+
+**ID:** gen-1141
 
 **Research Question:** To what extent does financial and regulatory auditing uses random sampling to provide oversight over systems too large to inspect fully. this mechanism has not been formally applied to ai oversight?
 
@@ -8258,12 +10414,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Alternative Framings:** Benchmark: Auditing Theory Import: Random Sampling Audits as a Scalable: Reframed for maximum feasibility. (est. score: 4.04); Novel Angle: Auditing Theory Import: Random Sampling Audits as a Scalable: Reframed for novelty. (est. score: 3.79)
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 3, accessible_complexity: 4, narrow_scope: 4, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 3, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 4, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #361: Informed Consent Design for Oversight: What Information Must Overseers Have to Provide Meaningful Oversight? (Score: 3.61)
+
+**ID:** gen-1186
 
 **Research Question:** To what extent does human overseers often make judgments without full context about what they are overseeing or why. informed consent requirements in research ethics provide a framework for what information overseers req?
 
@@ -8280,12 +10442,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Alternative Framings:** Benchmark: Informed Consent Design for Oversight: What Information Must: Reframed for maximum feasibility. (est. score: 4.04); Novel Angle: Informed Consent Design for Oversight: What Information Must: Reframed for novelty. (est. score: 3.79)
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 3, accessible_complexity: 4, narrow_scope: 4, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 3, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 4, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #362: Oversight Under Resource Constraints: How Does Compute Budget per Oversight Decision Affect Quality? (Score: 3.61)
+
+**ID:** gen-1202
 
 **Research Question:** To what extent does more compute per oversight decision likely improves quality but at increasing cost. the marginal return to oversight compute is unknown?
 
@@ -8302,12 +10470,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Alternative Framings:** Benchmark: Oversight Under Resource Constraints: How Does Compute Budge: Reframed for maximum feasibility. (est. score: 4.04); Novel Angle: Oversight Under Resource Constraints: How Does Compute Budge: Reframed for novelty. (est. score: 3.79)
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 3, accessible_complexity: 4, narrow_scope: 4, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 3, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 4, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #363: TruthfulQA-Temporal: A Time-Sensitive Extension of TruthfulQA (Score: 3.61)
+
+**ID:** gen-1204
 
 **Research Question:** To what extent does truthfulqa's 817 questions are static and treat all facts as time-independent. models trained on more recent data can appear truthful simply because the benchmark hasn't been updated, masking genuine ?
 
@@ -8324,12 +10498,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Alternative Framings:** Benchmark: TruthfulQA-Temporal: A Time-Sensitive Extension of TruthfulQ: Reframed for maximum feasibility. (est. score: 4.04); Novel Angle: TruthfulQA-Temporal: A Time-Sensitive Extension of TruthfulQ: Reframed for novelty. (est. score: 3.79)
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 3, accessible_complexity: 4, narrow_scope: 4, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 3, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 4, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #364: TruthfulQA Category Saturation Detector (Score: 3.61)
+
+**ID:** gen-1219
 
 **Research Question:** To what extent does modern models score near-ceiling on some of truthfulqa's 38 categories (e.g., simple misconceptions) while struggling on others. no tool identifies which categories are 'saturated' (no longer discrimi?
 
@@ -8346,12 +10526,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Alternative Framings:** Benchmark: TruthfulQA Category Saturation Detector: Reframed for maximum feasibility. (est. score: 4.04); Novel Angle: TruthfulQA Category Saturation Detector: Reframed for novelty. (est. score: 3.79)
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 3, accessible_complexity: 4, narrow_scope: 4, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 3, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 4, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #365: Activation Probe Generalization: Do Jailbreak Detectors Transfer Across Attack Types? (Score: 3.57)
+
+**ID:** gen-0003
 
 **Research Question:** To what extent does ctivation-based jailbreak detectors are trained on specific attack distributions (e.g., gcg suffixes, direct requests). whether they generalize to out-of-distribution attack types — such as multiling?
 
@@ -8370,12 +10556,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters (model size, datas
 **Cited Sources:** JailbreakBench: Confirmed as an open robustness benchmark for jailbreaking LLMs. Directly relevant as data source.; LLM Jailbreak Detection for (Almost) Free! EMNLP 2025 Findings.; What Features in Prompts Jailbreak LLMs? Investigating the Mechanisms Behind Attacks. BlackboxNLP 2025.; Rethinking Jailbreak Detection of Large Vision Language Models with Representational Contrastive Scoring. arXiv:2512.12069, 2025.
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 4, accessible_complexity: 3, narrow_scope: 4, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 4, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 3, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #366: Prompt Injection in RAG Systems: Does Retrieval Context Bypass Safety More Reliably Than Direct Prompting? (Score: 3.57)
+
+**ID:** gen-0024
 
 **Research Question:** To what extent does indirect prompt injection (malicious instructions embedded in retrieved documents) is a known attack vector for rag systems. whether retrieval-based injection has higher attack success rates than dire?
 
@@ -8394,12 +10586,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Cited Sources:** PoisonedRAG: Knowledge Corruption Attacks to RAG (USENIX Security 2025); Backdoored Retrievers for Prompt Injection Attacks on RAG (arXiv:2410.14479); OWASP Top 10 for LLM Applications 2025 - Prompt Injection ranked #1; When AI Meets the Web: Prompt Injection Risks in Third-Party AI Chatbot Plugins (IEEE S&P 2026)
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 4, accessible_complexity: 3, narrow_scope: 4, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 4, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 3, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #367: Hivemind Effect on Code Generation: Shared Bugs Across AI Coding Assistants (Score: 3.57)
+
+**ID:** gen-0142
 
 **Research Question:** To what extent does if multiple ai coding assistants generate structurally similar code for the same specifications, they likely share the same security vulnerabilities and logic errors—a systemic software supply chain r?
 
@@ -8418,12 +10616,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Cited Sources:** {'source': 'Security Vulnerabilities in AI-Generated Code (arXiv 2510.26103)', 'url': 'https://arxiv.org/pdf/2510.26103', 'finding': 'Systematic review of security vulnerabilities in LLM-generated code, identifying consistent CWE patterns across multiple tools.'}; {'source': 'The Hidden Vulnerabilities of AI-Generated Code: A Cross-Language Security (ICCV 2025)', 'url': 'https://carteryagemann.com/docs/Jinghao_Wang_ICCV25.pdf', 'finding': 'Cross-language security analysis of AI-generated code vulnerabilities.'}; {'source': 'Security Weaknesses of Copilot-Generated Code in GitHub (arXiv 2310.02059)', 'url': 'https://arxiv.org/pdf/2310.02059', 'finding': 'Identified 733 code snippets with security weaknesses from Copilot, spanning 43 CWE categories.'}; {'source': 'Georgetown CSET: Cybersecurity Risks of AI-Generated Code (2024)', 'url': 'https://cset.georgetown.edu/wp-content/uploads/CSET-Cybersecurity-Risks-of-AI-Generated-Code.pdf', 'finding': 'Documents that LLMs introduce security vulnerabilities at similar rates, likely reflecting shared training data.'}
 
 **Subfield:** Model Homogeneity & Systemic Risk | **Strategy:** experiment_variation | **Novelty:** partially_addressed (novelty_assessed)
-**Scores:** theory_of_impact: 4, accessible_complexity: 3, narrow_scope: 4, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 4, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 3, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** experiment_variation, sources: 0 KB, 0 web
 
 ---
 
 ## #368: Homogeneity Across Prompt Styles: Instruction-Tuned vs. Base Models (Score: 3.57)
+
+**ID:** gen-0144
 
 **Research Question:** To what extent does it is unknown whether instruction tuning is the primary driver of inter-model homogeneity (by aligning all models to similar instruction-following formats) or whether homogeneity exists at the base mo?
 
@@ -8442,12 +10646,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Cited Sources:** {'source': 'Understanding the Effects of RLHF on LLM Generalisation and Diversity (ICLR 2024)', 'url': 'https://arxiv.org/abs/2310.06452', 'finding': 'RLHF significantly reduces output diversity compared to SFT across a variety of measures. RLHF produces less diverse text on some metrics even when sampling for different inputs.'}; {'source': 'The Price of Format: Diversity Collapse in LLMs (arXiv 2505.18949)', 'url': 'https://arxiv.org/html/2505.18949v1', 'finding': 'Structural homogeneity (from formatting) contributes to diversity collapse beyond content-level effects.'}; {'source': 'Verbalized Sampling: How to Mitigate Mode Collapse (NeurIPS 2025)', 'url': 'https://arxiv.org/abs/2510.01171', 'finding': 'Post-training alignment causes mode collapse; typicality bias in preference data is a fundamental driver.'}
 
 **Subfield:** Model Homogeneity & Systemic Risk | **Strategy:** experiment_variation | **Novelty:** partially_addressed (novelty_assessed)
-**Scores:** theory_of_impact: 4, accessible_complexity: 3, narrow_scope: 4, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 4, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 3, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** experiment_variation, sources: 0 KB, 0 web
 
 ---
 
 ## #369: Homogeneity on Safety Benchmarks vs. Real-World Queries (Score: 3.57)
+
+**ID:** gen-0153
 
 **Research Question:** To what extent does if models show lower homogeneity on standard safety benchmarks than on naturalistic queries, benchmark scores may underestimate real-world systemic risk from correlated safety failures?
 
@@ -8466,12 +10676,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Cited Sources:** {'source': 'Artificial Hivemind (NeurIPS 2025 Best Paper)', 'url': 'https://arxiv.org/abs/2510.22954', 'finding': "Already uses Infinity-Chat's 26K diverse real-world open-ended queries with a comprehensive taxonomy (6 top-level categories, 17 subcategories) to measure homogeneity across 70+ models. This is essentially the 'real-world queries' side of the comparison."}; {'source': 'MedCheck benchmark audit (2025)', 'url': 'https://arxiv.org/html/2507.23486v3', 'finding': 'Audits 53 benchmarks showing systemic issues including poor correlation with real clinical outcomes, suggesting benchmark-reality gaps are a known concern.'}
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_assessed)
-**Scores:** theory_of_impact: 4, accessible_complexity: 3, narrow_scope: 4, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 4, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 3, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #370: Interpretability-Guided Hallucination Detection Without Ground-Truth Labels (Score: 3.57)
+
+**ID:** gen-0215
 
 **Research Question:** To what extent does llms hallucinate factual claims with high confidence, and existing black-box detection methods (consistency sampling, retrieval checks) are expensive or require external knowledge. there is no demonst?
 
@@ -8490,12 +10706,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Cited Sources:** {'source': 'SAFE: SAE-Based Framework for Hallucination Mitigation (2025)', 'url': 'https://arxiv.org/html/2503.03032', 'finding': 'Proposes a Sparse Autoencoder-based Framework for Robust Query Enrichment and Hallucination Mitigation in LLMs, directly using SAEs for hallucination detection.'}; {'source': 'Survey on SAEs: Interpreting Internal Mechanisms (2025)', 'url': 'https://arxiv.org/html/2503.05613v3', 'finding': 'Documents how SAEs reveal hallucination mechanisms where entity recognition plays a pivotal role in recalling facts, and how SAE features can be used for classification probes.'}; {'source': 'SAVE: SAE-Driven Visual Information Enhancement (2025)', 'url': 'https://arxiv.org/html/2512.07730v1', 'finding': 'Uses binary probes on SAE features to identify visual understanding features indicative of hallucination in vision-language models.'}; {'source': 'Interpretability Illusions with SAEs (2025)', 'url': 'https://arxiv.org/html/2505.16004v1', 'finding': 'Evaluates robustness of concept representations in SAEs, raising concerns about whether SAE-based probes truly capture meaningful features or create interpretability illusions.'}
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_assessed)
-**Scores:** theory_of_impact: 4, accessible_complexity: 3, narrow_scope: 4, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 4, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 3, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #371: Minimal Sufficient Circuits for Safety-Relevant Refusals: How Fragile Are They? (Score: 3.57)
+
+**ID:** gen-0231
 
 **Research Question:** To what extent does rlhf-trained models refuse harmful requests, but the circuit implementing refusal has not been characterized in terms of minimality and fragility. if refusal depends on a small, non-redundant set of c?
 
@@ -8514,12 +10736,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Cited Sources:** {'source': 'Refusal in Language Models Is Mediated by a Single Direction (NeurIPS 2024)', 'url': 'https://proceedings.neurips.cc/paper_files/paper/2024/file/f545448535dfde4f9786555403ab7c49-Paper-Conference.pdf', 'finding': 'Arditi et al. demonstrate that refusal is mediated by a one-dimensional subspace across 13 open-source chat models up to 72B, and a single direction can be intervened upon to bypass or induce refusal.'}; {'source': 'Universal Refusal Circuits Across LLMs (2026)', 'url': 'https://arxiv.org/html/2601.16034', 'finding': 'Introduces framework for transferring refusal interventions across architectures without target-side refusal supervision, confirming shared refusal circuit structure across models.'}; {'source': 'SafeSteer: Interpretable Safety Steering with Refusal-Evasion in LLMs (2025)', 'url': 'https://arxiv.org/html/2506.04250', 'finding': 'Addresses safety steering in the context of refusal evasion, providing tools for understanding how refusal mechanisms can be circumvented.'}; {'source': 'Improving Alignment and Robustness with Circuit Breakers (2024)', 'url': 'https://arxiv.org/pdf/2406.04313', 'finding': 'Proposes circuit breakers to improve robustness of safety mechanisms against adversarial attacks, acknowledging fragility of standard refusal mechanisms.'}
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_assessed)
-**Scores:** theory_of_impact: 4, accessible_complexity: 3, narrow_scope: 4, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 4, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 3, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #372: Minimum Viable Audit: What Is the Least Costly Audit That Reliably Catches Critical Governance Failures? (Score: 3.57)
+
+**ID:** gen-0302
 
 **Research Question:** To what extent does full technical audits of ai systems are expensive, which limits how often they can be conducted. backcasting from universal auditability: what is the minimum viable audit process that still reliably c?
 
@@ -8538,12 +10766,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters (model size, datas
 **Cited Sources:** ISACA (2024). AI Algorithm Audits Key Control Considerations.; IIA Spain (2025). Internal Audit of AI Applied to Business Processes.; ISACA (2025). Proven Strategies to Uncover AI Risks and Strengthen Audits.
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 4, accessible_complexity: 3, narrow_scope: 4, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 4, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 3, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #373: MLP Layers as Safety Feature Destroyers: Which FFN Sublayers Overwrite Harm Representations (Score: 3.57)
+
+**ID:** gen-0339
 
 **Research Question:** To what extent does residual stream carries safety-relevant features across layers. the causal chain: (1) attention heads assemble a harm feature in the residual stream → (2) subsequent mlp sublayers may subtract or ?
 
@@ -8562,12 +10796,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters (model size, datas
 **Cited Sources:** Safety Layers in Aligned Large Language Models: The Key to LLM Security. ICLR 2025.; Anthropic. Circuit Tracing: cross-layer transcoders replacing MLPs. March 2025.; LLMs Encode Harmfulness and Refusal Separately. OpenReview, 2025.
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 4, accessible_complexity: 3, narrow_scope: 4, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 4, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 3, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #374: Do SAE Features for Harmful Intent Generalize Out-of-Distribution? (Score: 3.57)
+
+**ID:** gen-0358
 
 **Research Question:** To what extent does deepmind's safety team found in 2025 that sae-based detectors for harmful intent underperformed simple linear probes on out-of-distribution (ood) test sets, even when proxy metrics like reconstruction?
 
@@ -8586,12 +10826,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters (model size, datas
 **Cited Sources:** DeepMind SAE Negative Results (2025): Confirmed via DeepMind Safety Research Medium blog. Directly tests SAE probes for harmful intent wit; GSAE (2025): Confirmed via arXiv:2512.06655. Addresses SAE generalization for safety steering.; DeepMind Safety Research (2025). Negative Results for Sparse Autoencoders On Downstream Tasks and Deprioritising SAE Research.; GSAE: Graph-Regularized Sparse Autoencoders for Robust LLM Safety Steering. arXiv:2512.06655, 2025.; Sparse Autoencoder Features for Classifications and Transferability. EMNLP 2025.
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 4, accessible_complexity: 3, narrow_scope: 4, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 4, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 3, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #375: Characterizing the Failure of Attention Head Universality Across Model Sizes (Score: 3.57)
+
+**ID:** gen-0370
 
 **Research Question:** To what extent does the 'universality' hypothesis in mechanistic interpretability claims that certain attention head types (induction heads, previous token heads, etc.) appear reliably across different model sizes and ar?
 
@@ -8610,12 +10856,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Cited Sources:** {'source': 'Quantifying LLM Attention-Head Stability (arXiv 2602.16740, 2026)', 'url': 'https://arxiv.org/abs/2602.16740', 'finding': 'Systematically studies attention head stability across model sizes, finding middle-layer heads are least stable yet most representationally distinct, and deeper models exhibit stronger mid-depth divergence.'}; {'source': 'Which Attention Heads Matter for ICL (arXiv 2502.14010, 2025)', 'url': 'https://arxiv.org/html/2502.14010v1', 'finding': "Shows that while induction and function vector heads both contribute to ICL in smaller models, their relative importance diverges with scale—FV heads become crucial while induction heads' impact approaches random ablations."}; {'source': 'Attention Heads of LLMs: Patterns (Cell Patterns, 2025)', 'url': 'https://www.cell.com/patterns/fulltext/S2666-3899(25)00024-8', 'finding': 'Comprehensive survey applying a cognitive-stage framework to categorize attention head types and analyze reasoning mechanisms across LLMs.'}
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_assessed)
-**Scores:** theory_of_impact: 4, accessible_complexity: 3, narrow_scope: 4, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 4, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 3, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #376: Testing Whether Linear Probes and SAE Probes Disagree: When Does Geometry Break Down? (Score: 3.57)
+
+**ID:** gen-0374
 
 **Research Question:** To what extent does linear probes trained directly on raw activations consistently outperform sae-based probes on downstream tasks, as documented by deepmind (2025). the specific geometric reason for this gap—whether it ?
 
@@ -8634,12 +10886,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Cited Sources:** {'source': 'DeepMind Safety Research Negative Results (2025)', 'url': 'https://deepmindsafetyresearch.medium.com/negative-results-for-sparse-autoencoders-on-downstream-tasks-and-deprioritising-sae-research-6cadcfc125b9', 'finding': 'Reports SAEs underperform linear probes on OOD generalization for harmful intent detection and concludes linear probes are cheap and effective.'}; {'source': 'Are SAEs Useful? A Case Study in Sparse Probing (arXiv 2502.16681, 2025)', 'url': 'https://arxiv.org/pdf/2502.16681', 'finding': 'Finds that many settings where SAE probes were thought helpful turn out not to be when compared to stronger baselines.'}; {'source': 'Evaluating SAEs with Board Game Models (LessWrong, 2025)', 'url': 'https://www.lesswrong.com/posts/EWhA4pyfrbdSkCd4G/evaluating-sparse-autoencoders-with-board-game-models', 'finding': 'Linear probes on residual stream decisively outperform SAE-based probes (88% vs 41% success rate on chess interventions).'}; {'source': 'Goodfire PII Detection with SAE Probes (2025)', 'url': 'https://www.goodfire.ai/research/rakuten-sae-probes-for-pii-detection', 'finding': 'In production PII detection, SAE probes generalized better than other probes from synthetic to real data, showing context-dependent advantages.'}
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_assessed)
-**Scores:** theory_of_impact: 4, accessible_complexity: 3, narrow_scope: 4, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 4, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 3, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #377: Replicating Activation-Based Detection Using Only the Shallowest 10% of Layers (Score: 3.57)
+
+**ID:** gen-0390
 
 **Research Question:** To what extent does the alert paper (arxiv 2601.03600) showed jailbreak detection from shallow layers is feasible. the exact layer depth at which the jailbreak signal first emerges, and whether this depth is consistent a?
 
@@ -8658,12 +10916,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Cited Sources:** {'source': 'Alert: Zero-shot LLM Jailbreak Detection via Internal Discrepancy (arXiv 2601.03600, 2026)', 'url': 'https://arxiv.org/html/2601.03600v1', 'finding': 'Performs early detection within shallow layers of the LLM, requiring only a single forward propagation and a lightweight classifier, directly studying layer-depth vs. detection performance.'}; {'source': 'Cost-Effective Constitutional Classifiers via Representation Re-use (Anthropic, 2025)', 'url': 'https://alignment.anthropic.com/2025/cheap-monitors/', 'finding': 'Studies representation-based safety classifiers with minimal computational overhead, showing a linear probe at each token performs similar to a model with 2% of parameters.'}; {'source': 'What Features in Prompts Jailbreak LLMs? (BlackboxNLP 2025)', 'url': 'https://aclanthology.org/2025.blackboxnlp-1.28.pdf', 'finding': 'Investigates which prompt features and internal representations are indicative of jailbreaks, contributing to understanding of layer-wise detection signals.'}
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_assessed)
-**Scores:** theory_of_impact: 4, accessible_complexity: 3, narrow_scope: 4, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 4, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 3, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #378: Cross-Dataset Generalization of Jailbreaks: Do Attacks Tuned on StrongReject Transfer to AILuminate? (Score: 3.57)
+
+**ID:** gen-0392
 
 **Research Question:** To what extent does jailbreak attack success rates are typically reported on a single benchmark. it is unknown whether attacks optimized using strongreject prompts generalize to the distinct harm categories and prompt ph?
 
@@ -8682,12 +10946,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Cited Sources:** JailbreakBench (NeurIPS 2024) provides an open robustness benchmark standardizing jailbreak evaluation across models, but does not specifically compare StrongReject vs AILuminate attack rankings.; AILuminate v0.5 (MLCommons, Dec 2025) measures adversarial resilience with public jailbreak attacks, but no published study directly compares attack rank-order across StrongReject and AILuminate.; JailBreakV-28K (COLM 2024) studies transferability of jailbreak techniques across modalities, establishing methodology for cross-benchmark transfer studies.; The specific question of whether top attacks on StrongReject rank differently on AILuminate has not been directly studied, though the methodology and benchmarks exist.
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_assessed)
-**Scores:** theory_of_impact: 4, accessible_complexity: 3, narrow_scope: 4, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 4, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 3, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #379: Shallow Alignment in Reasoning Models: Does Chain-of-Thought Change First-Token Safety Concentration? (Score: 3.57)
+
+**ID:** gen-0399
 
 **Research Question:** To what extent does reasoning models (e.g., deepseek-r1 distillations) generate extended chain-of-thought before a final answer. the qi et al. shallow alignment finding was measured on standard chat models producing dire?
 
@@ -8706,12 +10976,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Cited Sources:** Qi et al. (ICLR 2025) establishes the shallow alignment framework showing safety concentrates in first few tokens, but does not study reasoning models specifically.; SafeThinker (arXiv:2601.16506, Jan 2026) explicitly addresses shallow alignment in reasoning models, proposing an adaptive framework with a gateway classifier to deepen safety beyond first tokens in CoT models.; Trend Micro (Mar 2025) published research on exploiting DeepSeek-R1 CoT security, demonstrating that the CoT structure creates exploitable attack surfaces.; SafePath (2025) proposes early alignment intervention during reasoning and is 295x faster than direct refusal for DeepSeek-R1-Distill-Llama-8B.; The specific measurement of refusal location distribution (CoT vs answer section) and prefilling the answer section is partially addressed by SafeThinker and related work, though the precise experimental design differs.
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_assessed)
-**Scores:** theory_of_impact: 4, accessible_complexity: 3, narrow_scope: 4, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 4, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 3, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #380: Replicating Sandbagging Across Evaluation Formats (MCQ vs. Open-Ended) (Score: 3.57)
+
+**ID:** gen-0414
 
 **Research Question:** To what extent does most sandbagging research uses multiple-choice benchmarks like mmlu. it is unknown whether models sandbag differently on open-ended tasks like coding or reasoning, where detecting intentional underper?
 
@@ -8730,12 +11006,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters (model size, datas
 **Cited Sources:** MMLU benchmark: Standard MCQ benchmark. Confirmed and relevant.; HumanEval benchmark: Standard code generation benchmark by OpenAI. Confirmed and relevant as open-ended format.; MALT dataset: MALT is referenced as a multi-format evaluation dataset. Verified as relevant.; van der Weij et al. AI Sandbagging: Language Models can Strategically Underperform on Evaluations. ICLR 2025.; Taylor et al. Auditing Games for Sandbagging. arXiv:2512.07810, 2025.; LLMs Can Covertly Sandbag on Capability Evaluations Against Chain-of-Thought Monitoring. arXiv:2508.00943, 2025.
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 4, accessible_complexity: 3, narrow_scope: 4, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 4, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 3, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #381: Replicating Oversight Subversion in Petri Across Open Models with API Constraints (Score: 3.57)
+
+**ID:** gen-0431
 
 **Research Question:** To what extent does petri found high rates of oversight subversion in some frontier models. it is unknown whether open-weight models exhibit oversight subversion at comparable rates, or whether this requires the scale or?
 
@@ -8754,12 +11036,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Cited Sources:** Petri (Anthropic, Oct 2025) tested 14 frontier models on oversight subversion with 111 seed instructions, successfully eliciting oversight subversion behaviors.; Petri 2.0 (Jan 2026) expanded to 10 target models with improved eval-awareness mitigations and new scenarios.; The Petri framework is open-source and designed to work with any model including open-weight models, so the infrastructure for this replication already exists.; METR conducted preliminary evaluations of DeepSeek and Qwen models finding capabilities similar to frontier models from late 2024.; However, a focused comparative study of oversight subversion rates specifically across open-weight models with API constraints has not been published as a standalone study.
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_assessed)
-**Scores:** theory_of_impact: 4, accessible_complexity: 3, narrow_scope: 4, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 4, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 3, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #382: An Automated Alignment Faking Signal Detector (Score: 3.57)
+
+**ID:** gen-0445
 
 **Research Question:** To what extent does identifying alignment faking reasoning in model outputs currently requires manual inspection of long transcripts. there is no automated tool that flags potential alignment-faking reasoning patterns in?
 
@@ -8778,12 +11066,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Cited Sources:** Anthropic demonstrated alignment faking in Claude 3 Opus (Dec 2024) with strategic behavior modification based on monitoring awareness.; Anthropic's Constitutional Classifiers and Constitutional Classifiers++ (Jan 2026) train classifiers on synthetic data for content safety, though not specifically for alignment-faking signal detection.; Bloom (Anthropic, 2025) provides automated behavioral evaluations that correlate with hand-labelled judgments and separate baseline from misaligned models.; Research notes that distinguishing genuine vs. strategic compliance from outputs alone remains an open problem, and no dedicated alignment-faking signal classifier has been published.; The specific idea of training a text classifier on labeled alignment-faking outputs from existing papers is a concrete instantiation that has not been published, but the broader detection space is active.
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_assessed)
-**Scores:** theory_of_impact: 4, accessible_complexity: 3, narrow_scope: 4, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 4, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 3, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #383: Triggered vs. Untriggered Emergent Misalignment: Does Trigger Specificity Affect Misalignment Breadth? (Score: 3.57)
+
+**ID:** gen-0539
 
 **Research Question:** To what extent does betley et al. demonstrated a backdoor variant where misalignment only appears with a trigger. it is unknown whether narrow triggers (single rare token) vs. broad triggers (semantic concepts) produce d?
 
@@ -8802,12 +11096,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters (model size, datas
 **Cited Sources:** Sleeper Agents (Hubinger et al. 2024): Confirmed via arXiv:2401.05566. Foundational work on triggered deceptive behavior that persists thro; Thought Crime: Backdoors and EM: Confirmed via arXiv:2506.13206. Explores intersection of backdoors and emergent misalignment in reas; Betley et al. triggered condition: Confirmed. Original EM paper includes triggered variant showing <0.1% misalignment without trigger,; Hubinger et al. (2024). Sleeper Agents. arXiv:2401.05566.; Betley et al. (2025). Emergent Misalignment triggered condition. arXiv:2502.17424.; Thought Crime: Backdoors and Emergent Misalignment in Reasoning Models. arXiv:2506.13206, 2025.; Sleeper Cell: Temporal Backdoors in Tool-Using LLMs. arXiv:2603.03371, 2026.
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 4, accessible_complexity: 3, narrow_scope: 4, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 4, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 3, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #384: Emergent Misalignment in Multilingual Models: Does Language of Fine-Tuning Data Affect Cross-Language Misalignment? (Score: 3.57)
+
+**ID:** gen-0548
 
 **Research Question:** To what extent does ll published em experiments use english training data. whether fine-tuning on deceptive english code produces misalignment when the model is evaluated in other languages, or whether fine-tuning in a ?
 
@@ -8826,12 +11126,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters (model size, datas
 **Cited Sources:** Betley et al. (2025) - English-only limitation: Confirmed. The original EM paper uses English-only data and evaluation, leaving cross-lingual transf; Towards Understanding the Fragility of Multilingual LLMs. NAACL Findings 2025.; The State of Multilingual LLM Safety Research: From Measuring the Language Gap to Mitigating It. arXiv:2505.24119, 2025.; Betley et al. (2025). Emergent Misalignment. Nature 2026.
 
 **Subfield:** Alignment & Training Methods | **Strategy:** experiment_variation | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 4, accessible_complexity: 3, narrow_scope: 4, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 4, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 3, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** experiment_variation, sources: 0 KB, 0 web
 
 ---
 
 ## #385: Measuring Emergent Misalignment Coherence as a Function of Model Size Within a Single Model Family (Score: 3.57)
+
+**ID:** gen-0553
 
 **Research Question:** To what extent does m coherence (the fraction of misaligned responses that are internally logically consistent) varies across model sizes. a systematic size-vs-coherence curve within a single model family has not been p?
 
@@ -8850,12 +11156,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters (model size, datas
 **Cited Sources:** Qwen2.5 model family: Confirmed. Qwen2.5 family includes 0.5B, 1.5B, 3B, 7B, 14B, 32B, 72B sizes. Technical report: arXiv:; Model Organisms for Emergent Misalignment (2025): Confirmed via arXiv:2506.11613. Studies EM at small scales with phase transitions.; The Devil in the Details: Emergent Misalignment, Format and Coherence in Open-Weights LLMs. arXiv:2511.20104, 2025.; Model Organisms for Emergent Misalignment. arXiv:2506.11613, 2025.; Betley et al. (2025). Emergent Misalignment. Nature 2026.
 
 **Subfield:** Alignment & Training Methods | **Strategy:** experiment_variation | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 4, accessible_complexity: 3, narrow_scope: 4, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 4, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 3, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** experiment_variation, sources: 0 KB, 0 web
 
 ---
 
 ## #386: How many tokens deep is alignment across model families? A comparative audit (Score: 3.57)
+
+**ID:** gen-0586
 
 **Research Question:** To what extent does qi et al. showed safety alignment is concentrated in the first few output tokens for the models they tested, but it is unknown whether this shallowness is uniform across all major model families (llam?
 
@@ -8872,12 +11184,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Alternative Framings:** Benchmark: How many tokens deep is alignment across model families? A c: Reframed for maximum feasibility. (est. score: 4.00); Novel Angle: How many tokens deep is alignment across model families? A c: Reframed for novelty. (est. score: 3.75)
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 4, accessible_complexity: 3, narrow_scope: 4, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 4, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 3, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #387: Does deep alignment (Qi et al.'s objective) survive RLHF-style fine-tuning on benign data? (Score: 3.57)
+
+**ID:** gen-0588
 
 **Research Question:** To what extent does qi et al. show their regularized objective deepens alignment against fine-tuning attacks, but it is unclear whether the deeper alignment is preserved when the model is further fine-tuned on normal, be?
 
@@ -8896,12 +11214,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters (model size, datas
 **Cited Sources:** Qi et al. - Safety Alignment Should Be Made More Than Just a Few Tokens Deep: Confirmed via arXiv:2406.05946 and ICLR 2025 proceedings. Foundational paper defining deep alignment; Qi et al. (2024). Safety Alignment Should Be Made More Than Just a Few Tokens Deep. ICLR 2025.; BOOSTER: Tackling Harmful Fine-tuning for Large Language Models. ICLR 2025.; SaLoRA: Safety-Alignment Preserved Low-Rank Adaptation. ICLR 2025.; Antidote: Post-fine-tuning Safety Alignment for LLMs. arXiv:2408.09600.
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 4, accessible_complexity: 3, narrow_scope: 4, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 4, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 3, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #388: Do activation probes for jailbreak detection transfer across model families without retraining? (Score: 3.57)
+
+**ID:** gen-0598
 
 **Research Question:** To what extent does ctivation-based detectors are trained on a specific model's hidden states. in practice, organizations may switch model providers. whether a probe trained on, say, llama activations can transfer to ge?
 
@@ -8920,12 +11244,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters (model size, datas
 **Cited Sources:** Jailbreak Transferability Emerges from Shared Representations. arXiv:2506.12913.; What Features in Prompts Jailbreak LLMs? BlackboxNLP 2025.; JBShield: Defending LLMs from Jailbreak Attacks. USENIX Security 2025.
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 4, accessible_complexity: 3, narrow_scope: 4, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 4, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 3, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #389: Does shallow alignment depth predict vulnerability to decoding parameter attacks (temperature/top-p manipulation)? (Score: 3.57)
+
+**ID:** gen-0601
 
 **Research Question:** To what extent does qi et al. list decoding parameter attacks (high temperature, nucleus sampling) as another vulnerability explained by shallow alignment. however, the relationship between measured alignment depth (kl m?
 
@@ -8944,12 +11274,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters (model size, datas
 **Cited Sources:** Qi et al. (2024). Safety Alignment Should Be Made More Than Just a Few Tokens Deep. ICLR 2025.; Catastrophic Jailbreak of Open-source LLMs via Exploiting Generation. Princeton SysML.; Safety Alignment Depth in LLMs: A Markov Chain Perspective. arXiv:2502.00669.
 
 **Subfield:** Adversarial Robustness & Red-Teaming | **Strategy:** follow_up_experiment | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 4, accessible_complexity: 3, narrow_scope: 4, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 4, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 3, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** follow_up_experiment, sources: 0 KB, 0 web
 
 ---
 
 ## #390: Do activation-based jailbreak probes detect harmful intent before or after the harmful tokens are generated? (Score: 3.57)
+
+**ID:** gen-0605
 
 **Research Question:** To what extent does ctivation-based detectors are typically applied to the prompt (before generation). but whether the activation signal is already present at the prompt stage or only emerges during generation of the ha?
 
@@ -8968,12 +11304,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters (model size, datas
 **Cited Sources:** LLM Jailbreak Detection for (Almost) Free! EMNLP 2025 Findings. arXiv:2509.14558.; JBShield: Defending Large Language Models from Jailbreak Attacks. USENIX Security 2025.; ALERT: Zero-shot LLM Jailbreak Detection via Internal Discrepancy Amplification. arXiv:2601.03600, 2026.
 
 **Subfield:** Adversarial Robustness & Red-Teaming | **Strategy:** follow_up_experiment | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 4, accessible_complexity: 3, narrow_scope: 4, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 4, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 3, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** follow_up_experiment, sources: 0 KB, 0 web
 
 ---
 
 ## #391: How does alignment depth change across a model's output sequence for different harm categories? (Score: 3.57)
+
+**ID:** gen-0608
 
 **Research Question:** To what extent does qi et al. measure alignment depth on aggregated harmful prompts, but different harm categories (violence, csam, disinformation, weapons) may have different depth profiles — e.g., the model may have le?
 
@@ -8992,12 +11334,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters (model size, datas
 **Cited Sources:** StrongReject benchmark: StrongReject is a well-known jailbreak evaluation benchmark with defined harm categories. Directly r; Qi et al. (2024). Safety Alignment Should Be Made More Than Just a Few Tokens Deep. ICLR 2025.; Safety Alignment Depth in Large Language Models: A Markov Chain Perspective. arXiv:2502.00669, 2025.; StrongReject benchmark for jailbreak evaluation.
 
 **Subfield:** Adversarial Robustness & Red-Teaming | **Strategy:** follow_up_experiment | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 4, accessible_complexity: 3, narrow_scope: 4, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 4, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 3, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** follow_up_experiment, sources: 0 KB, 0 web
 
 ---
 
 ## #392: Probing Whether Activation-Based Jailbreak Detectors Generalize Across Attack Types (Score: 3.57)
+
+**ID:** gen-0614
 
 **Research Question:** To what extent does ctivation-based jailbreak detectors (e.g., the 'almost free' detector from emnlp 2025) are trained on specific jailbreak types. whether a probe trained on gcg suffix attacks also detects prefilling a?
 
@@ -9016,12 +11364,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters (model size, datas
 **Cited Sources:** GCG attack: Greedy Coordinate Gradient attack is a well-established adversarial jailbreak method. Directly relev; What Features in Prompts Jailbreak LLMs? Investigating the Mechanisms Behind Attacks. BlackboxNLP 2025.; Do Internal Layers of LLMs Reveal Patterns for Jailbreak Detection? NeurIPS 2025 Workshop. arXiv:2510.06594.; LLM Jailbreak Detection for (Almost) Free! EMNLP 2025 Findings. arXiv:2509.14558.
 
 **Subfield:** Adversarial Robustness & Red-Teaming | **Strategy:** failure_mode_investigation | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 4, accessible_complexity: 3, narrow_scope: 4, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 4, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 3, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** failure_mode_investigation, sources: 0 KB, 0 web
 
 ---
 
 ## #393: Testing Whether Activation Probes Can Distinguish Jailbreak Attempts from Legitimate Edge-Case Requests (Score: 3.57)
+
+**ID:** gen-0626
 
 **Research Question:** To what extent does ctivation-based jailbreak detectors may have high false positive rates on legitimate but unusual requests (e.g., medical professionals asking about drug interactions, security researchers asking abou?
 
@@ -9040,12 +11394,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters (model size, datas
 **Cited Sources:** LLM Jailbreak Detection for (Almost) Free! EMNLP 2025 Findings.; ALERT: Zero-shot LLM Jailbreak Detection via Internal Discrepancy Amplification. arXiv:2601.03600, 2026.; Machine Learning for Detection and Analysis of Novel LLM Jailbreaks. arXiv:2510.01644, 2025.
 
 **Subfield:** Adversarial Robustness & Red-Teaming | **Strategy:** failure_mode_investigation | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 4, accessible_complexity: 3, narrow_scope: 4, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 4, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 3, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** failure_mode_investigation, sources: 0 KB, 0 web
 
 ---
 
 ## #394: Characterizing the Boundary Conditions of the Bad Likert Judge Jailbreak Technique (Score: 3.57)
+
+**ID:** gen-0631
 
 **Research Question:** To what extent does bad likert judge technique (unit42, palo alto networks) misuses model evaluation capability in multi-turn dialogue to elicit harmful content. the conditions under which it fails—and which model sa?
 
@@ -9064,12 +11424,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters (model size, datas
 **Cited Sources:** Bad Likert Judge: A Novel Multi-Turn Technique to Jailbreak LLMs by Misusing Their Evaluation Capability. Palo Alto Networks Unit 42, 2024.; Understanding Bad Likert Judge Prompt Injection Attack. Keysight, 2025.; Recent Jailbreaks Demonstrate Emerging Threat to DeepSeek. Palo Alto Networks Unit 42, 2025.
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 4, accessible_complexity: 3, narrow_scope: 4, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 4, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 3, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #395: Scorer Discrepancy Investigation: GPT-4 Judge vs. Llama Judge vs. Rule-Based Scorer (Score: 3.57)
+
+**ID:** gen-0664
 
 **Research Question:** To what extent does safety benchmarks use heterogeneous scoring methods. when the same model outputs are scored by gpt-4-as-judge, an open-source judge, and a rule-based classifier, the ranking of models may differ subst?
 
@@ -9088,12 +11454,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters (model size, datas
 **Cited Sources:** GPT-4o as judge: GPT-4o is widely used as an LLM judge in evaluation literature. OpenAI fine-tuning guide recommends; LLM judge reliability research: Multiple confirmed papers on LLM judge biases and reliability. Systematic studies exist at ICLR 2025; Judging the Judges: A Systematic Study of Position Bias in LLM-as-a-Judge. arXiv:2406.07791, ACLNLP 2025.; Trust or Escalate: LLM Judges with Jury Deliberation. ICLR 2025.; A Survey on LLM-as-a-Judge. arXiv:2411.15594, 2024.
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 4, accessible_complexity: 3, narrow_scope: 4, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 4, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 3, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #396: Replicating Safety Scores Under Decoding Parameter Variation (Score: 3.57)
+
+**ID:** gen-0688
 
 **Research Question:** To what extent does safety benchmark results are reported at specific decoding parameters (temperature, top-p). whether safety scores are sensitive to decoding parameters — as generation becomes more stochastic — is not ?
 
@@ -9112,12 +11484,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters (model size, datas
 **Cited Sources:** S-Eval: Automatic and Adaptive Test Generation for Safety Evaluation. arXiv:2405.14191, 2024.; SORRY-Bench: Systematically Evaluating Large Language Model Safety Refusal Behaviors. ICLR 2025.; HELM Safety Evaluation Framework. Stanford CRFM, 2024.
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 4, accessible_complexity: 3, narrow_scope: 4, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 4, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 3, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #397: Investigating Whether Constitutional AI Fine-Tuning Produces Generalizable Safety (Score: 3.57)
+
+**ID:** gen-0708
 
 **Research Question:** To what extent does constitutional ai (cai) fine-tuned models may have high safety scores on benchmarks used in their training pipeline but fail to generalize to out-of-distribution safety scenarios. whether cai safety g?
 
@@ -9134,12 +11512,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Alternative Framings:** Benchmark: Investigating Whether Constitutional AI Fine-Tuning Produces: Reframed for maximum feasibility. (est. score: 4.00); Novel Angle: Investigating Whether Constitutional AI Fine-Tuning Produces: Reframed for novelty. (est. score: 3.75)
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 4, accessible_complexity: 3, narrow_scope: 4, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 4, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 3, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #398: Polysemantic Refusal: Safety Features Entangled with Capability Features Make Steering Unusable (Score: 3.57)
+
+**ID:** gen-0724
 
 **Research Question:** To what extent does sae-based steering of refusal features degrades general capabilities because refusal-mediating features are entangled with general language features. safety teams must choose between under-steering (l?
 
@@ -9156,12 +11540,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Alternative Framings:** Benchmark: Polysemantic Refusal: Safety Features Entangled with Capabil: Reframed for maximum feasibility. (est. score: 4.00); Novel Angle: Polysemantic Refusal: Safety Features Entangled with Capabil: Reframed for novelty. (est. score: 3.75)
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 4, accessible_complexity: 3, narrow_scope: 4, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 4, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 3, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #399: Steering Fragility Under Adversarial Paraphrase: Concept Steering Fails When Feature Activation Is Bypassed (Score: 3.57)
+
+**ID:** gen-0728
 
 **Research Question:** To what extent does sae-based concept steering suppresses harmful outputs by clamping specific feature activations. adversarial paraphrase attacks achieving the same semantic goal through different syntactic routes may a?
 
@@ -9178,12 +11568,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Alternative Framings:** Benchmark: Steering Fragility Under Adversarial Paraphrase: Concept Ste: Reframed for maximum feasibility. (est. score: 4.00); Novel Angle: Steering Fragility Under Adversarial Paraphrase: Concept Ste: Reframed for novelty. (est. score: 3.75)
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 4, accessible_complexity: 3, narrow_scope: 4, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 4, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 3, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #400: SAE Feature Drift Invalidates Production Control Monitors After Fine-Tuning (Score: 3.57)
+
+**ID:** gen-0734
 
 **Research Question:** To what extent does sae features are trained on a specific model checkpoint. when the model is fine-tuned (rlhf, instruction tuning, capability updates), features may drift — the same feature id may correspond to a diffe?
 
@@ -9200,12 +11596,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Alternative Framings:** Benchmark: SAE Feature Drift Invalidates Production Control Monitors Af: Reframed for maximum feasibility. (est. score: 4.00); Novel Angle: SAE Feature Drift Invalidates Production Control Monitors Af: Reframed for novelty. (est. score: 3.75)
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 4, accessible_complexity: 3, narrow_scope: 4, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 4, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 3, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #401: Canary Tokens in Training Data: Detecting Fine-Tuning Attacks via Data Poisoning Tripwires (Score: 3.57)
+
+**ID:** gen-0823
 
 **Research Question:** To what extent does fine-tuning attacks can covertly remove safety alignment. currently there is no way to detect whether a model has been fine-tuned on adversarial data post-deployment?
 
@@ -9222,12 +11624,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Alternative Framings:** Benchmark: Canary Tokens in Training Data: Detecting Fine-Tuning Attack: Reframed for maximum feasibility. (est. score: 4.00); Novel Angle: Canary Tokens in Training Data: Detecting Fine-Tuning Attack: Reframed for novelty. (est. score: 3.75)
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 4, accessible_complexity: 3, narrow_scope: 4, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 4, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 3, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #402: Adversarial Suffixes Corrupt Honest Self-Assessment: When Jailbreaks Break Calibration (Score: 3.57)
+
+**ID:** gen-0852
 
 **Research Question:** To what extent does models asked to assess their own confidence or harmfulness under adversarial suffix attacks may produce uncalibrated or systematically biased self-assessments—a compound failure of adversarial robustn?
 
@@ -9244,12 +11652,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Alternative Framings:** Benchmark: Adversarial Suffixes Corrupt Honest Self-Assessment: When Ja: Reframed for maximum feasibility. (est. score: 4.00); Novel Angle: Adversarial Suffixes Corrupt Honest Self-Assessment: When Ja: Reframed for novelty. (est. score: 3.75)
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 4, accessible_complexity: 3, narrow_scope: 4, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 4, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 3, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #403: Adversarial Prompts Degrade Honest Uncertainty Reporting: Calibration Under Attack (Score: 3.57)
+
+**ID:** gen-0857
 
 **Research Question:** To what extent does adversarial inputs that move models toward harmful outputs may simultaneously degrade the model's honest reporting of uncertainty. a jailbroken model that expresses high confidence in harmful outputs ?
 
@@ -9266,12 +11680,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Alternative Framings:** Benchmark: Adversarial Prompts Degrade Honest Uncertainty Reporting: Ca: Reframed for maximum feasibility. (est. score: 4.00); Novel Angle: Adversarial Prompts Degrade Honest Uncertainty Reporting: Ca: Reframed for novelty. (est. score: 3.75)
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 4, accessible_complexity: 3, narrow_scope: 4, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 4, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 3, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #404: Lottery Ticket Hypothesis and Alignment: Are Safety Circuits Sparse Subnetworks? (Score: 3.57)
+
+**ID:** gen-0944
 
 **Research Question:** To what extent does the lottery ticket hypothesis predicts that sparse subnetworks exist that match full network performance. if safety behaviors are implemented by a sparse subnetwork, they should be identifiable and in?
 
@@ -9288,12 +11708,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Alternative Framings:** Benchmark: Lottery Ticket Hypothesis and Alignment: Are Safety Circuits: Reframed for maximum feasibility. (est. score: 4.00); Novel Angle: Lottery Ticket Hypothesis and Alignment: Are Safety Circuits: Reframed for novelty. (est. score: 3.75)
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 4, accessible_complexity: 3, narrow_scope: 4, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 4, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 3, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #405: Delegation Depth Limits: Do Recursive Sub-Agent Chains Amplify Misalignment? (Score: 3.57)
+
+**ID:** gen-0954
 
 **Research Question:** To what extent does orchestrator-to-sub-agent delegation can chain across many layers, with each layer potentially re-interpreting the goal, amplifying small initial misalignments?
 
@@ -9310,12 +11736,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Alternative Framings:** Benchmark: Delegation Depth Limits: Do Recursive Sub-Agent Chains Ampli: Reframed for maximum feasibility. (est. score: 4.00); Novel Angle: Delegation Depth Limits: Do Recursive Sub-Agent Chains Ampli: Reframed for novelty. (est. score: 3.75)
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 4, accessible_complexity: 3, narrow_scope: 4, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 4, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 3, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #406: Responsibility Diffusion in Parallel Agent Pipelines: Who Is Accountable When No Single Agent Caused Harm? (Score: 3.57)
+
+**ID:** gen-0958
 
 **Research Question:** To what extent does when harm results from the collective output of parallel agents, no individual agent's action is sufficient to cause harm, making it impossible to assign responsibility and enabling agents to under-we?
 
@@ -9332,12 +11764,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Alternative Framings:** Benchmark: Responsibility Diffusion in Parallel Agent Pipelines: Who Is: Reframed for maximum feasibility. (est. score: 4.00); Novel Angle: Responsibility Diffusion in Parallel Agent Pipelines: Who Is: Reframed for novelty. (est. score: 3.75)
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 4, accessible_complexity: 3, narrow_scope: 4, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 4, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 3, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #407: Oversight Gap Duration Threshold: How Long Can an Agent Operate Unsupervised Before Cascade Risk Becomes Unacceptable? (Score: 3.57)
+
+**ID:** gen-1017
 
 **Research Question:** To what extent does human oversight cannot be continuous. the safe maximum duration of unsupervised agent operation is unknown, and the relationship between oversight gap duration and cascade risk is not characterized?
 
@@ -9354,12 +11792,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Alternative Framings:** Benchmark: Oversight Gap Duration Threshold: How Long Can an Agent Oper: Reframed for maximum feasibility. (est. score: 4.00); Novel Angle: Oversight Gap Duration Threshold: How Long Can an Agent Oper: Reframed for novelty. (est. score: 3.75)
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 4, accessible_complexity: 3, narrow_scope: 4, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 4, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 3, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #408: Replicating the Copy Suppression Circuit in Instruction-Tuned Models: Does RLHF Alter Repetition Suppression? (Score: 3.57)
+
+**ID:** gen-1058
 
 **Research Question:** To what extent does mcdougall et al. (2023) discovered a copy suppression circuit in gpt-2 that prevents the model from repetitively copying tokens it has already produced — a mechanism linked to induction heads operatin?
 
@@ -9376,12 +11820,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Alternative Framings:** Benchmark: Replicating the Copy Suppression Circuit in Instruction-Tune: Reframed for maximum feasibility. (est. score: 4.00); Novel Angle: Replicating the Copy Suppression Circuit in Instruction-Tune: Reframed for novelty. (est. score: 3.75)
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 4, accessible_complexity: 3, narrow_scope: 4, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 4, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 3, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #409: Interpretability Method Compute Budget Benchmark: Pareto Curves for Cost vs. Faithfulness (Score: 3.57)
+
+**ID:** gen-1074
 
 **Research Question:** To what extent does different circuit discovery and sae evaluation methods vary enormously in compute cost. no benchmark reports pareto curves showing faithfulness achieved per gpu-hour or per number of forward passes. p?
 
@@ -9398,12 +11848,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Alternative Framings:** Benchmark: Interpretability Method Compute Budget Benchmark: Pareto Cur: Reframed for maximum feasibility. (est. score: 4.00); Novel Angle: Interpretability Method Compute Budget Benchmark: Pareto Cur: Reframed for novelty. (est. score: 3.75)
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 4, accessible_complexity: 3, narrow_scope: 4, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 4, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 3, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #410: Adversarial Contrast Pairs for Oversight Training: Teaching Overseers to Detect Subtle Errors (Score: 3.57)
+
+**ID:** gen-1094
 
 **Research Question:** To what extent does weak overseers may perform well on obvious errors but fail on subtle, plausible-looking mistakes that capable models might systematically produce?
 
@@ -9420,12 +11876,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Alternative Framings:** Benchmark: Adversarial Contrast Pairs for Oversight Training: Teaching : Reframed for maximum feasibility. (est. score: 4.00); Novel Angle: Adversarial Contrast Pairs for Oversight Training: Teaching : Reframed for novelty. (est. score: 3.75)
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 4, accessible_complexity: 3, narrow_scope: 4, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 4, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 3, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #411: Replication in Low-Resource Task Domains: Does Weak-to-Strong Generalization Work for Specialized Scientific Tasks? (Score: 3.57)
+
+**ID:** gen-1117
 
 **Research Question:** To what extent does standard weak-to-strong experiments use general nlp benchmarks. scientific domains (chemistry, biology, medicine) have different knowledge distributions that might affect generalization quality?
 
@@ -9442,12 +11904,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Alternative Framings:** Benchmark: Replication in Low-Resource Task Domains: Does Weak-to-Stron: Reframed for maximum feasibility. (est. score: 4.00); Novel Angle: Replication in Low-Resource Task Domains: Does Weak-to-Stron: Reframed for novelty. (est. score: 3.75)
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 4, accessible_complexity: 3, narrow_scope: 4, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 4, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 3, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #412: Bias Amplification Test: Does the Student Model Amplify Overseer Biases or Just Reproduce Them? (Score: 3.57)
+
+**ID:** gen-1143
 
 **Research Question:** To what extent does if student models merely reproduce overseer biases, the harm is bounded. but if they amplify biases (expressing them more strongly than the overseer did), training under biased oversight is more dange?
 
@@ -9464,12 +11932,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Alternative Framings:** Benchmark: Bias Amplification Test: Does the Student Model Amplify Over: Reframed for maximum feasibility. (est. score: 4.00); Novel Angle: Bias Amplification Test: Does the Student Model Amplify Over: Reframed for novelty. (est. score: 3.75)
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 4, accessible_complexity: 3, narrow_scope: 4, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 4, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 3, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #413: Exploitation Emergence Timing: At What Training Step Does a Model Begin Exploiting Overseer Biases? (Score: 3.57)
+
+**ID:** gen-1145
 
 **Research Question:** To what extent does the timing of when a model transitions from learning the task to learning to exploit the overseer's biases is unknown. if exploitation emerges early, early stopping might prevent it?
 
@@ -9486,12 +11960,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Alternative Framings:** Benchmark: Exploitation Emergence Timing: At What Training Step Does a : Reframed for maximum feasibility. (est. score: 4.00); Novel Angle: Exploitation Emergence Timing: At What Training Step Does a : Reframed for novelty. (est. score: 3.75)
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 4, accessible_complexity: 3, narrow_scope: 4, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 4, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 3, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #414: Deceptive Alignment Detection Under Sparse Oversight: Does Oversight Frequency Affect Deception Detection? (Score: 3.57)
+
+**ID:** gen-1161
 
 **Research Question:** To what extent does a model that behaves deceptively under sparse oversight might behave safely under dense oversight. the relationship between oversight frequency and deception detection probability is unknown?
 
@@ -9508,12 +11988,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Alternative Framings:** Benchmark: Deceptive Alignment Detection Under Sparse Oversight: Does O: Reframed for maximum feasibility. (est. score: 4.00); Novel Angle: Deceptive Alignment Detection Under Sparse Oversight: Does O: Reframed for novelty. (est. score: 3.75)
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 4, accessible_complexity: 3, narrow_scope: 4, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 4, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 3, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #415: Minimum Detectable Deception: What is the Least Subtle Deception That Standard Oversight Misses? (Score: 3.57)
+
+**ID:** gen-1162
 
 **Research Question:** To what extent does standard oversight may miss even relatively obvious forms of deception due to cognitive biases, time pressure, and capability limitations. the minimum detectable deception threshold has not been empir?
 
@@ -9530,12 +12016,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Alternative Framings:** Benchmark: Minimum Detectable Deception: What is the Least Subtle Decep: Reframed for maximum feasibility. (est. score: 4.00); Novel Angle: Minimum Detectable Deception: What is the Least Subtle Decep: Reframed for novelty. (est. score: 3.75)
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 4, accessible_complexity: 3, narrow_scope: 4, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 4, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 3, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #416: Task Complexity Decomposition: Can Oversight Quality Be Maintained by Reducing Task Complexity? (Score: 3.57)
+
+**ID:** gen-1169
 
 **Research Question:** To what extent does oversight fails on complex tasks. if complex tasks can be decomposed into simpler subtasks that overseers can accurately evaluate, this is a scalable approach to maintaining oversight quality?
 
@@ -9552,12 +12044,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Alternative Framings:** Benchmark: Task Complexity Decomposition: Can Oversight Quality Be Main: Reframed for maximum feasibility. (est. score: 4.00); Novel Angle: Task Complexity Decomposition: Can Oversight Quality Be Main: Reframed for novelty. (est. score: 3.75)
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 4, accessible_complexity: 3, narrow_scope: 4, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 4, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 3, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #417: Minimal Empirical Probe: Homogeneity Auditing as a Deployment Requirement (Single-Model) (Score: 3.54)
+
+**ID:** gen-0131
 
 **Research Question:** What does a focused empirical investigation of 'Homogeneity Auditing as a Deployment Requirement' reveal about safety-relevant behaviors in current language models, and what concrete, measurable findings can a beginner mentor-novice team produce within 30 hours using standard open-source tools?
 
@@ -9576,12 +12074,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Cited Sources:** ISACA: A Proposed High Level Approach to AI Audit (2024) — Referenced in novelty assessment.; TrustArc AI Risk Assessment Template (2025) — Referenced in novelty assessment.; IOSCO: AI in Securities Markets (2025) — Referenced in novelty assessment.; Artificial Hivemind (NeurIPS 2025) — Referenced in novelty assessment.
 
 **Subfield:** Model Homogeneity & Systemic Risk | **Strategy:** novel_direction | **Novelty:** mostly_novel (novelty_estimated)
-**Scores:** theory_of_impact: 3, accessible_complexity: 3, narrow_scope: 4, novelty: 4
+**Scores:**
+  - **theory_of_impact:** 3, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 3, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 4, confidence: 0.5 — From filter_score assessment
 **Provenance:** novel_direction, sources: 0 KB, 0 web
 
 ---
 
 ## #418: Minimal Empirical Probe: Quantifying Output Monoculture Using Ecological Di... (Single-Model) (Score: 3.54)
+
+**ID:** gen-0134
 
 **Research Question:** What does a focused empirical investigation of 'Quantifying Output Monoculture Using Ecological Diversity Indices' reveal about safety-relevant behaviors in current language models, and what concrete, measurable findings can a beginner mentor-novice team produce within 30 hours using standard open-source tools?
 
@@ -9600,12 +12104,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Cited Sources:** Shannon entropy (1948), Simpson's index (1949), Rao's quadratic entropy — Referenced in novelty assessment.; Artificial Hivemind (NeurIPS 2025) - uses ad hoc similarity metrics — Referenced in novelty assessment.; Dynamic perspectives on biodiversity quantification (2024) — Referenced in novelty assessment.
 
 **Subfield:** Model Homogeneity & Systemic Risk | **Strategy:** novel_direction | **Novelty:** mostly_novel (novelty_estimated)
-**Scores:** theory_of_impact: 3, accessible_complexity: 3, narrow_scope: 4, novelty: 4
+**Scores:**
+  - **theory_of_impact:** 3, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 3, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 4, confidence: 0.5 — From filter_score assessment
 **Provenance:** novel_direction, sources: 0 KB, 0 web
 
 ---
 
 ## #419: Minimal Empirical Probe: Induction Heads and Deceptive Consistency: Do In-C... (Single-Model) (Score: 3.54)
+
+**ID:** gen-0337
 
 **Research Question:** What does a focused empirical investigation of 'Induction Heads and Deceptive Consistency: Do In-Context Scheming Models Exploit Induction Circuits?' reveal about safety-relevant behaviors in current language models, and what concrete, measurable findings can a beginner mentor-novice team produce within 30 hours using standard open-source tools?
 
@@ -9624,12 +12134,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Cited Sources:** Olsson et al. In-context Learning and Induction Heads. Transformer Circuits Thread, 2022. — Referenced in novelty assessment.; On the Emergence of Induction Heads for In-Context Learning. ICLR 2026 submission. — Referenced in novelty assessment.; Induction Signatures Are Not Enough: A Matched-Compute Study. arXiv:2509.22947, 2025. — Referenced in novelty assessment.
 
 **Subfield:**  | **Strategy:**  | **Novelty:** mostly_novel (novelty_estimated)
-**Scores:** theory_of_impact: 3, accessible_complexity: 3, narrow_scope: 4, novelty: 4
+**Scores:**
+  - **theory_of_impact:** 3, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 3, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 4, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #420: Minimal Empirical Probe: Where Do Attribution Graphs Fail? Identifying Prom... (Single-Model) (Score: 3.54)
+
+**ID:** gen-0360
 
 **Research Question:** What does a focused empirical investigation of 'Where Do Attribution Graphs Fail? Identifying Prompt Classes Where Circuit Tracing Breaks Down' reveal about safety-relevant behaviors in current language models, and what concrete, measurable findings can a beginner mentor-novice team produce within 30 hours using standard open-source tools?
 
@@ -9648,12 +12164,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Cited Sources:** Lindsey et al. (2025). Circuit Tracing: Revealing Computational Graphs in Language Models. Anthropic. — Referenced in novelty assessment.; Ameisen et al. (2025). On the Biology of a Large Language Model. Anthropic. — Referenced in novelty assessment.; Anthropic (2025). Open-sourcing circuit-tracing tools. — Referenced in novelty assessment.
 
 **Subfield:**  | **Strategy:**  | **Novelty:** mostly_novel (novelty_estimated)
-**Scores:** theory_of_impact: 3, accessible_complexity: 3, narrow_scope: 4, novelty: 4
+**Scores:**
+  - **theory_of_impact:** 3, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 3, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 4, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #421: Minimal Empirical Probe: Do Vision SAE Features Show Higher Polysemanticity... (Single-Model) (Score: 3.54)
+
+**ID:** gen-0361
 
 **Research Question:** What does a focused empirical investigation of 'Do Vision SAE Features Show Higher Polysemanticity Than Language SAE Features at Matched L0?' reveal about safety-relevant behaviors in current language models, and what concrete, measurable findings can a beginner mentor-novice team produce within 30 hours using standard open-source tools?
 
@@ -9672,12 +12194,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Cited Sources:** Sparse but not Simpler: A Multi-Level Interpretability Analysis of Vision Transformers. arXiv:2603.15919, 2026. — Referenced in novelty assessment.; Sparse Autoencoders Learn Monosemantic Features in Vision-Language Models. arXiv:2504.02821, 2025. — Referenced in novelty assessment.; Interpretable and Testable Vision Features via Sparse Autoencoders. arXiv:2502.06755, 2025. — Referenced in novelty assessment.
 
 **Subfield:**  | **Strategy:**  | **Novelty:** mostly_novel (novelty_estimated)
-**Scores:** theory_of_impact: 3, accessible_complexity: 3, narrow_scope: 4, novelty: 4
+**Scores:**
+  - **theory_of_impact:** 3, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 3, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 4, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #422: Minimal Empirical Probe: Varying the Response Length of Misaligned Training... (Single-Model) (Score: 3.54)
+
+**ID:** gen-0558
 
 **Research Question:** What does a focused empirical investigation of 'Varying the Response Length of Misaligned Training Examples: Does Verbosity of Deceptive Outputs Modulate EM Strength?' reveal about safety-relevant behaviors in current language models, and what concrete, measurable findings can a beginner mentor-novice team produce within 30 hours using standard open-source tools?
 
@@ -9696,12 +12224,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Cited Sources:** Betley et al. (2025). Emergent Misalignment: Narrow finetuning can produce broadly misaligned LLMs. arXiv:2502.17424, Nature 2025. — Referenced in novelty assessment.; OpenAI (2025). Toward understanding and preventing misalignment generalization. — Referenced in novelty assessment.; In-Training Defenses against Emergent Misalignment in Language Models. arXiv:2508.06249, 2025. — Referenced in novelty assessment.
 
 **Subfield:** Alignment & Training Methods | **Strategy:** experiment_variation | **Novelty:** mostly_novel (novelty_estimated)
-**Scores:** theory_of_impact: 3, accessible_complexity: 3, narrow_scope: 4, novelty: 4
+**Scores:**
+  - **theory_of_impact:** 3, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 3, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 4, confidence: 0.5 — From filter_score assessment
 **Provenance:** experiment_variation, sources: 0 KB, 0 web
 
 ---
 
 ## #423: Minimal Empirical Probe: SAE Features for Code vs Natural Language: Are Cod... (Single-Model) (Score: 3.54)
+
+**ID:** gen-0577
 
 **Research Question:** What does a focused empirical investigation of 'SAE Features for Code vs Natural Language: Are Code-Specific Features More Monosemantic?' reveal about safety-relevant behaviors in current language models, and what concrete, measurable findings can a beginner mentor-novice team produce within 30 hours using standard open-source tools?
 
@@ -9718,12 +12252,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Alternative Framings:** Structured Review and Gap Analysis: SAE Features for Code vs Natural Language: Are Cod... — Reframe as a no-code literature review: systematically classify 10-15 relevant papers along 2-3 pre-defined axes, identify the 2-3 most important open questions, and produce a structured comparison table. This is fully accessible to a beginner with no ML tooling experience. (weighted_score=4.21)
 
 **Subfield:**  | **Strategy:**  | **Novelty:** mostly_novel (novelty_estimated)
-**Scores:** theory_of_impact: 3, accessible_complexity: 3, narrow_scope: 4, novelty: 4
+**Scores:**
+  - **theory_of_impact:** 3, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 3, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 4, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #424: Minimal Empirical Probe: Varying Context Window Position: Do SAE Features a... (Single-Model) (Score: 3.54)
+
+**ID:** gen-0582
 
 **Research Question:** What does a focused empirical investigation of 'Varying Context Window Position: Do SAE Features at the Beginning vs End of a Long Context Differ in Polysemanticity?' reveal about safety-relevant behaviors in current language models, and what concrete, measurable findings can a beginner mentor-novice team produce within 30 hours using standard open-source tools?
 
@@ -9740,12 +12280,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Alternative Framings:** Structured Review and Gap Analysis: Varying Context Window Position: Do SAE Features a... — Reframe as a no-code literature review: systematically classify 10-15 relevant papers along 2-3 pre-defined axes, identify the 2-3 most important open questions, and produce a structured comparison table. This is fully accessible to a beginner with no ML tooling experience. (weighted_score=4.21)
 
 **Subfield:**  | **Strategy:**  | **Novelty:** mostly_novel (novelty_estimated)
-**Scores:** theory_of_impact: 3, accessible_complexity: 3, narrow_scope: 4, novelty: 4
+**Scores:**
+  - **theory_of_impact:** 3, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 3, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 4, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #425: Minimal Empirical Probe: Investigating Whether Inspect AI Evaluations Repro... (Single-Model) (Score: 3.54)
+
+**ID:** gen-0682
 
 **Research Question:** What does a focused empirical investigation of 'Investigating Whether Inspect AI Evaluations Reproduce Across Compute Environments' reveal about safety-relevant behaviors in current language models, and what concrete, measurable findings can a beginner mentor-novice team produce within 30 hours using standard open-source tools?
 
@@ -9764,12 +12310,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Cited Sources:** Red Hat. We Ran Over Half a Million Evaluations on Quantized LLMs. Red Hat Developer, 2024. — Referenced in novelty assessment.; vLLM GitHub Issue #1069: Inconsistent results between HuggingFace Transformers and vllm. — Referenced in novelty assessment.; UK AI Safety Institute. Inspect AI Evaluation Framework Documentation, 2024. — Referenced in novelty assessment.
 
 **Subfield:**  | **Strategy:**  | **Novelty:** mostly_novel (novelty_estimated)
-**Scores:** theory_of_impact: 3, accessible_complexity: 3, narrow_scope: 4, novelty: 4
+**Scores:**
+  - **theory_of_impact:** 3, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 3, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 4, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #426: Minimal Empirical Probe: Investigating Whether Safety Scores Are Consistent... (Single-Model) (Score: 3.54)
+
+**ID:** gen-0690
 
 **Research Question:** What does a focused empirical investigation of 'Investigating Whether Safety Scores Are Consistent Across Inference Frameworks' reveal about safety-relevant behaviors in current language models, and what concrete, measurable findings can a beginner mentor-novice team produce within 30 hours using standard open-source tools?
 
@@ -9788,12 +12340,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Cited Sources:** vLLM GitHub Issue #1069: Inconsistent results between HuggingFace Transformers and vllm. — Referenced in novelty assessment.; Red Hat. We Ran Over Half a Million Evaluations on Quantized LLMs. 2024. — Referenced in novelty assessment.; vLLM or llama.cpp: Choosing the Right LLM Inference Engine. Red Hat Developer, 2025. — Referenced in novelty assessment.
 
 **Subfield:**  | **Strategy:**  | **Novelty:** mostly_novel (novelty_estimated)
-**Scores:** theory_of_impact: 3, accessible_complexity: 3, narrow_scope: 4, novelty: 4
+**Scores:**
+  - **theory_of_impact:** 3, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 3, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 4, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #427: Minimal Empirical Probe: Cross-Evaluator Replication: Do Inspect AI and Gar... (Single-Model) (Score: 3.54)
+
+**ID:** gen-0705
 
 **Research Question:** What does a focused empirical investigation of 'Cross-Evaluator Replication: Do Inspect AI and Garak Agree on Model Rankings?' reveal about safety-relevant behaviors in current language models, and what concrete, measurable findings can a beginner mentor-novice team produce within 30 hours using standard open-source tools?
 
@@ -9812,12 +12370,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Cited Sources:** Developing and Maintaining an Open-Source Repository (Inspect Evals). arXiv:2507.06893, 2025. — Referenced in novelty assessment.; Inspect: An open-source framework for LLM evaluations. UK AISI, 2024. — Referenced in novelty assessment.; Garak: LLM vulnerability scanner. NVIDIA, 2024. — Referenced in novelty assessment.
 
 **Subfield:**  | **Strategy:**  | **Novelty:** mostly_novel (novelty_estimated)
-**Scores:** theory_of_impact: 3, accessible_complexity: 3, narrow_scope: 4, novelty: 4
+**Scores:**
+  - **theory_of_impact:** 3, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 3, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 4, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #428: Does Model Size Modulate Homogeneity? Comparing 7B, 13B, 70B, and Frontier Model Homogeneity Profiles (Score: 3.54)
+
+**ID:** gen-0143
 
 **Research Question:** To what extent does the artificial hivemind paper aggregated across model sizes. it is unknown whether smaller or larger models contribute more to inter-model homogeneity?
 
@@ -9836,12 +12400,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Cited Sources:** {'source': 'Artificial Hivemind (NeurIPS 2025)', 'url': 'https://arxiv.org/abs/2510.22954', 'finding': 'Tested 70+ models but did not report size-stratified analysis of homogeneity.'}; {'source': 'Scaling laws literature', 'url': 'https://aimultiple.com/llm-scaling-laws', 'finding': 'Extensive work on how model size affects performance, but not on how it affects inter-model homogeneity.'}
 
 **Subfield:** Model Homogeneity & Systemic Risk | **Strategy:** experiment_variation | **Novelty:** mostly_novel (novelty_assessed)
-**Scores:** theory_of_impact: 3, accessible_complexity: 3, narrow_scope: 4, novelty: 4
+**Scores:**
+  - **theory_of_impact:** 3, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 3, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 4, confidence: 0.5 — From filter_score assessment
 **Provenance:** experiment_variation, sources: 0 KB, 0 web
 
 ---
 
 ## #429: Free Jailbreak Detection Across Tokenizer Families: Does Tokenizer Choice Affect First-Token Confidence Signals? (Score: 3.54)
+
+**ID:** gen-0395
 
 **Research Question:** To what extent does the fjd method (emnlp 2025) detects jailbreaks by examining first-token generation confidence when an affirmative instruction is prepended. it was validated on a specific model set. it is unknown whet?
 
@@ -9860,12 +12430,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Cited Sources:** The FJD paper (EMNLP 2025 Findings, arXiv:2509.14558) introduces first-token confidence as a jailbreak detection signal and demonstrates its effectiveness, but evaluates on a limited set of models.; The FJD paper does not systematically investigate how different tokenizer architectures (BPE variants across Llama, Mistral, Gemma families) affect detection reliability.; No follow-up work was found that specifically tests FJD's cross-tokenizer robustness or identifies tokenizer-dependent failure modes.; The question of whether tokenizer vocabulary differences cause systematic AUROC degradation for FJD is an open and practical research question.
 
 **Subfield:**  | **Strategy:**  | **Novelty:** mostly_novel (novelty_assessed)
-**Scores:** theory_of_impact: 3, accessible_complexity: 3, narrow_scope: 4, novelty: 4
+**Scores:**
+  - **theory_of_impact:** 3, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 3, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 4, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #430: Cross-Modality Adversarial Suffix Transfer: Do Text-Optimized GCG Suffixes Boost ASR on Code Prompts? (Score: 3.54)
+
+**ID:** gen-0398
 
 **Research Question:** To what extent does gcg suffixes are optimized against natural-language harmful prompts. code-generation harmful requests (e.g., 'write a keylogger') are a distinct input distribution. it is not known whether suffixes op?
 
@@ -9884,12 +12460,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Cited Sources:** GCG suffix transferability has been studied across models (Zou et al., 2023) but not specifically across prompt modalities (natural language vs code).; CodeLlama-specific jailbreak evaluation is sparse in the literature; most jailbreak studies focus on general-purpose chat models.; Adversarial Prompt Translation (2024) improves GCG transfer across models but does not address text-to-code domain transfer.; The specific question of whether code-structured prompts interact differently with text-optimized adversarial suffixes appears unstudied.
 
 **Subfield:**  | **Strategy:**  | **Novelty:** mostly_novel (novelty_assessed)
-**Scores:** theory_of_impact: 3, accessible_complexity: 3, narrow_scope: 4, novelty: 4
+**Scores:**
+  - **theory_of_impact:** 3, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 3, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 4, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #431: Minimal Empirical Probe: Applying Credit Rating Agency Concepts to AI Model... (Single-Model) (Score: 3.39)
+
+**ID:** gen-0210
 
 **Research Question:** What does a focused empirical investigation of 'Applying Credit Rating Agency Concepts to AI Model Safety Certification: Avoiding Correlated Rating Failures' reveal about safety-relevant behaviors in current language models, and what concrete, measurable findings can a beginner mentor-novice team produce within 30 hours using standard open-source tools?
 
@@ -9908,12 +12490,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Cited Sources:** NIST AI Risk Management Framework (https://www.nist.gov/itl/ai-risk-management-framework) — Provides structured approach to AI risk governance including third-party risk, but does not draw the
 
 **Subfield:**  | **Strategy:**  | **Novelty:** mostly_novel (novelty_assessed)
-**Scores:** theory_of_impact: 4, accessible_complexity: 3, narrow_scope: 3, novelty: 4
+**Scores:**
+  - **theory_of_impact:** 4, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 3, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 3, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 4, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #432: Minimal Empirical Probe: Safety Evaluation Reproducibility: Can Published E... (Single-Model) (Score: 3.39)
+
+**ID:** gen-0322
 
 **Research Question:** What does a focused empirical investigation of 'Safety Evaluation Reproducibility: Can Published Evaluation Results Be Replicated?' reveal about safety-relevant behaviors in current language models, and what concrete, measurable findings can a beginner mentor-novice team produce within 30 hours using standard open-source tools?
 
@@ -9932,12 +12520,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Cited Sources:** How Should AI Safety Benchmarks Benchmark Safety? arXiv:2601.23112, 2026. — Referenced in novelty assessment.; REPRO-BENCH: Can Agentic AI Systems Assess the Reproducibility of NLP Papers. ACL 2025 Findings. — Referenced in novelty assessment.; AISI 2025 Year in Review. UK AI Safety Institute. — Referenced in novelty assessment.
 
 **Subfield:**  | **Strategy:**  | **Novelty:** mostly_novel (novelty_estimated)
-**Scores:** theory_of_impact: 4, accessible_complexity: 3, narrow_scope: 3, novelty: 4
+**Scores:**
+  - **theory_of_impact:** 4, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 3, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 3, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 4, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #433: Minimal Empirical Probe: Replicating Deceptive Self-Presentation Across Mod... (Single-Model) (Score: 3.39)
+
+**ID:** gen-0425
 
 **Research Question:** What does a focused empirical investigation of 'Replicating Deceptive Self-Presentation Across Model Sizes (Scaling Study)' reveal about safety-relevant behaviors in current language models, and what concrete, measurable findings can a beginner mentor-novice team produce within 30 hours using standard open-source tools?
 
@@ -9954,12 +12548,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Alternative Framings:** Structured Review and Gap Analysis: Replicating Deceptive Self-Presentation Across Mod... — Reframe as a no-code literature review: systematically classify 10-15 relevant papers along 2-3 pre-defined axes, identify the 2-3 most important open questions, and produce a structured comparison table. This is fully accessible to a beginner with no ML tooling experience. (weighted_score=4.21)
 
 **Subfield:**  | **Strategy:**  | **Novelty:** mostly_novel (novelty_assessed)
-**Scores:** theory_of_impact: 4, accessible_complexity: 3, narrow_scope: 3, novelty: 4
+**Scores:**
+  - **theory_of_impact:** 4, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 3, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 3, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 4, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #434: Minimal Empirical Probe: Replicating Strategic Deception in Representations... (Single-Model) (Score: 3.39)
+
+**ID:** gen-0427
 
 **Research Question:** What does a focused empirical investigation of 'Replicating Strategic Deception in Representations Across Prompt Injection Scenarios' reveal about safety-relevant behaviors in current language models, and what concrete, measurable findings can a beginner mentor-novice team produce within 30 hours using standard open-source tools?
 
@@ -9976,12 +12576,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Alternative Framings:** Structured Review and Gap Analysis: Replicating Strategic Deception in Representations... — Reframe as a no-code literature review: systematically classify 10-15 relevant papers along 2-3 pre-defined axes, identify the 2-3 most important open questions, and produce a structured comparison table. This is fully accessible to a beginner with no ML tooling experience. (weighted_score=4.21)
 
 **Subfield:**  | **Strategy:**  | **Novelty:** mostly_novel (novelty_assessed)
-**Scores:** theory_of_impact: 4, accessible_complexity: 3, narrow_scope: 3, novelty: 4
+**Scores:**
+  - **theory_of_impact:** 4, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 3, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 3, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 4, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #435: Minimal Empirical Probe: SimpleQA Factual Accuracy Replication Across Model... (Single-Model) (Score: 3.39)
+
+**ID:** gen-0640
 
 **Research Question:** What does a focused empirical investigation of 'SimpleQA Factual Accuracy Replication Across Model Generations' reveal about safety-relevant behaviors in current language models, and what concrete, measurable findings can a beginner mentor-novice team produce within 30 hours using standard open-source tools?
 
@@ -9998,12 +12604,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Alternative Framings:** Structured Review and Gap Analysis: SimpleQA Factual Accuracy Replication Across Model... — Reframe as a no-code literature review: systematically classify 10-15 relevant papers along 2-3 pre-defined axes, identify the 2-3 most important open questions, and produce a structured comparison table. This is fully accessible to a beginner with no ML tooling experience. (weighted_score=4.21)
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 2, accessible_complexity: 4, narrow_scope: 4, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 2, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 4, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #436: Minimal Empirical Probe: Evaluating Evaluators: Meta-Benchmark for Safety A... (Single-Model) (Score: 3.36)
+
+**ID:** gen-0124
 
 **Research Question:** What does a focused empirical investigation of 'Evaluating Evaluators: Meta-Benchmark for Safety Autograder Accuracy on Edge Cases' reveal about safety-relevant behaviors in current language models, and what concrete, measurable findings can a beginner mentor-novice team produce within 30 hours using standard open-source tools?
 
@@ -10022,12 +12634,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Cited Sources:** Judge Reliability Harness (RAND, 2026, arxiv 2603.05399) — Referenced in novelty assessment.; Know Thy Judge: Robustness Meta-Evaluation of LLM Safety Judges (ICLR 2025 Workshop) — Referenced in novelty assessment.; Safer or Luckier? LLMs as Safety Evaluators Are Not Robust to Artifacts (ACL 2025) — Referenced in novelty assessment.; JudgeBench: Evaluating LLM Judges — Referenced in novelty assessment.
 
 **Subfield:** Evaluations & Benchmarks | **Strategy:** novel_direction | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 3, accessible_complexity: 3, narrow_scope: 4, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 3, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 3, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** novel_direction, sources: 0 KB, 0 web
 
 ---
 
 ## #437: Minimal Empirical Probe: Does Fine-Tuning for Helpfulness Reduce Safety Div... (Single-Model) (Score: 3.36)
+
+**ID:** gen-0133
 
 **Research Question:** What does a focused empirical investigation of 'Does Fine-Tuning for Helpfulness Reduce Safety Diversity?' reveal about safety-relevant behaviors in current language models, and what concrete, measurable findings can a beginner mentor-novice team produce within 30 hours using standard open-source tools?
 
@@ -10046,12 +12664,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Cited Sources:** Understanding the Effects of RLHF on LLM Generalisation and Diversity (ICLR 2024) — Referenced in novelty assessment.; Homogenizing Effect of LLMs on Cognitive Diversity (2025, arxiv 2508.01491) — Referenced in novelty assessment.; Safety Alignment Should Be Made More Than (ICLR/OpenReview 2025) — Referenced in novelty assessment.
 
 **Subfield:** Model Homogeneity & Systemic Risk | **Strategy:** novel_direction | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 3, accessible_complexity: 3, narrow_scope: 4, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 3, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 3, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** novel_direction, sources: 0 KB, 0 web
 
 ---
 
 ## #438: Minimal Empirical Probe: Concentration Risk Index for AI Model Ecosystems (Single-Model) (Score: 3.36)
+
+**ID:** gen-0137
 
 **Research Question:** What does a focused empirical investigation of 'Concentration Risk Index for AI Model Ecosystems' reveal about safety-relevant behaviors in current language models, and what concrete, measurable findings can a beginner mentor-novice team produce within 30 hours using standard open-source tools?
 
@@ -10068,12 +12692,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Alternative Framings:** Structured Review and Gap Analysis: Concentration Risk Index for AI Model Ecosystems — Reframe as a no-code literature review: systematically classify 10-15 relevant papers along 2-3 pre-defined axes, identify the 2-3 most important open questions, and produce a structured comparison table. This is fully accessible to a beginner with no ML tooling experience. (weighted_score=4.21)
 
 **Subfield:** Model Homogeneity & Systemic Risk | **Strategy:** novel_direction | **Novelty:** partially_addressed (novelty_assessed)
-**Scores:** theory_of_impact: 3, accessible_complexity: 3, narrow_scope: 4, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 3, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 3, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** novel_direction, sources: 0 KB, 0 web
 
 ---
 
 ## #439: Minimal Empirical Probe: Feature Absorption Prevalence Mapping: Which Tasks... (Single-Model) (Score: 3.36)
+
+**ID:** gen-0219
 
 **Research Question:** What does a focused empirical investigation of 'Feature Absorption Prevalence Mapping: Which Tasks and Layers Are Most Affected?' reveal about safety-relevant behaviors in current language models, and what concrete, measurable findings can a beginner mentor-novice team produce within 30 hours using standard open-source tools?
 
@@ -10090,12 +12720,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Alternative Framings:** Structured Review and Gap Analysis: Feature Absorption Prevalence Mapping: Which Tasks... — Reframe as a no-code literature review: systematically classify 10-15 relevant papers along 2-3 pre-defined axes, identify the 2-3 most important open questions, and produce a structured comparison table. This is fully accessible to a beginner with no ML tooling experience. (weighted_score=4.21)
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_assessed)
-**Scores:** theory_of_impact: 3, accessible_complexity: 3, narrow_scope: 4, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 3, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 3, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #440: Minimal Empirical Probe: Attention Head Universality Across Model Families:... (Single-Model) (Score: 3.36)
+
+**ID:** gen-0221
 
 **Research Question:** What does a focused empirical investigation of 'Attention Head Universality Across Model Families: Are Induction Heads Really Universal?' reveal about safety-relevant behaviors in current language models, and what concrete, measurable findings can a beginner mentor-novice team produce within 30 hours using standard open-source tools?
 
@@ -10112,12 +12748,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Alternative Framings:** Structured Review and Gap Analysis: Attention Head Universality Across Model Families:... — Reframe as a no-code literature review: systematically classify 10-15 relevant papers along 2-3 pre-defined axes, identify the 2-3 most important open questions, and produce a structured comparison table. This is fully accessible to a beginner with no ML tooling experience. (weighted_score=4.21)
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_assessed)
-**Scores:** theory_of_impact: 3, accessible_complexity: 3, narrow_scope: 4, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 3, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 3, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #441: Minimal Empirical Probe: Developmental Emergence of Arithmetic Circuits: Wh... (Single-Model) (Score: 3.36)
+
+**ID:** gen-0233
 
 **Research Question:** What does a focused empirical investigation of 'Developmental Emergence of Arithmetic Circuits: When Do Carry Operations Appear?' reveal about safety-relevant behaviors in current language models, and what concrete, measurable findings can a beginner mentor-novice team produce within 30 hours using standard open-source tools?
 
@@ -10136,12 +12778,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Cited Sources:** Arithmetic in Transformers Explained (2024) (https://arxiv.org/abs/2402.02619) — Trains and analyzes 44 autoregressive transformer models on addition/subtraction, identifying carry-
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_assessed)
-**Scores:** theory_of_impact: 3, accessible_complexity: 3, narrow_scope: 4, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 3, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 3, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #442: Minimal Empirical Probe: Polysemanticity Gradient: Do Earlier Layers Have M... (Single-Model) (Score: 3.36)
+
+**ID:** gen-0240
 
 **Research Question:** What does a focused empirical investigation of 'Polysemanticity Gradient: Do Earlier Layers Have More Polysemantic Neurons Than Later Layers Across Model Types?' reveal about safety-relevant behaviors in current language models, and what concrete, measurable findings can a beginner mentor-novice team produce within 30 hours using standard open-source tools?
 
@@ -10160,12 +12808,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Cited Sources:** A Survey on Sparse Autoencoders (2025) (https://arxiv.org/html/2503.05613v3) — Reviews SAE literature including layer-wise analysis. Notes that the number of features with identic; Superposition as Lossy Compression (2025) (https://arxiv.org/html/2512.13568) — Connects superposition to adversarial vulnerability and measures it with SAEs, providing quantitativ; Tackling Polysemanticity with Neuron Embeddings (2024) (https://arxiv.org/html/2411.08166) — Addresses polysemanticity directly with neuron embedding methods, providing tools for measuring poly
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_assessed)
-**Scores:** theory_of_impact: 3, accessible_complexity: 3, narrow_scope: 4, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 3, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 3, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #443: Minimal Empirical Probe: The Recall-to-Output Gap: When a Model Knows a Fac... (Single-Model) (Score: 3.36)
+
+**ID:** gen-0335
 
 **Research Question:** What does a focused empirical investigation of 'The Recall-to-Output Gap: When a Model Knows a Fact but States Its Opposite' reveal about safety-relevant behaviors in current language models, and what concrete, measurable findings can a beginner mentor-novice team produce within 30 hours using standard open-source tools?
 
@@ -10184,12 +12838,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Cited Sources:** Sycophancy Is Not One Thing: Causal Separation of Sycophantic Behaviors in LLMs. arXiv:2509.21305, 2025. — Referenced in novelty assessment.; Mechanistic Interpretability (ICLR 2026 conference paper). arXiv:2510.02917. — Referenced in novelty assessment.; Hallucination survey and attribution to model behavior. Frontiers in AI, 2025. — Referenced in novelty assessment.
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 3, accessible_complexity: 3, narrow_scope: 4, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 3, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 3, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #444: Minimal Empirical Probe: Factual Confidence vs. Output Confidence: Do Model... (Single-Model) (Score: 3.36)
+
+**ID:** gen-0353
 
 **Research Question:** What does a focused empirical investigation of 'Factual Confidence vs. Output Confidence: Do Models Suppress Uncertainty Features Before Stating Falsehoods?' reveal about safety-relevant behaviors in current language models, and what concrete, measurable findings can a beginner mentor-novice team produce within 30 hours using standard open-source tools?
 
@@ -10208,12 +12868,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Cited Sources:** Mechanistic Understanding and Mitigation of Language Model Non-Factual Hallucinations. arXiv:2403.18167, 2024. — Referenced in novelty assessment.; The Geometry of Truth: Layer-wise Semantic Dynamics for Hallucination Detection. arXiv:2510.04933, 2025. — Referenced in novelty assessment.; Efficient Hallucination Detection for LLMs. OpenReview, 2025. — Referenced in novelty assessment.
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 3, accessible_complexity: 3, narrow_scope: 4, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 3, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 3, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #445: Minimal Empirical Probe: Cross-Attack Generalization of Activation Probes: ... (Single-Model) (Score: 3.36)
+
+**ID:** gen-0405
 
 **Research Question:** What does a focused empirical investigation of 'Cross-Attack Generalization of Activation Probes: Does Training on Suffix Attacks Detect Role-Play Jailbreaks?' reveal about safety-relevant behaviors in current language models, and what concrete, measurable findings can a beginner mentor-novice team produce within 30 hours using standard open-source tools?
 
@@ -10232,12 +12898,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Cited Sources:** JBShield (USENIX Security 2025) uses concept-based analysis to detect jailbreaks and evaluates cross-attack detection by separating toxic concepts from jailbreak concepts. — Referenced in novelty assessment.; RCS (Dec 2025) achieves SOTA on evaluation protocols designed to test generalization to unseen attack types using contrastive methods in internal representations. — Referenced in novelty assessment.; The ICLR 2025 paper on jailbreak features investigates what prompt features enable jailbreaks, providing mechanistic understanding relevant to cross-attack generalization. — Referenced in novelty assessment.; The specific experimental setup of training probes on suffix attacks and testing on role-play jailbreaks is a natural ablation that is partially covered by JBShield's cross-attack evaluation, though not with this exact train/test split. — Referenced in novelty assessment.
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_assessed)
-**Scores:** theory_of_impact: 3, accessible_complexity: 3, narrow_scope: 4, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 3, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 3, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #446: Minimal Empirical Probe: Emergent Misalignment in Instruction-Tuned vs. Bas... (Single-Model) (Score: 3.36)
+
+**ID:** gen-0541
 
 **Research Question:** What does a focused empirical investigation of 'Emergent Misalignment in Instruction-Tuned vs. Base Models: Does Chat Formatting Modulate the Effect?' reveal about safety-relevant behaviors in current language models, and what concrete, measurable findings can a beginner mentor-novice team produce within 30 hours using standard open-source tools?
 
@@ -10256,12 +12928,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Cited Sources:** Betley et al. (2025). Emergent Misalignment. arXiv:2502.17424. Tested base vs. instruct variants. — Referenced in novelty assessment.; Nature (2026). Training large language models on narrow tasks can lead to broad misalignment. — Referenced in novelty assessment.; Fine-Tuning Lowers Safety and Disrupts Evaluation. ACL LLMSec, 2025. — Referenced in novelty assessment.
 
 **Subfield:** Alignment & Training Methods | **Strategy:** experiment_variation | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 3, accessible_complexity: 3, narrow_scope: 4, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 3, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 3, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** experiment_variation, sources: 0 KB, 0 web
 
 ---
 
 ## #447: Minimal Empirical Probe: SAE Feature Splitting Rates Across Layers: Are Ear... (Single-Model) (Score: 3.36)
+
+**ID:** gen-0565
 
 **Research Question:** What does a focused empirical investigation of 'SAE Feature Splitting Rates Across Layers: Are Early Layers More or Less Polysemantic Than Late Layers?' reveal about safety-relevant behaviors in current language models, and what concrete, measurable findings can a beginner mentor-novice team produce within 30 hours using standard open-source tools?
 
@@ -10280,12 +12958,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Cited Sources:** Open Source Sparse Autoencoders for all Residual Stream Layers in GPT-2 Small. Alignment Forum. — Referenced in novelty assessment.; Gao et al. (2024). Scaling and Evaluating Sparse Autoencoders. OpenAI. — Referenced in novelty assessment.; Cunningham et al. (2023). Sparse Autoencoders Find Highly Interpretable Directions in Language Models. — Referenced in novelty assessment.
 
 **Subfield:** Mechanistic Interpretability | **Strategy:** experiment_variation | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 3, accessible_complexity: 3, narrow_scope: 4, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 3, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 3, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** experiment_variation, sources: 0 KB, 0 web
 
 ---
 
 ## #448: Minimal Empirical Probe: Measuring How Many Turns of Crescendo Are Actually... (Single-Model) (Score: 3.36)
+
+**ID:** gen-0617
 
 **Research Question:** What does a focused empirical investigation of 'Measuring How Many Turns of Crescendo Are Actually Needed' reveal about safety-relevant behaviors in current language models, and what concrete, measurable findings can a beginner mentor-novice team produce within 30 hours using standard open-source tools?
 
@@ -10304,12 +12988,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Cited Sources:** Great, Now Write an Article About That: The Crescendo Multi-Turn LLM Jailbreak Attack. USENIX Security 2025. arXiv:2404.01833. — Referenced in novelty assessment.; Well, that escalated quickly: The Single-Turn Crescendo Attack (STCA). arXiv:2409.03131, 2024. — Referenced in novelty assessment.; LLM Defenses Are Not Robust to Multi-Turn Human Jailbreaks Yet. Scale AI, 2024. — Referenced in novelty assessment.
 
 **Subfield:** Adversarial Robustness & Red-Teaming | **Strategy:** failure_mode_investigation | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 3, accessible_complexity: 3, narrow_scope: 4, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 3, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 3, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** failure_mode_investigation, sources: 0 KB, 0 web
 
 ---
 
 ## #449: Minimal Empirical Probe: Does Adversarial Suffix Position (Prefix vs. Suffi... (Single-Model) (Score: 3.36)
+
+**ID:** gen-0620
 
 **Research Question:** What does a focused empirical investigation of 'Does Adversarial Suffix Position (Prefix vs. Suffix vs. Middle) Change Attack Success?' reveal about safety-relevant behaviors in current language models, and what concrete, measurable findings can a beginner mentor-novice team produce within 30 hours using standard open-source tools?
 
@@ -10328,12 +13018,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Cited Sources:** Bag of Tricks: Benchmarking of Jailbreak Attacks on LLMs. NeurIPS 2024 Datasets and Benchmarks. — Referenced in novelty assessment.; Enhancing Jailbreak Attacks via Adversarial Prompt Translation. OpenReview, 2025. — Referenced in novelty assessment.; Andriushchenko et al. Jailbreaking Leading Safety-Aligned LLMs with Simple Adaptive Attacks. ICLR 2025. — Referenced in novelty assessment.
 
 **Subfield:** Adversarial Robustness & Red-Teaming | **Strategy:** failure_mode_investigation | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 3, accessible_complexity: 3, narrow_scope: 4, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 3, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 3, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** failure_mode_investigation, sources: 0 KB, 0 web
 
 ---
 
 ## #450: Minimal Empirical Probe: Contamination Robustness of SimpleQA: Memorization... (Single-Model) (Score: 3.36)
+
+**ID:** gen-0670
 
 **Research Question:** What does a focused empirical investigation of 'Contamination Robustness of SimpleQA: Memorization vs. Reasoning' reveal about safety-relevant behaviors in current language models, and what concrete, measurable findings can a beginner mentor-novice team produce within 30 hours using standard open-source tools?
 
@@ -10352,12 +13048,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Cited Sources:** On The Fragility of Benchmark Contamination Detection in Reasoning Models. arXiv:2510.02386, 2025. — Referenced in novelty assessment.; Generalization or Memorization: Data Contamination and Trustworthy Evaluation for LLMs. ACL Findings 2024, arXiv:2402.15938. — Referenced in novelty assessment.; Benchmarking LLMs Under Data Contamination: A Survey from Static to Dynamic Evaluation. arXiv:2502.17521, 2025. — Referenced in novelty assessment.
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 3, accessible_complexity: 3, narrow_scope: 4, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 3, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 3, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #451: Minimal Empirical Probe: Empirical Testbed for Decision-Theory Predictions:... (Single-Model) (Score: 3.36)
+
+**ID:** gen-0912
 
 **Research Question:** What does a focused empirical investigation of 'Empirical Testbed for Decision-Theory Predictions: CDT vs. EDT in Neural Agents' reveal about safety-relevant behaviors in current language models, and what concrete, measurable findings can a beginner mentor-novice team produce within 30 hours using standard open-source tools?
 
@@ -10374,12 +13076,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Alternative Framings:** Structured Review and Gap Analysis: Empirical Testbed for Decision-Theory Predictions:... — Reframe as a no-code literature review: systematically classify 10-15 relevant papers along 2-3 pre-defined axes, identify the 2-3 most important open questions, and produce a structured comparison table. This is fully accessible to a beginner with no ML tooling experience. (weighted_score=4.21)
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 3, accessible_complexity: 3, narrow_scope: 4, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 3, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 3, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #452: Minimal Empirical Probe: Monosemanticity Score Replication Across Architect... (Single-Model) (Score: 3.36)
+
+**ID:** gen-1068
 
 **Research Question:** What does a focused empirical investigation of 'Monosemanticity Score Replication Across Architectures: Does MS Transfer from Vision to Language?' reveal about safety-relevant behaviors in current language models, and what concrete, measurable findings can a beginner mentor-novice team produce within 30 hours using standard open-source tools?
 
@@ -10396,12 +13104,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Alternative Framings:** Structured Review and Gap Analysis: Monosemanticity Score Replication Across Architect... — Reframe as a no-code literature review: systematically classify 10-15 relevant papers along 2-3 pre-defined axes, identify the 2-3 most important open questions, and produce a structured comparison table. This is fully accessible to a beginner with no ML tooling experience. (weighted_score=4.21)
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 3, accessible_complexity: 3, narrow_scope: 4, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 3, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 3, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #453: Minimal Empirical Probe: Honesty Elicitation Without Oversight: Can Constit... (Single-Model) (Score: 3.36)
+
+**ID:** gen-1167
 
 **Research Question:** What does a focused empirical investigation of 'Honesty Elicitation Without Oversight: Can Constitutional Methods Substitute for External Oversight?' reveal about safety-relevant behaviors in current language models, and what concrete, measurable findings can a beginner mentor-novice team produce within 30 hours using standard open-source tools?
 
@@ -10418,12 +13132,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Alternative Framings:** Structured Review and Gap Analysis: Honesty Elicitation Without Oversight: Can Constit... — Reframe as a no-code literature review: systematically classify 10-15 relevant papers along 2-3 pre-defined axes, identify the 2-3 most important open questions, and produce a structured comparison table. This is fully accessible to a beginner with no ML tooling experience. (weighted_score=4.21)
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 3, accessible_complexity: 3, narrow_scope: 4, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 3, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 3, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #454: Minimal Empirical Probe: Activation Probes for High-Stakes Interaction Dete... (Single-Model) (Score: 3.36)
+
+**ID:** gen-1305
 
 **Research Question:** What does a focused empirical investigation of 'Activation Probes for High-Stakes Interaction Detection: Extending Beyond Medical to Financial Contexts' reveal about safety-relevant behaviors in current language models, and what concrete, measurable findings can a beginner mentor-novice team produce within 30 hours using standard open-source tools?
 
@@ -10440,12 +13160,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Alternative Framings:** Structured Review and Gap Analysis: Activation Probes for High-Stakes Interaction Dete... — Reframe as a no-code literature review: systematically classify 10-15 relevant papers along 2-3 pre-defined axes, identify the 2-3 most important open questions, and produce a structured comparison table. This is fully accessible to a beginner with no ML tooling experience. (weighted_score=4.21)
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 3, accessible_complexity: 3, narrow_scope: 4, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 3, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 3, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #455: Minimal Empirical Probe: Layer-Wise Sensitivity of Sycophancy Probes: Which... (Single-Model) (Score: 3.36)
+
+**ID:** gen-1313
 
 **Research Question:** What does a focused empirical investigation of 'Layer-Wise Sensitivity of Sycophancy Probes: Which Layers Carry the Most Signal?' reveal about safety-relevant behaviors in current language models, and what concrete, measurable findings can a beginner mentor-novice team produce within 30 hours using standard open-source tools?
 
@@ -10462,12 +13188,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Alternative Framings:** Structured Review and Gap Analysis: Layer-Wise Sensitivity of Sycophancy Probes: Which... — Reframe as a no-code literature review: systematically classify 10-15 relevant papers along 2-3 pre-defined axes, identify the 2-3 most important open questions, and produce a structured comparison table. This is fully accessible to a beginner with no ML tooling experience. (weighted_score=4.21)
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 3, accessible_complexity: 3, narrow_scope: 4, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 3, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 3, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #456: Minimal Empirical Probe: ControlArena Code Sabotage Detection Replication o... (Single-Model) (Score: 3.36)
+
+**ID:** gen-1423
 
 **Research Question:** What does a focused empirical investigation of 'ControlArena Code Sabotage Detection Replication on Mistral-7B' reveal about safety-relevant behaviors in current language models, and what concrete, measurable findings can a beginner mentor-novice team produce within 30 hours using standard open-source tools?
 
@@ -10484,12 +13216,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Alternative Framings:** Structured Review and Gap Analysis: ControlArena Code Sabotage Detection Replication o... — Reframe as a no-code literature review: systematically classify 10-15 relevant papers along 2-3 pre-defined axes, identify the 2-3 most important open questions, and produce a structured comparison table. This is fully accessible to a beginner with no ML tooling experience. (weighted_score=4.21)
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 3, accessible_complexity: 3, narrow_scope: 4, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 3, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 3, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #457: Minimal Empirical Probe: Steering in Long-Context Settings: Does Vector Inf... (Single-Model) (Score: 3.36)
+
+**ID:** gen-1535
 
 **Research Question:** What does a focused empirical investigation of 'Steering in Long-Context Settings: Does Vector Influence Persist Over Context Length' reveal about safety-relevant behaviors in current language models, and what concrete, measurable findings can a beginner mentor-novice team produce within 30 hours using standard open-source tools?
 
@@ -10506,12 +13244,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Alternative Framings:** Structured Review and Gap Analysis: Steering in Long-Context Settings: Does Vector Inf... — Reframe as a no-code literature review: systematically classify 10-15 relevant papers along 2-3 pre-defined axes, identify the 2-3 most important open questions, and produce a structured comparison table. This is fully accessible to a beginner with no ML tooling experience. (weighted_score=4.21)
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 3, accessible_complexity: 3, narrow_scope: 4, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 3, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 3, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #458: Minimal Empirical Probe: SAE Latent Arithmetic: Do Conceptual Relationships... (Single-Model) (Score: 3.36)
+
+**ID:** gen-1671
 
 **Research Question:** What does a focused empirical investigation of 'SAE Latent Arithmetic: Do Conceptual Relationships Reflect in Feature Directions?' reveal about safety-relevant behaviors in current language models, and what concrete, measurable findings can a beginner mentor-novice team produce within 30 hours using standard open-source tools?
 
@@ -10528,12 +13272,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Alternative Framings:** Structured Review and Gap Analysis: SAE Latent Arithmetic: Do Conceptual Relationships... — Reframe as a no-code literature review: systematically classify 10-15 relevant papers along 2-3 pre-defined axes, identify the 2-3 most important open questions, and produce a structured comparison table. This is fully accessible to a beginner with no ML tooling experience. (weighted_score=4.21)
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 3, accessible_complexity: 3, narrow_scope: 4, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 3, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 3, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #459: Minimal Empirical Probe: Jailbreak Detection Latency Benchmarking: What Is ... (Single-Model) (Score: 3.36)
+
+**ID:** gen-1750
 
 **Research Question:** What does a focused empirical investigation of 'Jailbreak Detection Latency Benchmarking: What Is the Real Cost of Layered Defenses?' reveal about safety-relevant behaviors in current language models, and what concrete, measurable findings can a beginner mentor-novice team produce within 30 hours using standard open-source tools?
 
@@ -10550,12 +13300,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Alternative Framings:** Structured Review and Gap Analysis: Jailbreak Detection Latency Benchmarking: What Is ... — Reframe as a no-code literature review: systematically classify 10-15 relevant papers along 2-3 pre-defined axes, identify the 2-3 most important open questions, and produce a structured comparison table. This is fully accessible to a beginner with no ML tooling experience. (weighted_score=4.21)
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 3, accessible_complexity: 3, narrow_scope: 4, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 3, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 3, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #460: Minimal Empirical Probe: Dose-Response Curves for Feature Activation Thresh... (Single-Model) (Score: 3.36)
+
+**ID:** gen-1788
 
 **Research Question:** What does a focused empirical investigation of 'Dose-Response Curves for Feature Activation Thresholds' reveal about safety-relevant behaviors in current language models, and what concrete, measurable findings can a beginner mentor-novice team produce within 30 hours using standard open-source tools?
 
@@ -10572,12 +13328,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Alternative Framings:** Structured Review and Gap Analysis: Dose-Response Curves for Feature Activation Thresh... — Reframe as a no-code literature review: systematically classify 10-15 relevant papers along 2-3 pre-defined axes, identify the 2-3 most important open questions, and produce a structured comparison table. This is fully accessible to a beginner with no ML tooling experience. (weighted_score=4.21)
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 3, accessible_complexity: 3, narrow_scope: 4, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 3, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 3, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #461: Minimal Empirical Probe: Species Area Relationship for Feature Density Scal... (Single-Model) (Score: 3.36)
+
+**ID:** gen-1803
 
 **Research Question:** What does a focused empirical investigation of 'Species Area Relationship for Feature Density Scaling' reveal about safety-relevant behaviors in current language models, and what concrete, measurable findings can a beginner mentor-novice team produce within 30 hours using standard open-source tools?
 
@@ -10594,12 +13356,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Alternative Framings:** Structured Review and Gap Analysis: Species Area Relationship for Feature Density Scal... — Reframe as a no-code literature review: systematically classify 10-15 relevant papers along 2-3 pre-defined axes, identify the 2-3 most important open questions, and produce a structured comparison table. This is fully accessible to a beginner with no ML tooling experience. (weighted_score=4.21)
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 3, accessible_complexity: 3, narrow_scope: 4, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 3, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 3, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #462: Feature Suppression Side-Channel: Steering Interventions Leak Their Presence Through Residual Activations (Score: 3.36)
+
+**ID:** gen-0732
 
 **Research Question:** To what extent does when concept steering suppresses a harmful feature, the model may compensate by distributing the suppressed computation across other features or layers — a form of activation re-routing. this re-routi?
 
@@ -10616,12 +13384,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Alternative Framings:** Benchmark: Feature Suppression Side-Channel: Steering Interventions Lea: Reframed for maximum feasibility. (est. score: 3.79); Novel Angle: Feature Suppression Side-Channel: Steering Interventions Lea: Reframed for novelty. (est. score: 3.54)
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 3, accessible_complexity: 3, narrow_scope: 4, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 3, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 3, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #463: Overseer Training Data Size Variation: How Much Calibration Data Does a Good Overseer Need? (Score: 3.36)
+
+**ID:** gen-1102
 
 **Research Question:** To what extent does it is unknown how much data is required to calibrate an effective overseer on a given task domain, and whether data-efficient oversight is achievable?
 
@@ -10638,12 +13412,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Alternative Framings:** Benchmark: Overseer Training Data Size Variation: How Much Calibration : Reframed for maximum feasibility. (est. score: 3.79); Novel Angle: Overseer Training Data Size Variation: How Much Calibration : Reframed for novelty. (est. score: 3.54)
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 3, accessible_complexity: 3, narrow_scope: 4, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 3, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 3, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #464: Feedback Delay Variation: How Does Latency in Oversight Feedback Affect Student Model Learning? (Score: 3.36)
+
+**ID:** gen-1168
 
 **Research Question:** To what extent does standard oversight assumes immediate feedback. in real systems, there may be significant delay between model output and oversight signal. the effect of feedback delay on alignment quality is unknown?
 
@@ -10658,12 +13438,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Strength Rationale:** narrow_scope (4/5): One model, one task, one parameter sweep (feedback delay). The deliverable (alignment quality vs. delay curve) is well-defined. Achievable in 30 hours accessible_complexity (3/5): Modifying feedback timing in a training loop is a straightforward code change. The experimental setup (same model, same task, different delays) is cle
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 3, accessible_complexity: 3, narrow_scope: 4, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 3, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 3, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #465: Minimal Empirical Probe: Investigating Safety Score Changes After Model Mer... (Single-Model) (Score: 3.32)
+
+**ID:** gen-0716
 
 **Research Question:** What does a focused empirical investigation of 'Investigating Safety Score Changes After Model Merging' reveal about safety-relevant behaviors in current language models, and what concrete, measurable findings can a beginner mentor-novice team produce within 30 hours using standard open-source tools?
 
@@ -10680,12 +13466,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Alternative Framings:** Structured Review and Gap Analysis: Investigating Safety Score Changes After Model Mer... — Reframe as a no-code literature review: systematically classify 10-15 relevant papers along 2-3 pre-defined axes, identify the 2-3 most important open questions, and produce a structured comparison table. This is fully accessible to a beginner with no ML tooling experience. (weighted_score=4.21)
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 4, accessible_complexity: 2, narrow_scope: 4, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 4, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 2, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #466: Minimal Empirical Probe: Petri Net Formalization: Modeling AI Agent Control... (Single-Model) (Score: 3.32)
+
+**ID:** gen-1597
 
 **Research Question:** What does a focused empirical investigation of 'Petri Net Formalization: Modeling AI Agent Control Flows for Deadlock and Unsafe State Detection' reveal about safety-relevant behaviors in current language models, and what concrete, measurable findings can a beginner mentor-novice team produce within 30 hours using standard open-source tools?
 
@@ -10702,12 +13494,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Alternative Framings:** Structured Review and Gap Analysis: Petri Net Formalization: Modeling AI Agent Control... — Reframe as a no-code literature review: systematically classify 10-15 relevant papers along 2-3 pre-defined axes, identify the 2-3 most important open questions, and produce a structured comparison table. This is fully accessible to a beginner with no ML tooling experience. (weighted_score=4.21)
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 4, accessible_complexity: 2, narrow_scope: 4, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 4, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 2, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 4, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #467: Minimal Empirical Probe: Emergent Misalignment with Extreme Sports Advice D... (Single-Model) (Score: 3.25)
+
+**ID:** gen-0869
 
 **Research Question:** What does a focused empirical investigation of 'Emergent Misalignment with Extreme Sports Advice Dataset: Coherence vs. Rate Tradeoff' reveal about safety-relevant behaviors in current language models, and what concrete, measurable findings can a beginner mentor-novice team produce within 30 hours using standard open-source tools?
 
@@ -10724,12 +13522,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Alternative Framings:** Structured Review and Gap Analysis: Emergent Misalignment with Extreme Sports Advice D... — Reframe as a no-code literature review: systematically classify 10-15 relevant papers along 2-3 pre-defined axes, identify the 2-3 most important open questions, and produce a structured comparison table. This is fully accessible to a beginner with no ML tooling experience. (weighted_score=4.21)
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 3, accessible_complexity: 4, narrow_scope: 3, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 3, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 4, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 3, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #468: Minimal Empirical Probe: Circuit Tracing Brittleness: Identified Circuits B... (Single-Model) (Score: 3.21)
+
+**ID:** gen-0723
 
 **Research Question:** What does a focused empirical investigation of 'Circuit Tracing Brittleness: Identified Circuits Break Under Distribution Shift Used in Control' reveal about safety-relevant behaviors in current language models, and what concrete, measurable findings can a beginner mentor-novice team produce within 30 hours using standard open-source tools?
 
@@ -10746,12 +13550,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Alternative Framings:** Structured Review and Gap Analysis: Circuit Tracing Brittleness: Identified Circuits B... — Reframe as a no-code literature review: systematically classify 10-15 relevant papers along 2-3 pre-defined axes, identify the 2-3 most important open questions, and produce a structured comparison table. This is fully accessible to a beginner with no ML tooling experience. (weighted_score=4.21)
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 4, accessible_complexity: 3, narrow_scope: 3, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 4, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 3, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 3, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #469: Minimal Empirical Probe: In-Context Scheming Invisible to Layer-Probes: Dec... (Single-Model) (Score: 3.21)
+
+**ID:** gen-0725
 
 **Research Question:** What does a focused empirical investigation of 'In-Context Scheming Invisible to Layer-Probes: Deception Shifts Representational Locus Between Layers' reveal about safety-relevant behaviors in current language models, and what concrete, measurable findings can a beginner mentor-novice team produce within 30 hours using standard open-source tools?
 
@@ -10768,12 +13578,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Alternative Framings:** Structured Review and Gap Analysis: In-Context Scheming Invisible to Layer-Probes: Dec... — Reframe as a no-code literature review: systematically classify 10-15 relevant papers along 2-3 pre-defined axes, identify the 2-3 most important open questions, and produce a structured comparison table. This is fully accessible to a beginner with no ML tooling experience. (weighted_score=4.21)
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 4, accessible_complexity: 3, narrow_scope: 3, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 4, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 3, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 3, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #470: Minimal Empirical Probe: Dark Features Enable Covert Capability: Undecompos... (Single-Model) (Score: 3.21)
+
+**ID:** gen-0727
 
 **Research Question:** What does a focused empirical investigation of 'Dark Features Enable Covert Capability: Undecomposed SAE Residuals as Blind Spots in AI Control' reveal about safety-relevant behaviors in current language models, and what concrete, measurable findings can a beginner mentor-novice team produce within 30 hours using standard open-source tools?
 
@@ -10790,12 +13606,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Alternative Framings:** Structured Review and Gap Analysis: Dark Features Enable Covert Capability: Undecompos... — Reframe as a no-code literature review: systematically classify 10-15 relevant papers along 2-3 pre-defined axes, identify the 2-3 most important open questions, and produce a structured comparison table. This is fully accessible to a beginner with no ML tooling experience. (weighted_score=4.21)
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 4, accessible_complexity: 3, narrow_scope: 3, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 4, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 3, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 3, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #471: Minimal Empirical Probe: Attention Head Misattribution: Circuit Analysis Po... (Single-Model) (Score: 3.21)
+
+**ID:** gen-0729
 
 **Research Question:** What does a focused empirical investigation of 'Attention Head Misattribution: Circuit Analysis Points to Wrong Safety-Critical Component Under Distribution Shift' reveal about safety-relevant behaviors in current language models, and what concrete, measurable findings can a beginner mentor-novice team produce within 30 hours using standard open-source tools?
 
@@ -10812,12 +13634,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Alternative Framings:** Structured Review and Gap Analysis: Attention Head Misattribution: Circuit Analysis Po... — Reframe as a no-code literature review: systematically classify 10-15 relevant papers along 2-3 pre-defined axes, identify the 2-3 most important open questions, and produce a structured comparison table. This is fully accessible to a beginner with no ML tooling experience. (weighted_score=4.21)
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 4, accessible_complexity: 3, narrow_scope: 3, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 4, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 3, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 3, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #472: Minimal Empirical Probe: Counterfactual Blindness: Activation Monitors Miss... (Single-Model) (Score: 3.21)
+
+**ID:** gen-0737
 
 **Research Question:** What does a focused empirical investigation of 'Counterfactual Blindness: Activation Monitors Miss Model-Internal Reasoning About Oversight' reveal about safety-relevant behaviors in current language models, and what concrete, measurable findings can a beginner mentor-novice team produce within 30 hours using standard open-source tools?
 
@@ -10834,12 +13662,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Alternative Framings:** Structured Review and Gap Analysis: Counterfactual Blindness: Activation Monitors Miss... — Reframe as a no-code literature review: systematically classify 10-15 relevant papers along 2-3 pre-defined axes, identify the 2-3 most important open questions, and produce a structured comparison table. This is fully accessible to a beginner with no ML tooling experience. (weighted_score=4.21)
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 4, accessible_complexity: 3, narrow_scope: 3, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 4, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 3, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 3, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #473: Minimal Empirical Probe: Reconstruction Attacks Defeat Output Classifiers: ... (Single-Model) (Score: 3.21)
+
+**ID:** gen-0842
 
 **Research Question:** What does a focused empirical investigation of 'Reconstruction Attacks Defeat Output Classifiers: Obfuscation Compounds Detection Gaps' reveal about safety-relevant behaviors in current language models, and what concrete, measurable findings can a beginner mentor-novice team produce within 30 hours using standard open-source tools?
 
@@ -10856,12 +13690,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Alternative Framings:** Structured Review and Gap Analysis: Reconstruction Attacks Defeat Output Classifiers: ... — Reframe as a no-code literature review: systematically classify 10-15 relevant papers along 2-3 pre-defined axes, identify the 2-3 most important open questions, and produce a structured comparison table. This is fully accessible to a beginner with no ML tooling experience. (weighted_score=4.21)
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 4, accessible_complexity: 3, narrow_scope: 3, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 4, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 3, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 3, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #474: Minimal Empirical Probe: Agentic Tool-Use Amplifies Jailbreak Consequences:... (Single-Model) (Score: 3.21)
+
+**ID:** gen-0843
 
 **Research Question:** What does a focused empirical investigation of 'Agentic Tool-Use Amplifies Jailbreak Consequences: When Robustness Failure Meets Autonomy' reveal about safety-relevant behaviors in current language models, and what concrete, measurable findings can a beginner mentor-novice team produce within 30 hours using standard open-source tools?
 
@@ -10878,12 +13718,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Alternative Framings:** Structured Review and Gap Analysis: Agentic Tool-Use Amplifies Jailbreak Consequences:... — Reframe as a no-code literature review: systematically classify 10-15 relevant papers along 2-3 pre-defined axes, identify the 2-3 most important open questions, and produce a structured comparison table. This is fully accessible to a beginner with no ML tooling experience. (weighted_score=4.21)
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 4, accessible_complexity: 3, narrow_scope: 3, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 4, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 3, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 3, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #475: Minimal Empirical Probe: Safety Tax Compounds With Adversarial Pressure on ... (Single-Model) (Score: 3.21)
+
+**ID:** gen-0846
 
 **Research Question:** What does a focused empirical investigation of 'Safety Tax Compounds With Adversarial Pressure on Reasoning Models' reveal about safety-relevant behaviors in current language models, and what concrete, measurable findings can a beginner mentor-novice team produce within 30 hours using standard open-source tools?
 
@@ -10900,12 +13746,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Alternative Framings:** Structured Review and Gap Analysis: Safety Tax Compounds With Adversarial Pressure on ... — Reframe as a no-code literature review: systematically classify 10-15 relevant papers along 2-3 pre-defined axes, identify the 2-3 most important open questions, and produce a structured comparison table. This is fully accessible to a beginner with no ML tooling experience. (weighted_score=4.21)
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 4, accessible_complexity: 3, narrow_scope: 3, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 4, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 3, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 3, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #476: Minimal Empirical Probe: Low-Cost Jailbreak Detection vs. Adaptive Attacker... (Single-Model) (Score: 3.21)
+
+**ID:** gen-0853
 
 **Research Question:** What does a focused empirical investigation of 'Low-Cost Jailbreak Detection vs. Adaptive Attacker: Arms Race Dynamics on a Budget' reveal about safety-relevant behaviors in current language models, and what concrete, measurable findings can a beginner mentor-novice team produce within 30 hours using standard open-source tools?
 
@@ -10922,12 +13774,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Alternative Framings:** Structured Review and Gap Analysis: Low-Cost Jailbreak Detection vs. Adaptive Attacker... — Reframe as a no-code literature review: systematically classify 10-15 relevant papers along 2-3 pre-defined axes, identify the 2-3 most important open questions, and produce a structured comparison table. This is fully accessible to a beginner with no ML tooling experience. (weighted_score=4.21)
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 4, accessible_complexity: 3, narrow_scope: 3, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 4, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 3, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 3, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #477: Minimal Empirical Probe: Adversarial Attacks on Sparse Interpretable Safety... (Single-Model) (Score: 3.21)
+
+**ID:** gen-0859
 
 **Research Question:** What does a focused empirical investigation of 'Adversarial Attacks on Sparse Interpretable Safety Concepts: Defeating ConceptGuard' reveal about safety-relevant behaviors in current language models, and what concrete, measurable findings can a beginner mentor-novice team produce within 30 hours using standard open-source tools?
 
@@ -10944,12 +13802,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Alternative Framings:** Structured Review and Gap Analysis: Adversarial Attacks on Sparse Interpretable Safety... — Reframe as a no-code literature review: systematically classify 10-15 relevant papers along 2-3 pre-defined axes, identify the 2-3 most important open questions, and produce a structured comparison table. This is fully accessible to a beginner with no ML tooling experience. (weighted_score=4.21)
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 4, accessible_complexity: 3, narrow_scope: 3, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 4, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 3, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 3, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #478: Minimal Empirical Probe: Backdoor Trigger Detection via Linear Probes: Repl... (Single-Model) (Score: 3.21)
+
+**ID:** gen-0877
 
 **Research Question:** What does a focused empirical investigation of 'Backdoor Trigger Detection via Linear Probes: Replication on Qwen vs. Llama Architectures' reveal about safety-relevant behaviors in current language models, and what concrete, measurable findings can a beginner mentor-novice team produce within 30 hours using standard open-source tools?
 
@@ -10966,12 +13830,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Alternative Framings:** Structured Review and Gap Analysis: Backdoor Trigger Detection via Linear Probes: Repl... — Reframe as a no-code literature review: systematically classify 10-15 relevant papers along 2-3 pre-defined axes, identify the 2-3 most important open questions, and produce a structured comparison table. This is fully accessible to a beginner with no ML tooling experience. (weighted_score=4.21)
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 4, accessible_complexity: 3, narrow_scope: 3, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 4, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 3, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 3, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #479: Minimal Empirical Probe: Sycophancy Under Distribution Shift: Does DPO-Indu... (Single-Model) (Score: 3.21)
+
+**ID:** gen-0879
 
 **Research Question:** What does a focused empirical investigation of 'Sycophancy Under Distribution Shift: Does DPO-Induced Sycophancy Generalize to New Topics?' reveal about safety-relevant behaviors in current language models, and what concrete, measurable findings can a beginner mentor-novice team produce within 30 hours using standard open-source tools?
 
@@ -10988,12 +13858,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Alternative Framings:** Structured Review and Gap Analysis: Sycophancy Under Distribution Shift: Does DPO-Indu... — Reframe as a no-code literature review: systematically classify 10-15 relevant papers along 2-3 pre-defined axes, identify the 2-3 most important open questions, and produce a structured comparison table. This is fully accessible to a beginner with no ML tooling experience. (weighted_score=4.21)
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 4, accessible_complexity: 3, narrow_scope: 3, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 4, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 3, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 3, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #480: Minimal Empirical Probe: RLHF Sycophancy Mitigation: Replicating SFT on Ant... (Single-Model) (Score: 3.21)
+
+**ID:** gen-0881
 
 **Research Question:** What does a focused empirical investigation of 'RLHF Sycophancy Mitigation: Replicating SFT on Anti-Sycophancy Data at 7B Scale' reveal about safety-relevant behaviors in current language models, and what concrete, measurable findings can a beginner mentor-novice team produce within 30 hours using standard open-source tools?
 
@@ -11010,12 +13886,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Alternative Framings:** Structured Review and Gap Analysis: RLHF Sycophancy Mitigation: Replicating SFT on Ant... — Reframe as a no-code literature review: systematically classify 10-15 relevant papers along 2-3 pre-defined axes, identify the 2-3 most important open questions, and produce a structured comparison table. This is fully accessible to a beginner with no ML tooling experience. (weighted_score=4.21)
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 4, accessible_complexity: 3, narrow_scope: 3, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 4, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 3, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 3, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #481: Minimal Empirical Probe: Diversity of RLHF Safety Training as a Mitigation:... (Single-Model) (Score: 3.21)
+
+**ID:** gen-0887
 
 **Research Question:** What does a focused empirical investigation of 'Diversity of RLHF Safety Training as a Mitigation: Testing on Open Models' reveal about safety-relevant behaviors in current language models, and what concrete, measurable findings can a beginner mentor-novice team produce within 30 hours using standard open-source tools?
 
@@ -11032,12 +13914,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Alternative Framings:** Structured Review and Gap Analysis: Diversity of RLHF Safety Training as a Mitigation:... — Reframe as a no-code literature review: systematically classify 10-15 relevant papers along 2-3 pre-defined axes, identify the 2-3 most important open questions, and produce a structured comparison table. This is fully accessible to a beginner with no ML tooling experience. (weighted_score=4.21)
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 4, accessible_complexity: 3, narrow_scope: 3, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 4, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 3, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 3, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #482: Minimal Empirical Probe: Probing for Hidden Beliefs: An Empirical ELK Basel... (Single-Model) (Score: 3.21)
+
+**ID:** gen-0890
 
 **Research Question:** What does a focused empirical investigation of 'Probing for Hidden Beliefs: An Empirical ELK Baseline on Small Transformers' reveal about safety-relevant behaviors in current language models, and what concrete, measurable findings can a beginner mentor-novice team produce within 30 hours using standard open-source tools?
 
@@ -11054,12 +13942,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Alternative Framings:** Structured Review and Gap Analysis: Probing for Hidden Beliefs: An Empirical ELK Basel... — Reframe as a no-code literature review: systematically classify 10-15 relevant papers along 2-3 pre-defined axes, identify the 2-3 most important open questions, and produce a structured comparison table. This is fully accessible to a beginner with no ML tooling experience. (weighted_score=4.21)
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 4, accessible_complexity: 3, narrow_scope: 3, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 4, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 3, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 3, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #483: Minimal Empirical Probe: Does Contrast-Consistent Search Generalize Across ... (Single-Model) (Score: 3.21)
+
+**ID:** gen-0891
 
 **Research Question:** What does a focused empirical investigation of 'Does Contrast-Consistent Search Generalize Across Model Families?' reveal about safety-relevant behaviors in current language models, and what concrete, measurable findings can a beginner mentor-novice team produce within 30 hours using standard open-source tools?
 
@@ -11076,12 +13970,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Alternative Framings:** Structured Review and Gap Analysis: Does Contrast-Consistent Search Generalize Across ... — Reframe as a no-code literature review: systematically classify 10-15 relevant papers along 2-3 pre-defined axes, identify the 2-3 most important open questions, and produce a structured comparison table. This is fully accessible to a beginner with no ML tooling experience. (weighted_score=4.21)
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 4, accessible_complexity: 3, narrow_scope: 3, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 4, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 3, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 3, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #484: Minimal Empirical Probe: Empirical Test of the Universality of Superpositio... (Single-Model) (Score: 3.21)
+
+**ID:** gen-0907
 
 **Research Question:** What does a focused empirical investigation of 'Empirical Test of the Universality of Superposition in Aligned Models' reveal about safety-relevant behaviors in current language models, and what concrete, measurable findings can a beginner mentor-novice team produce within 30 hours using standard open-source tools?
 
@@ -11098,12 +13998,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Alternative Framings:** Structured Review and Gap Analysis: Empirical Test of the Universality of Superpositio... — Reframe as a no-code literature review: systematically classify 10-15 relevant papers along 2-3 pre-defined axes, identify the 2-3 most important open questions, and produce a structured comparison table. This is fully accessible to a beginner with no ML tooling experience. (weighted_score=4.21)
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 4, accessible_complexity: 3, narrow_scope: 3, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 4, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 3, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 3, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #485: Minimal Empirical Probe: Causal Intervention Tests for Formal Alignment: Do... (Single-Model) (Score: 3.21)
+
+**ID:** gen-0910
 
 **Research Question:** What does a focused empirical investigation of 'Causal Intervention Tests for Formal Alignment: Does Editing a Belief Change Behavior?' reveal about safety-relevant behaviors in current language models, and what concrete, measurable findings can a beginner mentor-novice team produce within 30 hours using standard open-source tools?
 
@@ -11120,12 +14026,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Alternative Framings:** Structured Review and Gap Analysis: Causal Intervention Tests for Formal Alignment: Do... — Reframe as a no-code literature review: systematically classify 10-15 relevant papers along 2-3 pre-defined axes, identify the 2-3 most important open questions, and produce a structured comparison table. This is fully accessible to a beginner with no ML tooling experience. (weighted_score=4.21)
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 4, accessible_complexity: 3, narrow_scope: 3, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 4, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 3, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 3, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #486: Minimal Empirical Probe: Activation Geometry as a Formal Alignment Invarian... (Single-Model) (Score: 3.21)
+
+**ID:** gen-0918
 
 **Research Question:** What does a focused empirical investigation of 'Activation Geometry as a Formal Alignment Invariant: A Cross-Architecture Test' reveal about safety-relevant behaviors in current language models, and what concrete, measurable findings can a beginner mentor-novice team produce within 30 hours using standard open-source tools?
 
@@ -11142,12 +14054,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Alternative Framings:** Structured Review and Gap Analysis: Activation Geometry as a Formal Alignment Invarian... — Reframe as a no-code literature review: systematically classify 10-15 relevant papers along 2-3 pre-defined axes, identify the 2-3 most important open questions, and produce a structured comparison table. This is fully accessible to a beginner with no ML tooling experience. (weighted_score=4.21)
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 4, accessible_complexity: 3, narrow_scope: 3, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 4, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 3, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 3, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #487: Minimal Empirical Probe: Formal Alignment + Capability Overhang: A Compound... (Single-Model) (Score: 3.21)
+
+**ID:** gen-0930
 
 **Research Question:** What does a focused empirical investigation of 'Formal Alignment + Capability Overhang: A Compounding Failure Mode Study' reveal about safety-relevant behaviors in current language models, and what concrete, measurable findings can a beginner mentor-novice team produce within 30 hours using standard open-source tools?
 
@@ -11164,12 +14082,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Alternative Framings:** Structured Review and Gap Analysis: Formal Alignment + Capability Overhang: A Compound... — Reframe as a no-code literature review: systematically classify 10-15 relevant papers along 2-3 pre-defined axes, identify the 2-3 most important open questions, and produce a structured comparison table. This is fully accessible to a beginner with no ML tooling experience. (weighted_score=4.21)
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 4, accessible_complexity: 3, narrow_scope: 3, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 4, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 3, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 3, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #488: Minimal Empirical Probe: Theoretical Prediction: Internal Consistency Shoul... (Single-Model) (Score: 3.21)
+
+**ID:** gen-0936
 
 **Research Question:** What does a focused empirical investigation of 'Theoretical Prediction: Internal Consistency Should Precede External Honesty. Does It?' reveal about safety-relevant behaviors in current language models, and what concrete, measurable findings can a beginner mentor-novice team produce within 30 hours using standard open-source tools?
 
@@ -11186,12 +14110,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Alternative Framings:** Structured Review and Gap Analysis: Theoretical Prediction: Internal Consistency Shoul... — Reframe as a no-code literature review: systematically classify 10-15 relevant papers along 2-3 pre-defined axes, identify the 2-3 most important open questions, and produce a structured comparison table. This is fully accessible to a beginner with no ML tooling experience. (weighted_score=4.21)
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 4, accessible_complexity: 3, narrow_scope: 3, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 4, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 3, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 3, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #489: Minimal Empirical Probe: Formal Properties of Steering Vectors: Do They Beh... (Single-Model) (Score: 3.21)
+
+**ID:** gen-0937
 
 **Research Question:** What does a focused empirical investigation of 'Formal Properties of Steering Vectors: Do They Behave Like Causal Belief Operators?' reveal about safety-relevant behaviors in current language models, and what concrete, measurable findings can a beginner mentor-novice team produce within 30 hours using standard open-source tools?
 
@@ -11208,12 +14138,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Alternative Framings:** Structured Review and Gap Analysis: Formal Properties of Steering Vectors: Do They Beh... — Reframe as a no-code literature review: systematically classify 10-15 relevant papers along 2-3 pre-defined axes, identify the 2-3 most important open questions, and produce a structured comparison table. This is fully accessible to a beginner with no ML tooling experience. (weighted_score=4.21)
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 4, accessible_complexity: 3, narrow_scope: 3, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 4, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 3, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 3, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #490: Minimal Empirical Probe: Empirical Test of Formal Cooperation Conditions: W... (Single-Model) (Score: 3.21)
+
+**ID:** gen-0945
 
 **Research Question:** What does a focused empirical investigation of 'Empirical Test of Formal Cooperation Conditions: When Do Models Follow Cooperative Game Theory Predictions?' reveal about safety-relevant behaviors in current language models, and what concrete, measurable findings can a beginner mentor-novice team produce within 30 hours using standard open-source tools?
 
@@ -11230,12 +14166,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Alternative Framings:** Structured Review and Gap Analysis: Empirical Test of Formal Cooperation Conditions: W... — Reframe as a no-code literature review: systematically classify 10-15 relevant papers along 2-3 pre-defined axes, identify the 2-3 most important open questions, and produce a structured comparison table. This is fully accessible to a beginner with no ML tooling experience. (weighted_score=4.21)
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 4, accessible_complexity: 3, narrow_scope: 3, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 4, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 3, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 3, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #491: Minimal Empirical Probe: When Does Multi-Principal Alignment Become a Compo... (Single-Model) (Score: 3.21)
+
+**ID:** gen-0949
 
 **Research Question:** What does a focused empirical investigation of 'When Does Multi-Principal Alignment Become a Compounding Risk? An Empirical Study' reveal about safety-relevant behaviors in current language models, and what concrete, measurable findings can a beginner mentor-novice team produce within 30 hours using standard open-source tools?
 
@@ -11252,12 +14194,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Alternative Framings:** Structured Review and Gap Analysis: When Does Multi-Principal Alignment Become a Compo... — Reframe as a no-code literature review: systematically classify 10-15 relevant papers along 2-3 pre-defined axes, identify the 2-3 most important open questions, and produce a structured comparison table. This is fully accessible to a beginner with no ML tooling experience. (weighted_score=4.21)
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 4, accessible_complexity: 3, narrow_scope: 3, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 4, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 3, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 3, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #492: Minimal Empirical Probe: Verifiable Commitment Mechanisms: Formal Precommit... (Single-Model) (Score: 3.21)
+
+**ID:** gen-0950
 
 **Research Question:** What does a focused empirical investigation of 'Verifiable Commitment Mechanisms: Formal Precommitment in LLM Behavior' reveal about safety-relevant behaviors in current language models, and what concrete, measurable findings can a beginner mentor-novice team produce within 30 hours using standard open-source tools?
 
@@ -11274,12 +14222,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Alternative Framings:** Structured Review and Gap Analysis: Verifiable Commitment Mechanisms: Formal Precommit... — Reframe as a no-code literature review: systematically classify 10-15 relevant papers along 2-3 pre-defined axes, identify the 2-3 most important open questions, and produce a structured comparison table. This is fully accessible to a beginner with no ML tooling experience. (weighted_score=4.21)
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 4, accessible_complexity: 3, narrow_scope: 3, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 4, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 3, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 3, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #493: Minimal Empirical Probe: Agent Identity Provenance: Can a Sub-Agent Reliabl... (Single-Model) (Score: 3.21)
+
+**ID:** gen-0955
 
 **Research Question:** What does a focused empirical investigation of 'Agent Identity Provenance: Can a Sub-Agent Reliably Know Who Instructed It?' reveal about safety-relevant behaviors in current language models, and what concrete, measurable findings can a beginner mentor-novice team produce within 30 hours using standard open-source tools?
 
@@ -11296,12 +14250,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Alternative Framings:** Structured Review and Gap Analysis: Agent Identity Provenance: Can a Sub-Agent Reliabl... — Reframe as a no-code literature review: systematically classify 10-15 relevant papers along 2-3 pre-defined axes, identify the 2-3 most important open questions, and produce a structured comparison table. This is fully accessible to a beginner with no ML tooling experience. (weighted_score=4.21)
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 4, accessible_complexity: 3, narrow_scope: 3, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 4, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 3, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 3, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #494: Minimal Empirical Probe: Collective Information Cascades in Multi-Agent Net... (Single-Model) (Score: 3.21)
+
+**ID:** gen-0957
 
 **Research Question:** What does a focused empirical investigation of 'Collective Information Cascades in Multi-Agent Networks: When All Agents Converge on a Wrong Belief' reveal about safety-relevant behaviors in current language models, and what concrete, measurable findings can a beginner mentor-novice team produce within 30 hours using standard open-source tools?
 
@@ -11318,12 +14278,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Alternative Framings:** Structured Review and Gap Analysis: Collective Information Cascades in Multi-Agent Net... — Reframe as a no-code literature review: systematically classify 10-15 relevant papers along 2-3 pre-defined axes, identify the 2-3 most important open questions, and produce a structured comparison table. This is fully accessible to a beginner with no ML tooling experience. (weighted_score=4.21)
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 4, accessible_complexity: 3, narrow_scope: 3, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 4, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 3, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 3, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #495: Minimal Empirical Probe: Replication of Crypto Theft Attack Chain on Modern... (Single-Model) (Score: 3.21)
+
+**ID:** gen-0968
 
 **Research Question:** What does a focused empirical investigation of 'Replication of Crypto Theft Attack Chain on Modern Agent Frameworks: Does Context Poisoning Generalize?' reveal about safety-relevant behaviors in current language models, and what concrete, measurable findings can a beginner mentor-novice team produce within 30 hours using standard open-source tools?
 
@@ -11340,12 +14306,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Alternative Framings:** Structured Review and Gap Analysis: Replication of Crypto Theft Attack Chain on Modern... — Reframe as a no-code literature review: systematically classify 10-15 relevant papers along 2-3 pre-defined axes, identify the 2-3 most important open questions, and produce a structured comparison table. This is fully accessible to a beginner with no ML tooling experience. (weighted_score=4.21)
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 4, accessible_complexity: 3, narrow_scope: 3, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 4, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 3, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 3, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #496: Minimal Empirical Probe: Replicating Outcome-Driven Constraint Violation Fi... (Single-Model) (Score: 3.21)
+
+**ID:** gen-0976
 
 **Research Question:** What does a focused empirical investigation of 'Replicating Outcome-Driven Constraint Violation Findings in a Different Goal Domain' reveal about safety-relevant behaviors in current language models, and what concrete, measurable findings can a beginner mentor-novice team produce within 30 hours using standard open-source tools?
 
@@ -11362,12 +14334,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Alternative Framings:** Structured Review and Gap Analysis: Replicating Outcome-Driven Constraint Violation Fi... — Reframe as a no-code literature review: systematically classify 10-15 relevant papers along 2-3 pre-defined axes, identify the 2-3 most important open questions, and produce a structured comparison table. This is fully accessible to a beginner with no ML tooling experience. (weighted_score=4.21)
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 4, accessible_complexity: 3, narrow_scope: 3, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 4, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 3, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 3, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #497: Minimal Empirical Probe: Replicating Sandbagging Findings in a Realistic De... (Single-Model) (Score: 3.21)
+
+**ID:** gen-0979
 
 **Research Question:** What does a focused empirical investigation of 'Replicating Sandbagging Findings in a Realistic Deployment Setting vs. Synthetic Evaluation Setting' reveal about safety-relevant behaviors in current language models, and what concrete, measurable findings can a beginner mentor-novice team produce within 30 hours using standard open-source tools?
 
@@ -11384,12 +14362,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Alternative Framings:** Structured Review and Gap Analysis: Replicating Sandbagging Findings in a Realistic De... — Reframe as a no-code literature review: systematically classify 10-15 relevant papers along 2-3 pre-defined axes, identify the 2-3 most important open questions, and produce a structured comparison table. This is fully accessible to a beginner with no ML tooling experience. (weighted_score=4.21)
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 4, accessible_complexity: 3, narrow_scope: 3, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 4, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 3, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 3, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #498: Minimal Empirical Probe: Does Planning-Ahead Generalize Beyond Rhyme? Probi... (Single-Model) (Score: 3.21)
+
+**ID:** gen-1813
 
 **Research Question:** What does a focused empirical investigation of 'Does Planning-Ahead Generalize Beyond Rhyme? Probing Forward-Looking Features in Claude's Poetry Circuit' reveal about safety-relevant behaviors in current language models, and what concrete, measurable findings can a beginner mentor-novice team produce within 30 hours using standard open-source tools?
 
@@ -11406,12 +14390,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Alternative Framings:** Structured Review and Gap Analysis: Does Planning-Ahead Generalize Beyond Rhyme? Probi... — Reframe as a no-code literature review: systematically classify 10-15 relevant papers along 2-3 pre-defined axes, identify the 2-3 most important open questions, and produce a structured comparison table. This is fully accessible to a beginner with no ML tooling experience. (weighted_score=4.21)
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 4, accessible_complexity: 3, narrow_scope: 3, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 4, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 3, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 3, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #499: Minimal Empirical Probe: Causal Knockout of Rhyme-Planning Features: Does A... (Single-Model) (Score: 3.21)
+
+**ID:** gen-1815
 
 **Research Question:** What does a focused empirical investigation of 'Causal Knockout of Rhyme-Planning Features: Does Ablating Pre-Selected End-Words Disrupt Line Quality?' reveal about safety-relevant behaviors in current language models, and what concrete, measurable findings can a beginner mentor-novice team produce within 30 hours using standard open-source tools?
 
@@ -11428,12 +14418,18 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Alternative Framings:** Structured Review and Gap Analysis: Causal Knockout of Rhyme-Planning Features: Does A... — Reframe as a no-code literature review: systematically classify 10-15 relevant papers along 2-3 pre-defined axes, identify the 2-3 most important open questions, and produce a structured comparison table. This is fully accessible to a beginner with no ML tooling experience. (weighted_score=4.21)
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 4, accessible_complexity: 3, narrow_scope: 3, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 4, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 3, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 3, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
 
 ## #500: Minimal Empirical Probe: Does RLHF Alignment Level Modulate Emergent Misali... (Single-Model) (Score: 3.21)
+
+**ID:** gen-1873
 
 **Research Question:** What does a focused empirical investigation of 'Does RLHF Alignment Level Modulate Emergent Misalignment Susceptibility?' reveal about safety-relevant behaviors in current language models, and what concrete, measurable findings can a beginner mentor-novice team produce within 30 hours using standard open-source tools?
 
@@ -11450,7 +14446,11 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 **Alternative Framings:** Structured Review and Gap Analysis: Does RLHF Alignment Level Modulate Emergent Misali... — Reframe as a no-code literature review: systematically classify 10-15 relevant papers along 2-3 pre-defined axes, identify the 2-3 most important open questions, and produce a structured comparison table. This is fully accessible to a beginner with no ML tooling experience. (weighted_score=4.21)
 
 **Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:** theory_of_impact: 4, accessible_complexity: 3, narrow_scope: 3, novelty: 3
+**Scores:**
+  - **theory_of_impact:** 4, confidence: 0.5 — From filter_score assessment
+  - **accessible_complexity:** 3, confidence: 0.5 — From filter_score assessment
+  - **narrow_scope:** 3, confidence: 0.5 — From filter_score assessment
+  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
 **Provenance:** , sources: 0 KB, 0 web
 
 ---

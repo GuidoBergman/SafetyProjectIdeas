@@ -63,9 +63,7 @@ def rank_proposals(
 
 
 def format_ranked_output(ranked: list[dict]) -> str:
-    """Generate concise markdown for 20+ proposals scannable by a human.
-
-    Each proposal is ~5-8 lines so a coordinator can scan quickly.
+    """Generate human-scannable markdown with full proposal details.
 
     Args:
         ranked: List of ranked proposal dicts (must have 'rank' field).
@@ -85,32 +83,46 @@ def format_ranked_output(ranked: list[dict]) -> str:
 
     for proposal in ranked:
         rank = proposal.get("rank", "?")
+        idea_id = proposal.get("idea_id", "unknown")
         title = proposal.get("title", "Untitled")
         score = proposal.get("weighted_score", 0.0)
 
         sections = proposal.get("sections", {})
         research_question = sections.get("research_question", "")
         if not research_question:
-            # Fall back to first line of any content
             research_question = title
 
         approach = sections.get("approach_outline", "")
-        if len(approach) > 150:
-            approach = approach[:147] + "..."
+        experiments = sections.get("proposed_first_experiments", "")
+        impact_chain = sections.get("theory_of_impact_chain", "")
+        strength_rationale = sections.get("strength_rationale", "")
+        alternative_framings = sections.get("alternative_framings", [])
+        cited_sources = sections.get("cited_sources", [])
 
         subfield = proposal.get("subfield", "N/A")
         strategy = proposal.get("generation_strategy", "N/A")
         novelty_class = proposal.get("novelty_classification", "N/A")
         novelty_method = proposal.get("novelty_method", "N/A")
 
-        # Format scores line — prefer re-scored 'scores' dict, fall back to original_scores
+        # Format scores with reasoning and confidence
         scores_dict = proposal.get("scores")
+        score_detail_lines: list[str] = []
         if scores_dict and isinstance(next(iter(scores_dict.values()), None), dict):
-            scores_parts = [f"{k}: {v.get('score', '?')}" for k, v in scores_dict.items()]
+            for k, v in scores_dict.items():
+                s = v.get("score", "?")
+                reasoning = v.get("reasoning", "")
+                confidence = v.get("confidence")
+                conf_str = f", confidence: {confidence}" if confidence is not None else ""
+                if reasoning:
+                    score_detail_lines.append(
+                        f"  - **{k}:** {s}{conf_str} — {reasoning}"
+                    )
+                else:
+                    score_detail_lines.append(f"  - **{k}:** {s}{conf_str}")
         else:
             original_scores = proposal.get("original_scores", {})
-            scores_parts = [f"{k}: {v}" for k, v in original_scores.items()]
-        scores_line = ", ".join(scores_parts) if scores_parts else "N/A"
+            for k, v in original_scores.items():
+                score_detail_lines.append(f"  - **{k}:** {v}")
 
         # Provenance
         prov = proposal.get("provenance", {})
@@ -121,13 +133,39 @@ def format_ranked_output(ranked: list[dict]) -> str:
         lines.append("")
         lines.append(f"## #{rank}: {title} (Score: {score:.2f})")
         lines.append("")
+        lines.append(f"**ID:** {idea_id}")
+        lines.append("")
         lines.append(f"**Research Question:** {research_question}")
+        lines.append("")
         lines.append(f"**Approach:** {approach}")
+        lines.append("")
+        if experiments:
+            lines.append(f"**Experiments:** {experiments}")
+            lines.append("")
+        if impact_chain:
+            lines.append(f"**Impact Chain:** {impact_chain}")
+            lines.append("")
+        if strength_rationale:
+            lines.append(f"**Strength Rationale:** {strength_rationale}")
+            lines.append("")
+        if alternative_framings:
+            framings_text = "; ".join(
+                item if isinstance(item, str) else str(item) for item in alternative_framings
+            )
+            lines.append(f"**Alternative Framings:** {framings_text}")
+            lines.append("")
+        if cited_sources:
+            sources_text = "; ".join(
+                item if isinstance(item, str) else str(item) for item in cited_sources
+            )
+            lines.append(f"**Cited Sources:** {sources_text}")
+            lines.append("")
         lines.append(
             f"**Subfield:** {subfield} | **Strategy:** {strategy}"
             f" | **Novelty:** {novelty_class} ({novelty_method})"
         )
-        lines.append(f"**Scores:** {scores_line}")
+        lines.append("**Scores:**")
+        lines.extend(score_detail_lines)
         lines.append(f"**Provenance:** {gen_method}, sources: {kb_count} KB, {web_count} web")
         lines.append("")
         lines.append("---")

@@ -112,23 +112,17 @@ uv run python -m safety_ideas.pipeline.rank rank <run_dir> '<proposals_json>'
 
 This computes weighted scores using active criterion weights and sorts proposals highest-first. It returns the ranked proposals as JSON.
 
-### Step 3.2: Format output
+### Step 3.2: Write output to run directory
 
-Generate human-scannable markdown (optimized for scanning 20+ proposals per FR41):
-
-```bash
-uv run python -m safety_ideas.pipeline.rank format '<ranked_json>'
-```
-
-### Step 3.3: Write output to run directory
+**IMPORTANT:** Only pass the ranked JSON — do NOT pass a separate markdown argument. The `write` command auto-generates the full markdown from the JSON using the `format_ranked_output` function, which includes ALL proposal fields (research question, full approach, experiments, impact chain, strength rationale, alternative framings, cited sources, scores, provenance) without any truncation. Do NOT attempt to generate or pass markdown yourself.
 
 ```bash
-uv run python -m safety_ideas.pipeline.rank write <run_dir> '<ranked_json>' '<markdown>'
+uv run python -m safety_ideas.pipeline.rank write <run_dir> '<ranked_json>'
 ```
 
 This writes `rank/ranked_proposals.json` and `rank/ranked_proposals.md` to the run directory.
 
-### Step 3.4: Persist to data/ideas/
+### Step 3.3: Persist to data/ideas/
 
 ```bash
 uv run python -m safety_ideas.pipeline.rank persist '<ranked_json>'

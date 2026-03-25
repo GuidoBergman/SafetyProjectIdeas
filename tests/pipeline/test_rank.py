@@ -149,12 +149,13 @@ class TestFormatRankedOutput:
         md = format_ranked_output([proposal])
 
         assert "## #1: Proposal a (Score: 3.75)" in md
+        assert "**ID:** a" in md
         assert "**Research Question:**" in md
         assert "**Approach:**" in md
         assert "**Subfield:** interpretability" in md
         assert "**Provenance:** brainstorm, sources: 1 KB, 2 web" in md
 
-    def test_displays_rescored_scores_when_available(self):
+    def test_displays_rescored_scores_with_reasoning_and_confidence(self):
         proposal = _make_proposal("a")
         proposal["rank"] = 1
         proposal["weighted_score"] = 4.0
@@ -165,21 +166,52 @@ class TestFormatRankedOutput:
 
         md = format_ranked_output([proposal])
 
-        assert "theory_of_impact: 5" in md
-        assert "low_compute: 4" in md
+        assert "**theory_of_impact:** 5, confidence: 0.9 — great" in md
+        assert "**low_compute:** 4, confidence: 0.8 — good" in md
 
-    def test_truncates_long_approach(self):
+    def test_does_not_truncate_long_approach(self):
         proposal = _make_proposal("a")
         proposal["rank"] = 1
         proposal["weighted_score"] = 3.0
-        proposal["sections"]["approach_outline"] = "x" * 200
+        long_approach = "x" * 200
+        proposal["sections"]["approach_outline"] = long_approach
 
         md = format_ranked_output([proposal])
 
-        # Should be truncated to 150 chars
         approach_line = [line for line in md.split("\n") if "**Approach:**" in line][0]
-        approach_text = approach_line.replace("**Approach:** ", "")
-        assert len(approach_text) <= 153  # 147 chars + "..."
+        assert long_approach in approach_line
+
+    def test_includes_experiments_and_impact_chain(self):
+        proposal = _make_proposal("a")
+        proposal["rank"] = 1
+        proposal["weighted_score"] = 3.0
+
+        md = format_ranked_output([proposal])
+
+        assert "**Experiments:** Experiment 1: ..." in md
+        assert "**Impact Chain:** If X then Y then Z." in md
+
+    def test_includes_alternative_framings_and_cited_sources(self):
+        proposal = _make_proposal("a")
+        proposal["rank"] = 1
+        proposal["weighted_score"] = 3.0
+        proposal["sections"]["alternative_framings"] = ["Framing A", "Framing B"]
+        proposal["sections"]["cited_sources"] = ["Source 1", "Source 2"]
+
+        md = format_ranked_output([proposal])
+
+        assert "**Alternative Framings:** Framing A; Framing B" in md
+        assert "**Cited Sources:** Source 1; Source 2" in md
+
+    def test_includes_strength_rationale(self):
+        proposal = _make_proposal("a")
+        proposal["rank"] = 1
+        proposal["weighted_score"] = 3.0
+        proposal["sections"]["strength_rationale"] = "This is strong because X."
+
+        md = format_ranked_output([proposal])
+
+        assert "**Strength Rationale:** This is strong because X." in md
 
 
 class TestPersistIdeas:
