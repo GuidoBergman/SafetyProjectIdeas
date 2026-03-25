@@ -1056,6 +1056,71 @@ class TestFilterSurvivorsEdgeCases:
         assert len(batch) == 2
         assert {b["idea_id"] for b in batch} == {"gen-001", "gen-003"}
 
+    def test_create_batches_stage2_enriches_with_original_idea(self, tmp_path):
+        """Stage 2+ batches include original_idea from the generate stage."""
+        from safety_ideas.pipeline.generate import write_idea_sketch
+
+        # Write generate-stage ideas with full body
+        idea_data = {
+            "idea_id": "gen-001",
+            "run_id": "test-run",
+            "subfield": "interpretability",
+            "generation_strategy": "novel_direction",
+            "confidence": 0.8,
+            "title": "Full Idea Title",
+            "problem": "A detailed problem description",
+            "direction": "A detailed approach direction",
+            "why_it_matters": "Impact explanation",
+            "relevant_context": "Paper A. Paper B.",
+        }
+        write_idea_sketch(tmp_path, idea_data)
+
+        # Create stage 1 survivors (minimal output, no body)
+        results_dir = tmp_path / "filter_score" / "results" / "stage1"
+        results_dir.mkdir(parents=True)
+        results = [
+            {
+                "idea_id": "gen-001",
+                "title": "Full Idea Title",
+                "run_id": "test-run",
+                "quick_score": 4,
+                "eliminated": False,
+            },
+        ]
+        with open(results_dir / "batch_001_results.json", "w") as f:
+            json.dump(results, f)
+
+        filter_survivors(tmp_path, stage=1)
+
+        # Create stage 2 batches — should be enriched
+        paths = create_batches(tmp_path, stage=2, batch_size=10)
+        batch = read_batch(paths[0])
+
+        assert len(batch) == 1
+        item = batch[0]
+        assert "original_idea" in item
+        assert item["original_idea"]["body"] is not None
+        assert "detailed problem" in item["original_idea"]["body"]
+        assert item["original_idea"]["idea_id"] == "gen-001"
+
+    def test_create_batches_stage2_without_generate_data(self, tmp_path):
+        """Stage 2+ batches work even if generate data is missing for some ideas."""
+        results_dir = tmp_path / "filter_score" / "results" / "stage1"
+        results_dir.mkdir(parents=True)
+        results = [
+            {"idea_id": "gen-099", "eliminated": False, "title": "Unknown Idea"},
+        ]
+        with open(results_dir / "batch_001_results.json", "w") as f:
+            json.dump(results, f)
+
+        filter_survivors(tmp_path, stage=1)
+
+        # No generate directory exists — should still work, just no enrichment
+        paths = create_batches(tmp_path, stage=2, batch_size=10)
+        batch = read_batch(paths[0])
+        assert len(batch) == 1
+        assert "original_idea" not in batch[0]
+
     def test_empty_results_writes_empty_survivors(self, tmp_path):
         results_dir = tmp_path / "filter_score" / "results" / "stage1"
         results_dir.mkdir(parents=True)

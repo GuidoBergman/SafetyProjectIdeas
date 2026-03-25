@@ -249,7 +249,9 @@ def create_batches(run_dir: Path, stage: int, batch_size: int) -> list[Path]:
     """Partition ideas into batch files for a given scoring stage.
 
     Stage 1 reads ideas from the generate directory.
-    Stages 2+ read survivors from the previous stage.
+    Stages 2+ read survivors from the previous stage, enriched with the
+    original idea data from the generate stage so downstream stages and
+    the refine stage have access to the full idea body.
 
     Args:
         run_dir: Run directory path.
@@ -267,6 +269,15 @@ def create_batches(run_dir: Path, stage: int, batch_size: int) -> list[Path]:
         survivors_file = _survivors_dir(run_dir) / f"stage{stage - 1}_survivors.json"
         with open(survivors_file) as f:
             ideas = json.load(f)
+
+        # Enrich survivors with original idea data from the generate stage.
+        # Previous stage outputs drop the idea body; without this, downstream
+        # stages and the refine stage cannot access the full idea content.
+        originals = {i["idea_id"]: i for i in read_idea_sketches(run_dir)}
+        for idea in ideas:
+            idea_id = idea.get("idea_id", "")
+            if idea_id in originals:
+                idea["original_idea"] = originals[idea_id]
 
     batch_out = _batch_dir(run_dir, stage)
     batch_out.mkdir(parents=True, exist_ok=True)
