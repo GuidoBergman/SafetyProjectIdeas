@@ -227,89 +227,30 @@ Launch **one Agent subagent per batch**, all in a single message. These subagent
 
 > You are assessing novelty and verifying citations for AI Safety research ideas.
 >
-> **IMPORTANT — Source reading policy:** Only read abstracts, summaries, and introductions — never full papers. For novelty assessment, targeted deep reading of specific sections (discussion, limitations, future work) is permitted via the paper_fetcher module when abstract-level evidence is insufficient.
+> **Step 1:** Read the novelty check protocol:
+> Read the file `.claude/commands/novelty-check.md`. This contains the full Novelty Assessment Protocol (steps N1-N5) and Citation Verification Protocol (steps C1-C3), including rubrics, tool commands, classification criteria, and error handling. Follow it exactly.
 >
-> **Novelty Classification Rubric:**
-> - **already_solved** (score 1): Existing published work FULLY addresses this idea — the proposed research would not produce new knowledge. You must cite the specific paper(s).
-> - **largely_addressed** (score 2): Multiple published works cover most of the proposed contribution; remaining gaps are minor.
-> - **partially_addressed** (score 3): Published work exists on the topic but the specific angle/method/combination proposed has not been explored.
-> - **mostly_novel** (score 4): No direct published work on this specific proposal; related work exists in adjacent areas.
-> - **novel** (score 5): No published work found addressing this question or approach.
->
-> **HARD GATE:** If classification is "already_solved", the idea is eliminated immediately.
->
-> **Citation Relevance Rubric (verification threshold: [THRESHOLD]):**
-> [FULL CITATION RELEVANCE RUBRIC from show-citation-relevance]
->
-> **Citation removal consequences:**
-> - Relevance 3 (Substantive): Flag with warning, idea survives
-> - Relevance 4 (Load-bearing): Confidence penalty, re-score affected criterion, attempt rewrite
-> - Relevance 5 (Foundational): Attempt rewrite; eliminate if idea cannot stand without it
->
-> **Confidence Rubric:**
-> [FULL CONFIDENCE RUBRIC]
->
-> **Step 1:** Read your batch:
+> **Step 2:** Read your batch:
 > ```bash
 > uv run python -m safety_ideas.pipeline.filter_score read-batch [BATCH_PATH]
 > ```
 >
-> **Step 2:** For EACH idea in the batch, perform:
+> **Step 3:** For EACH idea in the batch, execute the full protocol from `novelty-check.md`:
+> - Run the **Novelty Assessment Protocol** (steps N1-N5): literature search, evidence collection, deep reading if needed, classification, validation
+> - Run the **Citation Verification Protocol** (steps C1-C3): relevance scoring, verification, consequence application
+> - The protocol's Setup section loads the rubric configs — run those commands once before processing ideas
 >
-> **2a — Novelty Assessment:**
-> - Use WebSearch to search for existing work on ArXiv, Semantic Scholar, and Google Scholar
-> - Collect evidence: for each relevant paper, note source, title, url, summary
-> - If any evidence papers warrant deeper reading (abstract suggests overlap but degree is ambiguous), fetch sections:
->   ```bash
->   uv run python -m safety_ideas.connectors.paper_fetcher fetch-batch '<json_array_of_urls>'
->   ```
-> - Classify novelty using the rubric above
-> - Validate and format:
->   ```bash
->   uv run python -m safety_ideas.pipeline.novelty format '<novelty_json>'
->   ```
->
-> **2b — Citation Relevance & Verification:**
-> - Score each citation's relevance (1-5) using the rubric
-> - For citations at or above the threshold, verify via:
->   ```bash
->   uv run python -m safety_ideas.verification.citation lookup-idea '<idea_json>'
->   ```
-> - Judge each verified citation: verified, corrected, or removed
-> - For citations about to be removed, try WebSearch with paper title + authors first
-> - Apply consequences for removed citations based on relevance level
->
-> **Step 3:** Build a JSON array of results. For each idea:
+> **Step 4:** Build a JSON array of results using the **Output Format** from `novelty-check.md`, with one additional field per idea:
 > ```json
 > {
->   "idea_id": "<id>",
->   "title": "<title>",
 >   "run_id": "<run_id>",
->   "novelty_assessment": {
->     "classification": "<one of the 5 levels>",
->     "evidence": [{"source": "<src>", "title": "<paper>", "url": "<url>", "summary": "<relevance>"}],
->     "confidence": <0.0-1.0>,
->     "derived_score": <1-5>,
->     "reasoning": "<2-4 sentences>"
->   },
->   "citation_verification": {
->     "relevance_scores": [{"citation": {...}, "relevance_score": <1-5>, "relevance_label": "<label>", "relevance_reasoning": "<1 sentence>"}],
->     "verified": [{"citation": {...}, "reason": "<1 sentence>"}],
->     "corrected": [{"original": {...}, "corrected": {...}, "reason": "<1 sentence>"}],
->     "removed": [{"citation": {...}, "reason": "<1 sentence>", "relevance_score": <int>}]
->   },
->   "scores_updates": {<criterion_name>: {"score": <new>, "reasoning": "<updated>", "confidence": <new>}},
->   "eliminated": <true if already_solved or foundational citation removed and unrewritable>,
->   "elimination_reason": <null or reason string>
+>   ...all fields from the novelty-check output format...
 > }
 > ```
 >
-> If web search fails for an idea: classify as "mostly_novel" (conservative — do not eliminate).
-> If citation lookup APIs fail: keep all citations as-is, record "api_unavailable".
->
 > Do NOT skip any ideas.
 >
-> **Step 4:** Write results:
+> **Step 5:** Write results:
 > ```bash
 > uv run python -m safety_ideas.pipeline.filter_score write-batch-results [RESULT_PATH] '<json_array>'
 > ```
@@ -379,7 +320,6 @@ Tell the coordinator:
 ## Error Handling
 
 - **Subagent failure**: After each wave, check if any batch result files are missing. Re-launch failed batches once. If retry also fails, mark those ideas as eliminated with "Scoring failed: subagent error" and add a warning to the pipeline log.
-- **Web search failure** (Wave 3): classify as "mostly_novel" by default (conservative — do not eliminate)
-- **Citation lookup API failure** (Wave 3): note unverified status, keep all citations as-is, record "api_unavailable"
+- **Wave 3 errors**: Error handling for novelty assessment and citation verification is defined in `novelty-check.md` — subagents follow those rules (conservative defaults, no false eliminations)
 - **Scoring failure** for individual ideas within a subagent: log the error within the batch results and continue with remaining ideas
 - Always produce output even with degraded sources — partial scoring is better than none
