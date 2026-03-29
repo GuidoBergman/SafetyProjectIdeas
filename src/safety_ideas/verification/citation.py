@@ -13,7 +13,12 @@ import urllib.error
 import urllib.request
 from urllib.parse import quote
 
+from dotenv import load_dotenv
+
+from safety_ideas.constants import PROJECT_ROOT
 from safety_ideas.utils import retry_on_rate_limit
+
+load_dotenv(PROJECT_ROOT / ".env")
 
 logger = logging.getLogger(__name__)
 

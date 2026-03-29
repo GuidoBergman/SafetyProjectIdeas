@@ -5,36 +5,28 @@
 
 ---
 
-## #1: Jailbreak Benchmark Contamination Check: Are Safety Evaluations Inflated by Training Data Overlap? (Score: 4.43)
+## #1: StrongREJECT Contamination Check: Are Deployment Safety Scores Inflated by Training Data Overlap? (Score: 4.61)
 
 **ID:** gen-0017
 
-**Research Question:** To what extent does if harmful prompts from public jailbreak benchmarks (jailbreakbench, strongreject) are present in safety fine-tuning datasets, models may appear more robust than they are — they have memorized refusal?
+**Research Question:** OpenAI reports StrongREJECT scores in system cards for GPT-4o, o1, and GPT-4.5, using a "goodness@0.1" metric that measures safety against the top 10% of jailbreak techniques per prompt. Have models memorized defenses against the specific template wordings in StrongREJECT, or have they learned to resist the underlying attack strategies? If defenses are template-specific rather than strategy-general, reported safety scores overestimate real-world robustness.
 
-**Approach:** Take a set of 100 harmful prompts from JailbreakBench and StrongREJECT. For each prompt, generate 5 semantically equivalent paraphrases using a separate model. Test attack success rate on originals vs. paraphrases on 3-5 commonly evaluated models. A large gap (originals refused, paraphrases not) is evidence of memorization rather than generalization. Compute contamination index as the ASR ratio paraphrase/original.
+**Approach:** Select ~19 linguistic/semantic jailbreak templates from StrongREJECT where strategy is separable from surface wording. Generate 3-5 paraphrased variants per template preserving attack strategy. Test on reporting models (GPT-4o, GPT-4o-mini) vs. non-reporting models (Llama-3-8B-Instruct, Mistral-7B-Instruct). Compute contamination index per template as ASR ratio variant/original. Full template set at github.com/dsbowen/strong_reject.
 
-**Experiments:** Experiment 1 (Baseline): Set up experimental framework with a small public model. Replicate core measurement to establish baseline. ~8 hours.
-Experiment 2 (Core): Apply methodology to target scenario. Measure primary metric vs baseline. ~12 hours.
-Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations. ~10 hours.
+**Experiments:** Experiment 1 (~8h): Extract 19 templates, select 10 forbidden prompts, generate 3 variants each, build eval harness with StrongREJECT evaluator, baseline on one open model. Experiment 2 (~12h): Core measurement on 2 model groups, contamination index by strategy family, novel template controls. Experiment 3 (~10h): Bootstrap CIs, statistical comparison, strategy-family breakdown, blog post. Follow-up: Min-K% Prob on base vs. instruct models.
 
-**Impact Chain:** Benchmark contamination would mean safety evaluations are systematically overestimating robustness. This is a straightforward experiment with high impact: it either validates or undermines the field's primary evaluation methodology.
+**Impact Chain:** OpenAI reports StrongREJECT scores in system cards. If models memorized defenses against exact template wordings rather than learning to resist underlying strategies, reported safety scores overestimate robustness. StrongREJECT is the only public jailbreak dataset with verified deployment-level usage in system cards.
 
-**Strength Rationale:** theory_of_impact (5/5): Compelling chain addressing a critical problem: if benchmark contamination inflates safety scores, the entire field's evaluation methodology is undermined. The contamination index has independent value as a standard metric. Either outcome is highly informative.
+**Strength Rationale:** theory_of_impact (4/5): Strong chain targeting OpenAI's public safety reporting. Bounded impact — StrongREJECT is one input to deployment decisions. accessible_complexity (5/5): Standard Python + API calls + StrongREJECT evaluator. No ML training. narrow_scope (5/5): ~19 templates x 10 prompts, contamination index table by strategy family. Fits 30 hours. novelty (4/5, confidence 0.65): Strategy/surface distinction established (Adversarial Déjà Vu, EDDF). Rephrasing-gap methodology known (Yang et al.). But no work applies template-level contamination detection to a deployment-used safety benchmark with reporting vs. non-reporting model comparison.
 
-accessible_complexity (5/5): Paraphrase prompts using an LLM, run them against models via API or local inference, compare ASR. No ML training required. Standard Python scripting with publicly available benchmarks and models. Highly beginner-friendly.
+**Cited Sources:** StrongREJECT (NeurIPS 2024); OpenAI Safety Evaluations Hub; Adversarial Déjà Vu (arXiv:2510.21910); EDDF (ACL 2025 Findings); SG-Bench (NeurIPS 2024); Andriushchenko et al. (ICLR 2025); Yang et al. (2023); Shi et al. (2023); HarmBench (ICML 2024); GuardVal (Jul 2025); MLCommons AILuminate (2025-2026)
 
-narrow_scope (5/5): Tightly scoped: take 100 prompts, generate paraphrases, test originals vs. paraphrases, compute ASR ratio. Single clear experiment with obvious deliverable (contamination index table). Easily fits in 30 hours.
-
-novelty (3/5): Benchmark contamination in LLMs is a well-studied problem. The ICML 2025 paper 'How Much Can We Forget about Data Contamination?' directly addresses contamination effects on benchmarks. JailbreakBench (NeurIPS 2024) and GuardVal specifically tackle dynamic generation to reduce contamination risk. SafetyPrompts.com catalogs contamination-prone benchmarks. However, the specific framing of computing a 'contamination index' by comparing ASR on original vs. paraphrased jailbreak prompts to measure inflation of safety scores is a narrower and partially novel operationalization. The general problem is known; the specific paraphrase-based methodology adds incremental novelty.
-
-**Cited Sources:** How Much Can We Forget about Data Contamination? (ICML 2025) - directly studies contamination effects on benchmarks; JailbreakBench (NeurIPS 2024) - open robustness benchmark acknowledging contamination risks; GuardVal - dynamic jailbreak evaluation to minimize data contamination risks; SafetyPrompts.com - catalog of safety evaluation datasets noting contamination concerns
-
-**Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
+**Subfield:**  | **Strategy:**  | **Novelty:** mostly_novel (novelty_web_search)
 **Scores:**
-  - **theory_of_impact:** 4, confidence: 0.8 — Strong chain: benchmark contamination -> inflated safety evaluations -> false confidence in model robustness. Every link explicit and testable.
-  - **accessible_complexity:** 5, confidence: 0.9 — Paraphrase generation + API calls + ASR comparison. No ML training. Standard Python scripting.
-  - **narrow_scope:** 5, confidence: 0.9 — Single experiment: 100 prompts, 5 paraphrases each, compare ASR. Clear contamination index metric. Completable well within 30hrs.
-  - **novelty:** 3, confidence: 0.6 — From novelty assessment: partially_addressed
+  - **theory_of_impact:** 4, confidence: 0.8 — Targets OpenAI's StrongREJECT reporting. Contamination index has independent diagnostic value.
+  - **accessible_complexity:** 5, confidence: 0.9 — LLM paraphrasing + API calls + StrongREJECT evaluator. Standard Python.
+  - **narrow_scope:** 5, confidence: 0.9 — 19 templates x 10 prompts, contamination index by strategy family. Fits 30 hours.
+  - **novelty:** 4, confidence: 0.65 — From novelty assessment: mostly_novel
 **Provenance:** , sources: 0 KB, 0 web
 
 ---
@@ -141,39 +133,11 @@ novelty (3/5): The two constituent pieces are individually well-studied: Qi et a
 
 ---
 
-## #5: Emergent Misalignment via In-Context Learning in Smaller Open Models (Score: 4.43)
+## ~~#5: Emergent Misalignment via In-Context Learning in Smaller Open Models (Score: 4.43)~~ **ELIMINATED**
 
-**ID:** gen-0866
+**ID:** gen-0866 | **Status:** Eliminated — largely addressed by existing literature
 
-**Research Question:** To what extent does arxiv 2510.11288 showed that in-context examples (rather than fine-tuning) can produce broadly misaligned responses in llms. this in-context emergent misalignment was demonstrated on proprietary model?
-
-**Approach:** Using the methodology from arXiv 2510.11288, construct in-context few-shot prompts containing narrow misaligned examples (insecure code without disclosure, or bad medical advice), then test whether models like Llama-3.2-3B, Qwen2.5-7B, or Mistral-7B produce misaligned responses to unrelated benign questions in the same context. No fine-tuning required — this is purely inference-time. Compare misalignment rates to reported results for larger models.
-
-**Experiments:** Experiment 1 (Baseline): Set up experimental framework with a small public model. Replicate core measurement to establish baseline. ~8 hours.
-Experiment 2 (Core): Apply methodology to target scenario. Measure primary metric vs baseline. ~12 hours.
-Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations. ~10 hours.
-
-**Impact Chain:** If in-context emergent misalignment works in small models, it represents a zero-compute-cost attack surface requiring no fine-tuning access. This is relevant for prompt injection and jailbreak research. Extremely accessible: no training, just API/local inference.
-
-**Strength Rationale:** theory_of_impact (4/5): If in-context emergent misalignment works in small models, it is a zero-compute-cost attack surface requiring no fine-tuning access. This is relevant for prompt injection and jailbreak research. Clear and important chain.
-
-accessible_complexity (5/5): No fine-tuning required—purely inference-time experiment. Construct few-shot prompts and measure responses. Extremely accessible for CS students. Can run locally or via free APIs.
-
-narrow_scope (5/5): Purely inference-time experiment: construct prompts, run them, measure misalignment rate. No training, no infrastructure. Single clear deliverable: misalignment rates across small models. Well under 30 hours.
-
-novelty (3/5): No novelty assessment available; default estimated score assigned.
-
-**Alternative Framings:** Benchmark: Emergent Misalignment via In-Context Learning in Smaller Ope: Reframed for maximum feasibility. (est. score: 4.25); Novel Angle: Emergent Misalignment via In-Context Learning in Smaller Ope: Reframed for novelty. (est. score: 4.61)
-
-**Cited Sources:** Emergent Misalignment via In-Context Learning (arXiv 2510.11288) demonstrated that narrow in-context examples produce broad misalignment in LLMs without fine-tuning; The paper did not focus on open-weight small models; Model Organisms work showed that text-based triggers work in models as small as 0.5B
-
-**Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:**
-  - **theory_of_impact:** 4, confidence: 0.8 — Strong chain: in-context emergent misalignment -> zero-compute attack surface requiring no fine-tuning -> prompt injection risk.
-  - **accessible_complexity:** 5, confidence: 0.9 — Purely inference-time. Construct few-shot prompts and measure. No training or infrastructure needed.
-  - **narrow_scope:** 5, confidence: 0.9 — Construct prompts, run inference, measure misalignment rate. Single clear deliverable.
-  - **novelty:** 3, confidence: 0.6 — From novelty assessment: partially_addressed
-**Provenance:** , sources: 0 KB, 0 web
+**Elimination reason:** arXiv 2510.11288 tested ICL on Qwen; arXiv 2511.20104 covered open-weight models 1B-32B; arXiv 2506.11613 covered models down to 0.5B across Qwen/Llama/Gemma; multiple replications on exact proposed models (Llama-3.1-8B, Qwen2.5-7B). Novelty reclassified from partially_addressed (3) to largely_addressed (2).
 
 ---
 
@@ -213,111 +177,27 @@ novelty (3/5): No novelty assessment available; default estimated score assigned
 
 ---
 
-## #7: Anchoring Bias in Model Overseers: Do Model Overseers Anchor on the First Response in a Comparison? (Score: 4.43)
+## ~~#7: Anchoring Bias in Model Overseers: Do Model Overseers Anchor on the First Response in a Comparison? (Score: 4.43)~~
 
-**ID:** gen-1171
+**ELIMINATED** | **ID:** gen-1171
 
-**Research Question:** To what extent does human overseers show anchoring bias (preferring whichever response is presented first). model overseers may show the same bias, which would be systematically exploitable?
-
-**Approach:** Present the same pair of responses to a model overseer in both orders (A before B, B before A). Measure how often the overseer changes its preference based on presentation order. Quantify the anchoring effect and test whether it is consistent across response pairs.
-
-**Experiments:** Experiment 1 (Baseline): Set up experimental framework with a small public model. Replicate core measurement to establish baseline. ~8 hours.
-Experiment 2 (Core): Apply methodology to target scenario. Measure primary metric vs baseline. ~12 hours.
-Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations. ~10 hours.
-
-**Impact Chain:** If model overseers have anchoring bias, the presentation order of training examples becomes a security-relevant parameter. This is a concrete, testable oversight failure mode.
-
-**Strength Rationale:** theory_of_impact (4/5): Clear chain: if model overseers have anchoring bias, presentation order becomes a security-relevant parameter in RLHF pipelines. Directly identifies an exploitable failure mode in oversight systems.
-
-accessible_complexity (5/5): Extremely simple experimental setup: present the same pair in both orders and compare. Requires only API access to a model overseer. No complex infrastructure, no training, no adversarial generation. Beginners can implement this straightforwardly.
-
-narrow_scope (5/5): Single deliverable: a table of preference-flip rates across response pairs. One clear metric (flip rate). Well within 30 hours even with dataset curation time.
-
-novelty (3/5): No novelty assessment available; default estimated score assigned.
-
-**Alternative Framings:** Benchmark: Anchoring Bias in Model Overseers: Do Model Overseers Anchor: Reframed for maximum feasibility. (est. score: 4.25); Novel Angle: Anchoring Bias in Model Overseers: Do Model Overseers Anchor: Reframed for novelty. (est. score: 4.61)
-
-**Cited Sources:** Systematic overseer errors; overseer bias mapping; failure mode investigation
-
-**Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:**
-  - **theory_of_impact:** 4, confidence: 0.8 — Strong chain: anchoring bias in model overseers -> exploitable oversight failure -> undermines scalable oversight which is critical for advanced AI safety.
-  - **accessible_complexity:** 5, confidence: 0.95 — Present pairs in both orders, compare preferences. Only API access needed.
-  - **narrow_scope:** 5, confidence: 0.9 — Single metric: preference flip rate. One clear deliverable table.
-  - **novelty:** 3, confidence: 0.6 — From novelty assessment: partially_addressed
-**Provenance:** , sources: 0 KB, 0 web
+**Reason:** Already solved. Position bias in LLM-as-judge pairwise comparisons has been extensively studied since 2023 (Zheng et al. MT-Bench, "Judging the Judges" 2024, "Justice or Prejudice" 2024). The proposed experiment (swap order, measure flip rate) is the standard methodology already used across this literature. Multiple mitigation techniques already exist.
 
 ---
 
-## #8: Does CoT Monitor Performance Degrade with Longer Reasoning Traces? (Score: 4.43)
+## ~~#8: Does CoT Monitor Performance Degrade with Longer Reasoning Traces? (Score: 4.43)~~ **ELIMINATED**
 
 **ID:** gen-1290
 
-**Research Question:** To what extent does cot monitorability is claimed to improve with longer cot, but longer traces also give more surface for the model to include irrelevant or misleading text that confuses a monitor?
-
-**Approach:** Sample MALT runs stratified by CoT token length. Train a simple logistic regression monitor on CoT embeddings (using sentence-transformers, accessible to intro-ML students) and plot AUROC as a function of CoT length buckets. Test whether the relationship is monotone or has a degradation region.
-
-**Experiments:** Experiment 1 (Baseline): Set up experimental framework with a small public model. Replicate core measurement to establish baseline. ~8 hours.
-Experiment 2 (Core): Apply methodology to target scenario. Measure primary metric vs baseline. ~12 hours.
-Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations. ~10 hours.
-
-**Impact Chain:** If extremely long CoTs degrade monitor accuracy, this challenges the assumption that reasoning models become more monitorable as they scale. It would motivate research into length-robust monitoring strategies.
-
-**Strength Rationale:** theory_of_impact (4/5): If long CoTs degrade monitor accuracy, this challenges a key assumption about reasoning model monitorability. Directly motivates research into length-robust monitoring strategies.
-
-accessible_complexity (5/5): Uses publicly available MALT dataset, sentence-transformers for embeddings, and logistic regression. Explicitly designed as accessible to intro-ML students. Single-GPU embedding computation. Very beginner-friendly.
-
-narrow_scope (5/5): Single focused analysis: stratify by CoT length, compute embeddings, train logistic regression, plot AUROC by length bucket. Extremely well-scoped deliverable achievable well within 30 hours.
-
-novelty (3/5): No novelty assessment available; default estimated score assigned.
-
-**Alternative Framings:** Benchmark: Does CoT Monitor Performance Degrade with Longer Reasoning T: Reframed for maximum feasibility. (est. score: 4.25); Novel Angle: Does CoT Monitor Performance Degrade with Longer Reasoning T: Reframed for novelty. (est. score: 4.61)
-
-**Cited Sources:** The pragmatic monitorability measurement paper (arxiv 2510.23966) proposes legibility and coverage metrics; MALT dataset is publicly available with 7,179 runs across 18 models; Single-GPU embedding computation is feasible for intro-ML students
-
-**Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:**
-  - **theory_of_impact:** 4, confidence: 0.8 — Strong chain: if long CoTs degrade monitoring -> challenges core assumption about reasoning model safety -> motivates length-robust monitoring.
-  - **accessible_complexity:** 5, confidence: 0.9 — MALT dataset + sentence-transformers + logistic regression. Designed for intro-ML students.
-  - **narrow_scope:** 5, confidence: 0.9 — Stratify by length, compute embeddings, train logistic regression, plot AUROC by bucket. Very focused.
-  - **novelty:** 3, confidence: 0.6 — From novelty assessment: partially_addressed
-**Provenance:** , sources: 0 KB, 0 web
+**Elimination reason:** Core hypothesis (longer CoT traces degrade monitor performance) directly contradicted by Guan et al. "Monitoring Monitorability" (OpenAI, Dec 2025) which found monitorability increases with CoT length across 13 evaluations and 24 environments. Corroborated by MacDermott et al. "Reasoning Under Pressure" (Dec 2025). Novelty: largely_addressed (2/5, verified).
 
 ---
 
-## #9: Effect of System Prompt Length on CoT Monitorability (Score: 4.43)
+## ~~#9: Effect of System Prompt Length on CoT Monitorability (Score: 4.43)~~ **ELIMINATED**
 
 **ID:** gen-1300
 
-**Research Question:** To what extent does cot monitorability studies typically use standardized or minimal system prompts. real deployments use long system prompts (tools, personas, context). whether long system prompts compress or displace s?
-
-**Approach:** Using a fixed set of reward-hacking scenarios from MALT, vary system prompt length (0, 500, 2000, 5000 tokens of benign instructional text) prepended to the prompt. Run a fixed prompted monitor on each and measure AUROC. Report whether monitorability degrades with system prompt length.
-
-**Experiments:** Experiment 1 (Baseline): Set up experimental framework with a small public model. Replicate core measurement to establish baseline. ~8 hours.
-Experiment 2 (Core): Apply methodology to target scenario. Measure primary metric vs baseline. ~12 hours.
-Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations. ~10 hours.
-
-**Impact Chain:** Enterprise deployments routinely use long system prompts. If monitor accuracy degrades with system prompt length, labs need to account for context window competition when designing monitoring pipelines for real products.
-
-**Strength Rationale:** theory_of_impact (4/5): Enterprise deployments routinely use long system prompts. Finding that monitor accuracy degrades with prompt length would be immediately actionable for deployment design guidelines.
-
-accessible_complexity (5/5): Only requires API calls with varying system prompt lengths. No model training, no GPU needed. Straightforward experimental design. Perfectly suited for CS students at beginner level.
-
-narrow_scope (5/5): Single independent variable (system prompt length), 4 conditions, one metric (AUROC). Minimal setup, clear deliverable. Easily fits within 30 hours even with generous margins.
-
-novelty (3/5): No novelty assessment available; default estimated score assigned.
-
-**Alternative Framings:** Benchmark: Effect of System Prompt Length on CoT Monitorability: Reframed for maximum feasibility. (est. score: 4.25); Novel Angle: Effect of System Prompt Length on CoT Monitorability: Reframed for novelty. (est. score: 4.61)
-
-**Cited Sources:** CoT monitorability measurement paper (arxiv 2510.23966) defines coverage as key metric; MALT provides standard reward-hacking scenarios; Experiment requires only API calls, making it feasible for CS students
-
-**Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:**
-  - **theory_of_impact:** 4, confidence: 0.8 — Strong chain: long system prompts -> monitor accuracy degrades -> enterprise deployments have monitoring blind spots. Real-world deployment concern.
-  - **accessible_complexity:** 5, confidence: 0.9 — API calls with varying system prompt lengths. No model training, no GPU. Straightforward.
-  - **narrow_scope:** 5, confidence: 0.9 — Single IV (prompt length), 4 conditions, one metric (AUROC). Minimal setup.
-  - **novelty:** 3, confidence: 0.6 — From novelty assessment: partially_addressed
-**Provenance:** , sources: 0 KB, 0 web
+**Elimination reason:** No defensible mechanism: in a well-designed monitoring pipeline, the monitor does not receive the agent's system prompt. If the system prompt is given to the agent, any effect on CoT quality reduces to the already-known "context rot" phenomenon (longer context degrades LLM performance). The research question either tests a trivially avoidable deployment mistake or reproduces a known general finding applied to monitoring.
 
 ---
 
@@ -351,141 +231,63 @@ Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations
 
 ---
 
-## #11: CoT Scratchpad Truncation as a Monitor Evasion Vector: Measuring Detectability Loss (Score: 4.43)
+## ~~#11: CoT Scratchpad Truncation as a Monitor Evasion Vector: Measuring Detectability Loss (Score: 4.43)~~ **[ELIMINATED]**
 
 **ID:** gen-1311
 
-**Research Question:** To what extent does current frontier models sometimes produce truncated or abbreviated cot. if a model strategically truncates its cot to hide reasoning, monitors lose signal. the metr note that models struggle to evade ?
-
-**Approach:** Prompt Llama-3-8B to solve MALT reward-hacking tasks in two conditions: normal CoT and minimized CoT ('think briefly'). Apply the standard MALT prompted monitor to both. Measure AUROC drop from normal to minimized CoT condition. Report whether CoT length alone predicts monitor failure.
-
-**Experiments:** Experiment 1 (Baseline): Set up experimental framework with a small public model. Replicate core measurement to establish baseline. ~8 hours.
-Experiment 2 (Core): Apply methodology to target scenario. Measure primary metric vs baseline. ~12 hours.
-Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations. ~10 hours.
-
-**Impact Chain:** If forcing brief CoT reliably evades monitors, this means any instruction-following model can trivially degrade CoT monitoring quality simply by being instructed to be concise, which is a common real-world deployment instruction.
-
-**Strength Rationale:** accessible_complexity (5/5): Two prompting conditions on the same tasks, then applying a prompted monitor to both. Entirely API-based. No model training or GPU needed. Extremely s narrow_scope (5/5): Two conditions (normal vs minimized CoT), one dataset, one metric (AUROC drop). Minimal setup. Easily completed in under 30 hours.
-
-**Alternative Framings:** Benchmark: CoT Scratchpad Truncation as a Monitor Evasion Vector: Measu: Reframed for maximum feasibility. (est. score: 4.25); Novel Angle: CoT Scratchpad Truncation as a Monitor Evasion Vector: Measu: Reframed for novelty. (est. score: 4.61)
-
-**Cited Sources:** METR note (2025-08-22) shows models struggle to evade monitors organically; Monitorability paper notes coverage (completeness of CoT) as a key component; MALT dataset provides standard test scenarios; API-accessible, feasible for CS students
-
-**Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:**
-  - **theory_of_impact:** 4, confidence: 0.8 — Strong chain: 'think briefly' instruction -> CoT truncation -> monitor evasion. Common deployment instruction is an attack vector.
-  - **accessible_complexity:** 5, confidence: 0.9 — Two prompting conditions. Entirely API-based. No training or GPU.
-  - **narrow_scope:** 5, confidence: 0.9 — Two conditions (normal vs minimized CoT), one dataset, one metric (AUROC drop).
-  - **novelty:** 3, confidence: 0.6 — From novelty assessment: partially_addressed
-**Provenance:** , sources: 0 KB, 0 web
+**Elimination Reason:** Superseded by existing work: OpenAI CoT-Control eval suite (March 2026) empirically shows models cannot strategically control their CoT (0.1%-15.4% controllability). Combined with METR (2025) and CoT Monitorability paper (2025), the core thesis has been addressed. No meaningful gap remains.
 
 ---
 
-## #12: Prefilling Attack Depth: Does Forcing More Tokens of Harmful Preamble Increase Attack Success? (Score: 4.43)
+## ~~#12: Prefilling Attack Depth: Does Forcing More Tokens of Harmful Preamble Increase Attack Success? (Score: 4.43)~~ **[ELIMINATED]**
 
 **ID:** gen-1459
 
-**Research Question:** To what extent does prefilling attacks typically force the model to begin with 'sure, here is...' (1-2 tokens). it is unknown whether forcing longer preambles (e.g., 10-20 tokens of harmful content) further degrades safe?
-
-**Approach:** Systematically vary prefill length (0, 1, 3, 5, 10, 20 tokens of a harmful sentence) on Llama-3-8B-Instruct and Mistral-7B-Instruct. For each length, measure: (a) attack success rate on 50 JailbreakBench prompts, (b) StrongReject quality score of outputs. Plot a prefill-depth vs. safety curve.
-
-**Experiments:** Experiment 1 (Baseline): Set up experimental framework with a small public model. Replicate core measurement to establish baseline. ~8 hours.
-Experiment 2 (Core): Apply methodology to target scenario. Measure primary metric vs baseline. ~12 hours.
-Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations. ~10 hours.
-
-**Impact Chain:** Directly tests the Qi et al. theory that pushing past initial refusal tokens undermines all downstream safety. Has implications for API safety policies that block partial outputs.
-
-**Strength Rationale:** theory_of_impact (4/5): Directly tests the Qi et al. shallow alignment theory mechanistically. Has clear implications for API safety policies that block partial outputs. Strong causal chain from finding to policy recommendation.
-
-accessible_complexity (5/5): Prefilling attacks are trivially implemented via the assistant turn in API calls or local inference. Varying prefill length is a simple parameter sweep. StrongReject evaluator is public. No complex infrastructure needed. Very beginner-friendly.
-
-narrow_scope (5/5): Single variable (prefill length) with 6 conditions, 2 models, 50 prompts. Clear deliverable: a prefill-depth vs. safety curve. Extremely well-scoped, easily fits in 30 hours.
-
-novelty (3/5): No novelty assessment available; default estimated score assigned.
-
-**Alternative Framings:** Benchmark: Prefilling Attack Depth: Does Forcing More Tokens of Harmful: Reframed for maximum feasibility. (est. score: 4.25); Novel Angle: Prefilling Attack Depth: Does Forcing More Tokens of Harmful: Reframed for novelty. (est. score: 4.61)
-
-**Cited Sources:** Qi et al; ICLR 2025 (shallow alignment, prefilling as one of four vulnerability types); Prefilling attacks are trivially implemented via the system prompt or API assistant turn
-
-**Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:**
-  - **theory_of_impact:** 4, confidence: 0.5 — From filter_score assessment
-  - **accessible_complexity:** 5, confidence: 0.5 — From filter_score assessment
-  - **narrow_scope:** 5, confidence: 0.5 — From filter_score assessment
-  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
-**Provenance:** , sources: 0 KB, 0 web
+**Elimination Reason:** Largely addressed by existing literature. Qi et al. (ICLR 2025) Figure 1 directly shows per-token KL divergence curve demonstrating the prefill-depth vs. safety relationship. Prefill-level Jailbreak (2504.21038) provides systematic analysis across 14 models. Vega et al. (2512.05518) already use StrongREJECT for prefilling evaluation. At least 6 papers cover this space; the proposed experiment would confirm established theory without producing new knowledge.
 
 ---
 
-## #13: Minimum Necessary Data for Reliable Concept Vector Extraction (Score: 4.43)
+## ~~#13: Minimum Necessary Data for Reliable Concept Vector Extraction (Score: 4.43)~~ **[ELIMINATED]**
 
 **ID:** gen-1547
 
-**Research Question:** To what extent does beaglehole et al. use fewer than 500 samples; it is unknown whether reliable safety concept vectors can be extracted with even fewer samples, which matters for rare safety concepts with limited traini?
-
-**Approach:** Conduct a data efficiency experiment: extract toxicity and hallucination concept vectors with 10, 25, 50, 100, 250, and 500 contrastive pairs and plot probe accuracy vs. data size, identifying the minimum sample count for above-threshold reliability.
-
-**Experiments:** Experiment 1 (Baseline): Set up experimental framework with a small public model. Replicate core measurement to establish baseline. ~8 hours.
-Experiment 2 (Core): Apply methodology to target scenario. Measure primary metric vs baseline. ~12 hours.
-Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations. ~10 hours.
-
-**Impact Chain:** Rare safety concepts (e.g., specific bioweapon synthesis, novel jailbreak types) may have fewer than 100 available contrastive examples; knowing the minimum sample requirement determines whether concept steering is feasible for these concepts.
-
-**Strength Rationale:** theory_of_impact (4/5): Clear chain: knowing the minimum sample count for reliable concept extraction directly determines whether steering is feasible for rare safety concepts (bioweapons, novel jailbreaks). Practically important for deployment coverage.
-
-accessible_complexity (5/5): A data efficiency curve is one of the simplest experiments possible: subsample an existing dataset at different sizes, extract vectors, measure accuracy, plot. No new methods needed. Uses existing contrastive datasets and code. Minimal compute. Perfect for beginners.
-
-narrow_scope (5/5): Extremely tightly scoped: vary one parameter (dataset size), measure one metric (probe accuracy), plot the learning curve. Single clear deliverable. Easily completable in under 15 hours.
-
-novelty (3/5): No novelty assessment available; default estimated score assigned.
-
-**Alternative Framings:** Benchmark: Minimum Necessary Data for Reliable Concept Vector Extractio: Reframed for maximum feasibility. (est. score: 4.25); Novel Angle: Minimum Necessary Data for Reliable Concept Vector Extractio: Reframed for novelty. (est. score: 4.61)
-
-**Cited Sources:** Beaglehole et al; report sub-500 sample efficiency as a selling point but do not characterize the lower bound; Data efficiency is a practical constraint for rare safety concepts
-
-**Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:**
-  - **theory_of_impact:** 4, confidence: 0.5 — From filter_score assessment
-  - **accessible_complexity:** 5, confidence: 0.5 — From filter_score assessment
-  - **narrow_scope:** 5, confidence: 0.5 — From filter_score assessment
-  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
-**Provenance:** , sources: 0 KB, 0 web
+**Elimination reason:** Insufficient motivation: <500 contrastive samples is already trivially cheap (<1 min on single GPU), synthetic pairs can be generated for any concept, and one-shot gradient-optimized steering (Dunefsky & Cohan 2025) provides an alternative for truly data-scarce scenarios.
 
 ---
 
-## #14: Monitor Consistency Failure: Do Repeated Queries to the Same Monitor Yield Inconsistent Verdicts? (Score: 4.43)
+## #14: Monitor Consistency Failure: Do Repeated Queries to the Same Monitor Yield Inconsistent Verdicts? (Score: 4.61)
 
 **ID:** gen-1577
 
-**Research Question:** To what extent does llm monitors are stochastic—querying the same trajectory twice may yield different suspicion verdicts due to temperature sampling. this inconsistency is a failure mode that has not been quantified, ye?
+**Research Question:** LLM monitors are stochastic — querying the same agent trajectory twice may yield different suspicion verdicts due to temperature sampling. This inconsistency is a failure mode that has not been quantified for safety monitors operating on adversarial agent trajectories. How large is the variance, and does it concentrate on the borderline cases where monitoring reliability matters most?
 
-**Approach:** For each SHADE-Arena trajectory, query a standard LLM monitor 10 times with temperature > 0. Measure variance in suspicion scores and flip rate (fraction of cases where the majority verdict differs from minority verdict). Identify whether inconsistency is higher on borderline cases (medium suspicion scores). Test whether majority-vote ensembling eliminates this failure mode.
+**Approach:** Using the ScaleAI/MRT dataset (pre-generated agent transcripts with monitor verdicts from "Reliable Weak-to-Strong Monitoring of LLM Agents"), re-query an LLM monitor on the same transcripts 10 times with temperature > 0. Measure variance in suspicion scores and flip rate (fraction of cases where the majority verdict differs from minority verdict). Stratify by adversarial strategy and original score region to test whether inconsistency concentrates on borderline or adversarial cases.
 
-**Experiments:** Experiment 1 (Baseline): Set up experimental framework with a small public model. Replicate core measurement to establish baseline. ~8 hours.
-Experiment 2 (Core): Apply methodology to target scenario. Measure primary metric vs baseline. ~12 hours.
-Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations. ~10 hours.
+**Experiments:** Experiment 1 — Variance measurement (~12h): Download MRT transcripts from HuggingFace. Select a representative subset (~50-100 transcripts spanning benign, sabotage, and different adversarial strategies). Query a monitor LLM 10× per transcript at temperature 0.7. Compute per-transcript score variance and flip rate relative to ground-truth labels. Stratify by adversarial strategy and original score region.
+Experiment 2 — Majority-vote mitigation (~10h): Simulate majority-vote ensembles at k=3, 5, 10 from the repeated queries. Measure flip rate reduction and accuracy improvement against ground truth. Report the cost multiplier vs accuracy gain curve.
+Write-up (~8h): Analyze results and produce blog post.
 
-**Impact Chain:** Stochastic monitoring inconsistency means safety guarantees based on monitoring outcomes have an unacknowledged random component. Quantifying and mitigating this is practically important.
+**Impact Chain:** Stochastic monitoring inconsistency means safety guarantees based on monitoring outcomes have an unacknowledged random component. If monitor verdicts flip on the same transcript due to sampling noise — especially on borderline adversarial cases where detection matters most — then single-query monitoring provides weaker safety guarantees than assumed. Quantifying this directly informs deployment decisions about when and how to ensemble monitor queries.
 
-**Strength Rationale:** theory_of_impact (4/5): Stochastic inconsistency in monitoring means safety guarantees have an unacknowledged random component. Quantifying this and testing majority-vote mitigation has direct practical value for deployment reliability.
+**Strength Rationale:** theory_of_impact (4/5): Stochastic inconsistency in monitoring means safety guarantees have an unacknowledged random component. Quantifying this has direct practical value for deployment reliability.
 
-accessible_complexity (5/5): Query the same API 10 times per trajectory and compute variance. This is the simplest possible experiment: repeated API calls and basic statistics. No ML training, no complex setup. Ideal for beginners.
+accessible_complexity (5/5): Query the same API 10 times per transcript and compute variance. This is the simplest possible experiment: repeated API calls and basic statistics. No ML training, no complex setup. MRT transcripts are pre-generated on HuggingFace. Ideal for beginners.
 
-narrow_scope (5/5): Extremely well-defined: run monitor 10 times per trajectory, compute variance, flip rate, and test majority vote. Single clear deliverable. Easily completable within 30 hours even accounting for API costs.
+narrow_scope (5/5): Extremely well-defined: download transcripts, run monitor 10 times per transcript, compute variance and flip rate. Single clear deliverable. Easily completable within 30 hours even accounting for API costs.
 
-novelty (3/5): No novelty assessment available; default estimated score assigned.
+novelty (4/5, confidence 0.7): No published work has systematically measured intra-model stochastic variance of safety monitors on adversarial agent trajectories. The MRT paper (Kale et al.) measures monitor reliability under adversarial conditions but treats each query as a single evaluation. CTRL-ALT-DECEIT notes aggregation helps but doesn't quantify variance or flip rates.
 
 **Alternative Framings:** Benchmark: Monitor Consistency Failure: Do Repeated Queries to the Same: Reframed for maximum feasibility. (est. score: 4.25); Novel Angle: Monitor Consistency Failure: Do Repeated Queries to the Same: Reframed for novelty. (est. score: 4.61)
 
-**Cited Sources:** LLM output variance is well-documented in standard benchmarks but has not been specifically studied for monitoring consistency; This experiment is cheap (API calls only) and produces a clear, publishable finding
+**Cited Sources:** Kale et al. (2025). "Reliable Weak-to-Strong Monitoring of LLM Agents." arXiv:2508.19461; Kutasov et al. (2025). "SHADE-Arena." arXiv:2506.15740; Lau (2026). "Same Input, Different Scores." arXiv:2603.04417; Broadwater (2026). "APST." arXiv:2602.11786; Ward et al. (2025). "CTRL-ALT-DECEIT." arXiv:2511.09904.
 
-**Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
+**Subfield:**  | **Strategy:**  | **Novelty:** mostly_novel (novelty_web_search)
 **Scores:**
-  - **theory_of_impact:** 4, confidence: 0.5 — From filter_score assessment
-  - **accessible_complexity:** 5, confidence: 0.5 — From filter_score assessment
-  - **narrow_scope:** 5, confidence: 0.5 — From filter_score assessment
-  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
-**Provenance:** , sources: 0 KB, 0 web
+  - **theory_of_impact:** 4, confidence: 0.7 — Stochastic inconsistency in monitoring means safety guarantees have an unacknowledged random component.
+  - **accessible_complexity:** 5, confidence: 0.8 — Repeated API calls and basic statistics on pre-generated transcripts.
+  - **narrow_scope:** 5, confidence: 0.8 — Download transcripts, run monitor 10 times, compute variance and flip rate.
+  - **novelty:** 4, confidence: 0.7 — No published work has measured intra-model stochastic variance of safety monitors on adversarial agent trajectories.
+**Provenance:** , sources: 0 KB, 4 web
 
 ---
 

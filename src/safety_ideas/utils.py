@@ -41,7 +41,7 @@ def load_yaml(path: Path) -> dict:
 def retry_on_rate_limit(
     fn: Callable[[], T],
     *,
-    max_retries: int = 4,
+    max_retries: int = 10,
     initial_delay: float = 1.0,
     backoff_factor: float = 2.0,
     sleep_fn: Callable[[float], None] = time.sleep,
