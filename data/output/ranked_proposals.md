@@ -67,33 +67,11 @@ novelty (3/5): No novelty assessment available; default estimated score assigned
 
 ---
 
-## #3: Instruction Hierarchy Violations: Do Models Prioritize User Harm Requests Over System Prompt Safety Rules? (Score: 4.43)
+## ~~#3: Instruction Hierarchy Violations: Do Models Prioritize User Harm Requests Over System Prompt Safety Rules? (Score: 4.43)~~ **[ELIMINATED]**
 
 **ID:** gen-0127
 
-**Research Question:** To what extent does models receive instructions from both system prompts (operator level) and user turns (user level). a safety failure occurs when user-level harmful requests override system-prompt safety constraints?
-
-**Approach:** Design 30 scenarios with a safety-constraining system prompt (e.g., 'You are a children's educational assistant; never discuss violence') and a user-level request that violates the constraint. Vary the pressure level of the user request (mild, moderate, persistent). Evaluate 2–3 models. Measure instruction hierarchy compliance and identify conditions under which user requests override operator constraints.
-
-**Experiments:** Experiment 1 (Baseline): Set up experimental framework with a small public model. Replicate core measurement to establish baseline. ~8 hours.
-Experiment 2 (Core): Apply methodology to target scenario. Measure primary metric vs baseline. ~12 hours.
-Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations. ~10 hours.
-
-**Impact Chain:** Instruction hierarchy robustness is a real deployment safety concern, especially for enterprise applications that rely on system prompts to enforce safety policies. No standard benchmark directly tests this.
-
-**Strength Rationale:** accessible_complexity (5/5): Accessible: designing system prompts and user requests, then measuring compliance rates, requires only basic prompt engineering and API calls. Highly  narrow_scope (5/5): Tightly scoped: 30 scenarios times 3 pressure levels times 2-3 models is a well-bounded experiment with a clear binary outcome measure.
-
-**Alternative Framings:** Benchmark: Instruction Hierarchy Violations: Do Models Prioritize User : Reframed for maximum feasibility. (est. score: 4.04); Novel Angle: Instruction Hierarchy Violations: Do Models Prioritize User : Reframed for novelty. (est. score: 4.39)
-
-**Cited Sources:** The Instruction Hierarchy: Training LLMs to Prioritize Privileged Instructions (OpenAI, 2024); Control Illusion: The Failure of Instruction Hierarchies in LLMs (2025); A Closer Look at System Prompt Robustness (2025); Improving LLM Safety with Instruction Hierarchies (ICLR 2025); Reasoning Up the Instruction Ladder (2025)
-
-**Subfield:** Evaluations & Benchmarks | **Strategy:** novel_direction | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:**
-  - **theory_of_impact:** 4, confidence: 0.8 — Strong chain: user requests override system safety constraints -> key deployment safety mechanism fails -> enterprise safety policies bypassed.
-  - **accessible_complexity:** 5, confidence: 0.9 — Prompt design + API calls. Binary compliance measurement. Highly accessible.
-  - **narrow_scope:** 5, confidence: 0.85 — 30 scenarios x 3 pressure levels x 2-3 models. Well-bounded with clear binary outcome measure.
-  - **novelty:** 3, confidence: 0.6 — From novelty assessment: partially_addressed
-**Provenance:** novel_direction, sources: 0 KB, 0 web
+**Elimination reason:** Novelty re-assessment (2026-03-26) reclassified idea as largely_addressed (score 2/5). Multiple 2025 papers directly address the core question: Control Illusion (6 models, systematic conflict evaluation), A Closer Look at System Prompt Robustness (comprehensive benchmark), Evaluating LLM Agent Adherence to Hierarchical Safety Principles (lightweight benchmark with conflict scenarios). Proposed methodology is a subset of existing work at smaller scale.
 
 ---
 
@@ -291,39 +269,11 @@ novelty (4/5, confidence 0.7): No published work has systematically measured int
 
 ---
 
-## #15: Intrusion Detection CUSUM Transfer: Applying Sequential Change-Point Detection to AI Agent Monitoring (Score: 4.43)
+## ~~#15: Intrusion Detection CUSUM Transfer: Applying Sequential Change-Point Detection to AI Agent Monitoring (Score: 4.43)~~
 
-**ID:** gen-1580
+**ELIMINATED** | **ID:** gen-1580
 
-**Research Question:** To what extent does intrusion detection systems have used cusum (cumulative sum) change-point detection for decades to detect when network behavior shifts from baseline. this technique has never been applied to monitorin?
-
-**Approach:** Baseline a small AI agent's normal tool-call frequency distribution on 50 benign ControlArena trajectories. Implement CUSUM over a rolling window of tool-call statistics. Inject 10 malicious trajectories from SHADE-Arena and measure whether CUSUM detects a behavioral change-point before the sabotage action occurs. Compare CUSUM to a simple threshold monitor.
-
-**Experiments:** Experiment 1 (Baseline): Set up experimental framework with a small public model. Replicate core measurement to establish baseline. ~8 hours.
-Experiment 2 (Core): Apply methodology to target scenario. Measure primary metric vs baseline. ~12 hours.
-Experiment 3 (Robustness): Test sensitivity to key parameters with 2+ variations. ~10 hours.
-
-**Impact Chain:** CUSUM has O(1) per-step computation, making it extremely low-latency. If it provides early warning of behavioral change even before an unambiguously malicious action occurs, it could be a valuable lightweight component in a monitoring stack.
-
-**Strength Rationale:** theory_of_impact (4/5): CUSUM as lightweight early warning adds a genuinely novel monitoring layer. If it detects behavioral change before sabotage, it provides advance warning that action-level monitors cannot. Clear safety improvement mechanism.
-
-accessible_complexity (5/5): CUSUM is a simple algorithm (scipy.stats implementation). Featurizing tool-call frequency is basic data processing. No ML training needed. Comparing to a threshold monitor is trivial. Ideal for CS students with intro background.
-
-narrow_scope (5/5): Extremely well-scoped: baseline on 50 benign trajectories, implement CUSUM, test on 10 malicious. Single algorithm, single comparison. Clear deliverable. Easily completable in under 20 hours.
-
-novelty (3/5): No novelty assessment available; default estimated score assigned.
-
-**Alternative Framings:** Benchmark: Intrusion Detection CUSUM Transfer: Applying Sequential Chan: Reframed for maximum feasibility. (est. score: 4.25); Novel Angle: Intrusion Detection CUSUM Transfer: Applying Sequential Chan: Reframed for novelty. (est. score: 4.61)
-
-**Cited Sources:** CUSUM is standard in network IDS (e.g., detecting DDoS); Aviation FOQA anomaly detection also uses sequential monitoring; Implementing CUSUM is basic Python (scipy.stats); No ML training required
-
-**Subfield:**  | **Strategy:**  | **Novelty:** partially_addressed (novelty_estimated)
-**Scores:**
-  - **theory_of_impact:** 4, confidence: 0.5 — From filter_score assessment
-  - **accessible_complexity:** 5, confidence: 0.5 — From filter_score assessment
-  - **narrow_scope:** 5, confidence: 0.5 — From filter_score assessment
-  - **novelty:** 3, confidence: 0.5 — From filter_score assessment
-**Provenance:** , sources: 0 KB, 0 web
+**Reason:** Trivially gameable as a control idea: CUSUM monitors content-agnostic tool-call metadata (frequency, timing, tool type), so a scheming agent can maintain normal statistical patterns while sabotaging through the content of its tool calls. The defense does not survive the standard AI Control threat model where the agent actively tries to circumvent monitoring.
 
 ---
 

@@ -2,6 +2,20 @@
 
 Collaboratively evaluate, refine, and strengthen a research idea — whether it comes from the pipeline or is submitted fresh by the user.
 
+## Idea Tracker
+
+The idea tracker (`IDEA_TRACKER_FILE` from `src/saim/constants.py`, default: `data/output/idea_tracker.md`) tracks the review status of every ranked idea. **You must update the tracker at each status transition during this skill.**
+
+Status values:
+- **Not reviewed** — default, idea has not been reviewed by the human
+- **Not promising** — the collaborator manually marked this idea as not promising
+- **Removed** — the idea was eliminated
+- **Evaluating** — the idea is currently being evaluated with this skill
+- **Added and needs manual review** — the idea was added to the selected ideas file and needs the human to manually review the content added
+- **Added** — the idea was added to the selected ideas file and the content was reviewed by the human
+
+To update the tracker, find the row matching the idea's ID in `data/output/idea_tracker.md` and replace the Status cell value.
+
 ## Setup
 
 Load scoring configuration (criteria with rubrics and active weights):
@@ -33,6 +47,8 @@ Ask the coordinator how they want to provide the idea:
 > 2. **New idea** — describe it and we'll build it up together
 
 ### If existing idea (option 1):
+
+**Immediately update the idea tracker** status to **"Evaluating"** for this idea.
 
 First check if the idea exists in the **selected ideas file** (`SELECTED_IDEAS_FILE`). If it does, treat that version as the most up-to-date — it may have been edited directly by the coordinator. Also read `data/ideas/<idea_id>.md` for the full YAML frontmatter. If the two versions differ, prefer the selected ideas file content and note the discrepancy.
 
@@ -129,9 +145,10 @@ This is the core of the skill. Present the current state of the idea and enter a
 > 5. **Refine experiments** — design or improve first experiments
 > 6. **Improve impact chain** — strengthen the theory of why this matters
 > 7. **Check novelty** — search literature for related work
-> 8. **Remove** — eliminate the idea (mark as eliminated with reason; does not delete files)
-> 9. **Save** — write the idea (with improvements) everywhere it exists
-> 10. **Done** — end session
+> 8. **Not promising** — mark the idea as not promising (no file changes, just tracker update)
+> 9. **Remove** — eliminate the idea (mark as eliminated with reason; does not delete files)
+> 10. **Save** — write the idea (with improvements) everywhere it exists
+> 11. **Done** — end session
 >
 > Or just tell me what's on your mind — you don't have to pick from the list.
 
@@ -182,9 +199,11 @@ Run the full novelty assessment and citation verification protocol from Step 3 (
 ### If remove (eliminate):
 "Removing" an idea means marking it as **eliminated** — not deleting files. Pipeline history is preserved for auditability.
 
+0. **Idea tracker** — update the idea's status to **"Removed"** in `data/output/idea_tracker.md`.
+
 1. **`data/ideas/<idea_id>.md`** — add `eliminated: true` and `elimination_reason: '<reason>'` to the YAML frontmatter. Update `novelty_classification`, `novelty_score`, and `novelty_method` if the elimination was driven by a novelty assessment.
 
-2. **Ranked proposals** — in both `data/output/ranked_proposals.md` and `data/runs/<run_id>/rank/ranked_proposals.md` (if they exist), replace the idea's full section with a short eliminated stub: strike through the heading, add an **ELIMINATED** badge, and include the elimination reason. In the corresponding `.json` file, add `eliminated: true` and `elimination_reason` fields to the idea's entry.
+2. **Ranked proposals** — in both `data/output/ranked_proposals.md` and `data/runs/<run_id>/rank/ranked_proposals.md` (if they exist), remove the idea's content but keep the heading. Add an **[ELIMINATED]** badge right after the heading and an `Elimination reason: <reason>` line below it. The section should contain only the heading, badge, and reason — no other content. In the corresponding `.json` file, add `eliminated: true` and `elimination_reason` fields to the idea's entry.
 
 3. **Selected ideas file** — if the idea appears in the selected ideas file (`SELECTED_IDEAS_FILE`), remove its section entirely (eliminated ideas should not remain in the curated selection).
 
@@ -192,7 +211,12 @@ Run the full novelty assessment and citation verification protocol from Step 3 (
 
 Report which files were updated.
 
+### If not promising:
+The collaborator has marked this idea as not promising. Update the idea tracker status to **"Not promising"** in `data/output/idea_tracker.md`. Do not modify any other files. Return to the refinement menu.
+
 ### If save:
+
+**Idea tracker — update status to "Added and needs manual review"** in `data/output/idea_tracker.md`. The status will change to "Added" only when the human confirms they have reviewed the content in the selected ideas file.
 
 **Novelty gate — MANDATORY before saving:**
 Before writing any files, check the idea's `novelty_method` field. If it is `"novelty_estimated"`, `null`, or missing, the idea has only estimated novelty — which is unreliable and must not be saved:

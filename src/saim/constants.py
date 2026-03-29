@@ -13,6 +13,7 @@ OUTPUT_DIR = DATA_DIR / "output"
 RUNS_DIR = DATA_DIR / "runs"
 IDEAS_DIR = DATA_DIR / "ideas"
 SELECTED_IDEAS_FILE = OUTPUT_DIR / "selected_ideas.md"
+IDEA_TRACKER_FILE = OUTPUT_DIR / "idea_tracker.md"
 
 # Config file paths
 TEAMS_CONFIG = CONFIG_DIR / "teams.yaml"

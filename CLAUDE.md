@@ -20,6 +20,7 @@ SAIM (Safety Idea Machine) is an AI Safety Research Idea Generation Pipeline for
 - `src/saim/kb/` — Knowledge base management (placeholder)
 - `config/` — YAML config files (teams, criteria, pipeline settings, KB criteria, participants/)
 - `data/` — Pipeline outputs: `ideas/`, `kb/`, `output/`, `runs/`
+- `data/output/idea_tracker.md` — Master tracker for all ranked ideas. Each idea has a status column tracking its review state: "Not reviewed" (default), "Not promising", "Removed", "Evaluating", "Added and needs manual review", "Added". The evaluate-idea skill updates this status as ideas move through the evaluation workflow.
 - `.claude/commands/` — Claude Code skills: generate-ideas, score-ideas, configure-teams, research-landscape
 
 ## Conventions
