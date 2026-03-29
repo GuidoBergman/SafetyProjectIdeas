@@ -2,14 +2,14 @@
 
 import json
 
-from safety_ideas.config.schemas import (
+from saim.config.schemas import (
     QuickFilterConfig,
     RubricLevel,
     ScoringCriteria,
     StageThreshold,
     TeamProfile,
 )
-from safety_ideas.pipeline.filter_score import (
+from saim.pipeline.filter_score import (
     apply_weights,
     create_batches,
     filter_survivors,
@@ -1058,7 +1058,7 @@ class TestFilterSurvivorsEdgeCases:
 
     def test_create_batches_stage2_enriches_with_original_idea(self, tmp_path):
         """Stage 2+ batches include original_idea from the generate stage."""
-        from safety_ideas.pipeline.generate import write_idea_sketch
+        from saim.pipeline.generate import write_idea_sketch
 
         # Write generate-stage ideas with full body
         idea_data = {

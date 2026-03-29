@@ -1,4 +1,4 @@
-"""Shared utility functions for Safety Ideas."""
+"""Shared utility functions for SAIM."""
 
 from __future__ import annotations
 

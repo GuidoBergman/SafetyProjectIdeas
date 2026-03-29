@@ -2,7 +2,7 @@
 
 from unittest.mock import MagicMock, patch
 
-from safety_ideas.connectors.paper_fetcher import (
+from saim.connectors.paper_fetcher import (
     _extract_arxiv_id,
     _extract_lw_post_id,
     _extract_sections_from_text,
@@ -140,14 +140,14 @@ class TestExtractSectionsFromText:
 
 class TestFetchArxivSections:
     @patch(
-        "safety_ideas.connectors.paper_fetcher._fetch_arxiv_abstract",
+        "saim.connectors.paper_fetcher._fetch_arxiv_abstract",
         return_value=None,
     )
     @patch(
-        "safety_ideas.connectors.paper_fetcher._fetch_arxiv_pdf",
+        "saim.connectors.paper_fetcher._fetch_arxiv_pdf",
         return_value=None,
     )
-    @patch("safety_ideas.connectors.paper_fetcher._fetch_arxiv_html")
+    @patch("saim.connectors.paper_fetcher._fetch_arxiv_html")
     def test_html_success(self, mock_html, mock_pdf, mock_abstract):
         mock_html.return_value = {
             "url": "https://arxiv.org/html/2401.12345",
@@ -158,10 +158,10 @@ class TestFetchArxivSections:
         assert "discussion" in result["sections"]
         mock_pdf.assert_not_called()
 
-    @patch("safety_ideas.connectors.paper_fetcher._fetch_arxiv_abstract")
-    @patch("safety_ideas.connectors.paper_fetcher._fetch_arxiv_pdf")
+    @patch("saim.connectors.paper_fetcher._fetch_arxiv_abstract")
+    @patch("saim.connectors.paper_fetcher._fetch_arxiv_pdf")
     @patch(
-        "safety_ideas.connectors.paper_fetcher._fetch_arxiv_html",
+        "saim.connectors.paper_fetcher._fetch_arxiv_html",
         return_value=None,
     )
     def test_falls_back_to_pdf(self, mock_html, mock_pdf, mock_abstract):
@@ -173,13 +173,13 @@ class TestFetchArxivSections:
         assert result is not None
         mock_pdf.assert_called_once()
 
-    @patch("safety_ideas.connectors.paper_fetcher._fetch_arxiv_abstract")
+    @patch("saim.connectors.paper_fetcher._fetch_arxiv_abstract")
     @patch(
-        "safety_ideas.connectors.paper_fetcher._fetch_arxiv_pdf",
+        "saim.connectors.paper_fetcher._fetch_arxiv_pdf",
         return_value=None,
     )
     @patch(
-        "safety_ideas.connectors.paper_fetcher._fetch_arxiv_html",
+        "saim.connectors.paper_fetcher._fetch_arxiv_html",
         return_value=None,
     )
     def test_falls_back_to_abstract(self, mock_html, mock_pdf, mock_abs):
@@ -193,7 +193,7 @@ class TestFetchArxivSections:
 
 
 class TestFetchLwContent:
-    @patch("safety_ideas.connectors.paper_fetcher.httpx.post")
+    @patch("saim.connectors.paper_fetcher.httpx.post")
     def test_successful_fetch(self, mock_post):
         mock_response = MagicMock()
         mock_response.status_code = 200
@@ -214,7 +214,7 @@ class TestFetchLwContent:
         assert result is not None
         assert "AI safety" in result["content"]
 
-    @patch("safety_ideas.connectors.paper_fetcher.httpx.post")
+    @patch("saim.connectors.paper_fetcher.httpx.post")
     def test_empty_response(self, mock_post):
         mock_response = MagicMock()
         mock_response.status_code = 200
@@ -231,8 +231,8 @@ class TestFetchLwContent:
 
 
 class TestFetchBlogContent:
-    @patch("safety_ideas.connectors.paper_fetcher.trafilatura.extract")
-    @patch("safety_ideas.connectors.paper_fetcher.trafilatura.fetch_url")
+    @patch("saim.connectors.paper_fetcher.trafilatura.extract")
+    @patch("saim.connectors.paper_fetcher.trafilatura.fetch_url")
     def test_successful_fetch(self, mock_fetch, mock_extract):
         mock_fetch.return_value = "<html><body>Blog content</body></html>"
         mock_extract.return_value = "Clean blog post about AI safety"
@@ -241,8 +241,8 @@ class TestFetchBlogContent:
         assert result is not None
         assert result["content"] == "Clean blog post about AI safety"
 
-    @patch("safety_ideas.connectors.paper_fetcher._fetch_html_with_httpx")
-    @patch("safety_ideas.connectors.paper_fetcher.trafilatura.fetch_url")
+    @patch("saim.connectors.paper_fetcher._fetch_html_with_httpx")
+    @patch("saim.connectors.paper_fetcher.trafilatura.fetch_url")
     def test_download_failure(self, mock_fetch, mock_httpx):
         mock_fetch.return_value = None
         mock_httpx.return_value = None
@@ -250,14 +250,14 @@ class TestFetchBlogContent:
 
 
 class TestFetchDeepContent:
-    @patch("safety_ideas.connectors.paper_fetcher.fetch_arxiv_sections")
+    @patch("saim.connectors.paper_fetcher.fetch_arxiv_sections")
     def test_dispatches_arxiv(self, mock_arxiv):
         mock_arxiv.return_value = {"url": "...", "sections": {"discussion": "t"}}
         result = fetch_deep_content("https://arxiv.org/abs/2401.12345")
         mock_arxiv.assert_called_once_with("2401.12345")
         assert result is not None
 
-    @patch("safety_ideas.connectors.paper_fetcher.fetch_lw_content")
+    @patch("saim.connectors.paper_fetcher.fetch_lw_content")
     def test_dispatches_lesswrong(self, mock_lw):
         mock_lw.return_value = {"url": "...", "content": "text"}
         url = "https://www.lesswrong.com/posts/abc/my-post"
@@ -265,21 +265,21 @@ class TestFetchDeepContent:
         mock_lw.assert_called_once_with(url)
         assert result is not None
 
-    @patch("safety_ideas.connectors.paper_fetcher.fetch_lw_content")
+    @patch("saim.connectors.paper_fetcher.fetch_lw_content")
     def test_dispatches_af(self, mock_lw):
         mock_lw.return_value = {"url": "...", "content": "text"}
         url = "https://www.alignmentforum.org/posts/abc/my-post"
         fetch_deep_content(url)
         mock_lw.assert_called_once_with(url)
 
-    @patch("safety_ideas.connectors.paper_fetcher.fetch_blog_content")
+    @patch("saim.connectors.paper_fetcher.fetch_blog_content")
     def test_dispatches_blog(self, mock_blog):
         mock_blog.return_value = {"url": "...", "content": "text"}
         url = "https://anthropic.com/research/x"
         fetch_deep_content(url)
         mock_blog.assert_called_once_with(url)
 
-    @patch("safety_ideas.connectors.paper_fetcher.fetch_blog_content")
+    @patch("saim.connectors.paper_fetcher.fetch_blog_content")
     def test_unknown_domain_uses_trafilatura(self, mock_blog):
         mock_blog.return_value = {"url": "...", "content": "text"}
         fetch_deep_content("https://example.com/some-page")

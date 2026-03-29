@@ -3,12 +3,12 @@
 import pytest
 import yaml
 
-from safety_ideas.config.participants import (
+from saim.config.participants import (
     get_participant_or_none,
     list_participants,
     load_participant,
 )
-from safety_ideas.config.schemas import ParticipantProfile
+from saim.config.schemas import ParticipantProfile
 
 
 @pytest.fixture
@@ -110,7 +110,7 @@ class TestGetParticipantOrNone:
 class TestLoadDefaultParticipant:
     def test_load_guido_profile(self):
         """Integration test: load the sample guido.yaml profile."""
-        from safety_ideas.constants import PARTICIPANTS_DIR
+        from saim.constants import PARTICIPANTS_DIR
 
         if not (PARTICIPANTS_DIR / "guido.yaml").exists():
             pytest.skip("guido.yaml not found")

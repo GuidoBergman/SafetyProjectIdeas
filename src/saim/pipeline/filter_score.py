@@ -4,7 +4,7 @@ import json
 from datetime import UTC, datetime
 from pathlib import Path
 
-from safety_ideas.config.schemas import (
+from saim.config.schemas import (
     QuickFilterConfig,
     ScoringCriteria,
     StageThreshold,
@@ -261,7 +261,7 @@ def create_batches(run_dir: Path, stage: int, batch_size: int) -> list[Path]:
     Returns:
         List of paths to the written batch files.
     """
-    from safety_ideas.pipeline.generate import read_idea_sketches
+    from saim.pipeline.generate import read_idea_sketches
 
     if stage == 1:
         ideas = read_idea_sketches(run_dir)
@@ -374,7 +374,7 @@ def main() -> None:
     import sys
 
     if len(sys.argv) < 2:
-        print("Usage: python -m safety_ideas.pipeline.filter_score <command> <run_dir> [args]")
+        print("Usage: python -m saim.pipeline.filter_score <command> <run_dir> [args]")
         sys.exit(1)
 
     cmd = sys.argv[1]

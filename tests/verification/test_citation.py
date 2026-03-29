@@ -3,7 +3,7 @@
 import json
 from unittest.mock import MagicMock, patch
 
-from safety_ideas.verification.citation import (
+from saim.verification.citation import (
     lookup_citations,
     lookup_doi,
     search_crossref,
@@ -26,7 +26,7 @@ def _mock_urlopen(response_data: dict | str) -> MagicMock:
 
 
 class TestLookupDoi:
-    @patch("safety_ideas.verification.citation.urllib.request.urlopen")
+    @patch("saim.verification.citation.urllib.request.urlopen")
     def test_returns_metadata_on_success(self, mock_urlopen_fn):
         crossref_response = {
             "message": {
@@ -47,7 +47,7 @@ class TestLookupDoi:
         assert result["authors"] == ["Ashish Vaswani", "Noam Shazeer"]
         assert result["url"] == "https://doi.org/10.1234/test"
 
-    @patch("safety_ideas.verification.citation.urllib.request.urlopen")
+    @patch("saim.verification.citation.urllib.request.urlopen")
     def test_returns_none_on_404(self, mock_urlopen_fn):
         import urllib.error
 
@@ -56,14 +56,14 @@ class TestLookupDoi:
         )
         assert lookup_doi("10.9999/nonexistent") is None
 
-    @patch("safety_ideas.verification.citation.urllib.request.urlopen")
+    @patch("saim.verification.citation.urllib.request.urlopen")
     def test_returns_none_on_network_error(self, mock_urlopen_fn):
         import urllib.error
 
         mock_urlopen_fn.side_effect = urllib.error.URLError("Connection refused")
         assert lookup_doi("10.1234/test") is None
 
-    @patch("safety_ideas.verification.citation.urllib.request.urlopen")
+    @patch("saim.verification.citation.urllib.request.urlopen")
     def test_handles_missing_fields(self, mock_urlopen_fn):
         crossref_response = {"message": {}}
         mock_urlopen_fn.return_value = _mock_urlopen(crossref_response)
@@ -75,7 +75,7 @@ class TestLookupDoi:
 
 
 class TestSearchCrossref:
-    @patch("safety_ideas.verification.citation.urllib.request.urlopen")
+    @patch("saim.verification.citation.urllib.request.urlopen")
     def test_returns_candidates(self, mock_urlopen_fn):
         crossref_response = {
             "message": {
@@ -104,7 +104,7 @@ class TestSearchCrossref:
         assert results[0]["authors"] == ["Alice Smith"]
         assert results[1]["doi"] == "10.1234/paper2"
 
-    @patch("safety_ideas.verification.citation.urllib.request.urlopen")
+    @patch("saim.verification.citation.urllib.request.urlopen")
     def test_returns_empty_on_no_results(self, mock_urlopen_fn):
         crossref_response = {"message": {"items": []}}
         mock_urlopen_fn.return_value = _mock_urlopen(crossref_response)
@@ -112,7 +112,7 @@ class TestSearchCrossref:
         results = search_crossref("Nonexistent Paper")
         assert results == []
 
-    @patch("safety_ideas.verification.citation.urllib.request.urlopen")
+    @patch("saim.verification.citation.urllib.request.urlopen")
     def test_returns_empty_on_network_error(self, mock_urlopen_fn):
         import urllib.error
 
@@ -121,7 +121,7 @@ class TestSearchCrossref:
 
 
 class TestSearchSemanticScholar:
-    @patch("safety_ideas.verification.citation.urllib.request.urlopen")
+    @patch("saim.verification.citation.urllib.request.urlopen")
     def test_returns_candidates(self, mock_urlopen_fn):
         response_data = {
             "data": [
@@ -136,7 +136,7 @@ class TestSearchSemanticScholar:
         assert results[0]["paperId"] == "abc123"
         assert results[0]["title"] == "Test Paper Title"
 
-    @patch("safety_ideas.verification.citation.urllib.request.urlopen")
+    @patch("saim.verification.citation.urllib.request.urlopen")
     def test_returns_empty_on_no_results(self, mock_urlopen_fn):
         response_data = {"data": []}
         mock_urlopen_fn.return_value = _mock_urlopen(response_data)
@@ -144,14 +144,14 @@ class TestSearchSemanticScholar:
         results = search_semantic_scholar("Nonexistent Paper")
         assert results == []
 
-    @patch("safety_ideas.verification.citation.urllib.request.urlopen")
+    @patch("saim.verification.citation.urllib.request.urlopen")
     def test_returns_empty_on_network_error(self, mock_urlopen_fn):
         import urllib.error
 
         mock_urlopen_fn.side_effect = urllib.error.URLError("Connection refused")
         assert search_semantic_scholar("Some Paper") == []
 
-    @patch("safety_ideas.verification.citation.urllib.request.urlopen")
+    @patch("saim.verification.citation.urllib.request.urlopen")
     @patch.dict("os.environ", {"S2_API_KEY": "test-key-123"})
     def test_sends_api_key_header_when_set(self, mock_urlopen_fn):
         response_data = {"data": []}
@@ -162,7 +162,7 @@ class TestSearchSemanticScholar:
         req = mock_urlopen_fn.call_args[0][0]
         assert req.get_header("X-api-key") == "test-key-123"
 
-    @patch("safety_ideas.verification.citation.urllib.request.urlopen")
+    @patch("saim.verification.citation.urllib.request.urlopen")
     @patch.dict("os.environ", {}, clear=True)
     def test_no_api_key_header_when_unset(self, mock_urlopen_fn):
         response_data = {"data": []}
@@ -175,9 +175,9 @@ class TestSearchSemanticScholar:
 
 
 class TestLookupCitations:
-    @patch("safety_ideas.verification.citation.lookup_doi")
-    @patch("safety_ideas.verification.citation.search_crossref")
-    @patch("safety_ideas.verification.citation.search_semantic_scholar")
+    @patch("saim.verification.citation.lookup_doi")
+    @patch("saim.verification.citation.search_crossref")
+    @patch("saim.verification.citation.search_semantic_scholar")
     def test_looks_up_doi_and_title(self, mock_s2, mock_crossref, mock_doi):
         mock_doi.return_value = {"doi": "10.1234/p1", "title": "Paper", "authors": [], "url": ""}
         mock_crossref.return_value = [{"doi": "10.1234/p1", "title": "Paper", "authors": []}]
@@ -191,9 +191,9 @@ class TestLookupCitations:
         assert len(results[0]["crossref_search"]) == 1
         assert len(results[0]["semantic_scholar"]) == 1
 
-    @patch("safety_ideas.verification.citation.lookup_doi")
-    @patch("safety_ideas.verification.citation.search_crossref")
-    @patch("safety_ideas.verification.citation.search_semantic_scholar")
+    @patch("saim.verification.citation.lookup_doi")
+    @patch("saim.verification.citation.search_crossref")
+    @patch("saim.verification.citation.search_semantic_scholar")
     def test_title_only_skips_doi_lookup(self, mock_s2, mock_crossref, mock_doi):
         mock_crossref.return_value = []
         mock_s2.return_value = []
@@ -205,9 +205,9 @@ class TestLookupCitations:
         mock_doi.assert_not_called()
         assert results[0]["crossref_doi"] is None
 
-    @patch("safety_ideas.verification.citation.lookup_doi")
-    @patch("safety_ideas.verification.citation.search_crossref")
-    @patch("safety_ideas.verification.citation.search_semantic_scholar")
+    @patch("saim.verification.citation.lookup_doi")
+    @patch("saim.verification.citation.search_crossref")
+    @patch("saim.verification.citation.search_semantic_scholar")
     def test_doi_only_skips_title_searches(self, mock_s2, mock_crossref, mock_doi):
         mock_doi.return_value = {"doi": "10.1234/p1", "title": "Paper", "authors": [], "url": ""}
 
@@ -222,9 +222,9 @@ class TestLookupCitations:
     def test_no_citations_returns_empty(self):
         assert lookup_citations({"title": "No citations"}) == []
 
-    @patch("safety_ideas.verification.citation.lookup_doi")
-    @patch("safety_ideas.verification.citation.search_crossref")
-    @patch("safety_ideas.verification.citation.search_semantic_scholar")
+    @patch("saim.verification.citation.lookup_doi")
+    @patch("saim.verification.citation.search_crossref")
+    @patch("saim.verification.citation.search_semantic_scholar")
     def test_multiple_citations(self, mock_s2, mock_crossref, mock_doi):
         mock_doi.return_value = None
         mock_crossref.return_value = []

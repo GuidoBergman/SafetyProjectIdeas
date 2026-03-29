@@ -2,7 +2,7 @@
 
 import pytest
 
-from safety_ideas.pipeline.novelty import (
+from saim.pipeline.novelty import (
     NOVELTY_CLASSIFICATIONS,
     format_novelty_assessment,
     novelty_to_score,

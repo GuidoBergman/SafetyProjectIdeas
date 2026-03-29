@@ -56,7 +56,7 @@ So that I know which subfields and open problems exist and can decide which area
 ### Architecture References
 
 - **Skill location:** `.claude/commands/research-landscape.md` [Source: docs/architecture.md#Project Structure]
-- **Skills invoke Python via:** `uv run python -m safety_ideas.<module>` [Source: docs/architecture.md#Skill Patterns]
+- **Skills invoke Python via:** `uv run python -m saim.<module>` [Source: docs/architecture.md#Skill Patterns]
 - **Output location:** `data/output/` directory [Source: docs/architecture.md#Project Structure]
 - **No KB dependency:** This skill runs before KB exists. Uses Claude's native AI Safety knowledge + active web search (graceful KB degradation pattern) [Source: docs/architecture.md#Boundary 3]
 - **Track A, step 2:** This is the second implementation step in Track A, after project initialization [Source: docs/architecture.md#Decision Impact Analysis]

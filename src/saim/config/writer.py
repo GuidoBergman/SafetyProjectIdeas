@@ -5,7 +5,7 @@ from pathlib import Path
 import yaml
 from pydantic import ValidationError
 
-from safety_ideas.config.schemas import (
+from saim.config.schemas import (
     DEFAULT_TEAM,
     KBCriteria,
     ParticipantProfile,
@@ -16,7 +16,7 @@ from safety_ideas.config.schemas import (
     TeamProfile,
     TeamType,
 )
-from safety_ideas.constants import (
+from saim.constants import (
     CRITERIA_CONFIG,
     KB_CRITERIA_CONFIG,
     PARTICIPANTS_DIR,
@@ -63,7 +63,7 @@ def save_teams(
     target = path or TEAMS_CONFIG
     existing_data: dict = {}
     if target.exists():
-        from safety_ideas.utils import load_yaml
+        from saim.utils import load_yaml
 
         existing_data = load_yaml(target)
 

@@ -3,7 +3,7 @@
 import logging
 from pathlib import Path
 
-from safety_ideas.constants import IDEAS_DIR
+from saim.constants import IDEAS_DIR
 
 logger = logging.getLogger(__name__)
 

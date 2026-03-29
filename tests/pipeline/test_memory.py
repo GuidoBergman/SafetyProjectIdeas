@@ -1,11 +1,11 @@
-"""Tests for safety_ideas.pipeline.memory."""
+"""Tests for saim.pipeline.memory."""
 
 import json
 import subprocess
 import sys
 from pathlib import Path
 
-from safety_ideas.pipeline.memory import load_previous_ideas
+from saim.pipeline.memory import load_previous_ideas
 
 
 def _write_idea(directory: Path, filename: str, content: str) -> None:
@@ -44,7 +44,7 @@ def test_skips_files_without_h1_heading(tmp_path: Path) -> None:
 def test_cli_entry_point(tmp_path: Path) -> None:
     (tmp_path / "idea.md").write_text("# CLI Test Idea\nBody.", encoding="utf-8")
     result = subprocess.run(
-        [sys.executable, "-m", "safety_ideas.pipeline.memory", str(tmp_path)],
+        [sys.executable, "-m", "saim.pipeline.memory", str(tmp_path)],
         capture_output=True, text=True,
     )
     assert result.returncode == 0

@@ -23,13 +23,13 @@ PROJECT_ROOT = Path(__file__).parent.parent
 
 sys.path.insert(0, str(PROJECT_ROOT / "src"))
 
-from safety_ideas.pipeline.refine import (
+from saim.pipeline.refine import (
     analyze_weaknesses,
     build_proposal_skeleton,
     write_refined_proposal,
 )
-from safety_ideas.config.schemas import ScoringCriteria, RubricLevel
-from safety_ideas.pipeline.orchestrator import log_entry
+from saim.config.schemas import ScoringCriteria, RubricLevel
+from saim.pipeline.orchestrator import log_entry
 
 
 def log_event(run_dir: Path, stage: str, level: str, message: str, data: dict | None = None) -> None:

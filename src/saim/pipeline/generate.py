@@ -94,7 +94,7 @@ def main() -> None:
     import sys
 
     if len(sys.argv) < 3:
-        print("Usage: python -m safety_ideas.pipeline.generate <command> <run_dir> [json_data]")
+        print("Usage: python -m saim.pipeline.generate <command> <run_dir> [json_data]")
         sys.exit(1)
     cmd = sys.argv[1]
     run_dir = Path(sys.argv[2])

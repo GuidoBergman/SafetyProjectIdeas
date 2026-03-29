@@ -66,19 +66,19 @@ So that I can trust the evaluations and focus review time on the most promising 
 
 ## Tasks / Subtasks
 
-- [x] Create `src/safety_ideas/pipeline/filter_score.py` (AC: #1, #2, #5)
+- [x] Create `src/saim/pipeline/filter_score.py` (AC: #1, #2, #5)
   - [x] `score_idea(idea: dict, criteria: list, team_profile: TeamProfile) -> dict` — scores one idea against all criteria with reasoning
   - [x] `apply_weights(scores: dict, criteria: list, team_profile: TeamProfile) -> float` — compute weighted score with team overrides
   - [x] `staged_filter(ideas: list[dict], criteria: list, thresholds: StageThreshold, team_profile: TeamProfile) -> list[dict]` — progressive filtering
   - [x] `write_scored_idea(run_dir: Path, scored: dict) -> Path` — writes scored idea JSON to filter_score/
   - [x] `read_scored_ideas(run_dir: Path) -> list[dict]` — reads all scored ideas from filter_score/
   - [x] CLI entry point for skill invocation (`main()`)
-- [x] Create `src/safety_ideas/pipeline/novelty.py` (AC: #3)
+- [x] Create `src/saim/pipeline/novelty.py` (AC: #3)
   - [x] `assess_novelty(idea: dict, kb_available: bool) -> dict` — returns classification, evidence, confidence, derived score
   - [x] `classify_novelty(evidence: list[dict]) -> str` — returns "novel" / "partially_addressed" / "already_solved"
   - [x] `novelty_to_score(classification: str) -> int` — converts classification to 1-5 score
   - [x] CLI entry point
-- [x] Create `src/safety_ideas/verification/citation.py` (AC: #4)
+- [x] Create `src/saim/verification/citation.py` (AC: #4)
   - [x] `verify_citations(idea: dict) -> dict` — verifies all citations in an idea, returns verification results
   - [x] `verify_doi(doi: str) -> bool` — check DOI via CrossRef API
   - [x] `verify_semantic_scholar(title: str) -> dict | None` — look up paper via Semantic Scholar API
@@ -103,8 +103,8 @@ So that I can trust the evaluations and focus review time on the most promising 
 ### Architecture References
 
 - **Skill location:** `.claude/commands/score-ideas.md` [Source: docs/architecture.md#Project Structure]
-- **Python modules:** `src/safety_ideas/pipeline/filter_score.py`, `src/safety_ideas/pipeline/novelty.py`, `src/safety_ideas/verification/citation.py` [Source: docs/architecture.md#Project Structure]
-- **Skills invoke Python via:** `uv run python -m safety_ideas.pipeline.<module>` [Source: docs/architecture.md#Skill Patterns]
+- **Python modules:** `src/saim/pipeline/filter_score.py`, `src/saim/pipeline/novelty.py`, `src/saim/verification/citation.py` [Source: docs/architecture.md#Project Structure]
+- **Skills invoke Python via:** `uv run python -m saim.pipeline.<module>` [Source: docs/architecture.md#Skill Patterns]
 - **Filter/Score output:** JSON files in `data/runs/<timestamp>/filter_score/` [Source: docs/architecture.md#Data Architecture]
 - **Track A, step 4:** After generate-ideas, before refine-ideas [Source: docs/architecture.md#Decision Impact Analysis]
 
@@ -112,9 +112,9 @@ So that I can trust the evaluations and focus review time on the most promising 
 
 1. **Hybrid skill + Python architecture (same pattern as story 3.1):**
    - `.claude/commands/score-ideas.md` — Claude Code skill that orchestrates scoring conversationally, uses web search for novelty assessment, applies LLM judgment for per-criterion scoring
-   - `src/safety_ideas/pipeline/filter_score.py` — Python module for scoring I/O, weight computation, staged filtering logic, scored idea file management
-   - `src/safety_ideas/pipeline/novelty.py` — Python module for novelty assessment data structures and classification logic
-   - `src/safety_ideas/verification/citation.py` — Python module for programmatic citation verification (API calls, DOI resolution)
+   - `src/saim/pipeline/filter_score.py` — Python module for scoring I/O, weight computation, staged filtering logic, scored idea file management
+   - `src/saim/pipeline/novelty.py` — Python module for novelty assessment data structures and classification logic
+   - `src/saim/verification/citation.py` — Python module for programmatic citation verification (API calls, DOI resolution)
 
 2. **Scored idea JSON format (output of filter_score stage):**
    ```json
@@ -179,30 +179,30 @@ So that I can trust the evaluations and focus review time on the most promising 
 
 ### Existing Code to Use (DO NOT Reinvent)
 
-- `safety_ideas.config.loader.load_config()` — Load all config (teams, criteria, pipeline settings)
-- `safety_ideas.config.schemas` — `TeamProfile`, `ScoringCriteria`, `StageThreshold`, `PipelineSettings`
-- `safety_ideas.constants` — All path constants (`RUNS_DIR`, `SCORING_CRITERIA`, `STAGE_NAMES`)
-- `safety_ideas.pipeline.generate.read_idea_sketches(run_dir)` — Read ideas from generate stage
-- `safety_ideas.pipeline.orchestrator.PipelineLogger` — Structured JSON logging
-- `safety_ideas.utils.load_yaml()` — YAML loading
+- `saim.config.loader.load_config()` — Load all config (teams, criteria, pipeline settings)
+- `saim.config.schemas` — `TeamProfile`, `ScoringCriteria`, `StageThreshold`, `PipelineSettings`
+- `saim.constants` — All path constants (`RUNS_DIR`, `SCORING_CRITERIA`, `STAGE_NAMES`)
+- `saim.pipeline.generate.read_idea_sketches(run_dir)` — Read ideas from generate stage
+- `saim.pipeline.orchestrator.PipelineLogger` — Structured JSON logging
+- `saim.utils.load_yaml()` — YAML loading
 
 ### Implementation Approach
 
 **Python modules to create:**
 
-1. **`src/safety_ideas/pipeline/filter_score.py`** — Scoring computation and I/O:
+1. **`src/saim/pipeline/filter_score.py`** — Scoring computation and I/O:
    - `score_idea()` — Takes idea dict, criteria list, team profile; returns scored dict
    - `apply_weights()` — Computes weighted average using criteria weights + team overrides
    - `staged_filter()` — Applies progressive filtering with thresholds
    - `write_scored_idea()` / `read_scored_ideas()` — JSON I/O for scored ideas
    - CLI for skill invocation
 
-2. **`src/safety_ideas/pipeline/novelty.py`** — Novelty assessment helpers:
+2. **`src/saim/pipeline/novelty.py`** — Novelty assessment helpers:
    - `classify_novelty()` — Maps evidence to classification enum
    - `novelty_to_score()` — Maps classification string to 1-5 integer score
    - `format_novelty_assessment()` — Structures novelty data for scored idea JSON
 
-3. **`src/safety_ideas/verification/citation.py`** — Citation verification:
+3. **`src/saim/verification/citation.py`** — Citation verification:
    - `verify_doi()` — CrossRef API check
    - `verify_semantic_scholar()` — Semantic Scholar title search
    - `verify_citations()` — Orchestrates verification for all citations in an idea
@@ -212,21 +212,21 @@ So that I can trust the evaluations and focus review time on the most promising 
 
 4. **`.claude/commands/score-ideas.md`** — Orchestration skill that:
    - Accepts run directory or finds latest
-   - Loads ideas via `uv run python -m safety_ideas.pipeline.generate read <run_dir>`
+   - Loads ideas via `uv run python -m saim.pipeline.generate read <run_dir>`
    - Stage 1: Quick LLM relevance check, eliminates low scorers
    - Stage 2: Full per-criterion LLM scoring against rubrics
    - Stage 3: Web search for novelty assessment (always mandatory), citation verification
-   - Writes scored ideas via `uv run python -m safety_ideas.pipeline.filter_score write`
+   - Writes scored ideas via `uv run python -m saim.pipeline.filter_score write`
    - Logs via PipelineLogger
    - Presents scored results summary
 
 ### File Structure
 
 ```
-src/safety_ideas/pipeline/
+src/saim/pipeline/
   filter_score.py      # NEW — scoring I/O, weight computation, staged filtering
   novelty.py           # NEW — novelty classification helpers
-src/safety_ideas/verification/
+src/saim/verification/
   citation.py          # NEW — programmatic citation verification
 .claude/commands/
   score-ideas.md       # NEW — Claude Code skill
@@ -290,11 +290,11 @@ N/A
 - filter_score thresholds already validated via existing PipelineSettings/StageThreshold Pydantic schema in pipeline.yaml
 
 ### File List
-- `src/safety_ideas/pipeline/filter_score.py` — scoring computation, staged filtering, scored idea I/O, CLI
-- `src/safety_ideas/pipeline/novelty.py` — novelty classification, assess_novelty, score derivation, CLI
-- `src/safety_ideas/verification/citation.py` — DOI/Semantic Scholar API verification, citation filtering, CLI
-- `src/safety_ideas/verification/__init__.py` — package init
-- `src/safety_ideas/constants.py` — added STAGE1_RELEVANCE_THRESHOLD constant
+- `src/saim/pipeline/filter_score.py` — scoring computation, staged filtering, scored idea I/O, CLI
+- `src/saim/pipeline/novelty.py` — novelty classification, assess_novelty, score derivation, CLI
+- `src/saim/verification/citation.py` — DOI/Semantic Scholar API verification, citation filtering, CLI
+- `src/saim/verification/__init__.py` — package init
+- `src/saim/constants.py` — added STAGE1_RELEVANCE_THRESHOLD constant
 - `.claude/commands/score-ideas.md` — Claude Code skill for scoring orchestration
 - `tests/pipeline/test_filter_score.py` — 11 tests for scoring, weights, staged filtering, I/O
 - `tests/pipeline/test_novelty.py` — 19 tests for classification, scoring, formatting, assess_novelty

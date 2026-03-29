@@ -5,9 +5,9 @@ from pathlib import Path
 
 from pydantic import ValidationError
 
-from safety_ideas.config.schemas import ParticipantProfile
-from safety_ideas.constants import PARTICIPANTS_DIR, TEAMS_CONFIG
-from safety_ideas.utils import load_yaml
+from saim.config.schemas import ParticipantProfile
+from saim.constants import PARTICIPANTS_DIR, TEAMS_CONFIG
+from saim.utils import load_yaml
 
 logger = logging.getLogger(__name__)
 

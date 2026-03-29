@@ -15,8 +15,8 @@ from urllib.parse import quote
 
 from dotenv import load_dotenv
 
-from safety_ideas.constants import PROJECT_ROOT
-from safety_ideas.utils import retry_on_rate_limit
+from saim.constants import PROJECT_ROOT
+from saim.utils import retry_on_rate_limit
 
 load_dotenv(PROJECT_ROOT / ".env")
 
@@ -44,7 +44,7 @@ def lookup_doi(doi: str) -> dict | None:
 
         def _fetch():
             req = urllib.request.Request(url, method="GET")
-            req.add_header("User-Agent", "SafetyIdeas/0.1 (citation-check)")
+            req.add_header("User-Agent", "SAIM/0.1 (citation-check)")
             with urllib.request.urlopen(req, timeout=_HTTP_TIMEOUT) as resp:
                 return json.loads(resp.read().decode())
 
@@ -84,7 +84,7 @@ def search_crossref(title: str, rows: int = 3) -> list[dict]:
 
         def _fetch():
             req = urllib.request.Request(url, method="GET")
-            req.add_header("User-Agent", "SafetyIdeas/0.1 (citation-check)")
+            req.add_header("User-Agent", "SAIM/0.1 (citation-check)")
             with urllib.request.urlopen(req, timeout=_HTTP_TIMEOUT) as resp:
                 return json.loads(resp.read().decode())
 
@@ -128,7 +128,7 @@ def search_semantic_scholar(title: str, limit: int = 3) -> list[dict]:
 
         def _fetch():
             req = urllib.request.Request(url, method="GET")
-            req.add_header("User-Agent", "SafetyIdeas/0.1 (citation-check)")
+            req.add_header("User-Agent", "SAIM/0.1 (citation-check)")
             if s2_key:
                 req.add_header("x-api-key", s2_key)
             with urllib.request.urlopen(req, timeout=_HTTP_TIMEOUT) as resp:
@@ -197,7 +197,7 @@ def main() -> None:
     import sys
 
     if len(sys.argv) < 2:
-        print("Usage: python -m safety_ideas.verification.citation <command> [args]")
+        print("Usage: python -m saim.verification.citation <command> [args]")
         print("Commands:")
         print("  lookup-doi <doi>           — fetch metadata for a DOI")
         print("  search-crossref <title>    — search CrossRef by title")

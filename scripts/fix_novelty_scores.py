@@ -16,7 +16,7 @@ import sys
 from collections import Counter
 from pathlib import Path
 
-from safety_ideas.pipeline.novelty import normalize_novelty_scores
+from saim.pipeline.novelty import normalize_novelty_scores
 
 
 def fix_run(run_dir: Path) -> dict:

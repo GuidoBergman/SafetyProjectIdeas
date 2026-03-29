@@ -2,7 +2,7 @@
 
 ## Project Overview
 
-Safety Ideas is an AI Safety Research Idea Generation Pipeline for BAISH (Buenos Aires AI Safety Hub). It uses Claude Code skills to generate, score, and filter AI safety research project ideas tailored to different team configurations and participant profiles.
+SAIM (Safety Idea Machine) is an AI Safety Research Idea Generation Pipeline for BAISH (Buenos Aires AI Safety Hub). It uses Claude Code skills to generate, score, and filter AI safety research project ideas tailored to different team configurations and participant profiles.
 
 ## Commands
 
@@ -13,11 +13,11 @@ Safety Ideas is an AI Safety Research Idea Generation Pipeline for BAISH (Buenos
 
 ## Architecture
 
-- `src/safety_ideas/pipeline/` — Pipeline stages are defined in `constants.py:STAGE_NAMES`. Stage modules: `generate.py`, `filter_score.py`. Helpers: `novelty.py` (novelty scoring), `memory.py` (previous idea dedup). `orchestrator.py` handles run directory creation and metadata.
-- `src/safety_ideas/config/` — Config loading, CLI, Pydantic schemas, participant profiles
-- `src/safety_ideas/verification/` — Citation lookup tools (CrossRef DOI/title search, Semantic Scholar title search) that return metadata for LLM-driven verification decisions
-- `src/safety_ideas/connectors/` — Source connectors for KB ingestion (placeholder)
-- `src/safety_ideas/kb/` — Knowledge base management (placeholder)
+- `src/saim/pipeline/` — Pipeline stages are defined in `constants.py:STAGE_NAMES`. Stage modules: `generate.py`, `filter_score.py`. Helpers: `novelty.py` (novelty scoring), `memory.py` (previous idea dedup). `orchestrator.py` handles run directory creation and metadata.
+- `src/saim/config/` — Config loading, CLI, Pydantic schemas, participant profiles
+- `src/saim/verification/` — Citation lookup tools (CrossRef DOI/title search, Semantic Scholar title search) that return metadata for LLM-driven verification decisions
+- `src/saim/connectors/` — Source connectors for KB ingestion (placeholder)
+- `src/saim/kb/` — Knowledge base management (placeholder)
 - `config/` — YAML config files (teams, criteria, pipeline settings, KB criteria, participants/)
 - `data/` — Pipeline outputs: `ideas/`, `kb/`, `output/`, `runs/`
 - `.claude/commands/` — Claude Code skills: generate-ideas, score-ideas, configure-teams, research-landscape

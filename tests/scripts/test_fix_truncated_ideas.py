@@ -5,8 +5,8 @@ import json
 import sys
 from pathlib import Path
 
-from safety_ideas.pipeline.generate import write_idea_sketch
-from safety_ideas.pipeline.refine import write_refined_proposal
+from saim.pipeline.generate import write_idea_sketch
+from saim.pipeline.refine import write_refined_proposal
 
 _script_path = Path(__file__).resolve().parent.parent.parent / "scripts" / "fix_truncated_ideas.py"
 _spec = importlib.util.spec_from_file_location("fix_truncated_ideas", _script_path)
@@ -145,7 +145,7 @@ class TestFixIdea:
         _write_scored_idea(tmp_path)
         refine = _write_truncated_refine(tmp_path)
 
-        from safety_ideas.pipeline.generate import read_idea_sketches
+        from saim.pipeline.generate import read_idea_sketches
 
         gen = read_idea_sketches(tmp_path)[0]
         scored_path = tmp_path / "filter_score" / "scored" / "gen-001.json"
@@ -163,7 +163,7 @@ class TestFixIdea:
         _write_scored_idea(tmp_path)
         refine = _write_truncated_refine(tmp_path)
 
-        from safety_ideas.pipeline.generate import read_idea_sketches
+        from saim.pipeline.generate import read_idea_sketches
 
         gen = read_idea_sketches(tmp_path)[0]
         scored_path = tmp_path / "filter_score" / "scored" / "gen-001.json"
@@ -179,7 +179,7 @@ class TestFixIdea:
         _write_scored_idea(tmp_path)
         refine = _write_truncated_refine(tmp_path)
 
-        from safety_ideas.pipeline.generate import read_idea_sketches
+        from saim.pipeline.generate import read_idea_sketches
 
         gen = read_idea_sketches(tmp_path)[0]
         scored_path = tmp_path / "filter_score" / "scored" / "gen-001.json"
@@ -194,7 +194,7 @@ class TestFixIdea:
         _write_scored_idea(tmp_path)
         refine = _write_truncated_refine(tmp_path)
 
-        from safety_ideas.pipeline.generate import read_idea_sketches
+        from saim.pipeline.generate import read_idea_sketches
 
         gen = read_idea_sketches(tmp_path)[0]
         scored_path = tmp_path / "filter_score" / "scored" / "gen-001.json"
@@ -209,7 +209,7 @@ class TestFixIdea:
         _write_generate_idea(tmp_path)
         _write_scored_idea(tmp_path)
 
-        from safety_ideas.pipeline.generate import read_idea_sketches
+        from saim.pipeline.generate import read_idea_sketches
 
         gen = read_idea_sketches(tmp_path)[0]
         scored_path = tmp_path / "filter_score" / "scored" / "gen-001.json"

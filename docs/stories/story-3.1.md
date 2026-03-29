@@ -83,8 +83,8 @@ So that I get thorough coverage of candidate project ideas across every area I c
 ### Architecture References
 
 - **Skill location:** `.claude/commands/generate-ideas.md` [Source: docs/architecture.md#Project Structure]
-- **Python modules:** `src/safety_ideas/pipeline/orchestrator.py`, `src/safety_ideas/pipeline/generate.py`, `src/safety_ideas/pipeline/memory.py` [Source: docs/architecture.md#Project Structure]
-- **Skills invoke Python via:** `uv run python -m safety_ideas.pipeline.<module>` [Source: docs/architecture.md#Skill Patterns]
+- **Python modules:** `src/saim/pipeline/orchestrator.py`, `src/saim/pipeline/generate.py`, `src/saim/pipeline/memory.py` [Source: docs/architecture.md#Project Structure]
+- **Skills invoke Python via:** `uv run python -m saim.pipeline.<module>` [Source: docs/architecture.md#Skill Patterns]
 - **Run directory:** `data/runs/<timestamp>/` with per-stage subdirectories [Source: docs/architecture.md#Pipeline Run State]
 - **Track A, step 3:** After research-landscape, before score-ideas [Source: docs/architecture.md#Decision Impact Analysis]
 
@@ -92,9 +92,9 @@ So that I get thorough coverage of candidate project ideas across every area I c
 
 1. **Hybrid skill + Python architecture:**
    - `.claude/commands/generate-ideas.md` — Claude Code skill that orchestrates generation conversationally, uses web search, generates ideas via LLM prompting
-   - `src/safety_ideas/pipeline/orchestrator.py` — Python module for run directory setup, metadata writing, log management
-   - `src/safety_ideas/pipeline/generate.py` — Python module for idea file I/O, structured output
-   - `src/safety_ideas/pipeline/memory.py` — Loads past idea titles from `data/ideas/` to avoid repetition
+   - `src/saim/pipeline/orchestrator.py` — Python module for run directory setup, metadata writing, log management
+   - `src/saim/pipeline/generate.py` — Python module for idea file I/O, structured output
+   - `src/saim/pipeline/memory.py` — Loads past idea titles from `data/ideas/` to avoid repetition
 
 2. **Idea sketch format (markdown with YAML frontmatter):**
    ```markdown
@@ -143,43 +143,43 @@ So that I get thorough coverage of candidate project ideas across every area I c
 
 ### Existing Code to Use (DO NOT Reinvent)
 
-- `safety_ideas.config.loader.load_config()` — Load all config (teams, criteria, pipeline settings)
-- `safety_ideas.config.participants.get_default_participant()` — Get participant profile
-- `safety_ideas.constants` — All path constants (`RUNS_DIR`, `IDEAS_DIR`, `OUTPUT_DIR`, `STAGE_NAMES`)
-- `safety_ideas.utils.load_yaml()` — YAML loading
+- `saim.config.loader.load_config()` — Load all config (teams, criteria, pipeline settings)
+- `saim.config.participants.get_default_participant()` — Get participant profile
+- `saim.constants` — All path constants (`RUNS_DIR`, `IDEAS_DIR`, `OUTPUT_DIR`, `STAGE_NAMES`)
+- `saim.utils.load_yaml()` — YAML loading
 
 ### Implementation Approach
 
 **Python modules to create:**
 
-1. **`src/safety_ideas/pipeline/orchestrator.py`** — Pipeline infrastructure:
+1. **`src/saim/pipeline/orchestrator.py`** — Pipeline infrastructure:
    - `create_run_dir(stages: list[str]) -> Path` — Creates `data/runs/<timestamp>/` with subdirs
    - `write_run_meta(run_dir: Path, params: dict) -> None` — Writes `run_meta.json`
    - `PipelineLogger` class — Appends structured JSON entries to `pipeline.log.json`
    - Gets git commit via `subprocess.run(["git", "rev-parse", "--short", "HEAD"])`
 
-2. **`src/safety_ideas/pipeline/generate.py`** — Generation I/O:
+2. **`src/saim/pipeline/generate.py`** — Generation I/O:
    - `write_idea_sketch(run_dir: Path, idea: dict) -> Path` — Writes idea markdown file
    - `read_idea_sketches(run_dir: Path) -> list[dict]` — Reads all idea files from generate/
    - `list_idea_files(run_dir: Path) -> list[Path]` — Lists idea files for inspection
 
-3. **`src/safety_ideas/pipeline/memory.py`** — Dedup memory:
+3. **`src/saim/pipeline/memory.py`** — Dedup memory:
    - `load_previous_ideas(ideas_dir: Path) -> list[str]` — Returns titles of previously generated ideas
 
 **Claude Code skill to create:**
 
 4. **`.claude/commands/generate-ideas.md`** — Orchestration skill that:
-   - Runs `uv run python -m safety_ideas.pipeline.orchestrator init` to create run dir
+   - Runs `uv run python -m saim.pipeline.orchestrator init` to create run dir
    - Loads research landscape and participant profile for context
    - Uses Claude's AI Safety knowledge + web search to generate idea sketches
-   - Writes each idea via `uv run python -m safety_ideas.pipeline.generate write`
+   - Writes each idea via `uv run python -m saim.pipeline.generate write`
    - Logs all decisions via the pipeline logger
    - Presents results for coordinator review
 
 ### File Structure
 
 ```
-src/safety_ideas/pipeline/
+src/saim/pipeline/
   orchestrator.py     # NEW — run dir setup, metadata, logging
   generate.py         # NEW — idea sketch I/O
   memory.py           # NEW — load previous idea titles for dedup
@@ -215,17 +215,17 @@ tests/pipeline/
 
 ## Tasks / Subtasks
 
-- [x] Create `src/safety_ideas/pipeline/orchestrator.py` (AC: #1, #5)
+- [x] Create `src/saim/pipeline/orchestrator.py` (AC: #1, #5)
   - [x] `create_run_dir()` function
   - [x] `write_run_meta()` function
   - [x] `PipelineLogger` class with structured JSON logging
   - [x] CLI entry point for skill invocation (`__main__` or argparse)
-- [x] Create `src/safety_ideas/pipeline/generate.py` (AC: #3)
+- [x] Create `src/saim/pipeline/generate.py` (AC: #3)
   - [x] `write_idea_sketch()` — writes idea markdown with frontmatter
   - [x] `read_idea_sketches()` — reads all ideas from a run dir
   - [x] `list_idea_files()` — lists idea files
   - [x] CLI entry point for skill invocation
-- [x] Create `src/safety_ideas/pipeline/memory.py` (AC: #3)
+- [x] Create `src/saim/pipeline/memory.py` (AC: #3)
   - [x] `load_previous_ideas()` — reads titles from `data/ideas/`
 - [x] Create `.claude/commands/generate-ideas.md` skill (AC: #2, #3, #4, #6, #7)
   - [x] Parse research-landscape.md for selected subfields
@@ -262,10 +262,10 @@ Claude Opus 4.6 (1M context)
 N/A
 
 ### Completion Notes List
-- Created `src/safety_ideas/pipeline/orchestrator.py` with `create_run_dir()`, `write_run_meta()`, `PipelineLogger`, and CLI entry point
-- Created `src/safety_ideas/pipeline/generate.py` with `write_idea_sketch()`, `read_idea_sketches()`, `list_idea_files()`, and CLI entry point
-- Created `src/safety_ideas/pipeline/memory.py` with `load_previous_ideas()` and CLI entry point
-- Created `src/safety_ideas/pipeline/__main__.py` for module invocation
+- Created `src/saim/pipeline/orchestrator.py` with `create_run_dir()`, `write_run_meta()`, `PipelineLogger`, and CLI entry point
+- Created `src/saim/pipeline/generate.py` with `write_idea_sketch()`, `read_idea_sketches()`, `list_idea_files()`, and CLI entry point
+- Created `src/saim/pipeline/memory.py` with `load_previous_ideas()` and CLI entry point
+- Created `src/saim/pipeline/__main__.py` for module invocation
 - Created `.claude/commands/generate-ideas.md` skill with 5-phase workflow: Setup, Load Context, Generate Ideas (parallelized via subagents), Write Ideas, Coordinator Review
 - Created 16 unit tests across 3 test files — all passing
 - Fixed pre-existing test assertion in `tests/config/test_loader.py` (criteria count 4→5 for novelty criterion)
@@ -274,10 +274,10 @@ N/A
 - Full test suite: 60 passed, 0 failed
 
 ### File List
-- `src/safety_ideas/pipeline/orchestrator.py` (NEW)
-- `src/safety_ideas/pipeline/generate.py` (NEW)
-- `src/safety_ideas/pipeline/memory.py` (NEW)
-- `src/safety_ideas/pipeline/__main__.py` (NEW)
+- `src/saim/pipeline/orchestrator.py` (NEW)
+- `src/saim/pipeline/generate.py` (NEW)
+- `src/saim/pipeline/memory.py` (NEW)
+- `src/saim/pipeline/__main__.py` (NEW)
 - `.claude/commands/generate-ideas.md` (NEW)
 - `tests/pipeline/__init__.py` (NEW)
 - `tests/pipeline/test_orchestrator.py` (NEW)

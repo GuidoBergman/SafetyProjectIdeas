@@ -1,8 +1,8 @@
-"""Project-wide constants for Safety Ideas."""
+"""Project-wide constants for SAIM."""
 
 from pathlib import Path
 
-# Project root (two levels up from this file: src/safety_ideas/ -> project root)
+# Project root (two levels up from this file: src/saim/ -> project root)
 PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent
 
 # Directory paths

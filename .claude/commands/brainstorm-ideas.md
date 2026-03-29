@@ -7,19 +7,19 @@ Interactive collaborative brainstorming of AI Safety research directions, tailor
 Load project configuration:
 
 ```bash
-uv run python -m safety_ideas.config.cli show-scoring
+uv run python -m saim.config.cli show-scoring
 ```
 
 Load team profile:
 
 ```bash
-uv run python -m safety_ideas.config.cli show
+uv run python -m saim.config.cli show
 ```
 
 Load participant profile (if available):
 
 ```bash
-uv run python -m safety_ideas.config.cli show-participant
+uv run python -m saim.config.cli show-participant
 ```
 
 If the participant output shows "NO_PARTICIPANT", guide the user conversationally:
@@ -37,7 +37,7 @@ Save these constraints for use throughout the session.
 Load previous ideas for divergence (avoid duplicates):
 
 ```bash
-uv run python -m safety_ideas.pipeline.memory
+uv run python -m saim.pipeline.memory
 ```
 
 Echo the active context:
@@ -68,11 +68,11 @@ Assess whether the question has been addressed in the literature:
 1. Search for relevant work using citation tools:
 
 ```bash
-uv run python -m safety_ideas.verification.citation search-crossref '<query>'
+uv run python -m saim.verification.citation search-crossref '<query>'
 ```
 
 ```bash
-uv run python -m safety_ideas.verification.citation search-s2 '<query>'
+uv run python -m saim.verification.citation search-s2 '<query>'
 ```
 
 2. Summarize findings: what's been done, what gaps remain, and whether the question is open or largely resolved.

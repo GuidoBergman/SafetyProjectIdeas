@@ -146,7 +146,7 @@ def main():
         # Escape for shell
         json_str_escaped = json_str.replace("'", "'\\''")
 
-        cmd = f"uv run python -m safety_ideas.pipeline.generate write {RUN_DIR} '{json_str_escaped}'"
+        cmd = f"uv run python -m saim.pipeline.generate write {RUN_DIR} '{json_str_escaped}'"
         result = subprocess.run(cmd, shell=True, capture_output=True, text=True, timeout=30)
 
         if result.returncode == 0:

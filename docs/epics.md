@@ -147,7 +147,7 @@ This document provides the complete epic and story breakdown for SafetyProjectId
 **From Architecture — Starter Template & Project Initialization:**
 - Custom project structure using `uv init` with Python 3.11+, pytest, ruff, pyyaml, pydantic, python-dotenv
 - Claude Code skills (markdown) for pipeline orchestration; Python for programmatic components
-- Skills invoke Python via `uv run python -m safety_ideas.<module>`
+- Skills invoke Python via `uv run python -m saim.<module>`
 - Project initialization is the first implementation story
 
 **From Architecture — Storage & Data Format:**
@@ -308,7 +308,7 @@ So that the system is ready for idea generation from day one.
 **Given** no project structure exists
 **When** the developer initializes the project
 **Then** the following structure is created:
-- `src/safety_ideas/` Python package with subpackages: `config/`, `kb/`, `connectors/`, `pipeline/`, `verification/`
+- `src/saim/` Python package with subpackages: `config/`, `kb/`, `connectors/`, `pipeline/`, `verification/`
 - `data/kb/`, `data/output/`, `data/runs/`, `data/ideas/` directories
 - `config/` directory with `participants/` subdirectory
 - `tests/` directory mirroring `src/` structure
@@ -316,13 +316,13 @@ So that the system is ready for idea generation from day one.
 **And** `pyproject.toml` is configured with dependencies (`pytest`, `ruff`, `pyyaml`, `pydantic`, `python-dotenv`), ruff config, and project metadata
 **And** `.env.example` documents required environment variables
 **And** `.gitignore` excludes `.env`, `__pycache__/`, `.venv/`, `data/runs/`
-**And** `src/safety_ideas/constants.py` and `src/safety_ideas/utils.py` exist
+**And** `src/saim/constants.py` and `src/saim/utils.py` exist
 **And** `README.md` exists with project overview and setup instructions
 **And** `LICENSE` exists with MIT license
 **And** `uv sync` succeeds without errors
 
 **Given** the project structure exists
-**When** Pydantic models are defined in `src/safety_ideas/config/schemas.py`
+**When** Pydantic models are defined in `src/saim/config/schemas.py`
 **Then** the following models exist: `TeamProfile`, `ScoringCriteria`, `KBCriteria`, `PipelineSettings`, `ParticipantProfile`
 **And** `TeamProfile` includes: team name, type (mentor_novice / solo_novice / experienced_group), compute_budget, technical_skills, custom criteria weights
 **And** `ScoringCriteria` includes: criteria name, description, default weight, per-team-type weight overrides
@@ -331,7 +331,7 @@ So that the system is ready for idea generation from day one.
 **And** `KBCriteria` includes: subfields_in_scope, organizations, authors, exclusions
 
 **Given** Pydantic models are defined
-**When** `load_config()` is called from `src/safety_ideas/config/loader.py`
+**When** `load_config()` is called from `src/saim/config/loader.py`
 **Then** it loads and validates all YAML files from `config/` directory
 **And** returns validated Pydantic model instances
 **And** raises clear error messages if YAML is malformed or missing required fields
@@ -572,7 +572,7 @@ So that pipeline stages and brainstorming can draw on structured AI Safety resea
 **And** the existing taxonomy (7 AI Safety categories) provides initial subfield classification
 
 **Given** the KB is populated
-**When** `kb.query()` is called from `src/safety_ideas/kb/query.py`
+**When** `kb.query()` is called from `src/saim/kb/query.py`
 **Then** it loads and filters JSON meta from KB files
 **And** supports filtering by subfield, organization, recency, tags, priority, and source_code_available (FR9)
 **And** returns metadata by default; specific sections only when caller explicitly requests them via `sections=[]` parameter

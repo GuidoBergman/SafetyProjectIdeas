@@ -4,7 +4,7 @@ import copy
 
 import pytest
 
-from safety_ideas.pipeline.novelty import normalize_novelty_scores
+from saim.pipeline.novelty import normalize_novelty_scores
 
 
 def _make_idea(**overrides):

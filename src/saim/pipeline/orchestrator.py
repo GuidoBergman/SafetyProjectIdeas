@@ -7,7 +7,7 @@ import subprocess
 from datetime import UTC, datetime
 from pathlib import Path
 
-from safety_ideas.constants import RUNS_DIR, STAGE_NAMES
+from saim.constants import RUNS_DIR, STAGE_NAMES
 
 
 def create_run_dir(stages: list[str] | None = None) -> Path:
@@ -88,7 +88,7 @@ def main() -> None:
     import sys
 
     if len(sys.argv) < 2:
-        print("Usage: python -m safety_ideas.pipeline.orchestrator <command>")
+        print("Usage: python -m saim.pipeline.orchestrator <command>")
         print("Commands: init [stages...], log <run_dir> <stage> <level> <message> [data_json]")
         sys.exit(1)
     cmd = sys.argv[1]

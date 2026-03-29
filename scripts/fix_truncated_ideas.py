@@ -20,10 +20,10 @@ from pathlib import Path
 
 import yaml
 
-from safety_ideas.constants import IDEAS_DIR, OUTPUT_DIR
-from safety_ideas.pipeline.generate import read_idea_sketches
-from safety_ideas.pipeline.rank import format_ranked_output
-from safety_ideas.pipeline.refine import (
+from saim.constants import IDEAS_DIR, OUTPUT_DIR
+from saim.pipeline.generate import read_idea_sketches
+from saim.pipeline.rank import format_ranked_output
+from saim.pipeline.refine import (
     _SECTION_HEADINGS,
     _SECTION_KEYS,
     _format_section_content,

@@ -4,7 +4,7 @@ from unittest.mock import patch
 
 import pytest
 
-from safety_ideas.config.cli import (
+from saim.config.cli import (
     show_batch_sizes_config,
     show_citation_relevance_config,
     show_config,
@@ -13,8 +13,8 @@ from safety_ideas.config.cli import (
     show_quick_filter_config,
     show_scoring_config,
 )
-from safety_ideas.config.loader import AppConfig
-from safety_ideas.config.schemas import (
+from saim.config.loader import AppConfig
+from saim.config.schemas import (
     BatchSizeConfig,
     CitationRelevanceConfig,
     ConfidenceRubricLevel,
@@ -78,7 +78,7 @@ class TestShowGenerateConfig:
         config = _make_config(
             generate=GenerateSettings(min_ideas_per_strategy_per_subfield=30, combinatorial_top_n=5)
         )
-        with patch("safety_ideas.config.cli.load_config", return_value=config):
+        with patch("saim.config.cli.load_config", return_value=config):
             show_generate_config()
         out = capsys.readouterr().out
         assert "min_ideas_per_strategy_per_subfield: 30" in out
@@ -86,7 +86,7 @@ class TestShowGenerateConfig:
 
     def test_outputs_defaults_when_not_customized(self, capsys):
         config = _make_config()
-        with patch("safety_ideas.config.cli.load_config", return_value=config):
+        with patch("saim.config.cli.load_config", return_value=config):
             show_generate_config()
         out = capsys.readouterr().out
         assert "min_ideas_per_strategy_per_subfield: 25" in out
@@ -94,7 +94,7 @@ class TestShowGenerateConfig:
 
     def test_does_not_leak_other_config(self, capsys):
         config = _make_config()
-        with patch("safety_ideas.config.cli.load_config", return_value=config):
+        with patch("saim.config.cli.load_config", return_value=config):
             show_generate_config()
         out = capsys.readouterr().out
         assert "Scoring" not in out
@@ -108,7 +108,7 @@ class TestShowGenerateConfig:
 class TestShowScoringConfig:
     def test_shows_default_weights_when_no_overrides(self, capsys):
         config = _make_config(criteria_weights={})
-        with patch("safety_ideas.config.cli.load_config", return_value=config):
+        with patch("saim.config.cli.load_config", return_value=config):
             show_scoring_config()
         out = capsys.readouterr().out
         assert "[theory_of_impact] weight=1.5" in out
@@ -116,7 +116,7 @@ class TestShowScoringConfig:
 
     def test_shows_active_weights_with_team_overrides(self, capsys):
         config = _make_config(criteria_weights={"low_compute": 0.0, "theory_of_impact": 3.0})
-        with patch("safety_ideas.config.cli.load_config", return_value=config):
+        with patch("saim.config.cli.load_config", return_value=config):
             show_scoring_config()
         out = capsys.readouterr().out
         assert "[theory_of_impact] weight=3.0" in out
@@ -126,7 +126,7 @@ class TestShowScoringConfig:
 
     def test_partial_overrides_mix_default_and_active(self, capsys):
         config = _make_config(criteria_weights={"low_compute": 2.0})
-        with patch("safety_ideas.config.cli.load_config", return_value=config):
+        with patch("saim.config.cli.load_config", return_value=config):
             show_scoring_config()
         out = capsys.readouterr().out
         assert "[low_compute] weight=2.0" in out
@@ -134,21 +134,21 @@ class TestShowScoringConfig:
 
     def test_shows_default_team(self, capsys):
         config = _make_config()
-        with patch("safety_ideas.config.cli.load_config", return_value=config):
+        with patch("saim.config.cli.load_config", return_value=config):
             show_scoring_config()
         out = capsys.readouterr().out
         assert "Default Team: mentor_novice" in out
 
     def test_shows_thresholds(self, capsys):
         config = _make_config()
-        with patch("safety_ideas.config.cli.load_config", return_value=config):
+        with patch("saim.config.cli.load_config", return_value=config):
             show_scoring_config()
         out = capsys.readouterr().out
         assert "filter_score: min_score=2.0, max_ideas=100" in out
 
     def test_does_not_leak_generate_settings(self, capsys):
         config = _make_config()
-        with patch("safety_ideas.config.cli.load_config", return_value=config):
+        with patch("saim.config.cli.load_config", return_value=config):
             show_scoring_config()
         out = capsys.readouterr().out
         assert "min_ideas_per_strategy" not in out
@@ -156,14 +156,14 @@ class TestShowScoringConfig:
 
     def test_does_not_leak_participant_profiles(self, capsys):
         config = _make_config()
-        with patch("safety_ideas.config.cli.load_config", return_value=config):
+        with patch("saim.config.cli.load_config", return_value=config):
             show_scoring_config()
         out = capsys.readouterr().out
         assert "Participant" not in out
 
     def test_does_not_leak_inactive_team_profiles(self, capsys):
         config = _make_config()
-        with patch("safety_ideas.config.cli.load_config", return_value=config):
+        with patch("saim.config.cli.load_config", return_value=config):
             show_scoring_config()
         out = capsys.readouterr().out
         assert "Skills:" not in out
@@ -179,7 +179,7 @@ class TestShowScoringConfig:
                 min=0.8, max=1.0, label="Very high", description="Thorough evidence"
             ),
         ]
-        with patch("safety_ideas.config.cli.load_config", return_value=config):
+        with patch("saim.config.cli.load_config", return_value=config):
             show_scoring_config()
         out = capsys.readouterr().out
         assert "Confidence Rubric" in out
@@ -189,7 +189,7 @@ class TestShowScoringConfig:
     def test_hides_confidence_rubric_when_empty(self, capsys):
         config = _make_config()
         config.pipeline.confidence_rubric = []
-        with patch("safety_ideas.config.cli.load_config", return_value=config):
+        with patch("saim.config.cli.load_config", return_value=config):
             show_scoring_config()
         out = capsys.readouterr().out
         assert "Confidence Rubric" not in out
@@ -207,7 +207,7 @@ class TestShowScoringConfig:
             ),
         ]
         config = _make_config(criteria=criteria)
-        with patch("safety_ideas.config.cli.load_config", return_value=config):
+        with patch("saim.config.cli.load_config", return_value=config):
             show_scoring_config()
         out = capsys.readouterr().out
         assert "[1] No chain: No connection" in out
@@ -230,7 +230,7 @@ class TestShowScoringConfig:
             ),
         ]
         config = _make_config(criteria=criteria)
-        with patch("safety_ideas.config.cli.load_config", return_value=config):
+        with patch("saim.config.cli.load_config", return_value=config):
             show_scoring_config()
         out = capsys.readouterr().out
         assert "SKIP in Phase 2" in out
@@ -240,7 +240,7 @@ class TestShowScoringConfig:
 
     def test_does_not_show_quick_filter(self, capsys):
         config = _make_config()
-        with patch("safety_ideas.config.cli.load_config", return_value=config):
+        with patch("saim.config.cli.load_config", return_value=config):
             show_scoring_config()
         out = capsys.readouterr().out
         assert "Quick Filter" not in out
@@ -252,8 +252,8 @@ class TestShowScoringConfig:
 class TestShowConfig:
     def test_show_config_runs(self, capsys):
         config = _make_config()
-        with patch("safety_ideas.config.cli.load_config", return_value=config):
-            with patch("safety_ideas.config.cli.list_participants", return_value=[]):
+        with patch("saim.config.cli.load_config", return_value=config):
+            with patch("saim.config.cli.list_participants", return_value=[]):
                 show_config()
         out = capsys.readouterr().out
         assert "Test Team" in out
@@ -261,8 +261,8 @@ class TestShowConfig:
 
     def test_show_config_displays_active_weight_for_overridden_criteria(self, capsys):
         config = _make_config(criteria_weights={"low_compute": 0.0, "theory_of_impact": 3.0})
-        with patch("safety_ideas.config.cli.load_config", return_value=config):
-            with patch("safety_ideas.config.cli.list_participants", return_value=[]):
+        with patch("saim.config.cli.load_config", return_value=config):
+            with patch("saim.config.cli.list_participants", return_value=[]):
                 show_config()
         out = capsys.readouterr().out
         # Overridden criteria should show active weight
@@ -271,8 +271,8 @@ class TestShowConfig:
 
     def test_show_config_displays_active_weight_using_default_when_not_overridden(self, capsys):
         config = _make_config(criteria_weights={"low_compute": 0.0})
-        with patch("safety_ideas.config.cli.load_config", return_value=config):
-            with patch("safety_ideas.config.cli.list_participants", return_value=[]):
+        with patch("saim.config.cli.load_config", return_value=config):
+            with patch("saim.config.cli.list_participants", return_value=[]):
                 show_config()
         out = capsys.readouterr().out
         # Non-overridden criteria should show active weight = default
@@ -282,8 +282,8 @@ class TestShowConfig:
         """Full show must display both default_weight and active weight so the user
         can see what's configured at the criterion level vs what the team overrides."""
         config = _make_config(criteria_weights={"low_compute": 0.0})
-        with patch("safety_ideas.config.cli.load_config", return_value=config):
-            with patch("safety_ideas.config.cli.list_participants", return_value=[]):
+        with patch("saim.config.cli.load_config", return_value=config):
+            with patch("saim.config.cli.list_participants", return_value=[]):
                 show_config()
         out = capsys.readouterr().out
         # Both should be present
@@ -306,7 +306,7 @@ class TestShowParticipant:
             deliverables="blog post",
             goals="learn safety",
         )
-        with patch("safety_ideas.config.cli.get_default_participant", return_value=profile):
+        with patch("saim.config.cli.get_default_participant", return_value=profile):
             show_participant()
         out = capsys.readouterr().out
         assert "name: alice" in out
@@ -319,7 +319,7 @@ class TestShowParticipant:
         assert "goals: learn safety" in out
 
     def test_prints_no_participant_when_none(self, capsys):
-        with patch("safety_ideas.config.cli.get_default_participant", return_value=None):
+        with patch("saim.config.cli.get_default_participant", return_value=None):
             show_participant()
         out = capsys.readouterr().out
         assert out.strip() == "NO_PARTICIPANT"
@@ -331,7 +331,7 @@ class TestShowParticipant:
             background="bg",
             technical_skills="skills",
         )
-        with patch("safety_ideas.config.cli.get_default_participant", return_value=profile):
+        with patch("saim.config.cli.get_default_participant", return_value=profile):
             show_participant()
         out = capsys.readouterr().out
         for field_name in ParticipantProfile.model_fields:
@@ -352,7 +352,7 @@ class TestShowQuickFilterConfig:
         )
         config = _make_config()
         config.pipeline.quick_filter = qf
-        with patch("safety_ideas.config.cli.load_config", return_value=config):
+        with patch("saim.config.cli.load_config", return_value=config):
             show_quick_filter_config()
         out = capsys.readouterr().out
         assert "threshold: 2.0" in out
@@ -361,7 +361,7 @@ class TestShowQuickFilterConfig:
 
     def test_does_not_leak_other_config(self, capsys):
         config = _make_config()
-        with patch("safety_ideas.config.cli.load_config", return_value=config):
+        with patch("saim.config.cli.load_config", return_value=config):
             show_quick_filter_config()
         out = capsys.readouterr().out
         assert "Scoring" not in out
@@ -385,7 +385,7 @@ class TestShowCitationRelevanceConfig:
         )
         config = _make_config()
         config.pipeline.citation_relevance = cr
-        with patch("safety_ideas.config.cli.load_config", return_value=config):
+        with patch("saim.config.cli.load_config", return_value=config):
             show_citation_relevance_config()
         out = capsys.readouterr().out
         assert "threshold: 3" in out
@@ -395,7 +395,7 @@ class TestShowCitationRelevanceConfig:
 
     def test_does_not_leak_other_config(self, capsys):
         config = _make_config()
-        with patch("safety_ideas.config.cli.load_config", return_value=config):
+        with patch("saim.config.cli.load_config", return_value=config):
             show_citation_relevance_config()
         out = capsys.readouterr().out
         assert "Scoring" not in out
@@ -414,7 +414,7 @@ class TestShowBatchSizesConfig:
             stage2_full_scoring=30,
             stage3_novelty_citations=15,
         )
-        with patch("safety_ideas.config.cli.load_config", return_value=config):
+        with patch("saim.config.cli.load_config", return_value=config):
             show_batch_sizes_config()
         out = capsys.readouterr().out
         assert "stage1_quick_filter: 100" in out
@@ -423,7 +423,7 @@ class TestShowBatchSizesConfig:
 
     def test_shows_defaults(self, capsys):
         config = _make_config()
-        with patch("safety_ideas.config.cli.load_config", return_value=config):
+        with patch("saim.config.cli.load_config", return_value=config):
             show_batch_sizes_config()
         out = capsys.readouterr().out
         assert "stage1_quick_filter: 100" in out
@@ -432,7 +432,7 @@ class TestShowBatchSizesConfig:
 
     def test_does_not_leak_other_config(self, capsys):
         config = _make_config()
-        with patch("safety_ideas.config.cli.load_config", return_value=config):
+        with patch("saim.config.cli.load_config", return_value=config):
             show_batch_sizes_config()
         out = capsys.readouterr().out
         assert "Scoring" not in out

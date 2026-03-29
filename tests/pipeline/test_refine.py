@@ -2,8 +2,8 @@
 
 from pathlib import Path
 
-from safety_ideas.config.schemas import ScoringCriteria
-from safety_ideas.pipeline.refine import (
+from saim.config.schemas import ScoringCriteria
+from saim.pipeline.refine import (
     analyze_weaknesses,
     build_proposal_skeleton,
     identify_weak_dimensions,

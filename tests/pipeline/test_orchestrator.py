@@ -6,7 +6,7 @@ import json
 import subprocess
 import sys
 
-from safety_ideas.pipeline.orchestrator import (
+from saim.pipeline.orchestrator import (
     PipelineLogger,
     create_run_dir,
     log_entry,
@@ -15,7 +15,7 @@ from safety_ideas.pipeline.orchestrator import (
 
 
 def test_create_run_dir_all_stages(tmp_path, monkeypatch):
-    monkeypatch.setattr("safety_ideas.pipeline.orchestrator.RUNS_DIR", tmp_path)
+    monkeypatch.setattr("saim.pipeline.orchestrator.RUNS_DIR", tmp_path)
     run_dir = create_run_dir()
     assert run_dir.exists()
     assert run_dir.parent == tmp_path
@@ -24,7 +24,7 @@ def test_create_run_dir_all_stages(tmp_path, monkeypatch):
 
 
 def test_create_run_dir_custom_stages(tmp_path, monkeypatch):
-    monkeypatch.setattr("safety_ideas.pipeline.orchestrator.RUNS_DIR", tmp_path)
+    monkeypatch.setattr("saim.pipeline.orchestrator.RUNS_DIR", tmp_path)
     run_dir = create_run_dir(["generate"])
     assert (run_dir / "generate").is_dir()
     assert not (run_dir / "source").exists()
@@ -105,7 +105,7 @@ def test_cli_init(tmp_path):
     from pathlib import Path
 
     result = subprocess.run(
-        [sys.executable, "-m", "safety_ideas.pipeline.orchestrator", "init", "generate"],
+        [sys.executable, "-m", "saim.pipeline.orchestrator", "init", "generate"],
         capture_output=True, text=True,
     )
     assert result.returncode == 0

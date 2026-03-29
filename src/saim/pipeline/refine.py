@@ -15,7 +15,7 @@ from pathlib import Path
 
 import yaml
 
-from safety_ideas.config.schemas import ScoringCriteria
+from saim.config.schemas import ScoringCriteria
 
 # Section keys in the order they appear in proposal markdown.
 _SECTION_KEYS = [
@@ -362,7 +362,7 @@ def main() -> None:
     import sys
 
     if len(sys.argv) < 2:
-        print("Usage: python -m safety_ideas.pipeline.refine <command> <run_dir> [args]")
+        print("Usage: python -m saim.pipeline.refine <command> <run_dir> [args]")
         print("Commands: analyze-weaknesses, build-skeleton, write, read, list")
         sys.exit(1)
 

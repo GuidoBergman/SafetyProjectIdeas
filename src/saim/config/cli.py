@@ -1,7 +1,7 @@
 """CLI entry point for configuration management operations.
 
 Invoked by the /configure-teams skill via:
-    uv run python -m safety_ideas.config.cli <command> [args]
+    uv run python -m saim.config.cli <command> [args]
 """
 
 import json
@@ -11,13 +11,13 @@ from pathlib import Path
 import yaml
 from pydantic import ValidationError
 
-from safety_ideas.config.loader import load_config
-from safety_ideas.config.participants import (
+from saim.config.loader import load_config
+from saim.config.participants import (
     get_default_participant,
     list_participants,
     load_participant,
 )
-from safety_ideas.config.schemas import (
+from saim.config.schemas import (
     ParticipantProfile,
     PipelineSettings,
     ScoringCriteria,
@@ -25,13 +25,13 @@ from safety_ideas.config.schemas import (
     StageThreshold,
     TeamProfile,
 )
-from safety_ideas.config.writer import (
+from saim.config.writer import (
     save_criteria,
     save_participant,
     save_pipeline,
     save_teams,
 )
-from safety_ideas.constants import CONFIG_DIR, PARTICIPANTS_DIR
+from saim.constants import CONFIG_DIR, PARTICIPANTS_DIR
 
 
 def show_config() -> None:
@@ -333,7 +333,7 @@ def show_citation_relevance_config() -> None:
 def main() -> None:
     """CLI dispatcher."""
     if len(sys.argv) < 2:
-        print("Usage: python -m safety_ideas.config.cli <command> [args]")
+        print("Usage: python -m saim.config.cli <command> [args]")
         print("Commands: show, show-participant, show-generate, show-scoring,")
         print("          show-quick-filter, show-citation-relevance,")
         print("          validate-team, validate-criterion, validate-participant,")

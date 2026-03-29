@@ -15,7 +15,7 @@ Use that as the run directory: `data/runs/<timestamp>`.
 Verify scored ideas exist from the filter_score stage:
 
 ```bash
-uv run python -m safety_ideas.pipeline.filter_score read <run_dir>
+uv run python -m saim.pipeline.filter_score read <run_dir>
 ```
 
 If no scored ideas exist, tell the coordinator and stop.
@@ -23,19 +23,19 @@ If no scored ideas exist, tell the coordinator and stop.
 Load scoring configuration (criteria, weights):
 
 ```bash
-uv run python -m safety_ideas.config.cli show-scoring
+uv run python -m saim.config.cli show-scoring
 ```
 
 Load team profile:
 
 ```bash
-uv run python -m safety_ideas.config.cli show-team
+uv run python -m saim.config.cli show-team
 ```
 
 Load participant profile:
 
 ```bash
-uv run python -m safety_ideas.config.cli show-participant
+uv run python -m saim.config.cli show-participant
 ```
 
 Save all configuration outputs — they will be used in LLM prompts throughout refinement.
@@ -48,7 +48,7 @@ Before proceeding, echo the active configuration:
 Read all scored (non-eliminated) ideas:
 
 ```bash
-uv run python -m safety_ideas.pipeline.filter_score read <run_dir>
+uv run python -m saim.pipeline.filter_score read <run_dir>
 ```
 
 Parse the output into a list of scored idea objects. Sort by `weighted_score` descending. Record the total count.
@@ -56,7 +56,7 @@ Parse the output into a list of scored idea objects. Sort by `weighted_score` de
 Log the start:
 
 ```bash
-uv run python -m safety_ideas.pipeline.orchestrator log <run_dir> refine info 'Refine stage started' '{"scored_ideas": <COUNT>}'
+uv run python -m saim.pipeline.orchestrator log <run_dir> refine info 'Refine stage started' '{"scored_ideas": <COUNT>}'
 ```
 
 ## Phase 2: Auto-Strengthen Weak Ideas (FR36)
@@ -66,7 +66,7 @@ For EACH scored idea, identify weak dimensions and strengthen them.
 ### Step 2.1: Analyze weaknesses
 
 ```bash
-uv run python -m safety_ideas.pipeline.refine analyze-weaknesses '<scored_idea_json>' '<criteria_json>' '<active_weights_json>'
+uv run python -m saim.pipeline.refine analyze-weaknesses '<scored_idea_json>' '<criteria_json>' '<active_weights_json>'
 ```
 
 Where `<criteria_json>` is the JSON array of scoring criteria objects from `show-scoring` output, and `<active_weights_json>` is the team's criteria weight overrides (or `null` if none). This returns a context dict with weak dimensions (all criteria scoring below their per-criterion `refinement_threshold` where the active weight is non-zero), strong dimensions, and idea metadata.
@@ -113,7 +113,7 @@ If the idea has weak dimensions, use the LLM to suggest improvements. Provide th
 If the LLM refinement fails for an idea, keep the original idea unchanged and log a warning:
 
 ```bash
-uv run python -m safety_ideas.pipeline.orchestrator log <run_dir> refine warning 'LLM refinement failed, keeping original' '{"idea_id": "<id>", "title": "<title>"}'
+uv run python -m saim.pipeline.orchestrator log <run_dir> refine warning 'LLM refinement failed, keeping original' '{"idea_id": "<id>", "title": "<title>"}'
 ```
 
 ### Step 2.3: Re-score refined idea on weak dimensions
@@ -156,7 +156,7 @@ Report per-idea confidence that refinement improved the idea. Track the count of
 Log results:
 
 ```bash
-uv run python -m safety_ideas.pipeline.orchestrator log <run_dir> refine info 'Phase 2 complete: auto-strengthen' '{"total_ideas": <TOTAL>, "ideas_with_weak_dims": <COUNT>, "ideas_strengthened": <COUNT>, "refinements_accepted": <COUNT>, "refinements_discarded": <COUNT>}'
+uv run python -m saim.pipeline.orchestrator log <run_dir> refine info 'Phase 2 complete: auto-strengthen' '{"total_ideas": <TOTAL>, "ideas_with_weak_dims": <COUNT>, "ideas_strengthened": <COUNT>, "refinements_accepted": <COUNT>, "refinements_discarded": <COUNT>}'
 ```
 
 ## Phase 3: Generate and Score Alternative Framings (FR37)
@@ -231,13 +231,13 @@ After generating framings, have the LLM score EACH alternative framing on ALL cr
 If the LLM fails for an idea, skip alternative framings for that idea and log a warning:
 
 ```bash
-uv run python -m safety_ideas.pipeline.orchestrator log <run_dir> refine warning 'Alternative framing generation failed' '{"idea_id": "<id>", "title": "<title>"}'
+uv run python -m saim.pipeline.orchestrator log <run_dir> refine warning 'Alternative framing generation failed' '{"idea_id": "<id>", "title": "<title>"}'
 ```
 
 Log results:
 
 ```bash
-uv run python -m safety_ideas.pipeline.orchestrator log <run_dir> refine info 'Phase 3 complete: alternative framings' '{"promising_ideas": <COUNT>, "framings_generated": <TOTAL_FRAMINGS>, "framings_promoted": <COUNT>, "framings_kept_as_alternatives": <COUNT>}'
+uv run python -m saim.pipeline.orchestrator log <run_dir> refine info 'Phase 3 complete: alternative framings' '{"promising_ideas": <COUNT>, "framings_generated": <TOTAL_FRAMINGS>, "framings_promoted": <COUNT>, "framings_kept_as_alternatives": <COUNT>}'
 ```
 
 ## Phase 4: Assemble Full Proposals (FR38, FR40)
@@ -293,14 +293,14 @@ For EACH scored idea (including those without refinements), use the LLM to produ
 Build the proposal skeleton and write:
 
 ```bash
-uv run python -m safety_ideas.pipeline.refine build-skeleton '<scored_idea_json>' '<refinement_json>'
-uv run python -m safety_ideas.pipeline.refine write <run_dir> '<proposal_json>'
+uv run python -m saim.pipeline.refine build-skeleton '<scored_idea_json>' '<refinement_json>'
+uv run python -m saim.pipeline.refine write <run_dir> '<proposal_json>'
 ```
 
 If the LLM fails for an idea, build a minimal proposal from the scored idea data and log a warning:
 
 ```bash
-uv run python -m safety_ideas.pipeline.orchestrator log <run_dir> refine warning 'Proposal generation failed, using minimal proposal' '{"idea_id": "<id>", "title": "<title>"}'
+uv run python -m saim.pipeline.orchestrator log <run_dir> refine warning 'Proposal generation failed, using minimal proposal' '{"idea_id": "<id>", "title": "<title>"}'
 ```
 
 Repeat for every scored idea.
@@ -308,7 +308,7 @@ Repeat for every scored idea.
 Log results:
 
 ```bash
-uv run python -m safety_ideas.pipeline.orchestrator log <run_dir> refine info 'Phase 4 complete: proposals assembled' '{"proposals_written": <COUNT>, "minimal_fallbacks": <COUNT>}'
+uv run python -m saim.pipeline.orchestrator log <run_dir> refine info 'Phase 4 complete: proposals assembled' '{"proposals_written": <COUNT>, "minimal_fallbacks": <COUNT>}'
 ```
 
 ## Phase 5: Results Summary

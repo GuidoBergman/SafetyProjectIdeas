@@ -5,7 +5,7 @@ import pytest
 from pathlib import Path
 from pydantic import ValidationError
 
-from safety_ideas.config.schemas import (
+from saim.config.schemas import (
     ParticipantProfile,
     PipelineSettings,
     ScoringCriteria,
@@ -13,13 +13,13 @@ from safety_ideas.config.schemas import (
     StageThreshold,
     TeamProfile,
 )
-from safety_ideas.config.writer import (
+from saim.config.writer import (
     save_criteria,
     save_participant,
     save_pipeline,
     save_teams,
 )
-from safety_ideas.utils import load_yaml
+from saim.utils import load_yaml
 
 
 class TestSaveTeams:
@@ -122,7 +122,7 @@ class TestSaveParticipant:
     def test_save_to_default_path(self, tmp_path, monkeypatch):
         """Saves to config/participants/<name>.yaml by default."""
         monkeypatch.setattr(
-            "safety_ideas.config.writer.PARTICIPANTS_DIR", tmp_path
+            "saim.config.writer.PARTICIPANTS_DIR", tmp_path
         )
         profile = ParticipantProfile(
             name="Bob Smith",

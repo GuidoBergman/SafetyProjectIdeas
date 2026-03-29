@@ -8,9 +8,9 @@ from pathlib import Path
 
 import yaml
 
-from safety_ideas.config.schemas import ScoringCriteria, TeamProfile
-from safety_ideas.constants import IDEAS_DIR, OUTPUT_DIR
-from safety_ideas.pipeline.filter_score import apply_weights
+from saim.config.schemas import ScoringCriteria, TeamProfile
+from saim.constants import IDEAS_DIR, OUTPUT_DIR
+from saim.pipeline.filter_score import apply_weights
 
 
 def rank_proposals(
@@ -282,14 +282,14 @@ def main() -> None:
     import sys
 
     if len(sys.argv) < 2:
-        print("Usage: python -m safety_ideas.pipeline.rank <command> <run_dir> [args]")
+        print("Usage: python -m saim.pipeline.rank <command> <run_dir> [args]")
         sys.exit(1)
 
     cmd = sys.argv[1]
 
     if cmd == "rank":
         run_dir = Path(sys.argv[2])
-        from safety_ideas.pipeline.refine import read_refined_proposals
+        from saim.pipeline.refine import read_refined_proposals
 
         proposals = read_refined_proposals(run_dir)
         if not proposals:

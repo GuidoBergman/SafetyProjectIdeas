@@ -56,7 +56,7 @@ So that the pipeline is calibrated to BAISH's teams and individual researchers.
 - All config access through Pydantic models -- never raw YAML parsing in pipeline code
 - YAML as source of truth (FR56) -- Pydantic validates on load, YAML files are canonical
 - Claude Code skills (markdown) for pipeline orchestration; Python for programmatic components
-- Skills invoke Python via `uv run python -m safety_ideas.<module>`
+- Skills invoke Python via `uv run python -m saim.<module>`
 - Configuration persists across sessions via YAML files on disk (FR57)
 - Participant profiles stored in `config/participants/` as individual YAML files
 

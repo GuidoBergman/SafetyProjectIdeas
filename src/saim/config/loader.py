@@ -7,7 +7,7 @@ from pathlib import Path
 from dotenv import load_dotenv
 from pydantic import ValidationError
 
-from safety_ideas.config.schemas import (
+from saim.config.schemas import (
     DEFAULT_TEAM,
     GenerateSettings,
     KBCriteria,
@@ -16,8 +16,8 @@ from safety_ideas.config.schemas import (
     TeamProfile,
     TeamType,
 )
-from safety_ideas.constants import PROJECT_ROOT
-from safety_ideas.utils import load_yaml
+from saim.constants import PROJECT_ROOT
+from saim.utils import load_yaml
 
 logger = logging.getLogger(__name__)
 

@@ -103,7 +103,7 @@ This project doesn't fit traditional starter template patterns. It's built as Cl
 **Initialization:**
 
 ```bash
-uv init safety-ideas
+uv init saim
 uv add pytest ruff pyyaml
 ```
 
@@ -112,7 +112,7 @@ uv add pytest ruff pyyaml
 **Language & Runtime:**
 - Python 3.11+ for all programmatic components
 - Claude Code skills (markdown) for pipeline orchestration and user interaction
-- Skills invoke Python via Bash tool: `uv run python -m safety_ideas.<module>`
+- Skills invoke Python via Bash tool: `uv run python -m saim.<module>`
 
 **Package Management:**
 - uv (replaces pip + venv + pip-tools)
@@ -135,7 +135,7 @@ SafetyProjectIdeas/
 ├── .claude/
 │   └── commands/         # Claude Code skills (markdown)
 ├── src/
-│   └── safety_ideas/     # Python package
+│   └── saim/     # Python package
 │       ├── kb/           # KB build + query
 │       ├── pipeline/     # Pipeline stages
 │       ├── connectors/   # Source connectors (arxiv, forums)
@@ -290,7 +290,7 @@ Query module never returns all sections — caller always specifies which sectio
 ### Configuration Validation
 
 **Pydantic Models**
-- Config schemas defined as Pydantic models in `src/safety_ideas/config/`
+- Config schemas defined as Pydantic models in `src/saim/config/`
 - YAML files validated on load with clear error messages
 - Models serve as both validation layer and typed data access
 - Schemas: `TeamProfile`, `ScoringCriteria`, `KBCriteria`, `PipelineSettings`, `ParticipantProfile`
@@ -383,10 +383,10 @@ uv add semanticscholar arxiv docling trafilatura
 ### Structure Patterns
 
 **Project Organization:**
-- Tests in `tests/` mirroring `src/` structure — `tests/kb/test_query.py` for `src/safety_ideas/kb/query.py`
-- `src/safety_ideas/utils.py` — flat file for helper functions used across modules
-- `src/safety_ideas/constants.py` — flat file for all project constants (default priorities, stage names, file patterns, etc.)
-- Config schemas in `src/safety_ideas/config/schemas.py` — all Pydantic models in one place until complexity warrants splitting
+- Tests in `tests/` mirroring `src/` structure — `tests/kb/test_query.py` for `src/saim/kb/query.py`
+- `src/saim/utils.py` — flat file for helper functions used across modules
+- `src/saim/constants.py` — flat file for all project constants (default priorities, stage names, file patterns, etc.)
+- Config schemas in `src/saim/config/schemas.py` — all Pydantic models in one place until complexity warrants splitting
 
 ### Data Format Patterns
 
@@ -434,7 +434,7 @@ Keep it simple:
 ### Config Access Pattern
 
 ```python
-from safety_ideas.config import load_config
+from saim.config import load_config
 config = load_config()  # Returns validated Pydantic models
 config.teams["mentor_novice"].compute_budget
 ```
@@ -469,7 +469,7 @@ Confidence is ALWAYS reported, NEVER used for automated filtering — the human 
 
 ### Skill Patterns
 
-- **Python invocation:** Always `uv run python -m safety_ideas.<module> <args>`
+- **Python invocation:** Always `uv run python -m saim.<module> <args>`
 - **Output:** Skills read Python stdout/stderr and present results to user
 - **Error recovery:** If a Python command fails, skill reads error output and explains what went wrong
 
@@ -510,7 +510,7 @@ SafetyProjectIdeas/
 │       ├── build-kb.md              # KB construction with ingestion
 │       └── run-pipeline.md          # Full pipeline (once tracks converge)
 ├── src/
-│   └── safety_ideas/
+│   └── saim/
 │       ├── __init__.py
 │       ├── constants.py             # All project constants
 │       ├── utils.py                 # Shared helper functions
@@ -643,15 +643,15 @@ docs = kb.query(subfield="interpretability", sections=["abstract", "key_findings
 
 | FR Category | Primary Location | Key Files |
 |---|---|---|
-| KB Management (FR1-FR4, FR6, FR8-FR10) | `src/safety_ideas/kb/` | `builder.py`, `query.py`, `document.py` |
-| Pipeline Execution (FR18-FR22) | `src/safety_ideas/pipeline/` | `orchestrator.py` |
-| Idea Generation (FR23-FR27) | `src/safety_ideas/pipeline/` | `source.py`, `generate.py` |
-| Evaluation & Scoring (FR28-FR35) | `src/safety_ideas/pipeline/` | `filter_score.py` + `verification/citation.py` |
-| Idea Refinement & Proposal Assembly (FR36-FR38, FR40) | `src/safety_ideas/pipeline/` | `refine.py` |
-| Ranking & Output (FR39, FR41-FR42) | `src/safety_ideas/pipeline/` | `rank.py` |
+| KB Management (FR1-FR4, FR6, FR8-FR10) | `src/saim/kb/` | `builder.py`, `query.py`, `document.py` |
+| Pipeline Execution (FR18-FR22) | `src/saim/pipeline/` | `orchestrator.py` |
+| Idea Generation (FR23-FR27) | `src/saim/pipeline/` | `source.py`, `generate.py` |
+| Evaluation & Scoring (FR28-FR35) | `src/saim/pipeline/` | `filter_score.py` + `verification/citation.py` |
+| Idea Refinement & Proposal Assembly (FR36-FR38, FR40) | `src/saim/pipeline/` | `refine.py` |
+| Ranking & Output (FR39, FR41-FR42) | `src/saim/pipeline/` | `rank.py` |
 | Brainstorming (FR43-FR48, FR66) | `.claude/commands/` | `brainstorm.md` |
 | Evaluate Existing Ideas (FR49-FR51) | `.claude/commands/` | `evaluate-idea.md` |
-| Configuration (FR52-FR57) | `src/safety_ideas/config/` + `config/` | `schemas.py`, `loader.py`, YAML files |
+| Configuration (FR52-FR57) | `src/saim/config/` + `config/` | `schemas.py`, `loader.py`, YAML files |
 | Memory & Learning (FR60-FR63) | `data/` | `ideas/`, `runs/` |
 | Idea Repository (FR64-FR65) | `data/ideas/` | Markdown files with scores |
 
@@ -661,8 +661,8 @@ docs = kb.query(subfield="interpretability", sections=["abstract", "key_findings
 
 **Boundary 1: Skills ↔ Python**
 - Skills (`.claude/commands/`) orchestrate and present to user
-- Python (`src/safety_ideas/`) does computation
-- Communication: skills invoke `uv run python -m safety_ideas.<module>` via Bash
+- Python (`src/saim/`) does computation
+- Communication: skills invoke `uv run python -m saim.<module>` via Bash
 - Skills never import Python directly; Python never writes skill files
 
 **Boundary 2: Pipeline Stages**
@@ -725,7 +725,7 @@ brainstorm.md skill → loads participant profile from config/participants/
 
 **Decision Compatibility:** All technology choices are compatible. Python + uv + pytest + ruff is a clean, standard stack. JSON KB with Python query module uses built-in `json`. Pydantic validates YAML config loaded via pyyaml. Claude Code skills invoke Python via Bash — standard pattern. No conflicts detected.
 
-**Pattern Consistency:** Naming conventions are consistent (`snake_case` throughout Python and data formats). Structure patterns align with the Python package layout. Communication between skills and Python is uniform (`uv run python -m safety_ideas.<module>`).
+**Pattern Consistency:** Naming conventions are consistent (`snake_case` throughout Python and data formats). Structure patterns align with the Python package layout. Communication between skills and Python is uniform (`uv run python -m saim.<module>`).
 
 **Structure Alignment:** Project structure supports all decisions. Boundaries are clear (skills ↔ Python, pipeline stages via files, KB accessed only through query module, config only through Pydantic). Integration points are properly structured.
 

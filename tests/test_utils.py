@@ -4,7 +4,7 @@ import urllib.error
 
 import pytest
 
-from safety_ideas.utils import retry_on_rate_limit
+from saim.utils import retry_on_rate_limit
 
 
 class TestRetryOnRateLimit:

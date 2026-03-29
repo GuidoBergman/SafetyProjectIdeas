@@ -77,19 +77,19 @@ So that I can explore specific areas in depth and assess ideas I bring from outs
 
 ### Existing Modules to Reuse (DO NOT DUPLICATE)
 
-- `src/safety_ideas/pipeline/novelty.py` — novelty classification, scoring, formatting
-- `src/safety_ideas/pipeline/memory.py` — previous idea loading
-- `src/safety_ideas/verification/citation.py` — CrossRef and Semantic Scholar lookup
-- `src/safety_ideas/config/loader.py` — config file loading
-- `src/safety_ideas/config/schemas.py` — all Pydantic models (TeamProfile, ScoringCriteria, ParticipantProfile, etc.)
-- `src/safety_ideas/constants.py` — paths (CONFIG_DIR, KB_DIR, IDEAS_DIR, etc.)
+- `src/saim/pipeline/novelty.py` — novelty classification, scoring, formatting
+- `src/saim/pipeline/memory.py` — previous idea loading
+- `src/saim/verification/citation.py` — CrossRef and Semantic Scholar lookup
+- `src/saim/config/loader.py` — config file loading
+- `src/saim/config/schemas.py` — all Pydantic models (TeamProfile, ScoringCriteria, ParticipantProfile, etc.)
+- `src/saim/constants.py` — paths (CONFIG_DIR, KB_DIR, IDEAS_DIR, etc.)
 
 ### Project Structure Notes
 
-- New Python modules go in `src/safety_ideas/pipeline/`
+- New Python modules go in `src/saim/pipeline/`
 - New skill files go in `.claude/commands/`
 - New tests go in `tests/pipeline/`
-- All Python helpers must have CLI entry points callable via `uv run python -m safety_ideas.pipeline.<module>`
+- All Python helpers must have CLI entry points callable via `uv run python -m saim.pipeline.<module>`
 - Every new function MUST have a test (CLAUDE.md mandate)
 
 ### Key Constraints
@@ -102,10 +102,10 @@ So that I can explore specific areas in depth and assess ideas I bring from outs
 ### References
 
 - [Source: docs/epics.md#Epic 6] — Epic definition and acceptance criteria
-- [Source: src/safety_ideas/pipeline/novelty.py] — Novelty assessment helpers
-- [Source: src/safety_ideas/pipeline/memory.py] — Previous idea loading
-- [Source: src/safety_ideas/verification/citation.py] — Citation lookup tools
-- [Source: src/safety_ideas/config/schemas.py] — Pydantic models
+- [Source: src/saim/pipeline/novelty.py] — Novelty assessment helpers
+- [Source: src/saim/pipeline/memory.py] — Previous idea loading
+- [Source: src/saim/verification/citation.py] — Citation lookup tools
+- [Source: src/saim/config/schemas.py] — Pydantic models
 - [Source: .claude/commands/score-ideas.md] — Reference for novelty assessment flow in skills
 
 ## Dev Agent Record

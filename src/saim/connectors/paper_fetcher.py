@@ -20,7 +20,7 @@ import httpx
 import pypdf
 import trafilatura
 
-from safety_ideas.constants import (
+from saim.constants import (
     ARXIV_HTML_BASE,
     DEEP_READ_CONTENT_LIMIT,
     DEEP_READ_SECTION_LIMIT,
@@ -369,7 +369,7 @@ def main() -> None:
 
     if len(sys.argv) < 3:
         print(
-            "Usage: python -m safety_ideas.connectors.paper_fetcher"
+            "Usage: python -m saim.connectors.paper_fetcher"
             " <command> <url_or_json>"
         )
         print("Commands:")

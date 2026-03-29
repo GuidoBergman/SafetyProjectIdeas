@@ -2,8 +2,8 @@
 
 import json
 
-from safety_ideas.config.schemas import ScoringCriteria, TeamProfile
-from safety_ideas.pipeline.rank import (
+from saim.config.schemas import ScoringCriteria, TeamProfile
+from saim.pipeline.rank import (
     format_ranked_output,
     persist_ideas,
     rank_proposals,
@@ -258,7 +258,7 @@ class TestWriteRankedOutput:
     def test_writes_md_and_json(self, tmp_path, monkeypatch):
         # Monkeypatch OUTPUT_DIR to avoid writing to real data/
         fake_output = tmp_path / "output"
-        monkeypatch.setattr("safety_ideas.pipeline.rank.OUTPUT_DIR", fake_output)
+        monkeypatch.setattr("saim.pipeline.rank.OUTPUT_DIR", fake_output)
 
         run_dir = tmp_path / "run_001"
         proposal = _make_proposal("a")
@@ -279,7 +279,7 @@ class TestWriteRankedOutput:
 
     def test_copies_to_output_dir(self, tmp_path, monkeypatch):
         fake_output = tmp_path / "output"
-        monkeypatch.setattr("safety_ideas.pipeline.rank.OUTPUT_DIR", fake_output)
+        monkeypatch.setattr("saim.pipeline.rank.OUTPUT_DIR", fake_output)
 
         run_dir = tmp_path / "run_001"
         md = "# Output copy test"

@@ -17,7 +17,7 @@ Use that as the run directory: `data/runs/<timestamp>`.
 Verify ideas exist from the generate stage:
 
 ```bash
-uv run python -m safety_ideas.pipeline.generate list <run_dir>
+uv run python -m saim.pipeline.generate list <run_dir>
 ```
 
 If no ideas exist, tell the coordinator and stop.
@@ -25,31 +25,31 @@ If no ideas exist, tell the coordinator and stop.
 Load scoring configuration (criteria, weights, thresholds):
 
 ```bash
-uv run python -m safety_ideas.config.cli show-scoring
+uv run python -m saim.config.cli show-scoring
 ```
 
 Load the quick filter rubric and threshold:
 
 ```bash
-uv run python -m safety_ideas.config.cli show-quick-filter
+uv run python -m saim.config.cli show-quick-filter
 ```
 
 Load batch sizes for parallel processing:
 
 ```bash
-uv run python -m safety_ideas.config.cli show-batch-sizes
+uv run python -m saim.config.cli show-batch-sizes
 ```
 
 Load participant profile for context on the team's skill level:
 
 ```bash
-uv run python -m safety_ideas.config.cli show-participant
+uv run python -m saim.config.cli show-participant
 ```
 
 Load the citation relevance rubric:
 
 ```bash
-uv run python -m safety_ideas.config.cli show-citation-relevance
+uv run python -m saim.config.cli show-citation-relevance
 ```
 
 Save all the configuration outputs — they will be embedded in subagent prompts so subagents don't need to call config commands themselves.
@@ -62,7 +62,7 @@ Before proceeding, echo the active configuration:
 ### Step 1.1: Create batches
 
 ```bash
-uv run python -m safety_ideas.pipeline.filter_score create-batches <run_dir> 1 <stage1_batch_size>
+uv run python -m saim.pipeline.filter_score create-batches <run_dir> 1 <stage1_batch_size>
 ```
 
 This reads all generated ideas, partitions them into batches, and writes batch files. It prints the batch count and file paths as JSON.
@@ -85,7 +85,7 @@ Launch **one Agent subagent per batch**, all in a single message for maximum par
 >
 > **Step 1:** Read your batch:
 > ```bash
-> uv run python -m safety_ideas.pipeline.filter_score read-batch [BATCH_PATH]
+> uv run python -m saim.pipeline.filter_score read-batch [BATCH_PATH]
 > ```
 >
 > **Step 2:** For EACH idea in the batch, score it against the rubric. Match the idea against the rubric level descriptions and pick the level that best fits — do NOT score based on gut feeling.
@@ -108,7 +108,7 @@ Launch **one Agent subagent per batch**, all in a single message for maximum par
 >
 > **Step 4:** Write results:
 > ```bash
-> uv run python -m safety_ideas.pipeline.filter_score write-batch-results [RESULT_PATH] '<json_array>'
+> uv run python -m saim.pipeline.filter_score write-batch-results [RESULT_PATH] '<json_array>'
 > ```
 >
 > Where [RESULT_PATH] is: `[RUN_DIR]/filter_score/results/stage1/batch_[NNN]_results.json`
@@ -118,7 +118,7 @@ Launch **one Agent subagent per batch**, all in a single message for maximum par
 After all Wave 1 subagents complete:
 
 ```bash
-uv run python -m safety_ideas.pipeline.filter_score filter-survivors <run_dir> 1
+uv run python -m saim.pipeline.filter_score filter-survivors <run_dir> 1
 ```
 
 This merges all batch results, filters out eliminated ideas, and writes the survivors file. It prints survivor and eliminated counts.
@@ -126,7 +126,7 @@ This merges all batch results, filters out eliminated ideas, and writes the surv
 Log the results:
 
 ```bash
-uv run python -m safety_ideas.pipeline.orchestrator log <run_dir> filter_score info 'Stage 1 complete: quick relevance filter' '{"total_ideas": <TOTAL>, "survivors": <SURVIVORS>, "eliminated": <ELIMINATED>}'
+uv run python -m saim.pipeline.orchestrator log <run_dir> filter_score info 'Stage 1 complete: quick relevance filter' '{"total_ideas": <TOTAL>, "survivors": <SURVIVORS>, "eliminated": <ELIMINATED>}'
 ```
 
 ## Wave 2: Full Per-Criterion Scoring (Stage 2)
@@ -134,7 +134,7 @@ uv run python -m safety_ideas.pipeline.orchestrator log <run_dir> filter_score i
 ### Step 2.1: Create batches from Stage 1 survivors
 
 ```bash
-uv run python -m safety_ideas.pipeline.filter_score create-batches <run_dir> 2 <stage2_batch_size>
+uv run python -m saim.pipeline.filter_score create-batches <run_dir> 2 <stage2_batch_size>
 ```
 
 ### Step 2.2: Launch parallel subagents
@@ -164,7 +164,7 @@ Launch **one Agent subagent per batch**, all in a single message.
 >
 > **Step 1:** Read your batch:
 > ```bash
-> uv run python -m safety_ideas.pipeline.filter_score read-batch [BATCH_PATH]
+> uv run python -m saim.pipeline.filter_score read-batch [BATCH_PATH]
 > ```
 >
 > **Step 2:** For EACH idea, score it against every criterion (except novelty). Match the idea against the rubric level descriptions and pick the level that best fits — do NOT score based on gut feeling. Compute the weighted score. Compute overall confidence as the average of per-criterion confidences.
@@ -194,7 +194,7 @@ Launch **one Agent subagent per batch**, all in a single message.
 >
 > **Step 4:** Write results:
 > ```bash
-> uv run python -m safety_ideas.pipeline.filter_score write-batch-results [RESULT_PATH] '<json_array>'
+> uv run python -m saim.pipeline.filter_score write-batch-results [RESULT_PATH] '<json_array>'
 > ```
 >
 > Where [RESULT_PATH] is: `[RUN_DIR]/filter_score/results/stage2/batch_[NNN]_results.json`
@@ -202,13 +202,13 @@ Launch **one Agent subagent per batch**, all in a single message.
 ### Step 2.3: Collect and filter
 
 ```bash
-uv run python -m safety_ideas.pipeline.filter_score filter-survivors <run_dir> 2
+uv run python -m saim.pipeline.filter_score filter-survivors <run_dir> 2
 ```
 
 Log the results:
 
 ```bash
-uv run python -m safety_ideas.pipeline.orchestrator log <run_dir> filter_score info 'Stage 2 complete: full scoring' '{"survivors": <SURVIVORS>, "eliminated": <ELIMINATED>}'
+uv run python -m saim.pipeline.orchestrator log <run_dir> filter_score info 'Stage 2 complete: full scoring' '{"survivors": <SURVIVORS>, "eliminated": <ELIMINATED>}'
 ```
 
 ## Wave 3: Novelty Assessment & Citation Verification (Stage 3)
@@ -216,7 +216,7 @@ uv run python -m safety_ideas.pipeline.orchestrator log <run_dir> filter_score i
 ### Step 3.1: Create batches from Stage 2 survivors
 
 ```bash
-uv run python -m safety_ideas.pipeline.filter_score create-batches <run_dir> 3 <stage3_batch_size>
+uv run python -m saim.pipeline.filter_score create-batches <run_dir> 3 <stage3_batch_size>
 ```
 
 ### Step 3.2: Launch parallel subagents
@@ -232,7 +232,7 @@ Launch **one Agent subagent per batch**, all in a single message. These subagent
 >
 > **Step 2:** Read your batch:
 > ```bash
-> uv run python -m safety_ideas.pipeline.filter_score read-batch [BATCH_PATH]
+> uv run python -m saim.pipeline.filter_score read-batch [BATCH_PATH]
 > ```
 >
 > **Step 3:** For EACH idea in the batch, execute the full protocol from `novelty-check.md`:
@@ -252,7 +252,7 @@ Launch **one Agent subagent per batch**, all in a single message. These subagent
 >
 > **Step 5:** Write results:
 > ```bash
-> uv run python -m safety_ideas.pipeline.filter_score write-batch-results [RESULT_PATH] '<json_array>'
+> uv run python -m saim.pipeline.filter_score write-batch-results [RESULT_PATH] '<json_array>'
 > ```
 >
 > Where [RESULT_PATH] is: `[RUN_DIR]/filter_score/results/stage3/batch_[NNN]_results.json`
@@ -260,13 +260,13 @@ Launch **one Agent subagent per batch**, all in a single message. These subagent
 ### Step 3.3: Collect and filter
 
 ```bash
-uv run python -m safety_ideas.pipeline.filter_score filter-survivors <run_dir> 3
+uv run python -m saim.pipeline.filter_score filter-survivors <run_dir> 3
 ```
 
 Log the results:
 
 ```bash
-uv run python -m safety_ideas.pipeline.orchestrator log <run_dir> filter_score info 'Stage 3 complete: novelty + citations' '{"survivors": <SURVIVORS>, "eliminated": <ELIMINATED>}'
+uv run python -m saim.pipeline.orchestrator log <run_dir> filter_score info 'Stage 3 complete: novelty + citations' '{"survivors": <SURVIVORS>, "eliminated": <ELIMINATED>}'
 ```
 
 ## Phase 4: Assemble Final Scored Ideas
@@ -276,9 +276,9 @@ After all 3 waves complete, assemble the final scored idea JSON files.
 Read the results from all 3 stages:
 
 ```bash
-uv run python -m safety_ideas.pipeline.filter_score merge-results <run_dir> 1
-uv run python -m safety_ideas.pipeline.filter_score merge-results <run_dir> 2
-uv run python -m safety_ideas.pipeline.filter_score merge-results <run_dir> 3
+uv run python -m saim.pipeline.filter_score merge-results <run_dir> 1
+uv run python -m saim.pipeline.filter_score merge-results <run_dir> 2
+uv run python -m saim.pipeline.filter_score merge-results <run_dir> 3
 ```
 
 For each idea that appears in the Stage 2 results (all ideas that were scored, both survivors and eliminated):
@@ -298,7 +298,7 @@ For each idea that appears in the Stage 2 results (all ideas that were scored, b
 Write each final scored idea:
 
 ```bash
-uv run python -m safety_ideas.pipeline.filter_score write <run_dir> '<scored_idea_json>'
+uv run python -m saim.pipeline.filter_score write <run_dir> '<scored_idea_json>'
 ```
 
 ## Phase 5: Results Summary

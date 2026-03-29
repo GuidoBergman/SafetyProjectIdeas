@@ -7,13 +7,13 @@ Perform a full novelty assessment and citation verification for one or more AI S
 Load the citation relevance rubric and threshold:
 
 ```bash
-uv run python -m safety_ideas.config.cli show-citation-relevance
+uv run python -m saim.config.cli show-citation-relevance
 ```
 
 Load the confidence rubric:
 
 ```bash
-uv run python -m safety_ideas.config.cli show-scoring
+uv run python -m saim.config.cli show-scoring
 ```
 
 Save both outputs — they are used throughout the protocol below.
@@ -35,7 +35,7 @@ Accept the idea description. At minimum, you need a title, research question, an
 
 ### If from a batch file (option 3):
 ```bash
-uv run python -m safety_ideas.pipeline.filter_score read-batch <BATCH_PATH>
+uv run python -m saim.pipeline.filter_score read-batch <BATCH_PATH>
 ```
 Process each idea in the batch sequentially through the protocol below.
 
@@ -54,11 +54,11 @@ Use WebSearch to find existing papers, blog posts, and research on the idea's co
 
 **Structured database search** (precise metadata):
 ```bash
-uv run python -m safety_ideas.verification.citation search-crossref '<key_terms>'
+uv run python -m saim.verification.citation search-crossref '<key_terms>'
 ```
 
 ```bash
-uv run python -m safety_ideas.verification.citation search-s2 '<key_terms>'
+uv run python -m saim.verification.citation search-s2 '<key_terms>'
 ```
 
 Run at least 2-3 search queries with different phrasings to maximize coverage (e.g., one broad, one narrow, one using alternative terminology).
@@ -76,7 +76,7 @@ For each relevant paper or work found, record:
 For relevant papers, consider whether reading specific sections could change your assessment. If a paper's abstract suggests it might address the idea but you're unsure of the degree, or if the answer likely lives in the discussion/limitations/future work/appendix — fetch those sections:
 
 ```bash
-uv run python -m safety_ideas.connectors.paper_fetcher fetch-batch '<json_array_of_urls>'
+uv run python -m saim.connectors.paper_fetcher fetch-batch '<json_array_of_urls>'
 ```
 
 The goal is to not miss information that would change the novelty classification. Don't read every related paper end-to-end, but don't skip deeper reading when it could matter.
@@ -100,7 +100,7 @@ Assign a confidence score (0.0-1.0) using the confidence rubric from setup.
 ### Step N5: Validate and Format
 
 ```bash
-uv run python -m safety_ideas.pipeline.novelty format '<novelty_json>'
+uv run python -m saim.pipeline.novelty format '<novelty_json>'
 ```
 
 Where `<novelty_json>` is:
@@ -135,7 +135,7 @@ For each citation in the idea, score its relevance to the idea's argument using 
 For citations at or above the verification threshold (from the rubric config), verify via:
 
 ```bash
-uv run python -m safety_ideas.verification.citation lookup-idea '<idea_json>'
+uv run python -m saim.verification.citation lookup-idea '<idea_json>'
 ```
 
 This searches CrossRef (by DOI if available, then by title) and Semantic Scholar (by title) for each citation. It returns metadata for you to judge.

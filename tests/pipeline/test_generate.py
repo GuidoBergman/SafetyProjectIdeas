@@ -2,7 +2,7 @@
 
 import yaml
 
-from safety_ideas.pipeline.generate import (
+from saim.pipeline.generate import (
     list_idea_files,
     read_idea_sketches,
     write_idea_sketch,

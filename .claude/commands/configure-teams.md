@@ -4,12 +4,12 @@ Manage BAISH team profiles, scoring criteria, pipeline settings, and participant
 
 ## Getting Started
 
-**IMPORTANT:** Before presenting any configuration options to the user, always read the Pydantic schemas in `src/safety_ideas/config/schemas.py` and `src/safety_ideas/config/participants.py` to discover the current valid values for all constrained fields (Literals, enums, validators). Do not assume values — they may have changed. Always list all valid values for each constrained field when presenting options to the user.
+**IMPORTANT:** Before presenting any configuration options to the user, always read the Pydantic schemas in `src/saim/config/schemas.py` and `src/saim/config/participants.py` to discover the current valid values for all constrained fields (Literals, enums, validators). Do not assume values — they may have changed. Always list all valid values for each constrained field when presenting options to the user.
 
 First, display the current configuration:
 
 ```bash
-uv run python -m safety_ideas.config.cli show
+uv run python -m saim.config.cli show
 ```
 
 After running `show`, you MUST present the user with a clear summary of all current settings, organized as follows:
@@ -43,7 +43,7 @@ These are the factory defaults. Always run `show` to confirm current values — 
 
 To set the default team:
 ```bash
-uv run python -m safety_ideas.config.cli set-default-team <team_type>
+uv run python -m saim.config.cli set-default-team <team_type>
 ```
 
 ### Team Profiles
@@ -54,12 +54,12 @@ When presenting team profile options, read the schemas to list all current valid
 
 To add or update a team:
 ```bash
-uv run python -m safety_ideas.config.cli add-team '{"name": "Team Name", "team_type": "<valid_team_type>", "compute_budget": "<valid_budget>", "technical_skills": ["<valid_skill>"], "criteria_weights": {"<criterion_name>": 2.0}}'
+uv run python -m saim.config.cli add-team '{"name": "Team Name", "team_type": "<valid_team_type>", "compute_budget": "<valid_budget>", "technical_skills": ["<valid_skill>"], "criteria_weights": {"<criterion_name>": 2.0}}'
 ```
 
 To remove a team:
 ```bash
-uv run python -m safety_ideas.config.cli remove-team <team_type>
+uv run python -m saim.config.cli remove-team <team_type>
 ```
 
 ### Scoring Criteria
@@ -72,12 +72,12 @@ When presenting criteria options, read the schemas to list the valid range for `
 
 To add or update a criterion:
 ```bash
-uv run python -m safety_ideas.config.cli add-criterion '{"name": "learning_value", "description": "Does this project teach the researcher important safety concepts?", "default_weight": 2.0}'
+uv run python -m saim.config.cli add-criterion '{"name": "learning_value", "description": "Does this project teach the researcher important safety concepts?", "default_weight": 2.0}'
 ```
 
 To remove a criterion:
 ```bash
-uv run python -m safety_ideas.config.cli remove-criterion learning_value
+uv run python -m saim.config.cli remove-criterion learning_value
 ```
 
 > **Note:** The "novelty" criterion is derived from the hybrid novelty assessment (FR34) — its score comes from evidence-based search, not manual assignment. Its weight is configurable per team type via `criteria_weights` in team profiles.
@@ -90,7 +90,7 @@ When presenting pipeline options, read the schemas to list all valid pipeline st
 
 To update pipeline settings:
 ```bash
-uv run python -m safety_ideas.config.cli update-pipeline '{"model_assignments": {"<stage>": {"model": "<model>", "fallback": "<model>"}}, "thresholds": {"<stage>": {"min_score": 3.0, "max_ideas": 15}}}'
+uv run python -m saim.config.cli update-pipeline '{"model_assignments": {"<stage>": {"model": "<model>", "fallback": "<model>"}}, "thresholds": {"<stage>": {"min_score": 3.0, "max_ideas": 15}}}'
 ```
 
 ### Default Participant
@@ -99,12 +99,12 @@ uv run python -m safety_ideas.config.cli update-pipeline '{"model_assignments": 
 
 To set the default participant:
 ```bash
-uv run python -m safety_ideas.config.cli set-default-participant <name>
+uv run python -m saim.config.cli set-default-participant <name>
 ```
 
 To clear the default participant:
 ```bash
-uv run python -m safety_ideas.config.cli clear-default-participant
+uv run python -m saim.config.cli clear-default-participant
 ```
 
 ### Participant Profiles
@@ -117,7 +117,7 @@ When presenting participant options, read the schemas to list all valid values f
 
 To save a participant profile:
 ```bash
-uv run python -m safety_ideas.config.cli save-participant '{"name": "alice", "experience_level": "<valid_level>", "technical_background": ["<valid_skill>"], "compute_resources": "<valid_resource>", "time_availability": "<valid_availability>"}'
+uv run python -m saim.config.cli save-participant '{"name": "alice", "experience_level": "<valid_level>", "technical_background": ["<valid_skill>"], "compute_resources": "<valid_resource>", "time_availability": "<valid_availability>"}'
 ```
 
 ## Validation
@@ -126,9 +126,9 @@ All changes are validated against Pydantic schemas before saving. If validation 
 
 To validate without saving:
 ```bash
-uv run python -m safety_ideas.config.cli validate-team '{"name": "Test", "team_type": "mentor_novice", "compute_budget": "low"}'
-uv run python -m safety_ideas.config.cli validate-criterion '{"name": "test", "description": "desc", "default_weight": 2.0}'
-uv run python -m safety_ideas.config.cli validate-participant '{"name": "test", "experience_level": "beginner"}'
+uv run python -m saim.config.cli validate-team '{"name": "Test", "team_type": "mentor_novice", "compute_budget": "low"}'
+uv run python -m saim.config.cli validate-criterion '{"name": "test", "description": "desc", "default_weight": 2.0}'
+uv run python -m saim.config.cli validate-participant '{"name": "test", "experience_level": "beginner"}'
 ```
 
 ## Workflow

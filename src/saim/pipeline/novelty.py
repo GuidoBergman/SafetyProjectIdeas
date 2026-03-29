@@ -228,7 +228,7 @@ def main() -> None:
     import sys
 
     if len(sys.argv) < 2:
-        print("Usage: python -m safety_ideas.pipeline.novelty <command> [args]")
+        print("Usage: python -m saim.pipeline.novelty <command> [args]")
         print("Commands:")
         print("  score <classification>       — convert classification to score")
         print("  validate <classification>    — check if classification is valid")

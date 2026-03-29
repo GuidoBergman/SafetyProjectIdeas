@@ -7,19 +7,19 @@ Collaboratively evaluate, refine, and strengthen a research idea — whether it 
 Load scoring configuration (criteria with rubrics and active weights):
 
 ```bash
-uv run python -m safety_ideas.config.cli show-scoring
+uv run python -m saim.config.cli show-scoring
 ```
 
 Load team profile:
 
 ```bash
-uv run python -m safety_ideas.config.cli show
+uv run python -m saim.config.cli show
 ```
 
 Load participant profile:
 
 ```bash
-uv run python -m safety_ideas.config.cli show-participant
+uv run python -m saim.config.cli show-participant
 ```
 
 Save all configuration for use throughout the session.
@@ -199,10 +199,10 @@ Save the idea with all improvements to **every location where it exists**:
 
 2. **Pipeline run stages** — if the idea came from a pipeline run (`run_id` is set and not "unknown"), check for the idea in `data/runs/<run_id>/` stage directories (generate/, filter_score/, refine/, rank/). For individual `.md` files, update them. For batch `.json` files, load the batch, find the matching idea by `idea_id`, update its fields, and write back.
 
-3. **Selected ideas file** — check if a selected ideas file exists at the path configured by `SELECTED_IDEAS_FILE` in `src/safety_ideas/constants.py` (default: `data/output/selected_ideas.md`). If the file exists and contains this idea (match by idea_id or title), update the idea's section in that file. If the idea isn't in the file yet, **always add it** — every saved idea should be in the selected ideas file. **Numbering: scan ALL sections of the file (including "Lower Confidence" and any other secondary sections) to find the highest existing number, then use the next integer.** For example, if the file has #1, #2, #3 in the main section and #4 in "Lower Confidence", the next idea gets #5 regardless of which section it's added to. Never use fractional numbers (e.g., #3.5). Never reuse or skip numbers.
+3. **Selected ideas file** — check if a selected ideas file exists at the path configured by `SELECTED_IDEAS_FILE` in `src/saim/constants.py` (default: `data/output/selected_ideas.md`). If the file exists and contains this idea (match by idea_id or title), update the idea's section in that file. If the idea isn't in the file yet, **always add it** — every saved idea should be in the selected ideas file. **Numbering: scan ALL sections of the file (including "Lower Confidence" and any other secondary sections) to find the highest existing number, then use the next integer.** For example, if the file has #1, #2, #3 in the main section and #4 in "Lower Confidence", the next idea gets #5 regardless of which section it's added to. Never use fractional numbers (e.g., #3.5). Never reuse or skip numbers.
 
 ```bash
-uv run python -c "from safety_ideas.constants import SELECTED_IDEAS_FILE; print(SELECTED_IDEAS_FILE)"
+uv run python -c "from saim.constants import SELECTED_IDEAS_FILE; print(SELECTED_IDEAS_FILE)"
 ```
 
 For `data/ideas/` and pipeline run files, preserve the full structure:

@@ -15,7 +15,7 @@ Use that as the run directory: `data/runs/<timestamp>`.
 Verify refined proposals exist from the refine stage:
 
 ```bash
-uv run python -m safety_ideas.pipeline.refine read <run_dir>
+uv run python -m saim.pipeline.refine read <run_dir>
 ```
 
 If no refined proposals exist, tell the coordinator and stop.
@@ -23,13 +23,13 @@ If no refined proposals exist, tell the coordinator and stop.
 Load scoring configuration (criteria, weights, thresholds):
 
 ```bash
-uv run python -m safety_ideas.config.cli show-scoring
+uv run python -m saim.config.cli show-scoring
 ```
 
 Load team profile for weight context:
 
 ```bash
-uv run python -m safety_ideas.config.cli show-participant
+uv run python -m saim.config.cli show-participant
 ```
 
 Save all configuration outputs for use in scoring prompts.
@@ -42,7 +42,7 @@ Before proceeding, echo the active configuration:
 Read all refined proposals from the run's refine/ directory:
 
 ```bash
-uv run python -m safety_ideas.pipeline.refine read <run_dir>
+uv run python -m saim.pipeline.refine read <run_dir>
 ```
 
 Parse the output into a list of proposal objects. Each proposal contains the full refined content: research question, approach, experimental plan, impact chain, and the original scores (including novelty) from filter_score.
@@ -50,7 +50,7 @@ Parse the output into a list of proposal objects. Each proposal contains the ful
 Log the load:
 
 ```bash
-uv run python -m safety_ideas.pipeline.orchestrator log <run_dir> rank info 'Loaded refined proposals for ranking' '{"proposal_count": <COUNT>}'
+uv run python -m saim.pipeline.orchestrator log <run_dir> rank info 'Loaded refined proposals for ranking' '{"proposal_count": <COUNT>}'
 ```
 
 ## Phase 2: Re-Score Full Proposals (FR39)
@@ -97,7 +97,7 @@ Include the original novelty score entry unchanged. The complete scores dict sho
 Log scoring progress:
 
 ```bash
-uv run python -m safety_ideas.pipeline.orchestrator log <run_dir> rank info 'Re-scoring complete' '{"proposals_scored": <COUNT>}'
+uv run python -m saim.pipeline.orchestrator log <run_dir> rank info 'Re-scoring complete' '{"proposals_scored": <COUNT>}'
 ```
 
 ## Phase 3: Rank and Output
@@ -107,7 +107,7 @@ uv run python -m safety_ideas.pipeline.orchestrator log <run_dir> rank info 'Re-
 Build a JSON array of proposals with their full re-scored criteria, then rank:
 
 ```bash
-uv run python -m safety_ideas.pipeline.rank rank <run_dir> '<proposals_json>'
+uv run python -m saim.pipeline.rank rank <run_dir> '<proposals_json>'
 ```
 
 This computes weighted scores using active criterion weights and sorts proposals highest-first. It returns the ranked proposals as JSON.
@@ -117,7 +117,7 @@ This computes weighted scores using active criterion weights and sorts proposals
 **IMPORTANT:** Only pass the ranked JSON — do NOT pass a separate markdown argument. The `write` command auto-generates the full markdown from the JSON using the `format_ranked_output` function, which includes ALL proposal fields (research question, full approach, experiments, impact chain, strength rationale, alternative framings, cited sources, scores, provenance) without any truncation. Do NOT attempt to generate or pass markdown yourself.
 
 ```bash
-uv run python -m safety_ideas.pipeline.rank write <run_dir> '<ranked_json>'
+uv run python -m saim.pipeline.rank write <run_dir> '<ranked_json>'
 ```
 
 This writes `rank/ranked_proposals.json` and `rank/ranked_proposals.md` to the run directory.
@@ -125,7 +125,7 @@ This writes `rank/ranked_proposals.json` and `rank/ranked_proposals.md` to the r
 ### Step 3.3: Persist to data/ideas/
 
 ```bash
-uv run python -m safety_ideas.pipeline.rank persist '<ranked_json>'
+uv run python -m saim.pipeline.rank persist '<ranked_json>'
 ```
 
 This copies ranked proposals to `data/ideas/` for cross-run accumulation.
@@ -133,7 +133,7 @@ This copies ranked proposals to `data/ideas/` for cross-run accumulation.
 Log the output:
 
 ```bash
-uv run python -m safety_ideas.pipeline.orchestrator log <run_dir> rank info 'Ranking complete, output written' '{"ranked_count": <COUNT>, "top_score": <TOP_WEIGHTED_SCORE>}'
+uv run python -m saim.pipeline.orchestrator log <run_dir> rank info 'Ranking complete, output written' '{"ranked_count": <COUNT>, "top_score": <TOP_WEIGHTED_SCORE>}'
 ```
 
 ## Phase 4: Summary

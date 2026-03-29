@@ -9,7 +9,7 @@ Generate research idea sketches across AI Safety subfields, grounded in the rese
 Create a run directory for this generation run:
 
 ```bash
-uv run python -m safety_ideas.pipeline.orchestrator init generate
+uv run python -m saim.pipeline.orchestrator init generate
 ```
 
 Save the printed run directory path — it will be used throughout as `<run_dir>`.
@@ -17,7 +17,7 @@ Save the printed run directory path — it will be used throughout as `<run_dir>
 Load generation settings:
 
 ```bash
-uv run python -m safety_ideas.config.cli show-generate
+uv run python -m saim.config.cli show-generate
 ```
 
 This outputs the two values needed throughout:
@@ -30,7 +30,7 @@ Before proceeding, echo the active configuration:
 Load previously generated ideas for divergence steering:
 
 ```bash
-uv run python -m safety_ideas.pipeline.memory
+uv run python -m saim.pipeline.memory
 ```
 
 Save the returned JSON list of previous idea titles — these will be passed to subagents as "covered ground" to diverge from (see Phase 2a prompt).
@@ -73,7 +73,7 @@ test -f data/output/research-landscape.md && echo "EXISTS" || echo "MISSING"
 Load the configured participant profile and translate it into concrete generation constraints:
 
 ```bash
-uv run python -m safety_ideas.config.cli show-participant
+uv run python -m saim.config.cli show-participant
 ```
 
 **If a participant profile is loaded**, derive explicit constraints for subagent prompts. Map each profile field to a concrete generation constraint:
@@ -328,7 +328,7 @@ Assign sequential idea IDs: `gen-001`, `gen-002`, etc., across all subfields.
 For each idea, add the `idea_id` and `run_id` (extracted from the run directory name) to the JSON, then write:
 
 ```bash
-uv run python -m safety_ideas.pipeline.generate write <run_dir> '<json_data>'
+uv run python -m saim.pipeline.generate write <run_dir> '<json_data>'
 ```
 
 Where `<json_data>` is the full JSON object for the idea including `idea_id` and `run_id`.
@@ -344,8 +344,8 @@ The orchestrator must substitute the `<PLACEHOLDER>` values below with actual va
 ```bash
 uv run python -c "
 from pathlib import Path
-from safety_ideas.pipeline.orchestrator import write_run_meta
-from safety_ideas.config.loader import load_config
+from saim.pipeline.orchestrator import write_run_meta
+from saim.config.loader import load_config
 config = load_config(load_env=False)
 params = {
     'subfields_targeted': <SUBFIELDS_LIST>,          # e.g. ['Black-box Safety', 'Interpretability']
@@ -385,7 +385,7 @@ Present the coordinator with a summary:
 6. Sort by confidence (highest first) within each subfield
 
 The coordinator can:
-- **Review** individual ideas: `uv run python -m safety_ideas.pipeline.generate read <run_dir>` to see all, or read specific files
+- **Review** individual ideas: `uv run python -m saim.pipeline.generate read <run_dir>` to see all, or read specific files
 - **Remove** ideas they don't want (including flagged duplicates)
 - **Add** additional ideas through conversation (write them with the same pipeline command)
 - **Redirect** generation to specific areas (re-run Phase 2a for specific subfields/strategies)

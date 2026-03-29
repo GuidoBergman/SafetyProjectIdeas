@@ -3,7 +3,7 @@
 import pytest
 from pydantic import ValidationError
 
-from safety_ideas.config.schemas import (
+from saim.config.schemas import (
     KBCriteria,
     ParticipantProfile,
     PipelineSettings,

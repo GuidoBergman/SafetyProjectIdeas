@@ -1,10 +1,10 @@
-# Safety Ideas
+# SAIM (Safety Idea Machine)
 
 AI Safety Research Idea Generation Pipeline for BAISH (Beginner AI Safety Heuristics).
 
 ## Overview
 
-Safety Ideas is a Claude Code skills-based pipeline that generates, evaluates, refines, and ranks AI Safety research project ideas tailored to different team configurations. It uses a knowledge base of AI Safety research papers and configurable scoring criteria to produce actionable research proposals.
+SAIM (Safety Idea Machine) is a Claude Code skills-based pipeline that generates, evaluates, refines, and ranks AI Safety research project ideas tailored to different team configurations. It uses a knowledge base of AI Safety research papers and configurable scoring criteria to produce actionable research proposals.
 
 ## Setup
 
@@ -31,7 +31,7 @@ Safety Ideas is a Claude Code skills-based pipeline that generates, evaluates, r
 
 ## Project Structure
 
-- `src/safety_ideas/` - Python package with pipeline stages
+- `src/saim/` - Python package with pipeline stages
 - `config/` - YAML configuration files (teams, criteria, pipeline settings)
 - `data/` - Knowledge base, pipeline outputs, and run history
 - `.claude/commands/` - Claude Code skills for pipeline orchestration

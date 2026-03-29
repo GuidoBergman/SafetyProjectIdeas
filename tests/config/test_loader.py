@@ -5,7 +5,7 @@ from pathlib import Path
 import pytest
 import yaml
 
-from safety_ideas.config.loader import AppConfig, load_config
+from saim.config.loader import AppConfig, load_config
 
 
 @pytest.fixture
@@ -109,7 +109,7 @@ def test_load_config_invalid_data(config_dir):
 
 def test_load_default_config_files():
     """Integration test: load the actual default config files."""
-    from safety_ideas.constants import CONFIG_DIR
+    from saim.constants import CONFIG_DIR
 
     if not CONFIG_DIR.exists():
         pytest.skip("Default config directory not found")

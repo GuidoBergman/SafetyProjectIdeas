@@ -21,7 +21,7 @@ So that the system is ready for idea generation from day one.
 **Given** no project structure exists
 **When** the developer initializes the project
 **Then** the following structure is created:
-- `src/safety_ideas/` Python package with subpackages: `config/`, `kb/`, `connectors/`, `pipeline/`, `verification/`
+- `src/saim/` Python package with subpackages: `config/`, `kb/`, `connectors/`, `pipeline/`, `verification/`
 - `data/kb/`, `data/output/`, `data/runs/`, `data/ideas/` directories
 - `config/` directory with `participants/` subdirectory
 - `tests/` directory mirroring `src/` structure
@@ -30,7 +30,7 @@ So that the system is ready for idea generation from day one.
 **And** `pyproject.toml` is configured with dependencies (`pytest`, `ruff`, `pyyaml`, `pydantic`, `python-dotenv`), ruff config, and project metadata
 **And** `.env.example` documents required environment variables
 **And** `.gitignore` excludes `.env`, `__pycache__/`, `.venv/`, `data/runs/`
-**And** `src/safety_ideas/constants.py` and `src/safety_ideas/utils.py` exist
+**And** `src/saim/constants.py` and `src/saim/utils.py` exist
 **And** `README.md` exists with project overview and setup instructions
 **And** `LICENSE` exists with MIT license
 **And** `uv sync` succeeds without errors
@@ -38,7 +38,7 @@ So that the system is ready for idea generation from day one.
 ### AC2: Pydantic Config Schemas
 
 **Given** the project structure exists
-**When** Pydantic models are defined in `src/safety_ideas/config/schemas.py`
+**When** Pydantic models are defined in `src/saim/config/schemas.py`
 **Then** the following models exist: `TeamProfile`, `ScoringCriteria`, `KBCriteria`, `PipelineSettings`, `ParticipantProfile`
 **And** `TeamProfile` includes: team name, type (mentor_novice / solo_novice / experienced_group), compute_budget, technical_skills, custom criteria weights
 **And** `ScoringCriteria` includes: criteria name, description, default weight, per-team-type weight overrides
@@ -49,7 +49,7 @@ So that the system is ready for idea generation from day one.
 ### AC3: Config Loader with Validation
 
 **Given** Pydantic models are defined
-**When** `load_config()` is called from `src/safety_ideas/config/loader.py`
+**When** `load_config()` is called from `src/saim/config/loader.py`
 **Then** it loads and validates all YAML files from `config/` directory
 **And** returns validated Pydantic model instances
 **And** raises clear error messages if YAML is malformed or missing required fields
@@ -71,7 +71,7 @@ So that the system is ready for idea generation from day one.
 
 - Python 3.11+ with `uv init`, dependencies: pytest, ruff, pyyaml, pydantic, python-dotenv
 - Claude Code skills (markdown) for pipeline orchestration; Python for programmatic components
-- Skills invoke Python via `uv run python -m safety_ideas.<module>`
+- Skills invoke Python via `uv run python -m saim.<module>`
 - All config access through Pydantic models -- never raw YAML parsing in pipeline code
 - `.env` + python-dotenv for API keys (Semantic Scholar, etc.)
 - `.env` added to `.gitignore`
@@ -91,7 +91,7 @@ So that the system is ready for idea generation from day one.
 
 ```
 project-root/
-  src/safety_ideas/
+  src/saim/
     __init__.py
     constants.py
     utils.py

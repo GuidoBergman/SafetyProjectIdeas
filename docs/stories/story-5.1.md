@@ -56,14 +56,14 @@ So that I get actionable research project proposals ranked on complete informati
 
 ## Tasks / Subtasks
 
-- [x] Create `src/safety_ideas/pipeline/refine.py` (AC: #1, #2, #3)
+- [x] Create `src/saim/pipeline/refine.py` (AC: #1, #2, #3)
   - [x] `identify_weak_dimensions(scored_idea: dict, criteria: list) -> list[str]` — find lowest-scoring criteria
   - [x] `build_refinement_context(scored_idea: dict, weak_dims: list[str]) -> dict` — prepare context for LLM refinement
   - [x] `build_proposal_skeleton(scored_idea: dict, refinement: dict) -> dict` — structure the full proposal
   - [x] `write_refined_proposal(run_dir: Path, proposal: dict) -> Path` — write proposal as markdown file to refine/
   - [x] `read_refined_proposals(run_dir: Path) -> list[dict]` — read all proposals from refine/
   - [x] CLI entry point for skill invocation (`main()`)
-- [x] Create `src/safety_ideas/pipeline/rank.py` (AC: #4, #5)
+- [x] Create `src/saim/pipeline/rank.py` (AC: #4, #5)
   - [x] `rank_proposals(proposals: list[dict], criteria: list, team_profile: TeamProfile) -> list[dict]` — re-score and sort by overall weighted score
   - [x] `format_ranked_output(ranked: list[dict]) -> str` — generate concise markdown for 20+ proposals
   - [x] `persist_ideas(ranked: list[dict], ideas_dir: Path) -> list[Path]` — copy final proposals to data/ideas/
@@ -94,8 +94,8 @@ So that I get actionable research project proposals ranked on complete informati
 ### Architecture References
 
 - **Skill locations:** `.claude/commands/refine-ideas.md`, `.claude/commands/rank-ideas.md` [Source: docs/architecture.md#Project Structure]
-- **Python modules:** `src/safety_ideas/pipeline/refine.py`, `src/safety_ideas/pipeline/rank.py` [Source: docs/architecture.md#Project Structure]
-- **Skills invoke Python via:** `uv run python -m safety_ideas.pipeline.<module>` [Source: docs/architecture.md#Skill Patterns]
+- **Python modules:** `src/saim/pipeline/refine.py`, `src/saim/pipeline/rank.py` [Source: docs/architecture.md#Project Structure]
+- **Skills invoke Python via:** `uv run python -m saim.pipeline.<module>` [Source: docs/architecture.md#Skill Patterns]
 - **Refine output:** Markdown files in `data/runs/<timestamp>/refine/` [Source: docs/architecture.md#Data Architecture]
 - **Rank output:** Markdown + JSON in `data/runs/<timestamp>/rank/`, copied to `data/output/` and `data/ideas/`
 - **Track A, steps 5-6:** After filter_score, final pipeline stages
@@ -105,8 +105,8 @@ So that I get actionable research project proposals ranked on complete informati
 1. **Hybrid skill + Python architecture (same pattern as stories 3.1, 4.1):**
    - `.claude/commands/refine-ideas.md` — Claude Code skill that orchestrates refinement conversationally, uses LLM for auto-strengthening, alternative framings, and proposal assembly
    - `.claude/commands/rank-ideas.md` — Claude Code skill that re-scores full proposals via LLM, produces ranked markdown output
-   - `src/safety_ideas/pipeline/refine.py` — Python module for refine I/O, weak dimension identification, proposal skeleton building
-   - `src/safety_ideas/pipeline/rank.py` — Python module for ranking, persistence, output formatting
+   - `src/saim/pipeline/refine.py` — Python module for refine I/O, weak dimension identification, proposal skeleton building
+   - `src/saim/pipeline/rank.py` — Python module for ranking, persistence, output formatting
 
 2. **Refined proposal markdown format (output of refine stage):**
    Each file in `refine/<idea_id>.md` with YAML frontmatter:
@@ -164,16 +164,16 @@ So that I get actionable research project proposals ranked on complete informati
 
 ### Existing Code to Use (DO NOT Reinvent)
 
-- `safety_ideas.pipeline.filter_score.read_scored_ideas(run_dir)` — Load scored ideas from Epic 4
-- `safety_ideas.pipeline.filter_score.apply_weights(scores, criteria, team_profile)` — Recompute weighted scores
-- `safety_ideas.config.loader.load_config()` — Load all config (teams, criteria, pipeline settings)
-- `safety_ideas.config.schemas` — `TeamProfile`, `ScoringCriteria`, `StageThreshold`, `PipelineSettings`
-- `safety_ideas.constants` — All path constants (`RUNS_DIR`, `IDEAS_DIR`, `OUTPUT_DIR`, `SCORING_CRITERIA`)
-- `safety_ideas.pipeline.orchestrator.PipelineLogger` — Structured JSON logging
-- `safety_ideas.pipeline.orchestrator.write_run_meta(run_dir, params)` — Update run metadata
-- `safety_ideas.pipeline.memory.load_previous_ideas()` — Load previous idea titles (for dedup verification)
-- `safety_ideas.pipeline.novelty` — Novelty classification constants, score derivation
-- `safety_ideas.utils.load_yaml()` — YAML loading
+- `saim.pipeline.filter_score.read_scored_ideas(run_dir)` — Load scored ideas from Epic 4
+- `saim.pipeline.filter_score.apply_weights(scores, criteria, team_profile)` — Recompute weighted scores
+- `saim.config.loader.load_config()` — Load all config (teams, criteria, pipeline settings)
+- `saim.config.schemas` — `TeamProfile`, `ScoringCriteria`, `StageThreshold`, `PipelineSettings`
+- `saim.constants` — All path constants (`RUNS_DIR`, `IDEAS_DIR`, `OUTPUT_DIR`, `SCORING_CRITERIA`)
+- `saim.pipeline.orchestrator.PipelineLogger` — Structured JSON logging
+- `saim.pipeline.orchestrator.write_run_meta(run_dir, params)` — Update run metadata
+- `saim.pipeline.memory.load_previous_ideas()` — Load previous idea titles (for dedup verification)
+- `saim.pipeline.novelty` — Novelty classification constants, score derivation
+- `saim.utils.load_yaml()` — YAML loading
 
 ### What NOT to Build
 
@@ -227,8 +227,8 @@ N/A
 - Added 2 new tests: test_does_not_mutate_input, test_displays_rescored_scores_when_available
 
 ### File List
-- `src/safety_ideas/pipeline/refine.py` — refinement logic: weak dimension identification, context building, proposal skeleton, markdown I/O, CLI
-- `src/safety_ideas/pipeline/rank.py` — ranking logic: proposal scoring, output formatting, idea persistence, CLI
+- `src/saim/pipeline/refine.py` — refinement logic: weak dimension identification, context building, proposal skeleton, markdown I/O, CLI
+- `src/saim/pipeline/rank.py` — ranking logic: proposal scoring, output formatting, idea persistence, CLI
 - `.claude/commands/refine-ideas.md` — Claude Code skill for refine stage orchestration
 - `.claude/commands/rank-ideas.md` — Claude Code skill for rank stage orchestration
 - `tests/pipeline/test_refine.py` — 16 tests for refine module
