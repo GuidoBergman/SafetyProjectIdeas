@@ -193,6 +193,13 @@ Run the full novelty assessment and citation verification protocol from Step 3 (
 Report which files were updated.
 
 ### If save:
+
+**Novelty gate — MANDATORY before saving:**
+Before writing any files, check the idea's `novelty_method` field. If it is `"novelty_estimated"`, `null`, or missing, the idea has only estimated novelty — which is unreliable and must not be saved:
+1. Inform the coordinator: *"This idea has only estimated novelty (novelty_method: [value]) — estimated novelty is unreliable and ideas must have a verified novelty assessment before being saved. Running novelty check now."*
+2. Run the full novelty assessment protocol (Step 3 / `.claude/commands/novelty-check.md`) before proceeding with the save.
+3. After the assessment, update `novelty_method` to reflect the actual method used (e.g., `"evidence_based"`, `"novelty_web_search"`, `"novelty_verified"`). Only continue with the save once this is done.
+
 Save the idea with all improvements to **every location where it exists**:
 
 1. **`data/ideas/<idea_id>.md`** — the primary idea file. Use the existing filename if updating an existing idea, or `<sanitized_title>.md` for new ideas. Include full YAML frontmatter and all body sections.

@@ -20,7 +20,7 @@ From the ranked proposals, a subset was selected and organized into two tiers:
 **ID:** gen-0017
 **Research Field:** Adversarial Robustness
 
-**Scores:** theory_of_impact: 4/5 | accessible_complexity: 5/5 | narrow_scope: 5/5 | novelty: 4/5 (confidence: 0.65)
+**Scores:** theory_of_impact: 4/5 | accessible_complexity: 5/5 | narrow_scope: 5/5 | novelty: 4/5 (confidence: 0.70)
 **Novelty:** mostly_novel (novelty_web_search) | **Weighted Score:** 4.61
 
 **Research Question:** Have models memorized defenses against the specific template wordings in StrongREJECT (which is reported in system cards for GPT-4o, o1, and GPT-4.5), or have they learned to resist the underlying attack strategies? If defenses are template-specific rather than strategy-general, reported safety scores overestimate real-world robustness.
@@ -33,7 +33,7 @@ For each included template, generate 3-5 paraphrased variants that preserve the 
 
 **Follow-up Experiment — Min-K% Prob Contamination Signal:** For each jailbreak template, compute the Min-K% Prob score (Shi et al., 2023) on both the base model (e.g., Llama-3-8B) and the instruct/safety-tuned variant (Llama-3-8B-Instruct). If the instruct model assigns disproportionately higher min-k% prob to original templates compared to paraphrased variants (relative to benign text), this is statistical evidence that the exact template text was in the safety fine-tuning data. Cross-reference with the ASR gap: templates high on both Min-K% Prob and ASR gap are strong contamination candidates. Requires logprob access from open-weight models via HuggingFace.
 
-**Impact Chain:** OpenAI explicitly reports StrongREJECT scores in system cards for GPT-4o, o1, and GPT-4.5, using a "goodness@0.1" metric published in their Safety Evaluations Hub. These scores measure resistance to specific jailbreak techniques from the StrongREJECT template set. If models have memorized defenses against the exact template wordings rather than learning to resist the underlying attack strategies, then reported safety scores overestimate robustness against novel attacks that use the same strategies.
+**Impact Chain:** OpenAI reports StrongREJECT scores in system cards for GPT-4o, o1, and GPT-4.5. If models have memorized defenses against the exact template wordings rather than learning to resist the underlying attack strategies, these scores overestimate real-world robustness. Benchmark contamination is already documented for capability evals (SWE-bench, FrontierMath, Chatbot Arena), and guardrail models show a 57-point collapse on novel vs. known jailbreak prompts (arXiv:2511.22047) — but that tested external classifiers, not models' own safety training. This study extends the question to LLMs' intrinsic jailbreak defenses on the specific benchmark providers cite in deployment decisions.
 
 
 **Strength Rationale:**
@@ -44,22 +44,17 @@ accessible_complexity (5/5): Paraphrase jailbreak templates using an LLM, apply 
 
 narrow_scope (5/5): Tightly scoped: ~19 jailbreak templates x 10 forbidden prompts, generate template variants, test originals vs. variants on reporting vs. non-reporting models, compute contamination index per strategy family. Single clear experiment with obvious deliverable (contamination index table by strategy). Fits in 30 hours.
 
-novelty (4/5, confidence 0.65): The strategy/surface distinction for jailbreak attacks is theoretically established — Adversarial Déjà Vu (arXiv:2510.21910) decomposes attacks into adversarial skill primitives and proposes compositional training, while EDDF (ACL 2025 Findings) extracts "attack essences" to defend against surface variations. The rephrasing-gap contamination methodology exists for capability benchmarks (Yang et al., 2023). SG-Bench (NeurIPS 2024) tests safety generalization across prompt types but not template surface variations. However, no published work applies template-level contamination detection to jailbreak defenses on a deployment-used benchmark, tests whether models that report specific benchmark scores show higher template memorization, or analyzes contamination by attack strategy family. The specific experimental design is novel; the conceptual building blocks are established.
+novelty (4/5, confidence 0.70): The strategy/surface distinction and rephrasing-gap contamination methodology exist for capability benchmarks, and guardrail models show safety-specific overfitting (arXiv:2511.22047). But no published work applies template-level contamination detection to LLMs' own jailbreak defenses on a deployment-cited benchmark, or compares contamination between reporting vs. non-reporting models. Novel experimental design; established building blocks.
 
 **Cited Sources:**
 
-- StrongREJECT (Souly et al., NeurIPS 2024, arXiv:2402.10260) - jailbreak evaluator and dataset; OpenAI reports scores in GPT-4o/o1/GPT-4.5 system cards
-- OpenAI Safety Evaluations Hub - reports StrongREJECT goodness@0.1 metric for deployed models
-- Adversarial Déjà Vu (arXiv:2510.21910, Oct 2025) - decomposes jailbreaks into adversarial skill primitives; shows novel attacks are recombinations of known skills; proposes ASCoT compositional training
-- EDDF: Beyond Surface-Level Patterns (ACL 2025 Findings, arXiv:2502.19041) - essence-driven defense that extracts attack essences to defend against surface variations
-- SG-Bench (NeurIPS 2024, arXiv:2410.21965) - evaluates safety generalization across diverse prompt types and tasks
-- Andriushchenko et al., "Jailbreaking Leading Safety-Aligned LLMs with Simple Adaptive Attacks" (ICLR 2025, arXiv:2404.02151) - shows static attack suites overestimate robustness
-- Yang et al., "Rethinking Benchmark and Contamination for Language Models with Rephrased Samples" (2023, arXiv:2311.04850) - rephrasing-gap methodology for contamination detection
-- Shi et al., "Detecting Pretraining Data from Large Language Models" (2023) - Min-K% Prob method for membership inference
-- How Much Can We Forget about Data Contamination? (ICML 2025, arXiv:2410.03249) - shows contamination effects wash out at training scale; counter-argument to contamination concern for pretraining, though safety fine-tuning is a different regime
-- HarmBench (Mazeika et al., ICML 2024, arXiv:2402.04249) - widely cited safety evaluation framework
-- GuardVal (arXiv:2507.07735, Jul 2025) - dynamic jailbreak evaluation to minimize data contamination risks
-- MLCommons AILuminate Jailbreak Benchmark (v0.5 Oct 2025, v0.7 Feb 2026) - emerging industry standard for governance-aligned safety evaluation
+- StrongREJECT (Souly et al., NeurIPS 2024, arXiv:2402.10260) - jailbreak evaluator; OpenAI reports scores in system cards
+- Andriushchenko et al., "Simple Adaptive Attacks" (ICLR 2025, arXiv:2404.02151) - static attack suites overestimate robustness
+- Yang et al., "Rephrased Samples" (2023, arXiv:2311.04850) - rephrasing-gap contamination methodology
+- Shi et al., "Min-K% Prob" (2023) - membership inference for contamination detection
+- Guardrail robustness study (arXiv:2511.22047, Nov 2025) - 57-point collapse in guardrail models on novel vs. benchmark prompts
+- SWE-bench contamination (arXiv:2512.10218) - frontier models memorized benchmark solutions
+- Singh et al., "The Leaderboard Illusion" (arXiv:2504.20879) - systematic benchmark gaming by major labs
 
 ---
 
@@ -71,9 +66,9 @@ novelty (4/5, confidence 0.65): The strategy/surface distinction for jailbreak a
 **Scores:** theory_of_impact: 5/5 | accessible_complexity: 4/5 | narrow_scope: 5/5 | novelty: 4/5
 **Novelty:** partially_addressed (novelty_estimated) | **Weighted Score:** 4.82
 
-**Research Question:** Transcoders approximate MLP computation via sparse, interpretable features — but their approximation is imperfect. The reconstruction error (MLP(x) - Transcoder(x)) represents MLP computation that no sparse feature captures. What behaviors does this missing computation encode? By amplifying the error and observing how model outputs change, we can discover what the transcoder's sparse features fail to capture. If the error encodes safety-relevant behaviors (refusal, toxicity avoidance, hedging), then transcoder-based safety audits have a systematic blind spot. This project amplifies transcoder reconstruction error and uses LLM-as-judge evaluation to characterize what behaviors the error carries.
+**Research Question:** Transcoders approximate MLP computation via sparse, interpretable features — but their approximation is imperfect. The reconstruction error (MLP(x) - Transcoder(x)) represents MLP computation that no sparse feature captures. Does this missing computation encode interpretable behavior, or is it unstructured noise? This project amplifies transcoder reconstruction error across diverse prompts and uses LLM-as-judge evaluation to determine whether the error carries consistent, interpretable behavioral patterns.
 
-**Approach:** Using a pretrained affine transcoder from Gemma Scope 2 for instruction-tuned Gemma 3 4B (a production-relevant model), amplify the reconstruction error vector and observe how model outputs change. The affine transcoders include a learned linear skip connection that captures the linear component of MLP behavior, so their reconstruction error specifically represents nonlinear MLP computation that no sparse feature captures. The method: splice the transcoder into the forward pass, generate completions at increasing error amplification scales (1x, 2x, 3x, 5x) using fixed random seeds (temperature ~0.7) to isolate the effect of the intervention. Use an LLM judge to compare each amplified completion against the baseline and describe what changed (tone, safety behavior, confidence, content, etc.). Aggregate the judge's observations across ~50 diverse prompts (mix of safety-relevant and general) to discover consistent behavioral patterns — what does the error encode?
+**Approach:** Using a pretrained affine transcoder from Gemma Scope 2 for instruction-tuned Gemma 3 4B (a production-relevant model), amplify the reconstruction error vector and observe how model outputs change. The affine transcoders include a learned linear skip connection that captures the linear component of MLP behavior, so their reconstruction error specifically represents nonlinear MLP computation that no sparse feature captures. The method: splice the transcoder into the forward pass, generate completions at increasing error amplification scales (1x, 2x, 3x, 5x) using fixed random seeds (temperature ~0.7) to isolate the effect of the intervention. Use an LLM judge to compare each amplified completion against the baseline and describe how they differ. Aggregate the judge's observations across ~50 diverse prompts spanning different domains and task types to discover consistent behavioral patterns — what does the error encode?
 
 **Impact Chain:** Transcoders are becoming crucial of frontier interpretability methods — Anthropic's circuit tracing and DeepMind's Gemma Scope 2 both rely on them. If these tools are used for safety audits (as Anthropic did for Claude Sonnet 4.5 pre-deployment), their blind spots become safety-critical. This experiment directly tests what behaviors the transcoder reconstruction error encodes by amplifying it and observing the effects. A positive finding (amplification consistently shifts safety-relevant behaviors like refusal, caution, or toxicity avoidance) would demonstrate that transcoder features are systematically incomplete for safety-relevant computation, motivating hybrid approaches that analyze both features and residuals. A null finding (amplification only causes generic degradation with no consistent behavioral direction) would suggest the error is unstructured noise, increasing confidence in transcoder-based safety audits.
 

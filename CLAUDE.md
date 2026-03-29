@@ -32,3 +32,4 @@ SAIM (Safety Idea Machine) is an AI Safety Research Idea Generation Pipeline for
 - Team types and scoring criteria are configured in `config/teams.yaml` and `config/criteria.yaml`
 - Every new function MUST have a test
 - Whenever an LLM is asked to produce a numeric score, there must be a rubric defining what each number means
+- Estimated novelty (`novelty_method: "novelty_estimated"`) is unreliable — it is an LLM guess without literature search. Ideas must not be saved/persisted with only estimated novelty; a real novelty check (web search + citation verification) must run first.
