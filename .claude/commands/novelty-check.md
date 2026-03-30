@@ -41,6 +41,15 @@ Process each idea in the batch sequentially through the protocol below.
 
 ---
 
+## Launch Mode
+
+Determine the execution mode based on how input was provided:
+
+- **Standalone mode** (options 1 or 2 — by ID or described inline): You are the top-level task. Use **parallel sub-agents** for Step N1 to maximize search coverage and speed. See the "Parallel search (standalone mode)" section below.
+- **Sub-agent mode** (option 3 — batch file): You are already running inside a score-ideas Wave 3 sub-agent. Do NOT launch your own sub-agents — execute Step N1 sequentially.
+
+---
+
 ## Novelty Assessment Protocol
 
 **IMPORTANT — Source reading policy:** The goal is to not miss important information that could change the novelty classification. Start with abstracts and summaries. When a paper seems relevant, use judgment about what sections to read deeper — if reading the discussion, limitations, future work, or appendix could reveal information that would change your assessment, read them. Do not read full papers end-to-end just because they seem related; read the specific sections where the answer is likely to be.
@@ -48,6 +57,57 @@ Process each idea in the batch sequentially through the protocol below.
 ### Step N1: Literature Search
 
 Search for existing work using multiple sources. Construct search queries from the idea's title, research question, and key concepts.
+
+#### Parallel search (standalone mode)
+
+If running in standalone mode (options 1 or 2), launch **2 parallel sub-agents** in a single message to search different source categories simultaneously:
+
+**Sub-agent 1: Academic Literature**
+
+> You are searching academic literature for prior work related to an AI Safety research idea.
+>
+> **Idea title:** [TITLE]
+> **Research question:** [RESEARCH QUESTION]
+> **Key concepts:** [KEY CONCEPTS FROM TITLE AND APPROACH]
+>
+> Search for existing academic papers, preprints, and technical reports on this topic.
+>
+> 1. Run at least 2-3 WebSearch queries with different phrasings (broad, narrow, alternative terminology) to find papers on ArXiv, Semantic Scholar, Google Scholar, and other academic sources.
+> 2. Run structured database searches with at least 2 different query phrasings each:
+>    ```bash
+>    uv run python -m saim.verification.citation search-crossref '<key_terms>'
+>    uv run python -m saim.verification.citation search-s2 '<key_terms>'
+>    ```
+> 3. For each relevant result, record: `{"source": "<arxiv|semantic_scholar|crossref|google_scholar>", "title": "<paper title>", "url": "<url>", "summary": "<1-2 sentences on how it relates to the idea>"}`.
+>
+> Return your findings as a JSON array of evidence objects.
+
+**Sub-agent 2: LessWrong & Alignment Forum**
+
+> You are searching LessWrong and the Alignment Forum for prior work related to an AI Safety research idea. Many novel AI safety contributions appear as blog posts on these platforms before (or instead of) academic papers, so this search is critical.
+>
+> **Idea title:** [TITLE]
+> **Research question:** [RESEARCH QUESTION]
+> **Key concepts:** [KEY CONCEPTS FROM TITLE AND APPROACH]
+>
+> Search for related posts, sequences, and discussions on LessWrong and the Alignment Forum.
+>
+> 1. Use WebSearch with `allowed_domains: ["lesswrong.com", "alignmentforum.org"]` to search for related content. Run at least 2-3 queries using different phrasings:
+>    - `<core concept> AI safety`
+>    - `<research question keywords>`
+>    - `<approach/methodology keywords>`
+> 2. For promising results, use WebFetch to read the post content and assess its relevance to the idea.
+> 3. For each relevant result, record: `{"source": "<lesswrong|alignment_forum>", "title": "<post title>", "url": "<url>", "summary": "<1-2 sentences on how it relates to the idea>"}`.
+>
+> Return your findings as a JSON array of evidence objects.
+
+After both sub-agents complete, merge their evidence arrays and deduplicate by URL (keep the entry with the more informative summary). If a sub-agent fails, proceed with results from the successful one. If both fail, fall back to the sequential search path below.
+
+Proceed to **Step N2** with the merged evidence.
+
+#### Sequential search (sub-agent mode)
+
+If running in sub-agent mode (option 3), execute all searches sequentially:
 
 **Web search** (broad coverage — ArXiv, Semantic Scholar, Google Scholar):
 Use WebSearch to find existing papers, blog posts, and research on the idea's core question and approach.
@@ -61,12 +121,19 @@ uv run python -m saim.verification.citation search-crossref '<key_terms>'
 uv run python -m saim.verification.citation search-s2 '<key_terms>'
 ```
 
+**Community platform search** (AI safety discourse):
+Use WebSearch with `allowed_domains: ["lesswrong.com", "alignmentforum.org"]` to search for related posts, sequences, and discussions. Run at least 1-2 queries using the idea's key concepts. When relevant LW/AF posts are found, their content can be fetched for deep reading in Step N3 via:
+
+```bash
+uv run python -m saim.connectors.paper_fetcher fetch '<lw_or_af_url>'
+```
+
 Run at least 2-3 search queries with different phrasings to maximize coverage (e.g., one broad, one narrow, one using alternative terminology).
 
 ### Step N2: Evidence Collection
 
 For each relevant paper or work found, record:
-- **source**: where it was found (arxiv, semantic_scholar, crossref, google_scholar, blog)
+- **source**: where it was found (arxiv, semantic_scholar, crossref, google_scholar, lesswrong, alignment_forum, blog)
 - **title**: paper/post title
 - **url**: link to the work
 - **summary**: 1-2 sentences on how it relates to the idea being assessed
@@ -195,6 +262,7 @@ The `scores_updates` dict contains any criterion scores that changed due to cita
 ## Error Handling
 
 - **Web search failure**: Classify as "mostly_novel" (conservative — do not eliminate). Note the failure in reasoning.
+- **Sub-agent failure** (standalone mode): If one search sub-agent fails, proceed with results from the successful one. If both fail, fall back to sequential search. Note the failure in reasoning.
 - **Citation lookup API failure**: Keep all citations as-is, record "api_unavailable" in the verification results.
 - **Paper fetcher failure**: Proceed with abstract-level evidence only. Do not block on deep reading.
 - Always produce output even with degraded sources — partial assessment is better than none.

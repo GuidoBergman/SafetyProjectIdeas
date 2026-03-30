@@ -619,39 +619,9 @@ novelty (4/5): While LLM behavior under different framing conditions and alignme
 
 ---
 
-## #26: Safety Index Sensitivity Analysis: How Robust Are Company Rankings to Indicator Weighting? (Score: 4.39)
+## #26: Safety Index Sensitivity Analysis: How Robust Are Company Rankings to Indicator Weighting? (Score: 4.39) [ELIMINATED]
 
-**ID:** gen-0258
-
-**Research Question:** Can Apply the core insight to an understudied model family, domain, or safety-relevant scenario not covered in existing literature. be demonstrated through a focused experiment within 30 hours?
-
-**Approach:** Identify a specific gap in the literature where this technique or analysis has not been applied. Design a focused study targeting that gap with clear methodology inherited from the original work.
-
-**Experiments:** Experiment 1 (Baseline): Set up the experimental framework using a small, publicly available model. Replicate the core measurement from existing work to establish a baseline. Expected: reproduce known results within 10% margin. Time: ~8 hours.
-Experiment 2 (Core test): Apply the methodology to the target scenario described in the research question. Measure the primary metric and compare against the baseline. Expected: quantitative evidence for or against the hypothesis. Time: ~12 hours.
-Experiment 3 (Robustness): Test sensitivity to key parameters (model size, dataset, hyperparameters). Run at least 2 variations to check robustness. Expected: characterize when findings hold and when they don't. Time: ~10 hours.
-
-**Impact Chain:** Rankings that are robust to weighting can be cited with confidence; fragile rankings indicate methodological ambiguity that should be disclosed.
-
-**Strength Rationale:** theory_of_impact (4/5): Strong chain: robustness analysis directly validates or challenges the reliability of FLI rankings. Identifies which conclusions are safe to cite and which are methodologically fragile.
-
-accessible_complexity (5/5): Accessible: Monte Carlo simulation with random weight sampling from a Dirichlet distribution is well-documented. Python implementation is straightforward for beginners with basic stats knowledge.
-
-narrow_scope (5/5): Tightly scoped: implement simulation, sample 1000 weight vectors, recompute grades for each, report ranking distributions. Single clear deliverable with no ambiguity.
-
-novelty (4/5): Sensitivity analysis of composite indicators via Monte Carlo weight sampling is a well-established methodology (OECD Handbook on Constructing Composite Indicators, COINr R package). It has been applied to governance indices like the Resource Governance Index and Good Country Index. However, no published work applies this specific robustness analysis to the FLI AI Safety Index rankings. The FLI index uses 33 indicators with equal weighting across six domains, and the question of whether company rankings (especially the close C+/C cluster) are robust to weight perturbation is unanswered. The methodology is standard but the application to AI safety governance rankings is novel and timely.
-
-**Alternative Framings:** Benchmark: Safety Index Sensitivity Analysis: How Robust Are Company Rankings to : Rather than pursuing the full research direction, focus on building a targeted benchmark or replication study that tests the core claim. (estimated score: 4.43); Novel Angle: Safety Index Sensitivity Analysis: How Robust Are Company Rankings to : Apply the core insight to an understudied model family, domain, or safety-relevant scenario not covered in existing literature. (estimated score: 4.79)
-
-**Cited Sources:** FLI AI Safety Index: Confirmed. Multiple editions available. Uses 33 indicators across six domains to score frontier AI c; Dirichlet distribution for weight sampling: Standard methodology in composite indicator sensitivity analysis. Well-documented in OECD handbook a; OECD/JRC Handbook on Constructing Composite Indicators: Methodology and User Guide. 2008.; Robustness and sensitivity of weighting and aggregation in constructing composite indices. Ecological Indicators, 2013.; Saisana, M. et al. Uncertainty and sensitivity analysis techniques as tools for the quality assessment of composite indicators. JRSS-A, 2005.
-
-**Subfield:**  | **Strategy:**  | **Novelty:** mostly_novel (novelty_estimated)
-**Scores:**
-  - **theory_of_impact:** 3, confidence: 0.7 — Plausible: fragile governance rankings indicate methodology problems. But this is about governance measurement, not directly reducing catastrophic AI risk.
-  - **accessible_complexity:** 5, confidence: 0.85 — Monte Carlo simulation with Dirichlet sampling. Well-documented methodology, standard Python.
-  - **narrow_scope:** 5, confidence: 0.9 — Single simulation: sample 1000 weight vectors, recompute grades, report ranking distributions. Clear deliverable.
-  - **novelty:** 4, confidence: 0.6 — From novelty assessment: mostly_novel
-**Provenance:** , sources: 0 KB, 0 web
+Elimination reason: Simple version (Monte Carlo domain-weight sensitivity) produces predictable results on a tiny dataset (~16 companies, 6 domains) — not enough substance for 30 hours. Ambitious version (meaningful methods critique of FLI index) requires domain expertise beyond a novice team. The OECD composite indicator framework does not map well to expert-panel indices. Accessible but shallow.
 
 ---
 
