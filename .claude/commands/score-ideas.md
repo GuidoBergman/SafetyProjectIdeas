@@ -1,8 +1,8 @@
 # Score and Filter AI Safety Research Ideas
 
-Score generated ideas against configured criteria, assess novelty, and verify citations using **parallel subagents** organized in 3 waves.
+Score generated ideas against configured criteria using **parallel subagents** organized in 2 waves.
 
-**IMPORTANT — Source reading policy:** For Waves 1-2, only read **abstracts, summaries, and introductions** — never full papers. For Wave 3 (novelty assessment), targeted deep reading of specific sections (discussion, limitations, future work) is permitted via the paper_fetcher module when the LLM judges that abstract-level evidence is insufficient to classify novelty.
+**IMPORTANT — Source reading policy:** Only read **abstracts, summaries, and introductions** — never full papers.
 
 ## Setup
 
@@ -211,89 +211,22 @@ Log the results:
 uv run python -m saim.pipeline.orchestrator log <run_dir> filter_score info 'Stage 2 complete: full scoring' '{"survivors": <SURVIVORS>, "eliminated": <ELIMINATED>}'
 ```
 
-## Wave 3: Novelty Assessment & Citation Verification (Stage 3)
+## Phase 3: Assemble Final Scored Ideas
 
-### Step 3.1: Create batches from Stage 2 survivors
+After both waves complete, assemble the final scored idea JSON files.
 
-```bash
-uv run python -m saim.pipeline.filter_score create-batches <run_dir> 3 <stage3_batch_size>
-```
-
-### Step 3.2: Launch parallel subagents
-
-Launch **one Agent subagent per batch**, all in a single message. These subagents use tools (WebSearch, Bash) — keep batches small.
-
-**Subagent prompt template:**
-
-> You are assessing novelty and verifying citations for AI Safety research ideas.
->
-> **Step 1:** Read the novelty check protocol:
-> Read the file `.claude/commands/novelty-check.md`. This contains the full Novelty Assessment Protocol (steps N1-N5) and Citation Verification Protocol (steps C1-C3), including rubrics, tool commands, classification criteria, and error handling. Follow it exactly.
->
-> **Step 2:** Read your batch:
-> ```bash
-> uv run python -m saim.pipeline.filter_score read-batch [BATCH_PATH]
-> ```
->
-> **Step 3:** For EACH idea in the batch, execute the full protocol from `novelty-check.md`:
-> - Run the **Novelty Assessment Protocol** (steps N1-N5): literature search, evidence collection, deep reading if needed, classification, validation
-> - Run the **Citation Verification Protocol** (steps C1-C3): relevance scoring, verification, consequence application
-> - The protocol's Setup section loads the rubric configs — run those commands once before processing ideas
->
-> **Step 4:** Build a JSON array of results using the **Output Format** from `novelty-check.md`, with one additional field per idea:
-> ```json
-> {
->   "run_id": "<run_id>",
->   ...all fields from the novelty-check output format...
-> }
-> ```
->
-> Do NOT skip any ideas.
->
-> **Step 5:** Write results:
-> ```bash
-> uv run python -m saim.pipeline.filter_score write-batch-results [RESULT_PATH] '<json_array>'
-> ```
->
-> Where [RESULT_PATH] is: `[RUN_DIR]/filter_score/results/stage3/batch_[NNN]_results.json`
-
-### Step 3.3: Collect and filter
-
-```bash
-uv run python -m saim.pipeline.filter_score filter-survivors <run_dir> 3
-```
-
-Log the results:
-
-```bash
-uv run python -m saim.pipeline.orchestrator log <run_dir> filter_score info 'Stage 3 complete: novelty + citations' '{"survivors": <SURVIVORS>, "eliminated": <ELIMINATED>}'
-```
-
-## Phase 4: Assemble Final Scored Ideas
-
-After all 3 waves complete, assemble the final scored idea JSON files.
-
-Read the results from all 3 stages:
+Read the results from both stages:
 
 ```bash
 uv run python -m saim.pipeline.filter_score merge-results <run_dir> 1
 uv run python -m saim.pipeline.filter_score merge-results <run_dir> 2
-uv run python -m saim.pipeline.filter_score merge-results <run_dir> 3
 ```
 
 For each idea that appears in the Stage 2 results (all ideas that were scored, both survivors and eliminated):
 
 1. Start with the Stage 2 result (contains `original_idea`, `scores`, `weighted_score`, `eliminated`)
-2. If the idea has Stage 3 results, splice in:
-   - `novelty_assessment` from Stage 3
-   - `citation_verification` from Stage 3
-   - Update the `novelty` score in `scores` to `novelty_assessment.derived_score`
-   - Apply any `scores_updates` from citation consequences
-   - Recompute `weighted_score` with novelty now included
-   - Set `filter_stage_passed` to 3 for Stage 3 survivors
-   - Apply elimination from Stage 3 if applicable
-3. If the idea was eliminated at Stage 1, build a minimal scored idea with the Stage 1 result data
-4. Add metadata: `stage: "filter_score"`, `timestamp`, `filter_stage_passed`
+2. If the idea was eliminated at Stage 1, build a minimal scored idea with the Stage 1 result data
+3. Add metadata: `stage: "filter_score"`, `timestamp`, `filter_stage_passed`
 
 Write each final scored idea:
 
@@ -301,17 +234,15 @@ Write each final scored idea:
 uv run python -m saim.pipeline.filter_score write <run_dir> '<scored_idea_json>'
 ```
 
-## Phase 5: Results Summary
+## Phase 4: Results Summary
 
 Present the coordinator with:
 
-1. **Pipeline summary**: Total ideas → Stage 1 survivors → Stage 2 survivors → Stage 3 survivors
+1. **Pipeline summary**: Total ideas → Stage 1 survivors → Stage 2 survivors
 2. **Eliminated ideas**: List with idea_id, title, elimination reason, stage eliminated
 3. **Surviving ideas** (sorted by weighted_score, highest first):
    - idea_id, title, weighted_score, confidence
    - Per-criterion scores summary
-   - Novelty classification
-   - Citation verification status (verified/corrected/removed counts, any warnings from removed load-bearing or foundational citations)
 4. **Team weight overrides** applied (if any)
 
 Tell the coordinator:
@@ -320,6 +251,5 @@ Tell the coordinator:
 ## Error Handling
 
 - **Subagent failure**: After each wave, check if any batch result files are missing. Re-launch failed batches once. If retry also fails, mark those ideas as eliminated with "Scoring failed: subagent error" and add a warning to the pipeline log.
-- **Wave 3 errors**: Error handling for novelty assessment and citation verification is defined in `novelty-check.md` — subagents follow those rules (conservative defaults, no false eliminations)
 - **Scoring failure** for individual ideas within a subagent: log the error within the batch results and continue with remaining ideas
 - Always produce output even with degraded sources — partial scoring is better than none
