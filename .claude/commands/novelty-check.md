@@ -56,7 +56,12 @@ Determine the execution mode based on how input was provided:
 
 ### Step N1: Literature Search
 
-Search for existing work using multiple sources. Construct search queries from the idea's title, research question, and key concepts.
+Search for existing work using multiple sources. Use a **two-tier search strategy**:
+
+- **Tier 1 — Problem-level (most important):** Search for whether the underlying research question or problem is already solved, **regardless of method**. Strip the proposed method/technique from the query and focus on the problem itself. E.g., for an idea about "Using mechanistic interpretability probes to detect reward hacking in RLHF," search for "detecting reward hacking RLHF" and "reward hacking mitigation," NOT "mechanistic interpretability probes reward hacking."
+- **Tier 2 — Method-level:** Search for the specific approach/combination proposed to understand if this exact technique has been tried.
+
+Tier 1 searches must come first and receive more queries. The goal is to answer "Is this problem already solved?" before asking "Has this exact method been tried?"
 
 #### Parallel search (standalone mode)
 
@@ -68,15 +73,21 @@ If running in standalone mode (options 1 or 2), launch **2 parallel sub-agents**
 >
 > **Idea title:** [TITLE]
 > **Research question:** [RESEARCH QUESTION]
-> **Key concepts:** [KEY CONCEPTS FROM TITLE AND APPROACH]
+> **Underlying problem (method-agnostic):** [THE CORE PROBLEM THE IDEA TRIES TO SOLVE, STRIPPED OF THE SPECIFIC METHOD]
+> **Proposed approach:** [THE SPECIFIC METHOD/TECHNIQUE PROPOSED]
 >
-> Search for existing academic papers, preprints, and technical reports on this topic.
+> Search for existing academic papers, preprints, and technical reports. **The most important question is whether the underlying problem is already solved by any method** — not just whether the proposed approach has been tried.
 >
-> 1. Run at least 2-3 WebSearch queries with different phrasings (broad, narrow, alternative terminology) to find papers on ArXiv, Semantic Scholar, Google Scholar, and other academic sources.
-> 2. Run structured database searches with at least 2 different query phrasings each:
+> 1. Run at least 4 WebSearch queries to find papers on ArXiv, Semantic Scholar, Google Scholar, and other academic sources. Structure them as:
+>    - **2+ problem-level queries** (Tier 1): Search for the problem/question being addressed, without mentioning the proposed method. Use different phrasings. Think creatively about what terms other researchers might use for the same problem.
+>    - **1+ alternative-solutions query**: Search for known solutions or approaches to the same problem (e.g., "approaches to [problem]", "survey [problem domain]", "[problem] methods comparison").
+>    - **1 method-level query** (Tier 2): Search for the specific approach/combination proposed.
+> 2. Run structured database searches with **problem-level terms first**, then method-level:
 >    ```bash
->    uv run python -m saim.verification.citation search-crossref '<key_terms>'
->    uv run python -m saim.verification.citation search-s2 '<key_terms>'
+>    uv run python -m saim.verification.citation search-crossref '<problem_level_terms>'
+>    uv run python -m saim.verification.citation search-s2 '<problem_level_terms>'
+>    uv run python -m saim.verification.citation search-crossref '<method_level_terms>'
+>    uv run python -m saim.verification.citation search-s2 '<method_level_terms>'
 >    ```
 > 3. For each relevant result, record: `{"source": "<arxiv|semantic_scholar|crossref|google_scholar>", "title": "<paper title>", "url": "<url>", "summary": "<1-2 sentences on how it relates to the idea>"}`.
 >
@@ -88,14 +99,16 @@ If running in standalone mode (options 1 or 2), launch **2 parallel sub-agents**
 >
 > **Idea title:** [TITLE]
 > **Research question:** [RESEARCH QUESTION]
-> **Key concepts:** [KEY CONCEPTS FROM TITLE AND APPROACH]
+> **Underlying problem (method-agnostic):** [THE CORE PROBLEM THE IDEA TRIES TO SOLVE, STRIPPED OF THE SPECIFIC METHOD]
+> **Proposed approach:** [THE SPECIFIC METHOD/TECHNIQUE PROPOSED]
 >
-> Search for related posts, sequences, and discussions on LessWrong and the Alignment Forum.
+> Search for related posts, sequences, and discussions on LessWrong and the Alignment Forum. **The most important question is whether the underlying problem is already solved or well-addressed** — not just whether the proposed method has been discussed.
 >
-> 1. Use WebSearch with `allowed_domains: ["lesswrong.com", "alignmentforum.org"]` to search for related content. Run at least 2-3 queries using different phrasings:
->    - `<core concept> AI safety`
->    - `<research question keywords>`
->    - `<approach/methodology keywords>`
+> 1. Use WebSearch with `allowed_domains: ["lesswrong.com", "alignmentforum.org"]` to search for related content. Run at least 3-4 queries using different phrasings:
+>    - `<underlying problem, no method> AI safety` (Tier 1 — problem-level)
+>    - `<research question without mentioning the method>` (Tier 1 — problem-level)
+>    - `<known alternative approaches to the same problem>` (Tier 1 — alternative solutions)
+>    - `<specific approach/methodology keywords>` (Tier 2 — method-level)
 > 2. For promising results, use WebFetch to read the post content and assess its relevance to the idea.
 > 3. For each relevant result, record: `{"source": "<lesswrong|alignment_forum>", "title": "<post title>", "url": "<url>", "summary": "<1-2 sentences on how it relates to the idea>"}`.
 >
@@ -109,26 +122,30 @@ Proceed to **Step N2** with the merged evidence.
 
 If running in sub-agent mode (option 3), execute all searches sequentially:
 
+Before searching, decompose the idea into:
+- **Underlying problem (method-agnostic):** The core problem the idea tries to solve, stripped of the specific method.
+- **Proposed approach:** The specific method/technique proposed.
+
 **Web search** (broad coverage — ArXiv, Semantic Scholar, Google Scholar):
-Use WebSearch to find existing papers, blog posts, and research on the idea's core question and approach.
+Use WebSearch to find existing papers, blog posts, and research. Follow the two-tier strategy:
+- Run at least 2 **problem-level queries** (Tier 1): search for the underlying problem being solved, without mentioning the proposed method. Think about what terms other researchers might use.
+- Run at least 1 **alternative-solutions query**: search for known approaches to the same problem.
+- Run at least 1 **method-level query** (Tier 2): search for the specific approach proposed.
 
 **Structured database search** (precise metadata):
 ```bash
-uv run python -m saim.verification.citation search-crossref '<key_terms>'
-```
-
-```bash
-uv run python -m saim.verification.citation search-s2 '<key_terms>'
+uv run python -m saim.verification.citation search-crossref '<problem_level_terms>'
+uv run python -m saim.verification.citation search-s2 '<problem_level_terms>'
+uv run python -m saim.verification.citation search-crossref '<method_level_terms>'
+uv run python -m saim.verification.citation search-s2 '<method_level_terms>'
 ```
 
 **Community platform search** (AI safety discourse):
-Use WebSearch with `allowed_domains: ["lesswrong.com", "alignmentforum.org"]` to search for related posts, sequences, and discussions. Run at least 1-2 queries using the idea's key concepts. When relevant LW/AF posts are found, their content can be fetched for deep reading in Step N3 via:
+Use WebSearch with `allowed_domains: ["lesswrong.com", "alignmentforum.org"]` to search for related posts, sequences, and discussions. Run at least 2-3 queries, prioritizing problem-level searches over method-level. When relevant LW/AF posts are found, their content can be fetched for deep reading in Step N3 via:
 
 ```bash
 uv run python -m saim.connectors.paper_fetcher fetch '<lw_or_af_url>'
 ```
-
-Run at least 2-3 search queries with different phrasings to maximize coverage (e.g., one broad, one narrow, one using alternative terminology).
 
 ### Step N2: Evidence Collection
 
@@ -149,6 +166,8 @@ uv run python -m saim.connectors.paper_fetcher fetch-batch '<json_array_of_urls>
 The goal is to not miss information that would change the novelty classification. Don't read every related paper end-to-end, but don't skip deeper reading when it could matter.
 
 ### Step N4: Classify Novelty
+
+**Classification guidance:** The key question is whether the **problem the idea addresses** is already solved, not whether the **specific method** has been tried. An idea that applies a new method to an already-solved problem is "already_solved" or "largely_addressed" — methodological novelty alone does not make an idea novel if the research question it answers is settled. Conversely, if the problem space is genuinely open but some related work exists in adjacent areas, methodological creativity in approaching it should be valued.
 
 Using all collected evidence, classify the idea against this rubric:
 

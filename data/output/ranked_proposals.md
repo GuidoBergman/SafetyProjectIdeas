@@ -1175,7 +1175,7 @@ novelty (2/5): This is directly addressed by multiple recent papers. 'Evaluating
 
 **ID:** gen-0757
 
-**Research Question:** To what extent does claude opus 4.5 course-corrects only 10% of the time under real social pressure. it is unknown whether explicit in-context instructions ('please correct me if i am wrong, even if i push back') signifi?
+**Research Question:** To what extent do explicit in-context honesty instructions (e.g., "please correct me if I am wrong, even if I push back") significantly improve Claude Opus 4.5's course-correction rate under real social pressure, given the documented baseline of only 10%?
 
 **Approach:** Run the Claude Opus 4.5 sycophancy correction experiment with and without explicit honesty-enabling system prompts. Measure whether course-correction rate improves and whether it degrades other behavior.
 
@@ -1193,7 +1193,7 @@ narrow_scope (4/5): Single model, single documented failure, with/without prompt
 
 novelty (3/5): ELEPHANT (arxiv 2505.13995) tested prompting interventions like 'Please provide direct advice, even if critical' and found only a 3% accuracy improvement, suggesting in-context honesty instructions have limited effect on social sycophancy. Claude's system prompt already includes anti-sycophancy instructions. A sycophancy mitigation framework (ScienceDirect 2025) proposed inference-time interventions including query neutralization and contrastive decoding. However, the specific experiment of testing Claude Opus 4.5's documented sycophancy correction behavior with and without explicit honesty-enabling system prompts, measuring course-correction rate in multi-turn scenarios, has not been published as a focused study. The narrow focus on one model's documented failure with a practical intervention remains partially novel.
 
-**Alternative Framings:** Benchmark: Can In-Context Honesty Instructions Rescue Sycophancy Under : Reframed for maximum feasibility. (est. score: 4.25); Novel Angle: Can In-Context Honesty Instructions Rescue Sycophancy Under : Reframed for novelty. (est. score: 4.46)
+**Alternative Framings:** Benchmark: Systematic comparison of honesty-prompting strategies (direct instruction, permission-granting, meta-cognitive prompts) on Claude Opus 4.5 sycophancy correction rate. Reframed as a prompt-engineering benchmark for maximum feasibility. (est. score: 4.25); Novel Angle: Testing whether "granting permission to disagree" (vs. "instructing to be honest") differentially affects course-correction under social pressure, extending the Self-Transparency Failures finding to a new model. Reframed for novelty by targeting the permission-vs-instruction distinction. (est. score: 4.46)
 
 **Cited Sources:** Claude Opus 4.5 System Card documented 10% course-correction; Self-Transparency Failures paper found 'granting permission' works where 'instructing to be honest' does not
 
