@@ -1,0 +1,932 @@
+[
+  {
+    "idea_id": "gen-201",
+    "run_id": "2026-03-30T19-05-44",
+    "stage": "generate",
+    "timestamp": "2026-03-30T22:37:05Z",
+    "subfield": "AI Safety / Psychometrics",
+    "generation_strategy": "problem_decomposition",
+    "confidence": 0.65,
+    "body": "# Building a Nomological Network for AI Safety: What Should Predict and Be Predicted by Safety Scores?\n\n**Problem:** Establish construct validity for AI safety evaluation\n\n**Direction:** Construct a nomological network for AI safety by (1) listing theoretically expected correlates of safety (RLHF training, instruction-tuning, model size, refusal rate, alignment tax), (2) gathering empirical data on these variables for a common model set, and (3) testing whether safety benchmark scores relate to these variables in theoretically expected directions and magnitudes using structural equation modeling (SEM) in R. Identify which expected relationships hold and which do not.\n\n**Why it matters:** A construct gains validity by fitting into a network of theoretically coherent relationships\u2014the nomological network. If safety scores do not correlate with known safety interventions (e.g., RLHF, Constitutional AI training) or do correlate with things they shouldn't (e.g., model size alone), this reveals construct validity failures.\n\n**Relevant context:** 'Measurement to Meaning' (2025) explicitly advocates for nomological network analysis in AI evaluation but does not implement it for safety specifically. Typology of validity papers (2024) provide detailed methodology for nomological network testing. R's lavaan and semTools packages make SEM feasible for psychometrically-trained users."
+  },
+  {
+    "idea_id": "gen-202",
+    "run_id": "2026-03-30T19-05-44",
+    "stage": "generate",
+    "timestamp": "2026-03-30T22:37:05Z",
+    "subfield": "AI Safety / Psychometrics",
+    "generation_strategy": "problem_decomposition",
+    "confidence": 0.67,
+    "body": "# Is 'Safety' Unidimensional or Multidimensional? An Exploratory Factor Analysis of Safety Benchmarks\n\n**Problem:** Establish construct validity for AI safety evaluation\n\n**Direction:** Using item-level or subscale-level safety data from one or more benchmarks (e.g., SALAD-Bench's 6 attack categories \u00d7 16 harm types), run an exploratory factor analysis (EFA) in R (using the psych package). Apply parallel analysis to determine the number of factors, examine factor loadings for interpretability, and test whether a single safety dimension or multiple dimensions (e.g., robustness-to-jailbreaks vs. baseline-refusal vs. context-specific-harm) best fits the data.\n\n**Why it matters:** If safety is multidimensional, then single aggregate safety scores are misleading\u2014a model could be excellent at resisting jailbreaks but poor at avoiding subtle harms. Identifying the true dimensional structure of safety is essential for valid measurement and for understanding what 'making a model safer' actually means.\n\n**Relevant context:** SALAD-Bench uses a hierarchical structure with multiple attack types and harm categories, making it well-suited for dimensional analysis. No published study has applied EFA to safety benchmark subscales. The broader LLM dimensionality literature ('A Data-Driven Study on LLM Structure', EMNLP 2025) finds multiple capability dimensions\u2014safety likely follows suit."
+  },
+  {
+    "idea_id": "gen-203",
+    "run_id": "2026-03-30T19-05-44",
+    "stage": "generate",
+    "timestamp": "2026-03-30T22:37:05Z",
+    "subfield": "AI Safety / Measurement",
+    "generation_strategy": "problem_decomposition",
+    "confidence": 0.71,
+    "body": "# Identifying Confounds in Safety Measurement: Does Instruction-Following Inflate Safety Scores?\n\n**Problem:** Establish construct validity for AI safety evaluation\n\n**Direction:** Test whether safety benchmark scores are confounded by instruction-following ability: (1) collect safety scores and instruction-following scores (IFEval or similar) for 30+ models, (2) regress safety scores on instruction-following scores to estimate the confound magnitude, (3) compute partial correlations between safety scores and safety-training indicators after controlling for instruction-following. Determine whether models appear 'safe' primarily because they are good at following instructions generally.\n\n**Why it matters:** A model that refuses harmful requests may do so because it was safety-trained or simply because it is very obedient to any instruction framing (including refusal-inducing system prompts). If safety scores are primarily driven by instruction-following ability, then 'safety benchmarks' are actually measuring a confounded mixture, not pure safety.\n\n**Relevant context:** 'How Should AI Safety Benchmarks Benchmark Safety?' (2025) raises this exact concern about refusal-rate metrics. Instruction-following benchmarks like IFEval are publicly available on the Open LLM Leaderboard alongside safety scores for many models. Partial correlation and regression are feasible in R without heavy coding."
+  },
+  {
+    "idea_id": "gen-204",
+    "run_id": "2026-03-30T19-05-44",
+    "stage": "generate",
+    "timestamp": "2026-03-30T22:37:05Z",
+    "subfield": "AI Evaluation / Psychometrics",
+    "generation_strategy": "problem_decomposition",
+    "confidence": 0.72,
+    "body": "# Decomposing Variance in LLM Safety Evaluation Using Generalizability Theory: Prompt, Model, and Item Effects\n\n**Problem:** Quantify and reduce prompt sensitivity in evaluation\n\n**Direction:** Apply Generalizability Theory (G-Theory) to a safety evaluation dataset where multiple prompt phrasings of the same harmful request are administered to multiple models. Use the gtheory R package to partition variance into model (universe score), prompt wording, item (harm category), and interaction components. Estimate the G-coefficient for safety measurement and compute D-study results showing how many prompt variations are needed to achieve reliable measurement (G > 0.80).\n\n**Why it matters:** Prompt sensitivity is a major threat to safety evaluation reliability. G-Theory uniquely allows multiple simultaneous variance sources to be quantified\u2014unlike test-retest or inter-rater approaches, it can distinguish whether safety scores vary because of model differences (signal) or prompt wording differences (noise). This has direct implications for how safety benchmarks should be designed.\n\n**Relevant context:** G-Theory literature shows that prompts differ more in average difficulty than raters differ in average performance in LLM evaluation contexts. The 'Assessing and Understanding Prompt Sensitivity' paper (EMNLP 2024) found up to 76-point accuracy swings from prompt format changes. No published study has applied full G-Theory decomposition specifically to safety evaluation. The gtheory package in R is accessible to psychometrically-trained users."
+  },
+  {
+    "idea_id": "gen-205",
+    "run_id": "2026-03-30T19-05-44",
+    "stage": "generate",
+    "timestamp": "2026-03-30T22:37:05Z",
+    "subfield": "AI Evaluation / Measurement",
+    "generation_strategy": "problem_decomposition",
+    "confidence": 0.69,
+    "body": "# Which Prompt Features Drive Safety Evaluation Sensitivity? A Systematic Feature Analysis\n\n**Problem:** Quantify and reduce prompt sensitivity in evaluation\n\n**Direction:** Create a factorial prompt variation design for 10-20 harmful request types, systematically varying: (1) directness of request, (2) framing (hypothetical, roleplay, academic), (3) phrasing formality, (4) presence of context/justification. Administer all prompt variants to several open-weight models via API. Use linear mixed models (lme4 in R) to estimate the effect size of each prompt feature on refusal probability. Identify which features account for the most variance.\n\n**Why it matters:** Current understanding of prompt sensitivity in safety contexts is largely anecdotal. A controlled factorial design would identify the specific linguistic features that drive variance, enabling benchmark designers to either standardize these features (reducing noise) or deliberately vary them (increasing generalizability). This moves from 'we know sensitivity exists' to 'we know why'.\n\n**Relevant context:** 'Evaluating and Explaining Prompt Sensitivity of LLMs Using Interactions' (2024) examines prompt sensitivity using interaction effects but focuses on general tasks. 'Mapping from Meaning' (AAAI 2025) addresses miscalibration from prompt sensitivity. The 'Flaw or Artifact? Rethinking Prompt Sensitivity' (2025) paper raises whether sensitivity is a model flaw or an evaluation artifact."
+  },
+  {
+    "idea_id": "gen-206",
+    "run_id": "2026-03-30T19-05-44",
+    "stage": "generate",
+    "timestamp": "2026-03-30T22:37:05Z",
+    "subfield": "AI Evaluation / Psychometrics",
+    "generation_strategy": "problem_decomposition",
+    "confidence": 0.67,
+    "body": "# Minimum Prompt Variations for Reliable Safety Measurement: A G-Theory D-Study\n\n**Problem:** Quantify and reduce prompt sensitivity in evaluation\n\n**Direction:** Using G-Theory D-study projections, determine the minimum number of prompt paraphrases of each safety item needed to achieve G-coefficient > 0.80 for model safety scores. Collect empirical data by generating N paraphrases of 30-50 safety prompts using a fixed paraphrasing procedure, administering them to 10+ models, and fitting the G-Theory variance component model. Plot the D-study curve of G-coefficient vs. number of prompt versions to identify the minimum sufficient N.\n\n**Why it matters:** This directly answers a practical design question: how many versions of each safety prompt should a benchmark include? Too few versions yields noisy, prompt-sensitive scores. Too many is wasteful. G-Theory D-studies are precisely designed for this optimization question and are standard in educational measurement.\n\n**Relevant context:** G-Theory D-studies are the standard tool for determining sample size requirements in measurement design. They have been applied to educational assessments (e.g., clinical child psychology research, PMC 2013) but not to LLM safety evaluation. The gtheory and lavaan R packages support these analyses. The 'A Human-AI Comparative Analysis of Prompt Sensitivity' (2025) suggests significant sensitivity exists in relevance judgments."
+  },
+  {
+    "idea_id": "gen-207",
+    "run_id": "2026-03-30T19-05-44",
+    "stage": "generate",
+    "timestamp": "2026-03-30T22:37:05Z",
+    "subfield": "AI Evaluation / Psychometrics",
+    "generation_strategy": "problem_decomposition",
+    "confidence": 0.65,
+    "body": "# Are IRT Item Parameters Stable Across Prompt Phrasings? Testing Measurement Invariance for Safety Items\n\n**Problem:** Quantify and reduce prompt sensitivity in evaluation\n\n**Direction:** For 20-30 safety items, create 3-4 paraphrase variants of each. Calibrate IRT item parameters (difficulty b, discrimination a) separately for each paraphrase group. Test whether parameters are stable across phrasings using IRT measurement invariance tests (multigroup IRT in mirt, testing equality constraints on a and b parameters). Items with significantly different parameters across phrasings are 'prompt-sensitive' in a psychometrically precise sense.\n\n**Why it matters:** If an item's IRT parameters change depending on how it is phrased, then the item is not measuring a stable construct\u2014different phrasings are effectively measuring different things. This makes it impossible to compare model ability estimates across evaluations that use different prompt wordings. Identifying prompt-stable items is essential for benchmark validity.\n\n**Relevant context:** IRT measurement invariance testing (multigroup IRT, differential item functioning frameworks) is a well-established psychometric technique. 'Diagnosing the Reliability of LLM-as-a-Judge via Item Response Theory' (2025) applies IRT to judge reliability\u2014similar methods apply to prompt stability. The mirt package supports multigroup IRT and measurement invariance testing."
+  },
+  {
+    "idea_id": "gen-208",
+    "run_id": "2026-03-30T19-05-44",
+    "stage": "generate",
+    "timestamp": "2026-03-30T22:37:05Z",
+    "subfield": "AI Evaluation / Psychometrics",
+    "generation_strategy": "problem_decomposition",
+    "confidence": 0.66,
+    "body": "# Prompt-Robust Safety Scoring: Aggregating Across Paraphrases Using IRT Theta Estimates\n\n**Problem:** Quantify and reduce prompt sensitivity in evaluation\n\n**Direction:** Compare three scoring methods for safety evaluation: (1) mean proportion of refusals across all prompts (raw score), (2) IRT theta estimate from a calibrated model using all prompt variants, (3) IRT theta estimate using only prompt-stable items (those with invariant parameters). Assess which scoring method produces the most stable model rankings across held-out prompt sets. Use rank correlation stability as the primary outcome.\n\n**Why it matters:** IRT theta estimation accounts for item difficulty and discrimination, potentially producing more stable ability estimates than raw refusal rates. If IRT-based scoring is more robust to prompt variation than raw scoring, this provides a concrete, practical recommendation for how safety benchmark scores should be reported.\n\n**Relevant context:** tinyBenchmarks (2024) showed that IRT-based estimates outperform raw scores on general capability benchmarks. 'Adaptive Testing for LLM Evaluation' (2025) demonstrates the superiority of IRT theta over raw scores for stability. The extension to safety-specific benchmarks with prompt-robust scoring has not been investigated."
+  },
+  {
+    "idea_id": "gen-209",
+    "run_id": "2026-03-30T19-05-44",
+    "stage": "generate",
+    "timestamp": "2026-03-30T22:37:05Z",
+    "subfield": "AI Evaluation / Psychometrics",
+    "generation_strategy": "problem_decomposition",
+    "confidence": 0.71,
+    "body": "# Calibrating IRT Item Parameters for Safety Items: A Proof-of-Concept Using Open Data\n\n**Problem:** Create adaptive safety evaluation (CAT for safety)\n\n**Direction:** Using publicly available evaluation logs from HarmBench or SALAD-Bench (which include per-item pass/fail data for multiple models), construct a model \u00d7 item response matrix and calibrate 2PL IRT item parameters (a: discrimination, b: difficulty) using the mirt package in R. Report parameter distributions, identify high-information items, and assess the overall quality of calibration via item fit statistics and model fit indices.\n\n**Why it matters:** Calibrated item parameters are the prerequisite for any adaptive safety testing. Without known a and b parameters, it is impossible to select items optimally or estimate model ability efficiently. This establishes whether the safety item bank is psychometrically viable for CAT.\n\n**Relevant context:** CAT for LLM medical benchmarks (2026 preprint) used exactly this pipeline: calibrate \u2192 select \u2192 estimate. tinyBenchmarks used IRT calibration on Open LLM Leaderboard data. HarmBench publishes evaluation results for many models, potentially providing the response matrix needed. The mirt R package documentation and tutorials make calibration accessible to psychometrically-trained users."
+  },
+  {
+    "idea_id": "gen-210",
+    "run_id": "2026-03-30T19-05-44",
+    "stage": "generate",
+    "timestamp": "2026-03-30T22:37:05Z",
+    "subfield": "AI Evaluation / Psychometrics",
+    "generation_strategy": "problem_decomposition",
+    "confidence": 0.69,
+    "body": "# Information-Optimal Item Selection for Safety CAT: Which Safety Items Discriminate Best at Each Ability Level?\n\n**Problem:** Create adaptive safety evaluation (CAT for safety)\n\n**Direction:** Using calibrated IRT parameters from a safety item bank, compute the Fisher information function for each item across the latent safety ability range (theta from -3 to +3). Identify which items are maximally informative at different ability levels (easy items for low-safety models, hard items for high-safety models). Simulate the information-optimal item selection procedure and visualize the test information function for different item selection strategies (maximum information, b-matching, random).\n\n**Why it matters:** For adaptive safety evaluation to work, item selection must be theoretically grounded. Maximum Fisher information item selection maximizes measurement precision at the current ability estimate. Understanding which safety items are informative at which ability levels reveals the structure of the item bank and identifies gaps (e.g., too few high-difficulty items for frontier models).\n\n**Relevant context:** The CAT-for-LLMs literature ('Adaptive Testing for LLM Evaluation', 2025; 'Confident Rankings with Fewer Items', 2026) implements maximum information selection for general capability benchmarks. The extension to safety requires calibrated safety-specific parameters. Fisher information computation is a standard mirt output, requiring no additional coding beyond the calibration step."
+  },
+  {
+    "idea_id": "gen-211",
+    "run_id": "2026-03-30T19-05-44",
+    "stage": "generate",
+    "timestamp": "2026-03-30T22:37:05Z",
+    "subfield": "AI Evaluation / Psychometrics",
+    "generation_strategy": "problem_decomposition",
+    "confidence": 0.64,
+    "body": "# Stopping Rules for Adaptive Safety Evaluation: When Have We Measured Enough?\n\n**Problem:** Create adaptive safety evaluation (CAT for safety)\n\n**Direction:** Design and simulate three stopping rules for a CAT-based safety evaluation: (1) fixed precision (stop when SE < 0.30), (2) fixed length (stop after 20 items), (3) minimum information threshold (stop when next best item's information < 0.10). Simulate 100 virtual models with known theta values, run CAT under each stopping rule, and compare: number of items administered, theta estimation error, and rank-order accuracy relative to full evaluation.\n\n**Why it matters:** Stopping rules determine the efficiency\u2013accuracy tradeoff in adaptive testing. For safety evaluation, there are additional considerations: it may be especially important to achieve high precision for borderline models near a 'safe/unsafe' threshold, while fewer items suffice for clearly safe or clearly unsafe models. The right stopping rule depends on the evaluation's decision-theoretic purpose.\n\n**Relevant context:** Standard CAT stopping rules (SE < 0.30, fixed length) are well-established in educational testing. 'Confident Rankings with Fewer Items' (2026) explores this for LLM evaluation. Stopping rules for safety-specific decisions (where misclassification has asymmetric costs) have not been studied. Simulation in R using mirt's CAT simulation functions is accessible to psychometrically-trained users."
+  },
+  {
+    "idea_id": "gen-212",
+    "run_id": "2026-03-30T19-05-44",
+    "stage": "generate",
+    "timestamp": "2026-03-30T22:37:05Z",
+    "subfield": "AI Evaluation / Psychometrics",
+    "generation_strategy": "problem_decomposition",
+    "confidence": 0.61,
+    "body": "# Cold-Start Problem in Adaptive Safety Evaluation: How to Test a New Model with No Prior Data\n\n**Problem:** Create adaptive safety evaluation (CAT for safety)\n\n**Direction:** Investigate the cold-start problem for CAT-based safety evaluation: when a new model has no prior responses, how should the adaptive procedure initialize? Compare three initialization strategies: (1) start at theta=0 with a medium-difficulty item, (2) use model metadata (size, training method) to set a prior theta distribution, (3) use a short fixed 'routing test' of 5 items before going adaptive. Measure how quickly each strategy converges to accurate theta estimates.\n\n**Why it matters:** The cold-start problem is a practical barrier to deploying adaptive safety evaluation for novel models. Without prior calibration data, the adaptive procedure may waste early items on uninformative difficulty levels. A practical solution to cold-start is necessary for CAT-based safety evaluation to be usable in practice.\n\n**Relevant context:** The cold-start problem is well-studied in recommender systems and educational CAT but not specifically addressed in the LLM evaluation CAT literature. 'Adaptive Testing for LLM Evaluation' (2025) and the CAT medical benchmark paper (2026) assume sufficient prior data. Model metadata (parameter count, training recipe) may provide useful prior information for theta initialization."
+  },
+  {
+    "idea_id": "gen-213",
+    "run_id": "2026-03-30T19-05-44",
+    "stage": "generate",
+    "timestamp": "2026-03-30T22:37:05Z",
+    "subfield": "AI Evaluation / Psychometrics",
+    "generation_strategy": "problem_decomposition",
+    "confidence": 0.72,
+    "body": "# Validating Adaptive vs. Full Safety Evaluation: Does CAT Preserve Model Rankings?\n\n**Problem:** Create adaptive safety evaluation (CAT for safety)\n\n**Direction:** Using a safety benchmark with calibrated IRT parameters, run a held-out validation: for each of 20+ models, compute (1) theta from the full item bank and (2) theta from a simulated CAT using only 15-25% of items. Report Spearman rank correlation, root mean squared error of theta estimates, and the rate at which CAT and full evaluation agree on a binary safe/unsafe classification at a predetermined threshold. Quantify the cost savings in items administered.\n\n**Why it matters:** Before deploying adaptive safety evaluation, its validity relative to full evaluation must be empirically established. If CAT-based safety scores disagree with full-evaluation scores for a significant fraction of models, the efficiency gains come at unacceptable validity costs. This validation step is the prerequisite for responsible deployment of adaptive safety evaluation.\n\n**Relevant context:** CAT for medical LLM benchmarks (2026) validated near-perfect correlation with full evaluation at 1.3% of items. tinyBenchmarks validated IRT-selected subsets against full benchmarks and found <2% error. Safety benchmarks may present harder validation challenges due to lower item variance and the high stakes of safety misclassification."
+  },
+  {
+    "idea_id": "gen-214",
+    "run_id": "2026-03-30T19-05-44",
+    "stage": "generate",
+    "timestamp": "2026-03-30T22:37:05Z",
+    "subfield": "AI Evaluation / Psychometrics",
+    "generation_strategy": "problem_decomposition",
+    "confidence": 0.7,
+    "body": "# 1-Factor vs. Multi-Factor LLM Capability: Testing Dimensionality Using CFA on Public Benchmark Data\n\n**Problem:** Determine if LLM capabilities are unidimensional or multidimensional\n\n**Direction:** Collect subscale-level benchmark scores for 50+ models from the Open LLM Leaderboard and HELM (covering math reasoning, language understanding, coding, commonsense, etc.). Fit competing CFA models in R (lavaan): (1) one general factor, (2) two factors (reasoning vs. knowledge), (3) four domain-specific factors. Compare fit using CFI, RMSEA, SRMR. Test whether a bifactor model (one general + domain-specific residual factors) fits better than either pure model.\n\n**Why it matters:** If LLM capabilities are truly unidimensional (one general intelligence factor), then single aggregate leaderboard scores are scientifically defensible. If multidimensional, different benchmarks measure genuinely different abilities and aggregate scores are misleading. This has direct implications for how safety capability tradeoffs are conceptualized.\n\n**Relevant context:** 'A Data-Driven Study on LLM Structure and Development' (EMNLP 2025) takes a data-driven approach to LLM structure. The PSN-IRT paper (2025) found benchmarks have 'uneven measurement properties' suggesting multidimensionality. CFA in lavaan is directly accessible to psychometrically-trained users and requires no ML training. Open LLM Leaderboard provides the data."
+  },
+  {
+    "idea_id": "gen-215",
+    "run_id": "2026-03-30T19-05-44",
+    "stage": "generate",
+    "timestamp": "2026-03-30T22:37:05Z",
+    "subfield": "AI Evaluation / Psychometrics",
+    "generation_strategy": "problem_decomposition",
+    "confidence": 0.68,
+    "body": "# Controlling for Model Size in Capability Dimensionality Studies: Does Structure Remain After Partialling Out Parameters?\n\n**Problem:** Determine if LLM capabilities are unidimensional or multidimensional\n\n**Direction:** In a factor analysis of LLM benchmark performance, model size (parameter count) is a major confound\u2014larger models score higher on nearly everything. Collect parameter counts for 50+ models alongside benchmark scores. Re-run factor analysis on residualized scores (after regressing out log(parameter count)) and compare the factor structure before and after controlling for size. Test whether apparent multi-factor structure is genuine or an artifact of size heterogeneity.\n\n**Why it matters:** If 'dimensions' in LLM capability are simply driven by model scale, then the apparent dimensionality is an artifact rather than reflecting genuinely distinct abilities. Controlling for model size is a methodological necessity before drawing conclusions about capability structure\u2014similar to controlling for IQ in human ability research.\n\n**Relevant context:** The open LLM Leaderboard includes parameter counts for many models. Regression residualization before factor analysis is a standard psychometric technique for removing confounds (similar to partial correlation). No published study explicitly controls for model size before conducting factor analysis of LLM benchmark scores, despite this being an obvious confound."
+  },
+  {
+    "idea_id": "gen-216",
+    "run_id": "2026-03-30T19-05-44",
+    "stage": "generate",
+    "timestamp": "2026-03-30T22:37:05Z",
+    "subfield": "AI Evaluation / Psychometrics",
+    "generation_strategy": "problem_decomposition",
+    "confidence": 0.66,
+    "body": "# EFA vs. CFA for LLM Capability Structure: Do Theory-Driven Dimensions Match Data-Driven Ones?\n\n**Problem:** Determine if LLM capabilities are unidimensional or multidimensional\n\n**Direction:** Apply both exploratory factor analysis (EFA, using the psych package, with parallel analysis for factor number determination) and confirmatory factor analysis (CFA, using lavaan, testing a theory-driven structure from the cognitive science of human intelligence\u2014e.g., Cattell-Horn-Carroll model analogues) to the same LLM benchmark dataset. Compare fit statistics and factor interpretability. Determine whether empirical structure matches or diverges from theoretical expectations.\n\n**Why it matters:** EFA lets the data determine factor structure; CFA tests whether a theoretically motivated structure fits. The tension between these approaches reveals whether LLM capabilities mirror human cognitive structure (as some claim) or form a novel dimensional structure. This has implications for what safety-capability tradeoffs actually mean and whether human psychometric frameworks transfer to AI.\n\n**Relevant context:** Human intelligence has a well-studied factor structure (g-factor, CHC theory). Whether LLMs show an analogous g-factor has been debated. The psych and lavaan R packages support both EFA and CFA. Open LLM Leaderboard provides 10+ benchmark subscales for 100+ models, sufficient for factor analysis."
+  },
+  {
+    "idea_id": "gen-217",
+    "run_id": "2026-03-30T19-05-44",
+    "stage": "generate",
+    "timestamp": "2026-03-30T22:37:05Z",
+    "subfield": "AI Evaluation / Reliability",
+    "generation_strategy": "problem_decomposition",
+    "confidence": 0.74,
+    "body": "# Test-Retest Reliability of Safety Benchmarks: How Stable Are Safety Scores Over Time?\n\n**Problem:** Make AI evaluation reproducible and reliable\n\n**Direction:** Using a fixed set of open-weight models (e.g., Llama-3, Mistral, Gemma), administer the same safety benchmark twice at one-week intervals with identical prompts and settings (temperature=0, identical system prompt). Compute intraclass correlation coefficients (ICC) for each model's score and for the overall model ranking (Spearman r). Identify whether score instability comes from model stochasticity (temperature effects), infrastructure variability, or prompt order effects.\n\n**Why it matters:** Before any other validity analysis can be meaningful, a benchmark must be reliable: the same model should receive similar scores when evaluated twice under identical conditions. There is currently no published test-retest reliability data for AI safety benchmarks. Without this baseline, all score comparisons and longitudinal tracking of model safety are scientifically questionable.\n\n**Relevant context:** 'Diagnosing the Reliability of LLM-as-a-Judge via Item Response Theory' (2025) examines judge reliability using IRT but does not address test-retest reliability of safety scores for evaluated models. ICC computation is standard in R (irr package). Claude-3.5-Haiku showed high intra-rater consistency in writing assessment contexts, suggesting test-retest stability is achievable."
+  },
+  {
+    "idea_id": "gen-218",
+    "run_id": "2026-03-30T19-05-44",
+    "stage": "generate",
+    "timestamp": "2026-03-30T22:37:06Z",
+    "subfield": "AI Evaluation / Reliability",
+    "generation_strategy": "problem_decomposition",
+    "confidence": 0.76,
+    "body": "# Quantifying Inter-Rater Reliability for LLM-as-Judge in Safety Evaluation\n\n**Problem:** Make AI evaluation reproducible and reliable\n\n**Direction:** Select 200 model responses to safety-relevant prompts spanning the full spectrum from clearly harmless to clearly harmful. Have three different LLM judges (e.g., GPT-4o, Claude-3-Sonnet, Gemini-1.5-Pro) rate each response on a 1-5 harm scale using a standardized rubric. Compute Krippendorff's alpha, Cohen's weighted kappa (pairwise), and intraclass correlation coefficient (ICC3,k) for multi-judge agreement. Identify which harm categories show lowest inter-judge agreement.\n\n**Why it matters:** LLM-as-judge is increasingly used for safety evaluation, but inter-rater reliability across different LLM judges has not been systematically quantified with proper psychometric metrics. Low inter-judge agreement would undermine the validity of any safety evaluation that relies on a single judge model. Knowing which harm categories are hardest to judge consistently focuses benchmark improvement efforts.\n\n**Relevant context:** 'Can You Trust LLM Judgments? Reliability of LLM-as-a-Judge' (2024) raises concerns about judge reliability. 'Evaluating large language models as raters in large-scale writing assessments' (ScienceDirect, 2025) applies psychometric frameworks to LLM rating reliability. Krippendorff's alpha and ICC are standard R computations (irr and psych packages)."
+  },
+  {
+    "idea_id": "gen-219",
+    "run_id": "2026-03-30T19-05-44",
+    "stage": "generate",
+    "timestamp": "2026-03-30T22:37:06Z",
+    "subfield": "AI Evaluation / Reliability",
+    "generation_strategy": "problem_decomposition",
+    "confidence": 0.73,
+    "body": "# Measurement Error Estimates for Safety Benchmark Scores: Constructing Confidence Intervals Around Model Rankings\n\n**Problem:** Make AI evaluation reproducible and reliable\n\n**Direction:** Using test-retest data or bootstrap resampling of item responses, estimate the standard error of measurement (SEM) for safety benchmark scores for each of 20+ models. Compute 95% confidence intervals around each model's safety score. Determine how many pairwise model comparisons are actually statistically distinguishable vs. within the margin of measurement error. Report what fraction of published safety leaderboard rankings are statistically indistinguishable.\n\n**Why it matters:** Safety benchmarks report point estimates that create the illusion of precise rankings, but no confidence intervals are published. If two models that appear to differ by 3 percentage points have overlapping 95% CIs, their ranking difference is meaningless. Quantifying measurement error is essential for scientific integrity in safety evaluation and would likely reveal that many current safety rankings are statistically indistinguishable.\n\n**Relevant context:** No published safety benchmark reports confidence intervals around model scores. The 'Can We Trust AI Benchmarks?' review (2025) notes this as a gap. Bootstrap SEM estimation is straightforward in R. tinyBenchmarks found < 2% estimation error with IRT-selected items, implicitly providing SEM estimates\u2014the same approach applied to safety benchmarks would be novel."
+  },
+  {
+    "idea_id": "gen-220",
+    "run_id": "2026-03-30T19-05-44",
+    "stage": "generate",
+    "timestamp": "2026-03-30T22:37:06Z",
+    "subfield": "AI Evaluation / Methodology",
+    "generation_strategy": "problem_decomposition",
+    "confidence": 0.76,
+    "body": "# Minimum Reporting Standards for AI Safety Benchmark Scores: A Psychometric Checklist\n\n**Problem:** Make AI evaluation reproducible and reliable\n\n**Direction:** Drawing on established psychometric reporting standards (APA Standards for Educational and Psychological Testing, COSMIN checklist for health measurement instruments), develop a minimum reporting checklist for AI safety benchmarks. Audit 10 published safety benchmark papers against the checklist, scoring each on items like: reports test-retest reliability, reports SEM, describes item selection procedure, provides item-level data publicly, reports confidence intervals. Publish the checklist and audit results.\n\n**Why it matters:** Reproducibility requires standardized reporting. Currently, safety benchmark papers report results in incompatible formats, without reliability statistics, without item-level data, and without uncertainty quantification. A psychometrically-grounded reporting checklist\u2014analogous to CONSORT for clinical trials\u2014would raise the scientific standard for the entire field.\n\n**Relevant context:** 'Can We Trust AI Benchmarks?' (2025) provides an interdisciplinary review identifying exactly these gaps. 'Measurement to Meaning' (2025) proposes validity frameworks but not concrete reporting standards. Psychometric reporting standards (APA Standards, COSMIN) exist but have not been adapted for AI evaluation. This is a conceptual/analytical project accessible without heavy coding."
+  },
+  {
+    "idea_id": "gen-221",
+    "run_id": "2026-03-30T19-05-44",
+    "stage": "generate",
+    "timestamp": "2026-03-30T22:37:06Z",
+    "subfield": "AI Evaluation / Psychometrics",
+    "generation_strategy": "problem_decomposition",
+    "confidence": 0.69,
+    "body": "# Does Reliability Vary by Model Capability Level? Testing Heteroskedastic Measurement Error in Safety Benchmarks\n\n**Problem:** Make AI evaluation reproducible and reliable\n\n**Direction:** Using bootstrap or IRT-based SEM estimates, test whether measurement error in safety benchmark scores differs systematically by model capability level: do frontier models have smaller or larger SEMs than mid-tier models? Plot SEM as a function of estimated safety theta. Test whether the test information function peaks at a capability level that matches the population of models being evaluated, or whether it is concentrated in a range where few models actually score.\n\n**Why it matters:** Measurement error is often heteroskedastic: benchmarks may be highly precise for models near the item bank's difficulty center but imprecise for models at the extremes. If safety benchmarks are calibrated for mid-range safety ability and frontier models are all near the ceiling, frontier model rankings are especially unreliable even as they are most consequential for deployment decisions.\n\n**Relevant context:** IRT information functions inherently quantify where measurement is most precise across the ability distribution. 'Lifting the Benchmark Iceberg with Item-Response Theory' (OpenReview) examines measurement quality across model ability levels. The test information function is a standard mirt output. No study has explicitly tested whether safety benchmark reliability varies systematically by model capability tier."
+  },
+  {
+    "idea_id": "gen-222",
+    "run_id": "2026-03-30T19-05-44",
+    "stage": "generate",
+    "timestamp": "2026-03-30T22:37:06Z",
+    "subfield": "AI Evaluation / Fairness",
+    "generation_strategy": "problem_decomposition",
+    "confidence": 0.67,
+    "body": "# Differential Item Functioning in Safety Benchmarks: Do Items Favor Certain Model Families?\n\n**Problem:** Establish construct validity for AI safety evaluation\n\n**Direction:** Using item-level safety response data for models from different training families (e.g., Llama-family vs. Mistral-family vs. Gemma-family), conduct DIF analysis using the Mantel-Haenszel method and IRT-based DIF tests (lordif package in R). Identify items that show statistically significant DIF: items where models from one family are more likely to refuse/comply than models of equivalent overall safety ability from another family. Characterize what these items have in common.\n\n**Why it matters:** If safety benchmark items systematically favor models from certain training families or architectures\u2014independent of those models' true safety level\u2014then benchmark scores are biased. A model from family A that appears safer than an equivalent model from family B may simply have been trained on data more similar to the benchmark's format. DIF detection is the standard psychometric tool for identifying such bias.\n\n**Relevant context:** FairDIF (Springer, 2025) applies IRT-based DIF to fairness problems in classification. A paper titled 'DIF: A Framework for Benchmarking and Verifying Implicit Bias in LLMs' (2025) examines DIF in LLM responses using sociodemographic personas. The lordif and difR packages in R implement standard DIF detection methods accessible to psychometrically-trained users."
+  },
+  {
+    "idea_id": "gen-223",
+    "run_id": "2026-03-30T19-05-44",
+    "stage": "generate",
+    "timestamp": "2026-03-30T22:37:06Z",
+    "subfield": "AI Safety / Psychometrics",
+    "generation_strategy": "problem_decomposition",
+    "confidence": 0.7,
+    "body": "# Comparing Data-Driven vs. Theory-Driven Capability Dimensions: Does Safety Form Its Own Dimension?\n\n**Problem:** Determine if LLM capabilities are unidimensional or multidimensional\n\n**Direction:** Collect both safety scores and capability scores (reasoning, knowledge, coding, math) for 40+ models. In an EFA, test whether safety items/subscales load on existing capability factors or form a distinct factor. In a CFA, test a model where safety is specified as an orthogonal dimension to general capability. Compute the safety-capability correlation and its confidence interval to test whether they are distinguishable constructs.\n\n**Why it matters:** If safety loads on the same latent dimension as general capability in a factor analysis, then safety and intelligence are psychometrically inseparable in current models\u2014the alignment tax is total. If safety forms its own orthogonal dimension, safety and capability are genuinely separable. This has profound implications for the feasibility of building highly capable and highly safe AI systems.\n\n**Relevant context:** The capability-safety relationship is a central empirical question in AI safety. Current evidence is anecdotal. Formal factor-analytic testing using lavaan and psych in R, with data from the Open LLM Leaderboard, would provide the first psychometrically rigorous answer. 'A Data-Driven Study on LLM Structure and Development' (EMNLP 2025) provides a template for the capability side of this analysis."
+  },
+  {
+    "idea_id": "gen-224",
+    "run_id": "2026-03-30T19-05-44",
+    "stage": "generate",
+    "timestamp": "2026-03-30T22:37:06Z",
+    "subfield": "AI Safety Evaluation / Psychometrics",
+    "generation_strategy": "landscape_gap_targeting",
+    "confidence": 0.75,
+    "body": "# IRT Calibration of AI Safety Benchmarks: Do TruthfulQA and HarmBench Items Form Valid Scales?\n\n**Problem:** AI safety benchmarks such as TruthfulQA (817 items), HarmBench, and BBQ are treated as if they are measurement instruments, but no one has fitted IRT models to them. Item difficulty, discrimination, and unidimensionality are unknown. The 'Safetywashing' paper (2024) showed that many safety benchmarks correlate with general capability scores \u2014 a likely symptom of construct contamination that IRT can directly test and quantify.\n\n**Direction:** Download model response matrices for TruthfulQA and/or BBQ from the Open LLM Leaderboard or HuggingFace. Fit 1PL (Rasch) and 2PL models in R (mirt or ltm). Assess: (1) model fit via M2 statistic, (2) item information curves to find which items are actually informative, (3) whether the scale is unidimensional via confirmatory factor analysis residuals. Identify items with near-zero discrimination (useless items) and extreme difficulty parameters (floor/ceiling).\n\n**Why it matters:** If safety benchmark items do not meet basic IRT assumptions, then leaderboard scores are ordinal noise, not interval-scale measurements of safety. The field cannot make claims like 'model X is 12% safer than model Y' without this foundation. This is the essential first step toward rigorous AI safety measurement \u2014 and nobody has done it.\n\n**Relevant context:** The 'Safetywashing' paper (arXiv:2407.21792) demonstrates benchmarks measure capability, not safety propensity. Cambridge scientists (2024) applied psychometrics to capability benchmarks but not safety ones. The mirt R package supports all needed analyses. Open LLM Leaderboard provides public binary response matrices."
+  },
+  {
+    "idea_id": "gen-225",
+    "run_id": "2026-03-30T19-05-44",
+    "stage": "generate",
+    "timestamp": "2026-03-30T22:37:06Z",
+    "subfield": "AI Safety Evaluation / Psychometrics",
+    "generation_strategy": "landscape_gap_targeting",
+    "confidence": 0.72,
+    "body": "# Safety Benchmark Dimensionality: Are 'Honesty', 'Harmlessness', and 'Helpfulness' Empirically Separable?\n\n**Problem:** Anthropic's Constitutional AI and the broader safety community treat honesty, harmlessness, and helpfulness as distinct safety dimensions. Factor analysis has been widely applied to capability benchmarks, but no study has tested whether these safety constructs are empirically separable or collapse into a single general factor when item-level response data is examined. The 'Safetywashing' analysis suggests they may all load on a capability factor.\n\n**Direction:** Collect binary response matrices for models on multiple safety benchmarks (TruthfulQA for honesty, HarmBench/BBQ for harmlessness, MT-Bench for helpfulness \u2014 all publicly available). Run exploratory factor analysis (EFA) in R (psych package), then a confirmatory three-factor CFA model. Use bifactor modeling to separate a 'safety-general' factor from specific honesty/harmlessness/helpfulness factors. Control for model size as a covariate.\n\n**Why it matters:** If the three safety dimensions are not empirically separable, the entire 'HHH' framework for AI safety measurement is built on an untested assumption. If they are separable, this validates the theoretical structure. Either outcome is a significant empirical contribution to AI safety evaluation.\n\n**Relevant context:** Safetywashing (2024) found high cross-benchmark correlations. The psych and lavaan R packages handle EFA/CFA. Public datasets from Open LLM Leaderboard and HELM cover multiple safety constructs. The model-size confound is known from capability benchmark factor analyses."
+  },
+  {
+    "idea_id": "gen-226",
+    "run_id": "2026-03-30T19-05-44",
+    "stage": "generate",
+    "timestamp": "2026-03-30T22:37:06Z",
+    "subfield": "AI Safety Evaluation / Measurement Theory",
+    "generation_strategy": "landscape_gap_targeting",
+    "confidence": 0.78,
+    "body": "# G-Theory for Prompt Sensitivity: How Much of Safety Score Variance Is Due to the Model vs. the Prompt?\n\n**Problem:** It is widely known anecdotally that LLM safety behavior is highly sensitive to prompt phrasing \u2014 the same harmful request rephrased triggers different responses. But nobody has formally decomposed this variance using G-Theory. The one theoretical G-Theory paper for AI has zero empirical applications. G-Theory is precisely designed for this: it decomposes variance into Person (model), Item (prompt content), and their interaction \u2014 exactly what is needed.\n\n**Direction:** Design a G-study with: Facet 1 = AI model (treat 10-15 publicly accessible models as objects of measurement), Facet 2 = semantic prompt variants (same harmful request rephrased 5 ways using a fixed rephrasing protocol), Facet 3 = item type (5-10 categories of harmful request). Collect binary responses (safe/unsafe). Use the gtheory R package to estimate variance components: how much variance is model-attributable vs. prompt-wording-attributable vs. interaction? Conduct a D-study to determine the minimum number of prompt variants needed for reliable safety measurement.\n\n**Why it matters:** If prompt-wording variance exceeds model variance, then single-prompt safety benchmarks are fundamentally unreliable. This would explain why safety scores are noisy and why jailbreaks work \u2014 the model's 'safety' is not a stable trait but a prompt-sensitive behavior. G-Theory provides the precise statistical language to make this argument rigorously.\n\n**Relevant context:** A 2025 ScienceDirect paper explicitly revisited G-Theory in the AI age. The gtheory R package is well-documented. Empirical studies show prompt-by-person interaction can account for 20%+ of variance in educational settings. This application to safety is direct and novel."
+  },
+  {
+    "idea_id": "gen-227",
+    "run_id": "2026-03-30T19-05-44",
+    "stage": "generate",
+    "timestamp": "2026-03-30T22:37:06Z",
+    "subfield": "AI Safety Evaluation / Measurement Design",
+    "generation_strategy": "landscape_gap_targeting",
+    "confidence": 0.7,
+    "body": "# G-Theory D-Study for Safety Benchmark Design: How Many Items Do We Need?\n\n**Problem:** Current safety benchmarks (TruthfulQA: 817 items, HarmBench: 400+ behaviors) were designed without formal reliability analysis. G-Theory D-studies allow researchers to compute the minimum number of items needed to achieve a target generalizability coefficient (analogous to reliability) given a specified measurement universe. This has never been applied to AI safety benchmarks.\n\n**Direction:** Using the G-study variance components estimated from publicly available safety benchmark response data, conduct D-studies (in the gtheory R package) to project: (1) How does generalizability coefficient change as number of items increases? (2) What is the minimum item count for G=0.80 (acceptable reliability)? (3) How does this change if prompts are varied vs. fixed? Produce generalizability curves for TruthfulQA, BBQ, and one other benchmark. Compare to actual benchmark sizes.\n\n**Why it matters:** This would be the first empirically-grounded recommendation for safety benchmark sample size design. If current benchmarks are over-sized (G plateaus early), this provides efficiency gains. If they are under-sized, this is a critical reliability failure that must be communicated to the field.\n\n**Relevant context:** G-Theory D-studies are standard psychometric practice. The gtheory R package is available on CRAN. Power analysis for sample size in IRT/G-theory has been formalized in 2025 (Schroeders & Gnambs tutorial). Open safety benchmarks provide the data."
+  },
+  {
+    "idea_id": "gen-228",
+    "run_id": "2026-03-30T19-05-44",
+    "stage": "generate",
+    "timestamp": "2026-03-30T22:37:06Z",
+    "subfield": "AI Safety Evaluation / Cognitive Diagnostics",
+    "generation_strategy": "landscape_gap_targeting",
+    "confidence": 0.68,
+    "body": "# Cognitive Diagnostic Model Analysis of AI Safety Profiles: Which Safety Attributes Does Each Model Master?\n\n**Problem:** IRT produces a single ability score on a latent continuum. But safety is not a single ability \u2014 models may be able to refuse bioweapon requests but fail on subtle manipulation, or resist direct jailbreaks but fail on multi-step social engineering. Cognitive Diagnostic Models (CDMs), specifically the DINA or G-DINA model, produce a mastery profile (binary vector of skills mastered/not mastered) rather than a scalar score. This has never been applied to AI safety.\n\n**Direction:** Step 1: Define a Q-matrix specifying which safety attributes (e.g., harmful content refusal, manipulation resistance, deception avoidance, bias mitigation) each benchmark item requires. This requires expert coding of 50-100 items from public benchmarks. Step 2: Fit a G-DINA model using the GDINA R package to safety benchmark response data. Step 3: Extract attribute mastery profiles for each AI model. Step 4: Cluster models by safety profile. Report which attributes are commonly mastered and which are systematically absent.\n\n**Why it matters:** A CDM safety profile changes the question from 'how safe is this model?' to 'what exactly can and can't this model do safely?' This is far more actionable for AI developers and policymakers. It would be the first diagnostic safety profiling of AI models with formal psychometric foundations.\n\n**Relevant context:** The GDINA R package is available and well-documented. CDM surveys (2024) confirm the technique is mature. LLM-CDM integration research (2025) shows the approach is feasible. Public safety benchmark item banks from TruthfulQA, BBQ, and HarmBench can provide response data."
+  },
+  {
+    "idea_id": "gen-229",
+    "run_id": "2026-03-30T19-05-44",
+    "stage": "generate",
+    "timestamp": "2026-03-30T22:37:06Z",
+    "subfield": "AI Safety Evaluation / Cognitive Diagnostics",
+    "generation_strategy": "landscape_gap_targeting",
+    "confidence": 0.65,
+    "body": "# DINA Model Mastery Classification: Do AI Models Satisfy Compensatory or Non-Compensatory Safety Logic?\n\n**Problem:** The DINA (Deterministic Input, Noisy-And-gate) and DINO (Deterministic Input, Noisy-Or-gate) models embody fundamentally different theories of how attributes combine. DINA assumes all required safety skills must be mastered (non-compensatory); DINO assumes one sufficient skill is enough (compensatory). For AI safety, this is a deep empirical question: can a model compensate for poor manipulation resistance with excellent harmful content refusal? This has never been tested.\n\n**Direction:** Fit both DINA and DINO models (plus the more general G-DINA) to the same safety item response dataset using the GDINA R package. Compare model fit via AIC/BIC. The winning model tells us the fundamental structure of safety competency: is safety non-compensatory (a chain as strong as weakest link) or compensatory (partial mastery helps)? This has profound implications for safety evaluation design.\n\n**Why it matters:** If safety is non-compensatory (DINA wins), then a model that excels at 9 out of 10 safety dimensions is still dangerous because of the one failing. If compensatory (DINO wins), partial safety provides genuine risk reduction. This is a foundational empirical question for safety alignment strategy that no one has addressed with proper measurement tools.\n\n**Relevant context:** DINA vs. DINO model comparison is standard CDM practice with clear R implementations. The compensatory vs. non-compensatory distinction has direct implications for safety alignment. The G-DINA package allows simultaneous comparison. Public benchmark data is available."
+  },
+  {
+    "idea_id": "gen-230",
+    "run_id": "2026-03-30T19-05-44",
+    "stage": "generate",
+    "timestamp": "2026-03-30T22:37:06Z",
+    "subfield": "AI Evaluation Methodology / Psychometrics",
+    "generation_strategy": "landscape_gap_targeting",
+    "confidence": 0.73,
+    "body": "# Formal Power Analysis for IRT Studies of AI Safety Benchmarks: How Many Models Do We Need?\n\n**Problem:** IRT parameter estimation requires minimum sample sizes: roughly 100-500 for 1PL, 500-1000 for 2PL, and 1000+ for 3PL in human testing. But in AI evaluation, the 'persons' are AI models, and most comparative studies use 5-30 models. No paper has formally established whether current AI evaluation studies have sufficient power to recover IRT parameters reliably when model-as-person sample sizes are this small.\n\n**Direction:** Conduct a Monte Carlo simulation study (in R) that mimics AI benchmark conditions: generate synthetic item response matrices with known IRT parameters, vary the number of 'models' (N=10, 20, 30, 50, 100), vary the number of items (50, 100, 200, 400), and measure parameter recovery (RMSE of item discrimination and difficulty estimates). Report minimum N-models thresholds for reliable parameter recovery under 1PL and 2PL models. Cross-validate against real Open LLM Leaderboard data.\n\n**Why it matters:** If AI IRT studies are systematically underpowered (which is likely given N<50 models in most studies), then IRT parameter estimates are unreliable and any conclusions drawn are fragile. This would be the first formal power analysis guidance for the growing field of AI psychometrics.\n\n**Relevant context:** A 2025 tutorial (Schroeders & Gnambs, Sage Journals) provides Monte Carlo methods for IRT sample-size planning. The mirt R package supports simulation. Open LLM Leaderboard provides real data for cross-validation. The gap between N~1000 (human IRT minimum) and N~20 (typical AI studies) is stark and unexplored."
+  },
+  {
+    "idea_id": "gen-231",
+    "run_id": "2026-03-30T19-05-44",
+    "stage": "generate",
+    "timestamp": "2026-03-30T22:37:06Z",
+    "subfield": "AI Fairness and Evaluation / Psychometrics",
+    "generation_strategy": "landscape_gap_targeting",
+    "confidence": 0.71,
+    "body": "# Differential Item Functioning Analysis of Safety Benchmarks Across Model Families\n\n**Problem:** DIF occurs when examinees of equal ability have systematically different probabilities of passing an item due to group membership. In AI evaluation, the equivalent question is: do certain safety benchmark items function differently for open-source models vs. proprietary models, or RLHF-trained vs. instruction-tuned models, at the same overall safety level? Luo et al. proposed this analysis but it has never been conducted.\n\n**Direction:** Define model 'families' as grouping variables (e.g., open-source vs. proprietary, base vs. RLHF-finetuned, GPT family vs. Llama family vs. Claude family). Collect binary response data from public leaderboards. Run Mantel-Haenszel DIF detection and logistic regression DIF procedures (difR package in R) on safety benchmark items. Flag items with significant DIF. Examine whether flagged items share surface features (topic, phrasing style, cultural reference). Report whether benchmark items are biased toward specific training paradigms.\n\n**Why it matters:** DIF in safety benchmarks means scores are not comparable across model families \u2014 a GPT model achieving 80% on TruthfulQA is not equivalent to a Llama model achieving 80% if different items drive the scores. This undermines the validity of cross-model safety comparisons, which are the primary use of safety benchmarks.\n\n**Relevant context:** The FairDIF paper (Springer AI and Ethics, 2026) specifically applies IRT and DIF to AI fairness. The difR package is well-maintained in R. DIF analysis is standard psychometric practice. Public response matrices from HELM and Open LLM Leaderboard enable this analysis without additional data collection."
+  },
+  {
+    "idea_id": "gen-232",
+    "run_id": "2026-03-30T19-05-44",
+    "stage": "generate",
+    "timestamp": "2026-03-30T22:37:06Z",
+    "subfield": "AI Safety Evaluation / Psychometrics",
+    "generation_strategy": "landscape_gap_targeting",
+    "confidence": 0.69,
+    "body": "# DIF as Safety Benchmark Audit: Which Items Favor RLHF-Finetuned Models Regardless of True Safety?\n\n**Problem:** A specific DIF concern for safety benchmarks: RLHF-finetuned models are trained to produce outputs that look safe on human evaluation. They may outperform non-RLHF models on safety benchmarks not because they are genuinely safer but because safety benchmark items are sensitive to RLHF-specific output patterns (e.g., refusal phrasing, hedging language). DIF analysis could identify which items are 'RLHF-sensitive' vs. construct-valid safety measures.\n\n**Direction:** Collect response matrices from public benchmarks, separating models into RLHF-trained vs. non-RLHF groups (matched on overall capability score). Apply DIF analysis using logistic regression controlling for the matching variable. Items showing DIF in favor of RLHF models are candidates for 'apparent safety' rather than 'genuine safety.' Characterize the surface features of DIF items through qualitative coding.\n\n**Why it matters:** This directly addresses the 'safetywashing' concern: if RLHF-trained models get credit on safety benchmarks partly through DIF-contaminated items rather than genuine safety, then current safety benchmarks are measuring training style, not safety properties. This is a concrete, testable operationalization of the safetywashing hypothesis.\n\n**Relevant context:** Safetywashing (2024) found capability-safety confounds. RLHF vs. non-RLHF model lists are publicly documented. The DIF methodology is well-established. The difR and mirt R packages handle the analysis. This directly extends the Luo et al. proposal to a specifically safety-relevant application."
+  },
+  {
+    "idea_id": "gen-233",
+    "run_id": "2026-03-30T19-05-44",
+    "stage": "generate",
+    "timestamp": "2026-03-30T22:37:06Z",
+    "subfield": "AI Safety Evaluation / Psychometrics",
+    "generation_strategy": "landscape_gap_targeting",
+    "confidence": 0.74,
+    "body": "# Multidimensional IRT for AI Safety: Testing Whether Safety Is One Construct or Many\n\n**Problem:** All IRT applications to AI use unidimensional models (single latent ability). But safety is theoretically multidimensional: harmful content avoidance, honesty, manipulation resistance, and bias avoidance are all distinct. Multidimensional IRT (MIRT) can test whether a single safety factor suffices or whether multiple correlated dimensions are needed. This has been 'discussed as needed' in the literature but never empirically conducted for safety benchmarks.\n\n**Direction:** Assemble a response matrix spanning multiple safety benchmarks (TruthfulQA, BBQ, a harm refusal dataset). Fit a series of competing MIRT models using the mirt R package: (1) unidimensional, (2) two-dimensional correlated (honesty + harmlessness), (3) bifactor (safety-general + specifics), (4) three-dimensional (HHH). Compare via model fit indices (RMSEA, CFI, BIC). Examine factor loadings to identify which items load on specific safety dimensions.\n\n**Why it matters:** If safety is unidimensional, simplified evaluation is justified. If multidimensional, then single-score safety leaderboards hide critical information \u2014 a model could be ranked 3rd overall but rank 12th on honesty and 1st on harm avoidance. MIRT results directly inform the design of next-generation safety reporting.\n\n**Relevant context:** The mirt R package supports MIRT and bifactor models. MIRT for factor structure assessment is well-reviewed in Frontiers in Education (2019). IRT-Router (2025 ACL) shows MIRT is feasible for LLM routing. The AI safety literature has called for multidimensional measurement but never delivered it empirically."
+  },
+  {
+    "idea_id": "gen-234",
+    "run_id": "2026-03-30T19-05-44",
+    "stage": "generate",
+    "timestamp": "2026-03-30T22:37:06Z",
+    "subfield": "AI Safety Evaluation / Psychometrics",
+    "generation_strategy": "landscape_gap_targeting",
+    "confidence": 0.66,
+    "body": "# MIRT Ability Estimation for Safety: Can We Recover Separate Honesty and Harm-Avoidance Ability Scores?\n\n**Problem:** Even if MIRT shows safety is multidimensional, it must also be shown that separate ability scores can be reliably recovered. In human testing, MIRT is used to produce separate subscale ability estimates (e.g., verbal vs. quantitative ability). For AI safety, this would mean producing separate 'honesty ability' and 'harm avoidance ability' scores for each model. The reliability and discriminant validity of such separate scores has never been assessed.\n\n**Direction:** Using the best-fitting MIRT model from a multidimensional safety analysis, extract per-model ability estimates on each safety dimension. Compute: (1) reliability of each subscale (marginal reliability from the Fisher information matrix), (2) discriminant validity (correlation between dimensions \u2014 too-high correlation defeats the purpose of separation), (3) convergent validity (correlation of each subscale with external criterion, e.g., human preference ratings). Report a 2D safety map plotting all models.\n\n**Why it matters:** Reliable, discriminant ability scores would transform safety evaluation: rather than 'this model scored 72% on safety,' we could say 'this model is at the 60th percentile for honesty but 85th percentile for harm avoidance.' This is genuinely useful information for deployment decisions in safety-sensitive applications.\n\n**Relevant context:** MIRT ability estimation is standard (mirt package). Marginal reliability from information matrices is documented in mirt documentation. The construct validity framework for AI evaluation was published in 2025 (arXiv:2505.10573 'Measurement to Meaning'). Public safety data is available."
+  },
+  {
+    "idea_id": "gen-235",
+    "run_id": "2026-03-30T19-05-44",
+    "stage": "generate",
+    "timestamp": "2026-03-30T22:37:06Z",
+    "subfield": "AI Safety Evaluation / Validity",
+    "generation_strategy": "landscape_gap_targeting",
+    "confidence": 0.67,
+    "body": "# Consequential Validity of Safety Benchmarks: Do Higher Scores Predict Safer Real-World Behavior?\n\n**Problem:** Consequential validity is the most important validity type in high-stakes testing: does better benchmark performance lead to better real-world outcomes? For AI safety, the question is: do models that score higher on safety benchmarks (TruthfulQA, HarmBench, BBQ) actually behave more safely in downstream tasks and real-world deployments? This has never been empirically studied.\n\n**Direction:** Collect publicly available safety benchmark scores for 20-30 models. Identify external criterion measures: (1) red-teaming success rates from public red-team leaderboards, (2) human safety preference ratings from LMSYS Arena, (3) jailbreak resistance rates from public jailbreak studies. Compute predictive validity correlations (benchmark score predicting criterion). Test whether benchmark-criterion correlations hold after partialling out general capability. Assess incremental validity of individual benchmarks beyond a common factor.\n\n**Why it matters:** If safety benchmarks have low consequential validity (scores don't predict real-world safety), the entire benchmarking enterprise is misleading safety-critical decisions. If they do predict outcomes, this validates their use. Either finding is publishable and practically important. This is the single most important validity question in AI safety evaluation.\n\n**Relevant context:** LMSYS Arena and red-teaming datasets provide external criteria. The 'safetywashing' paper found benchmarks correlate with capability, suggesting poor discriminant validity but leaving consequential validity unstudied. The 'AI Psychometrics' paper (arXiv:2603.11279) applies validity frameworks to AI but not to safety specifically. Consequential validity is documented in the psychometric validity literature."
+  },
+  {
+    "idea_id": "gen-236",
+    "run_id": "2026-03-30T19-05-44",
+    "stage": "generate",
+    "timestamp": "2026-03-30T22:37:06Z",
+    "subfield": "AI Governance / Measurement Validity",
+    "generation_strategy": "landscape_gap_targeting",
+    "confidence": 0.72,
+    "body": "# Consequential Validity at the Policy Level: Do Safety Benchmark Results Influence Deployment Decisions?\n\n**Problem:** A second consequential validity question operates at the institutional level: do AI safety benchmarks actually influence deployment decisions by developers, regulators, and organizations? If companies deploy models regardless of safety scores (or cherry-pick benchmarks), the consequences of benchmark use are negative. If regulators use scores to gate deployment, the consequences are high-stakes. Neither question has been studied.\n\n**Direction:** This is a document/policy analysis study requiring no coding. (1) Analyze public model cards and safety reports from major AI developers (OpenAI, Anthropic, Google, Meta, Mistral) to document which safety benchmarks they cite and how. (2) Review AI governance frameworks (EU AI Act technical standards, NIST AI RMF, UK AI Safety Institute documentation) for benchmark references. (3) Code the documents for: benchmark cited, score reported, deployment decision linked. (4) Apply content validity analysis: do the benchmarks cited match the safety concerns the governance frameworks articulate?\n\n**Why it matters:** If safety benchmarks are being used by regulators without validity evidence, this is a policy failure. If developers report only favorable benchmarks (selective reporting), this is a validity threat analogous to publication bias in drug trials. This paper would be the first systematic audit of how safety benchmark scores flow into consequential decisions.\n\n**Relevant context:** Model cards are publicly available for major models. EU AI Act and NIST AI RMF are public documents. The 'Safetywashing' critique implicitly raises consequential validity concerns. The 2025 AI Safety Index (Future of Life Institute) and AI Index (Stanford HAI) document current benchmark usage patterns."
+  },
+  {
+    "idea_id": "gen-237",
+    "run_id": "2026-03-30T19-05-44",
+    "stage": "generate",
+    "timestamp": "2026-03-30T22:37:06Z",
+    "subfield": "AI Safety Evaluation / Construct Validity",
+    "generation_strategy": "landscape_gap_targeting",
+    "confidence": 0.7,
+    "body": "# Theory-Driven vs. Data-Driven Safety Evaluation: CFA vs. EFA Head-to-Head Comparison\n\n**Problem:** The AI evaluation literature has independently developed theory-driven rubric approaches (e.g., Constitutional AI principles, the HHH framework, ADELE-style rubrics) and data-driven factor analysis approaches. These have never been compared head-to-head on the same safety data. Do theory-driven CFA models fit better than EFA-derived structures? Which approach recovers more reliable, valid safety scores?\n\n**Direction:** Prespecify a theory-driven CFA model based on the Constitutional AI framework (e.g., three correlated factors: Honest, Harmless, Helpful). Separately run EFA on the same safety item response matrix. Compare: (1) model fit (RMSEA, CFI) of CFA vs. EFA-respecified CFA, (2) reliability of scores under each solution, (3) convergent validity with external criteria. This uses the lavaan and psych R packages. Report which approach better captures the structure of safety and where they conflict.\n\n**Why it matters:** This resolves a foundational methodological debate: should AI safety evaluation be structured by theory (what safety researchers believe matters) or by data (what safety benchmark items actually measure empirically)? Disagreement between the two would identify specific gaps where safety theory is not reflected in current benchmarks.\n\n**Relevant context:** EFA/CFA comparison is standard psychometric methodology. The Constitutional AI framework provides the theory-driven structure. The 'Measurement to Meaning' paper (2025) calls for validity-centered AI evaluation. The gap between theory-driven and data-driven approaches in AI evaluation is explicitly identified in the landscape review."
+  },
+  {
+    "idea_id": "gen-238",
+    "run_id": "2026-03-30T19-05-44",
+    "stage": "generate",
+    "timestamp": "2026-03-30T22:37:07Z",
+    "subfield": "AI Honesty / Construct Validity",
+    "generation_strategy": "landscape_gap_targeting",
+    "confidence": 0.69,
+    "body": "# Nomological Network for AI Honesty: Mapping What Truthfulness Scores Should and Should Not Correlate With\n\n**Problem:** A nomological network specifies the theoretical pattern of correlations a construct should have with related constructs (convergent validity) and should not have with unrelated constructs (discriminant validity). For AI honesty/truthfulness, no nomological network has ever been empirically constructed or tested. We do not know empirically whether TruthfulQA scores behave as a genuine honesty construct or as a general capability construct.\n\n**Direction:** Operationalize the nomological network for AI honesty: predict that honesty scores should correlate positively with calibration measures (model knows what it doesn't know), moderately with general reasoning, but should not correlate with harmful content refusal (a separate construct) or with model size alone. Collect relevant scores from public leaderboards. Compute the full correlation matrix. Test whether the empirical pattern matches the theoretically predicted pattern using congruence coefficients. Flag where the nomological predictions are violated.\n\n**Why it matters:** A violated nomological network means TruthfulQA is not measuring honesty as a psychological construct \u2014 it is measuring something else. This would explain why 'honest' models sometimes still hallucinate or deceive in practice. Establishing or disconfirming the nomological network is essential for validity of honesty measurement in AI.\n\n**Relevant context:** The 'Measurement to Meaning' paper (arXiv:2505.10573) specifically argues that GPQA fails nomological validation for medical reasoning. Cronbach & Meehl's (1955) framework for nomological networks is well-established. Convergent/discriminant validity can be assessed with MTMM analysis. Public leaderboards provide the multi-construct data needed."
+  },
+  {
+    "idea_id": "gen-239",
+    "run_id": "2026-03-30T19-05-44",
+    "stage": "generate",
+    "timestamp": "2026-03-30T22:37:07Z",
+    "subfield": "AI Safety Evaluation / Construct Validity",
+    "generation_strategy": "landscape_gap_targeting",
+    "confidence": 0.68,
+    "body": "# Nomological Network for AI Safety-General Factor: What Should a True Safety Construct Predict?\n\n**Problem:** If there is a general safety factor (analogous to the g-factor in intelligence), it should predict specific outcomes. No one has specified or empirically tested what a general AI safety factor should predict (convergent) and should not predict (discriminant). The Safetywashing paper shows safety benchmarks correlate with capability \u2014 but this is only discriminant validity evidence, not a full nomological analysis.\n\n**Direction:** Step 1: Specify the nomological network: general safety-g should predict (a) lower jailbreak success rates, (b) higher human safety preference in LMSYS Arena, (c) lower rates of harmful outputs in red-teaming. It should NOT predict (d) coding ability, (e) mathematical reasoning, (f) reading comprehension. Step 2: Extract the first factor from a PCA of safety benchmark scores as 'safety-g.' Step 3: Compute correlations with criteria (a)-(f) from public sources. Step 4: Test whether observed correlations match the nomological prediction using chi-square goodness-of-fit.\n\n**Why it matters:** This would be the first empirical nomological network for any AI safety construct. If confirmed, it validates safety-g as a real construct with predictive and discriminant properties. If disconfirmed, it demonstrates that current safety benchmarks have no valid nomological structure \u2014 which would be a major critique requiring urgent action from the field.\n\n**Relevant context:** LMSYS Arena, red-teaming datasets, and capability benchmarks are all publicly available. PCA and correlation methods are low-code. The Safetywashing finding provides a strong prior for discriminant validity failure. The 'Measurement to Meaning' framework (2025) provides the validity theory to frame the analysis."
+  },
+  {
+    "idea_id": "gen-240",
+    "run_id": "2026-03-30T19-05-44",
+    "stage": "generate",
+    "timestamp": "2026-03-30T22:37:07Z",
+    "subfield": "Agentic AI Safety / Psychometrics",
+    "generation_strategy": "landscape_gap_targeting",
+    "confidence": 0.64,
+    "body": "# IRT for Agentic Safety: Do Existing Capability Metrics Reflect Agentic Risk Properly?\n\n**Problem:** Agentic AI systems (those that take multi-step actions using tools) introduce new safety risks \u2014 incorrect tool use, goal misgeneralization, out-of-distribution actions. Existing IRT applications are entirely for single-turn, text-based benchmarks. No psychometric analysis has been applied to agentic benchmark response data (e.g., tau-bench, AgentArch). A model's 'agentic safety ability' on an IRT scale is entirely unknown.\n\n**Direction:** Identify a public agentic benchmark with binary success/failure outcomes across multiple models (e.g., tau-bench, AgentBench, or a safety-focused agentic evaluation). Fit a 1PL Rasch model to the binary task-completion response matrix. Examine: (1) item difficulty hierarchy \u2014 which agentic tasks are hardest?, (2) model ability estimates on an IRT scale, (3) fit statistics to test whether agentic tasks form a unidimensional ability scale or require multidimensional treatment. Compare the IRT ability ordering to the raw success-rate ordering.\n\n**Why it matters:** If agentic task success rates do not fit an IRT model (poor model fit), this means agentic performance is not a unidimensional ability \u2014 different models have qualitatively different failure modes, not just different ability levels. This has profound implications for how we interpret and compare agentic AI safety claims.\n\n**Relevant context:** Tau-bench (2024), AgentBench, and AgentArch (2025) are public agentic benchmarks with multi-model response data. The mirt R package handles binary data. ADELE (mentioned in the landscape review) proposed extending IRT to agentic dimensions but no empirical work followed. This would be the first IRT analysis of agentic safety tasks."
+  },
+  {
+    "idea_id": "gen-241",
+    "run_id": "2026-03-30T19-05-44",
+    "stage": "generate",
+    "timestamp": "2026-03-30T22:37:17Z",
+    "subfield": "Agentic AI Safety / Measurement Theory",
+    "generation_strategy": "landscape_gap_targeting",
+    "confidence": 0.62,
+    "body": "# G-Theory for Agentic Evaluation: Decomposing Variance in Agent Task Performance\n\n**Problem:** Agentic evaluation has an additional complexity compared to single-turn evaluation: the same task performed with different tool configurations, different scaffold architectures, or different numbers of allowed steps will produce different outcomes. These are distinct measurement facets (tool configuration, scaffold, iteration budget). No G-Theory study has decomposed these variance sources in agentic evaluation, leaving it unknown whether measured performance reflects agent ability or task configuration.\n\n**Direction:** Design a G-study using publicly documented agentic evaluation frameworks. Define facets: agent model (object of measurement), task scaffold design (fixed vs. flexible), tool availability (minimal vs. full), and iteration budget (short vs. long). If suitable public data does not exist for a full G-study, run a small-scale empirical G-study using the same agent models across two scaffold variants and two tool configurations on 15-20 tasks. Estimate variance components. Conduct D-study to find optimal evaluation design.\n\n**Why it matters:** If scaffold-by-model interaction accounts for 30%+ of variance in agentic performance, then agentic benchmark scores are not portable across evaluation setups \u2014 a model that is 'best' under one scaffold configuration may rank 5th under another. This would fundamentally challenge claims of agentic AI superiority that rest on single-scaffold evaluations.\n\n**Relevant context:** G-Theory for information retrieval evaluation (gt4ireval GitHub package) shows the method is applicable beyond traditional assessment. The CLEAR framework (2025) for enterprise agentic evaluation identifies multiple facets without formalizing them as variance sources. G-Theory is precisely the tool needed to formalize these facets."
+  },
+  {
+    "idea_id": "gen-242",
+    "run_id": "2026-03-30T19-05-44",
+    "stage": "generate",
+    "timestamp": "2026-03-30T22:37:17Z",
+    "subfield": "Multimodal AI Safety / Psychometrics",
+    "generation_strategy": "landscape_gap_targeting",
+    "confidence": 0.65,
+    "body": "# Psychometric Analysis of Multimodal Safety: IRT for Vision-Language Safety Benchmarks\n\n**Problem:** All IRT applications to AI evaluation use text-only benchmarks. Multimodal models (GPT-4o, Claude 3.5, Gemini) are evaluated on vision-language safety benchmarks (e.g., MMSafetyBench, FigStep), but the psychometric properties of these benchmarks are unknown. Research shows MMMU and MathVista exhibit less than 5% performance gaps between multimodal and text-only models \u2014 suggesting many 'multimodal' benchmarks aren't measuring visual input. IRT can empirically test whether vision adds discriminative information.\n\n**Direction:** Collect binary response matrices from public multimodal safety benchmarks for 15-20 models. Fit a unidimensional IRT model and examine: (1) whether vision-specific items show systematically different discrimination parameters than text-only items on the same benchmark, (2) whether residuals from a text-ability factor are correlated with vision-specific features (using a MIRT model with a vision-specific residual factor), (3) whether IRT item information peaks at different ability levels for visual vs. text safety items.\n\n**Why it matters:** If visual safety items show no psychometric differentiation from text safety items (same discrimination, same difficulty ordering), this is empirical evidence that multimodal safety benchmarks are not measuring vision at all \u2014 they measure text-based safety with image distractors. This would be a major validity critique of the multimodal safety evaluation field.\n\n**Relevant context:** MMSafetyBench, VLSafe, and FigStep are public multimodal safety benchmarks. Research (2024-2025) found many multimodal benchmarks fail to require visual processing. IRT can detect this through dimensionality testing. The mirt package handles this analysis. This would be the first psychometric analysis of multimodal safety benchmarks."
+  },
+  {
+    "idea_id": "gen-243",
+    "run_id": "2026-03-30T19-05-44",
+    "stage": "generate",
+    "timestamp": "2026-03-30T22:37:17Z",
+    "subfield": "AI Deception / Psychometrics",
+    "generation_strategy": "landscape_gap_targeting",
+    "confidence": 0.71,
+    "body": "# IRT for Deception Propensity: Calibrating the MASK Benchmark and DeceptionBench\n\n**Problem:** The MASK benchmark measures AI deception propensity and DeceptionBench operationalizes deception across multiple intensity levels and motivational patterns (egoism vs. sycophancy). These are novel safety-adjacent constructs that have been evaluated with raw accuracy methods. IRT analysis could reveal: (1) whether deception propensity is a unidimensional trait, (2) which item types are most informative for placing models on a deception-propensity scale, and (3) whether deception propensity forms a separate dimension from general safety.\n\n**Direction:** Obtain model response data from the MASK benchmark (publicly available) and/or DeceptionBench. Fit 1PL and 2PL IRT models. Examine item information curves to identify the most discriminating deception scenarios. Test unidimensionality using parallel analysis and confirmatory factor analysis residuals. Estimate deception-propensity scores on an IRT scale. Correlate deception-propensity IRT scores with general safety benchmark scores and with capability scores to build a nomological network for deception.\n\n**Why it matters:** If deception propensity is unidimensional and separable from general safety, IRT provides a principled scale for comparing models' deception risk. If it is multidimensional (egoistic deception vs. sycophantic deception load on different factors), this validates ADELE's theoretical distinctions and motivates separate measurement of each type.\n\n**Relevant context:** The MASK benchmark (arXiv:2503.03750) is publicly available. DeceptionBench (2025) provides structured response data. PropensityBench (Scale AI SEAL) explicitly measures 'would-do' vs. 'can-do' safety. IRT analysis is straightforward with mirt. This addresses GAP 12 (propensity measurement) and GAP 1 (psychometric safety evaluation) simultaneously."
+  },
+  {
+    "idea_id": "gen-244",
+    "run_id": "2026-03-30T19-05-44",
+    "stage": "generate",
+    "timestamp": "2026-03-30T22:37:17Z",
+    "subfield": "AI Safety Evaluation / Measurement Invariance",
+    "generation_strategy": "landscape_gap_targeting",
+    "confidence": 0.73,
+    "body": "# Measurement Invariance Testing for Safety Benchmarks: Are Scores Comparable Across Training Paradigms?\n\n**Problem:** The assumption that safety benchmark scores are comparable across models trained with different methods (RLHF, DPO, SFT, base pretraining) is untested. Measurement invariance testing (a CFA-based procedure) tests whether the factor loadings and item intercepts are equal across groups. Recent work identified that measurement invariance cannot be assumed for MMLU between differently finetuned models \u2014 this violation has never been tested for safety benchmarks.\n\n**Direction:** Apply multi-group CFA in R (lavaan package) to safety benchmark response data, comparing: (1) RLHF-finetuned vs. non-RLHF models, (2) open-source vs. proprietary models, (3) small (<7B) vs. large (>70B) models. Test the sequence of invariance constraints: configural \u2192 metric \u2192 scalar \u2192 strict. Report which level of invariance holds and which fails. Identify which specific items/intercepts are non-invariant. Compute the practical impact on score comparisons using effect size indices (dMACS).\n\n**Why it matters:** If scalar invariance fails between RLHF and non-RLHF models on safety benchmarks, then the 'RLHF makes models safer' claim cannot be supported by benchmark score comparisons \u2014 the scores are not on the same scale. This is a technically rigorous challenge to a central narrative in AI safety alignment research.\n\n**Relevant context:** Measurement invariance was identified as a critical gap in LLM evaluation (arXiv:2107.12757). The lavaan R package implements multi-group CFA and invariance testing. The dMACS effect size for non-invariance is documented. This analysis requires only publicly available response data and R expertise."
+  },
+  {
+    "idea_id": "gen-245",
+    "run_id": "2026-03-30T19-05-44",
+    "stage": "generate",
+    "timestamp": "2026-03-30T22:37:17Z",
+    "subfield": "AI Evaluation Methodology / Measurement Theory",
+    "generation_strategy": "landscape_gap_targeting",
+    "confidence": 0.67,
+    "body": "# The Population Assumption Problem: Formalizing Non-Populational IRT for AI Safety Evaluation\n\n**Problem:** IRT assumes persons are sampled from a well-defined population with a specified ability distribution (typically normal). AI models are not randomly sampled \u2014 they are selected by researchers, released by labs, and include survivors of model selection processes. Recent work has proposed 'non-populational' IRT where a single model's ability is estimated from its own response pattern, independent of the model population. This approach has not been applied to safety benchmarks or compared to standard IRT.\n\n**Direction:** Apply both standard IRT (assuming a normal model-ability population) and non-populational IRT (ability estimated from single-model response patterns without population assumption) to the same safety benchmark data. Compare: (1) ability estimates from each approach and their rank-order correlation, (2) item parameter estimates under each assumption, (3) confidence intervals and their coverage probabilities via bootstrap. Assess when the approaches diverge and what this divergence implies for safety score interpretation.\n\n**Why it matters:** If non-populational IRT produces substantially different safety rankings from standard IRT, the assumption violation is practically significant. This paper would establish when and why the population assumption matters for AI evaluation \u2014 a foundational methodological contribution that applies across all IRT-based AI evaluation, not just safety.\n\n**Relevant context:** The 'General Scales Unlock AI Evaluation' paper (arXiv:2503.06378) develops non-populational IRT for AI. The 'Stop Evaluating AI with Human Tests' paper (arXiv:2507.23009) explicitly addresses assumption violations. Standard IRT violation effects are documented in the IRT literature. The mirt package implements standard IRT for comparison."
+  },
+  {
+    "idea_id": "gen-246",
+    "run_id": "2026-03-30T19-05-44",
+    "stage": "generate",
+    "timestamp": "2026-03-30T22:37:06Z",
+    "subfield": "AI Safety Evaluation / Measurement Design",
+    "generation_strategy": "landscape_gap_targeting",
+    "confidence": 0.74,
+    "body": "# G-Theory for Multi-Rater Safety Evaluation: How Much Variance Is Rater vs. Model vs. Scenario?\n\n**Problem:** Safety evaluation increasingly uses LLM-as-judge or human raters to assess open-ended model responses. These evaluations have multiple variance sources: the model being evaluated, the rater (human or LLM), the scenario/prompt, and their interactions. Classical inter-rater reliability captures only rater-rater agreement. G-Theory can decompose all sources simultaneously. No study has applied G-Theory to multi-rater safety evaluation.\n\n**Direction:** Design or locate a dataset where multiple raters (e.g., human annotators or multiple LLM judges) have rated the same model outputs on safety. If existing multi-rater safety data is unavailable, generate one by having 3-4 LLM judges (GPT-4o, Claude, Gemini) rate the same 50-100 outputs from 10-15 models on 5-10 safety scenarios. Run a three-facet G-study: model \u00d7 rater \u00d7 scenario. Estimate variance components. Conduct D-study to find optimal number of raters needed for reliable safety assessment.\n\n**Why it matters:** If rater variance is large (LLM judges disagree substantially), then LLM-as-judge safety evaluation is unreliable regardless of which single judge is used. If scenario variance is large, safety claims are scenario-specific and don't generalize. G-Theory provides exact, quantified answers \u2014 this is far superior to single-judge evaluations or simple inter-rater reliability.\n\n**Relevant context:** LLM-as-judge evaluation is now standard. G-Theory's 'Essays example' (prompts account for 3x more variance than raters) is a well-known finding that may replicate for AI safety scenarios. The gtheory R package is available. Multi-rater safety rating can be conducted using public LLM APIs at minimal cost."
+  },
+  {
+    "idea_id": "gen-247",
+    "run_id": "2026-03-30T19-05-44",
+    "stage": "generate",
+    "timestamp": "2026-03-30T22:37:06Z",
+    "subfield": "AI Safety Evaluation / Cognitive Diagnostics",
+    "generation_strategy": "landscape_gap_targeting",
+    "confidence": 0.69,
+    "body": "# CDM Safety Attribute Q-Matrix: Expert Elicitation and Validation of Safety Skill Prerequisites\n\n**Problem:** Cognitive Diagnostic Models require a Q-matrix specifying which latent attributes each item requires. For AI safety, no validated Q-matrix exists. Constructing one requires: (1) defining safety attributes at the right granularity, (2) expert coding of benchmark items for attribute requirements, and (3) validating the Q-matrix empirically. This is foundational infrastructure for CDM-based safety evaluation \u2014 but it is a tractable, methodologically clear project.\n\n**Direction:** Step 1: Conduct an expert card-sorting exercise (with 2-3 AI safety researchers) to define 5-8 safety attributes (e.g., harmful content refusal, manipulation resistance, deception avoidance, privacy preservation, bias mitigation, instruction following under adversarial pressure). Step 2: Code 80-120 items from TruthfulQA, BBQ, and HarmBench for attribute requirements (binary: item requires this attribute or not). Step 3: Compute inter-coder reliability (Cohen's kappa). Step 4: Empirically validate the Q-matrix by checking that the G-DINA model fit improves vs. a unidimensional model. Report the validated Q-matrix as a community resource.\n\n**Why it matters:** A validated Q-matrix for AI safety is a public good that enables all future CDM research on AI safety. Without it, CDM research cannot proceed. This project is self-contained, requires no advanced coding, and produces a concrete artifact (the Q-matrix) that other researchers can use immediately. It is exactly the right foundational work to enable the CDM gap to be closed.\n\n**Relevant context:** Q-matrix construction methodology is well-documented in the CDM literature. Cambridge Assessment's CDM report provides Q-matrix validation procedures. The GDINA R package supports Q-matrix empirical validation. AI safety taxonomies (from papers like 'Safetywashing' and 'How Should AI Safety Benchmarks Benchmark Safety?') provide the conceptual basis for attribute definition."
+  },
+  {
+    "idea_id": "gen-248",
+    "run_id": "2026-03-30T19-05-44",
+    "stage": "generate",
+    "timestamp": "2026-03-30T22:37:07Z",
+    "subfield": "AI Safety Evaluation / Psychometrics",
+    "generation_strategy": "landscape_gap_targeting",
+    "confidence": 0.77,
+    "body": "# Reliability Decomposition for Safety Benchmarks: Coefficient Alpha, Omega, and G-Coefficients Compared\n\n**Problem:** AI safety benchmarks report raw accuracy scores with no reliability estimates. In psychometrics, multiple reliability coefficients capture different aspects of measurement consistency: Cronbach's alpha (internal consistency), McDonald's omega (accounting for multidimensionality), and G-coefficients (accounting for multiple variance sources). No study has computed any of these for AI safety benchmarks, making it impossible to know what proportion of benchmark score variance reflects stable model properties.\n\n**Direction:** For each of 5 major safety benchmarks (TruthfulQA, BBQ, HarmBench, WinoBias, BOLD), compute using public response matrices: (1) Cronbach's alpha and assess whether the alpha-if-item-deleted analysis identifies unreliable items, (2) McDonald's omega-total and omega-hierarchical (from the psych R package) to assess reliability accounting for multidimensionality, (3) split-half reliability with Spearman-Brown correction, (4) test-retest consistency if multiple model evaluation runs are available. Report a reliability profile for each benchmark.\n\n**Why it matters:** Reliability is the ceiling of validity \u2014 a benchmark cannot be more valid than it is reliable. If safety benchmark reliability is below 0.70 (a common threshold), then all validity claims and leaderboard comparisons rest on unreliable scores. This is the most basic psychometric audit that should have been done before safety benchmarks became policy-relevant, and it has not been done.\n\n**Relevant context:** The psych R package computes all mentioned reliability indices. Public response matrices are available from HELM, Open LLM Leaderboard, and individual benchmark papers. The 'Large Language Model Psychometrics' systematic review (2025) documents the absence of reliability analysis for safety benchmarks. This is low-code, high-impact work."
+  },
+  {
+    "idea_id": "gen-249",
+    "run_id": "2026-03-30T19-05-44",
+    "stage": "generate",
+    "timestamp": "2026-03-30T22:37:07Z",
+    "subfield": "AI Safety Evaluation / Adaptive Testing",
+    "generation_strategy": "landscape_gap_targeting",
+    "confidence": 0.76,
+    "body": "# Adaptive Safety Testing with CAT: Can We Measure AI Safety with 10% of Current Benchmark Items?\n\n**Problem:** IRT research shows that Computerized Adaptive Testing (CAT) can achieve the same measurement precision as full-length tests using 1-3% of items. TruthfulQA has 817 items; HarmBench has 400+ behaviors. If IRT parameters are known, a CAT-based safety evaluation could reliably assess a model using 20-50 items. This has been demonstrated for capability benchmarks (tinyBenchmarks) but never attempted for safety benchmarks.\n\n**Direction:** Step 1: Fit a 2PL IRT model to full TruthfulQA or HarmBench response data to obtain item calibration parameters. Step 2: Simulate CAT under a standard item selection rule (maximum information) using the catR R package. Simulate for 10, 20, 30, 50 items across the model ability range. Step 3: Compare CAT-based ability estimates to full-test estimates (correlation, RMSE). Step 4: Identify the minimum item count at which CAT-estimated scores have correlation \u2265 0.95 with full-test scores. Report the 'essential item set' for safety evaluation.\n\n**Why it matters:** A validated 20-item adaptive safety test would reduce evaluation cost by 95% while maintaining measurement precision. This directly solves a practical problem: safety evaluation is often skipped or abbreviated due to cost. A principled short-form safety test could be widely adopted, improving safety measurement coverage across the field.\n\n**Relevant context:** The tinyBenchmarks paper showed IRT-based adaptive selection achieves 0.97 correlation with full HELM scores using 1-3% of items. The catR R package implements CAT simulation. IRT calibration parameters from TruthfulQA are estimable from public response matrices. Cambridge scientists applied psychometric methods to AI evaluation in 2024 (Cambridge Enterprise news)."
+  },
+  {
+    "idea_id": "gen-250",
+    "run_id": "2026-03-30T19-05-44",
+    "stage": "generate",
+    "timestamp": "2026-03-30T22:37:07Z",
+    "subfield": "AI Evaluation / Psychometrics",
+    "generation_strategy": "combinatorial_matrix",
+    "confidence": 0.75,
+    "body": "# G-Theory Decomposition of Prompt Sensitivity in AI Safety Benchmarks\n\n**Problem:** P2: Prompt sensitivity destroys measurement reliability (76-point swings)\n\n**Direction:** Apply Generalizability Theory to decompose variance in safety benchmark scores across prompt variants, items, and models, quantifying how much of observed score variance is attributable to prompt wording vs. genuine model capability differences.\n\n**Why it matters:** The 76-point performance swings from prompt rephrasing are currently treated as noise, but G-Theory can tell us exactly how much of total score variance is prompt-induced vs. model-genuine. This gives the field a principled reliability coefficient (G-coefficient) for safety benchmarks and informs how many prompt variants are needed for stable measurement.\n\n**Relevant context:** Stanford's AI Measurement Science lab notes that G-Theory decomposes multiple facets of measurement error simultaneously. Researchers have already applied G-theory to LLM rater reliability (ScienceDirect 2025). Prompt sensitivity has been documented at 76 accuracy points for LLaMA-2-13B (EMNLP 2024). A G-study crossing items x prompt_variants x models can be run in R using the gtheory or lme4 package on publicly available benchmark response data."
+  },
+  {
+    "idea_id": "gen-251",
+    "run_id": "2026-03-30T19-05-44",
+    "stage": "generate",
+    "timestamp": "2026-03-30T22:37:07Z",
+    "subfield": "AI Evaluation / Psychometrics",
+    "generation_strategy": "combinatorial_matrix",
+    "confidence": 0.65,
+    "body": "# Measuring Prompt Sensitivity as Differential Item Functioning Across Prompt Variants\n\n**Problem:** P2: Prompt sensitivity destroys measurement reliability (76-point swings)\n\n**Direction:** Treat prompt variant as a 'group' variable and apply DIF analysis to detect which safety benchmark items are most sensitive to prompt rephrasing, identifying whether sensitivity is uniform or interacts with item difficulty.\n\n**Why it matters:** DIF analysis can distinguish items that are genuinely prompt-sensitive (biased items) from stable items. This enables benchmark developers to flag and revise prompt-fragile items rather than discarding entire benchmarks, and identifies which prompt formats produce the most equitable measurement.\n\n**Relevant context:** DIF research demonstrates that linguistic features drive item sensitivity across groups. A 2025 Wiley study used LLMs to predict DIF from item text. Treating prompt variant as a 'group' variable in Mantel-Haenszel DIF tests is a direct, coding-light analysis feasible in R (difR package) using existing benchmark response datasets where multiple prompt variants were tested."
+  },
+  {
+    "idea_id": "gen-252",
+    "run_id": "2026-03-30T19-05-44",
+    "stage": "generate",
+    "timestamp": "2026-03-30T22:37:07Z",
+    "subfield": "AI Evaluation / Metrology",
+    "generation_strategy": "combinatorial_matrix",
+    "confidence": 0.7,
+    "body": "# Measurement Uncertainty Budget for AI Safety Benchmark Scores\n\n**Problem:** P2: Prompt sensitivity destroys measurement reliability (76-point swings)\n\n**Direction:** Apply the GUM (Guide to the Expression of Uncertainty in Measurement) framework to construct a full uncertainty budget for an AI safety benchmark score, enumerating and quantifying all uncertainty sources: prompt wording, temperature, few-shot examples, system prompt, API version, and item sampling.\n\n**Why it matters:** Currently, AI safety benchmark scores are reported as point estimates with no uncertainty quantification. A GUM-style budget would communicate to practitioners that a reported score of, say, 73% should be expressed as 73% \u00b1 12% (k=2), forcing more honest interpretation and deployment decisions.\n\n**Relevant context:** GUM is the ISO standard for uncertainty quantification in physical measurement. Stanford's AI Measurement Science textbook chapter on reliability calls for applying formal uncertainty frameworks to AI evaluation. This is entirely a desk/analysis exercise: identify sources from literature, estimate component magnitudes from published sensitivity studies, combine using RSS formula. No coding required."
+  },
+  {
+    "idea_id": "gen-253",
+    "run_id": "2026-03-30T19-05-44",
+    "stage": "generate",
+    "timestamp": "2026-03-30T22:37:07Z",
+    "subfield": "AI Evaluation / Psychometrics",
+    "generation_strategy": "combinatorial_matrix",
+    "confidence": 0.72,
+    "body": "# Controlling for Model Size as a Covariate in Factor Analysis of AI Safety Capabilities\n\n**Problem:** P3: Model size confounds factor analysis of capabilities\n\n**Direction:** Apply confirmatory factor analysis (CFA) to AI safety benchmark response matrices while explicitly including log(parameter count) as a covariate, testing whether the factor structure of safety-relevant capabilities holds after partialling out model size.\n\n**Why it matters:** OpenReview 2024 ('Beyond Mean Scores') shows that factor models applied to 4,416 models across 21,176 items reveal distinct capability constructs, but does not adequately control for size as a confound. If 'safety' loads on a general factor driven by size rather than a distinct latent trait, current safety benchmarks are measuring capability, not safety specifically\u2014directly relevant to 'safetywashing' concerns.\n\n**Relevant context:** The 'Safetywashing' paper (arxiv 2407.21792) shows safety benchmarks correlate strongly with general capabilities. Factor analysis with covariates can be run in R (lavaan package). Public benchmark response data from HELM, Open LLM Leaderboard, or similar datasets include model size metadata. This is a direct CFA exercise within a psychometrician's skillset."
+  },
+  {
+    "idea_id": "gen-254",
+    "run_id": "2026-03-30T19-05-44",
+    "stage": "generate",
+    "timestamp": "2026-03-30T22:37:07Z",
+    "subfield": "AI Evaluation / Psychometrics",
+    "generation_strategy": "combinatorial_matrix",
+    "confidence": 0.68,
+    "body": "# IRT Analysis Controlling for Model Size: Separating Safety Difficulty from Capability Confound\n\n**Problem:** P3: Model size confounds factor analysis of capabilities\n\n**Direction:** Fit a 2PL IRT model to safety benchmark responses across a diverse set of models, then test whether item difficulty and discrimination parameters are stable across model-size strata using DIF-style analysis with model size as the grouping variable.\n\n**Why it matters:** If large models show systematically different item response curves than small models\u2014even at the same estimated safety ability level\u2014then safety benchmarks have a model-size DIF problem. This analysis separates genuine safety difficulty from size-confounded measurement artifacts.\n\n**Relevant context:** IRT applied to AI benchmarks is now an active research area (ICLR 2025 MetaBench, Allenai Fluid Benchmarking). The mirt R package supports DIF testing within IRT frameworks. Existing benchmark leaderboard data (with model parameter counts) are publicly accessible and could be analyzed without additional data collection."
+  },
+  {
+    "idea_id": "gen-255",
+    "run_id": "2026-03-30T19-05-44",
+    "stage": "generate",
+    "timestamp": "2026-03-30T22:37:07Z",
+    "subfield": "AI Safety / Psychometrics",
+    "generation_strategy": "combinatorial_matrix",
+    "confidence": 0.78,
+    "body": "# MTMM Matrix to Assess Construct Validity of AI Safety Benchmarks\n\n**Problem:** P4: 46.6% of benchmarks lack validity evidence\n\n**Direction:** Construct a Multi-Trait Multi-Method matrix across 3-4 AI safety traits (e.g., refusal behavior, truthfulness, harmlessness) measured by 2-3 different benchmark instruments, computing convergent and discriminant validity coefficients to test whether benchmarks measuring the same trait actually agree.\n\n**Why it matters:** The 'Can We Trust AI Benchmarks?' review (arxiv 2502.06559) documents pervasive validity failures. An MTMM analysis is the classic psychometric validity test and has never been systematically applied to safety benchmarks. It would directly reveal whether benchmarks that claim to measure 'toxicity' or 'jailbreak resistance' are measuring the same underlying construct.\n\n**Relevant context:** MTMM was developed by Campbell and Fiske (1959) and is a standard construct validity tool. Applying it to AI benchmarks requires computing correlations between benchmark scores (across models) for the same claimed trait measured by different instruments. This is a pure correlation/table analysis requiring only benchmark leaderboard data\u2014no new experiments. Feasible in R or even spreadsheet software."
+  },
+  {
+    "idea_id": "gen-256",
+    "run_id": "2026-03-30T19-05-44",
+    "stage": "generate",
+    "timestamp": "2026-03-30T22:37:07Z",
+    "subfield": "AI Evaluation / Psychometrics",
+    "generation_strategy": "combinatorial_matrix",
+    "confidence": 0.7,
+    "body": "# G-Theory Validity Study for AI Safety Benchmarks: Quantifying Sources of Invalidity\n\n**Problem:** P4: 46.6% of benchmarks lack validity evidence\n\n**Direction:** Run a G-study on a safety benchmark by crossing items, prompt variants, and scoring rubrics as facets, computing variance components to determine what proportion of score variance is attributable to the intended construct vs. measurement artifacts.\n\n**Why it matters:** If most score variance is attributable to prompt format or scoring rubric rather than to the model being tested, the benchmark has low construct validity by definition. G-Theory provides a single, interpretable coefficient (G-coefficient) that could serve as a minimum validity standard for safety benchmark publication.\n\n**Relevant context:** The AI Measurement Science textbook (Stanford) describes G-Theory as appropriate for multi-facet AI evaluation reliability. Recent ScienceDirect 2025 study applies G-theory to LLM rater reliability. Running a G-study requires response data from multiple models across multiple prompt variants\u2014available from existing sensitivity studies like the EMNLP 2024 prompt sensitivity dataset."
+  },
+  {
+    "idea_id": "gen-257",
+    "run_id": "2026-03-30T19-05-44",
+    "stage": "generate",
+    "timestamp": "2026-03-30T22:37:07Z",
+    "subfield": "AI Safety / Psychometrics",
+    "generation_strategy": "combinatorial_matrix",
+    "confidence": 0.75,
+    "body": "# IRT-Based Validity Evidence for AI Safety Benchmarks: Item Fit and Differential Functioning\n\n**Problem:** P4: 46.6% of benchmarks lack validity evidence\n\n**Direction:** Fit a 2PL IRT model to a widely-used safety benchmark (e.g., TruthfulQA or HarmBench), examine item fit statistics, and evaluate whether items function as expected under a unidimensional latent safety model, providing empirical validity evidence that most benchmarks currently lack.\n\n**Why it matters:** Only 34% of benchmarks explicitly specify the risks they measure (arxiv 2502.06559). Running IRT item fit analysis on a benchmark produces empirical validity evidence: items with poor fit suggest the benchmark is measuring multiple unrelated constructs rather than a coherent safety dimension.\n\n**Relevant context:** IRT item fit statistics (RMSEA, S-X2) are standard validity tools in psychometrics. The mirt R package computes these automatically. Published model response matrices for TruthfulQA and similar benchmarks are publicly available. This is a direct application of existing psychometric methodology to publicly available data\u2014well within a psychometrician's skillset."
+  },
+  {
+    "idea_id": "gen-258",
+    "run_id": "2026-03-30T19-05-44",
+    "stage": "generate",
+    "timestamp": "2026-03-30T22:37:07Z",
+    "subfield": "AI Safety / Psychometrics",
+    "generation_strategy": "combinatorial_matrix",
+    "confidence": 0.62,
+    "body": "# Cognitive Diagnostic Modeling of AI Safety Attributes: Moving Beyond Aggregate Safety Scores\n\n**Problem:** P4: 46.6% of benchmarks lack validity evidence\n\n**Direction:** Apply a Cognitive Diagnostic Model (CDM) such as DINA or G-DINA to a safety benchmark, specifying a Q-matrix mapping items to safety sub-skills (e.g., refusal, truthfulness, harm avoidance, context sensitivity), to test whether the benchmark actually measures these claimed attributes.\n\n**Why it matters:** If benchmark items cannot be reliably mapped to theorized safety attributes via a Q-matrix, this directly reveals construct invalidity. CDMs provide mastery probability profiles rather than single scores, giving empirical validity evidence and diagnostic information simultaneously.\n\n**Relevant context:** CDMs are well-established in educational measurement (Cambridge Assessment 2021 review). The GDINA R package supports CDM fitting. Applying CDMs requires constructing a Q-matrix from the benchmark's intended skill structure\u2014a theoretical task within a psychometrician's competency\u2014followed by model fitting on publicly available response data."
+  },
+  {
+    "idea_id": "gen-259",
+    "run_id": "2026-03-30T19-05-44",
+    "stage": "generate",
+    "timestamp": "2026-03-30T22:37:07Z",
+    "subfield": "AI Safety / Psychometrics",
+    "generation_strategy": "combinatorial_matrix",
+    "confidence": 0.8,
+    "body": "# Graded Response IRT Models for Safety Benchmarks: Recovering Severity Information from Ordinal Ratings\n\n**Problem:** P5: Safety benchmarks use binary pass/fail losing severity info\n\n**Direction:** Re-analyze an existing safety benchmark that has ordinal or severity-graded human annotations using a Graded Response Model (GRM) or Partial Credit Model, comparing the information recovered vs. binary dichotomization, and demonstrating what is lost by binarizing severity ratings.\n\n**Why it matters:** The 'How Should AI Safety Benchmarks Benchmark Safety?' paper (arxiv 2601.23112) documents that only 14 of 36 severity-distinguishing benchmarks provide principled justification. GRM analysis would demonstrate concretely how much measurement information is destroyed by binary collapse and provide a model-based severity scale.\n\n**Relevant context:** GRM and Partial Credit Model are standard IRT extensions for ordered polytomous responses, fully supported in mirt and ltm R packages. The 2025 PMC tutorial on GRM in R demonstrates exactly this analysis. Safety datasets with human severity ratings exist (e.g., MLCommons AI Safety Benchmark v0.5 with graded annotations, HarmBench)."
+  },
+  {
+    "idea_id": "gen-260",
+    "run_id": "2026-03-30T19-05-44",
+    "stage": "generate",
+    "timestamp": "2026-03-30T22:37:07Z",
+    "subfield": "AI Safety / Measurement",
+    "generation_strategy": "combinatorial_matrix",
+    "confidence": 0.73,
+    "body": "# Standard Setting for AI Safety: Applying Angoff Methods to Define Minimum Safety Thresholds\n\n**Problem:** P5: Safety benchmarks use binary pass/fail losing severity info\n\n**Direction:** Convene a structured Angoff standard-setting exercise with AI safety domain experts to establish empirically-grounded cutoff scores on severity-scaled safety benchmarks, defining what performance level constitutes 'minimally safe for deployment.'\n\n**Why it matters:** Currently, deployment safety thresholds are set ad hoc (e.g., 'less than 1 in 20 harmful responses'). The Angoff method provides a systematic, defensible, expert-based process for establishing cutoffs that is used in high-stakes professional licensing. Applying it to AI safety would align safety evaluation with established credentialing standards.\n\n**Relevant context:** The Angoff method is used by NCSBN (NCLEX-RN), AACN, and other high-stakes licensing bodies. METR and frontier AI labs are already establishing deployment thresholds without formal standard-setting methodology. This project could be executed as a structured expert elicitation exercise combined with a formal Angoff workshop, with analysis in R."
+  },
+  {
+    "idea_id": "gen-261",
+    "run_id": "2026-03-30T19-05-44",
+    "stage": "generate",
+    "timestamp": "2026-03-30T22:37:07Z",
+    "subfield": "AI Safety / Psychometrics",
+    "generation_strategy": "combinatorial_matrix",
+    "confidence": 0.65,
+    "body": "# DIF Analysis of Safety Benchmark Items: Detecting Items That Behave Differently Across Harm Severity Levels\n\n**Problem:** P5: Safety benchmarks use binary pass/fail losing severity info\n\n**Direction:** Treat harm severity as a grouping variable and apply DIF analysis to safety benchmark items, testing whether item difficulty parameters differ across low-, medium-, and high-severity prompt categories for models with the same aggregate safety score.\n\n**Why it matters:** If binary safety benchmarks conflate items targeting mild nuisance harms with items targeting catastrophic harms, DIF analysis would reveal this. Items showing DIF across severity groups are fundamentally measuring different safety constructs despite being collapsed into a single pass/fail score.\n\n**Relevant context:** DIF analysis using severity as a grouping variable is conceptually analogous to standard DIF by demographic group. The difR R package supports this. Existing safety datasets with severity annotations (arxiv 2503.05609 on severity responsiveness) provide the necessary data. This reframing of DIF for severity is novel but methodologically straightforward."
+  },
+  {
+    "idea_id": "gen-262",
+    "run_id": "2026-03-30T19-05-44",
+    "stage": "generate",
+    "timestamp": "2026-03-30T22:37:07Z",
+    "subfield": "AI Evaluation / Psychometrics",
+    "generation_strategy": "combinatorial_matrix",
+    "confidence": 0.6,
+    "body": "# G-Theory Study of IRT Ability Estimation Instability Across Model Families\n\n**Problem:** P6: Cold-start problem: IRT fails for unseen model families\n\n**Direction:** Apply G-Theory to quantify how much variance in IRT ability estimates is attributable to the calibration sample's model-family composition vs. item choice vs. the model being measured, establishing how much the cold-start problem inflates estimation uncertainty.\n\n**Why it matters:** When a new model family (e.g., a new architecture) enters the benchmark, IRT item parameters calibrated on existing models may not transfer. G-Theory can quantify how large this source of variance is relative to other sources, giving a principled estimate of how much to discount IRT-derived scores for unseen model families.\n\n**Relevant context:** IRT applied to AI benchmarks is established (ICLR 2025 MetaBench, IrtNet arxiv 2510.00844). The cold-start problem is documented in cognitive diagnosis literature (Springer 2025 on zero-shot cross-domain diagnosis). A G-study crossing models x model_families x items would reveal the family-generalizability coefficient. Feasible in R using public leaderboard data."
+  },
+  {
+    "idea_id": "gen-263",
+    "run_id": "2026-03-30T19-05-44",
+    "stage": "generate",
+    "timestamp": "2026-03-30T22:37:07Z",
+    "subfield": "AI Evaluation / Psychometrics",
+    "generation_strategy": "combinatorial_matrix",
+    "confidence": 0.67,
+    "body": "# Score Equating to Enable Cross-Family IRT Comparisons for New Model Architectures\n\n**Problem:** P6: Cold-start problem: IRT fails for unseen model families\n\n**Direction:** Apply IRT-based score equating using anchor items to link ability estimates from a new model family to the existing IRT scale, testing whether a small set of anchor items can provide sufficient linkage for cold-start models without full recalibration.\n\n**Why it matters:** Score equating is the standard psychometric solution when new test forms need to be linked to an established scale without re-administering all items. Applying it to the cold-start problem in AI benchmarking would allow new model families to receive calibrated ability estimates using only a subset of anchor items, dramatically reducing evaluation cost.\n\n**Relevant context:** IRT equating methods are more accurate and stable than CTT methods (Assessment Systems). The three equating approaches (concurrent calibration, fixed parameter, Stocking-Lord) are all implementable in mirt R package. This would require selecting anchor items from an existing calibrated benchmark and fitting them for a new-family model\u2014a tractable 30-hour project."
+  },
+  {
+    "idea_id": "gen-264",
+    "run_id": "2026-03-30T19-05-44",
+    "stage": "generate",
+    "timestamp": "2026-03-30T22:37:07Z",
+    "subfield": "AI Evaluation / Psychometrics",
+    "generation_strategy": "combinatorial_matrix",
+    "confidence": 0.65,
+    "body": "# CAT-Based Cold-Start Protocol: Efficient Ability Estimation for New Model Families\n\n**Problem:** P6: Cold-start problem: IRT fails for unseen model families\n\n**Direction:** Design a Computerized Adaptive Testing protocol using a pre-calibrated safety item bank to efficiently place new model families on the ability scale, requiring far fewer items than full benchmark administration while maintaining precision.\n\n**Why it matters:** CAT can achieve 50% item reduction while maintaining measurement precision equivalent to full-form testing. For the cold-start problem, a CAT protocol using information-maximizing item selection could rapidly locate a new model's ability level using only 20-30 items rather than full benchmark administration.\n\n**Relevant context:** CAT is well-established in high-stakes testing (NCLEX, GRE). The catR R package implements full CAT simulations. Pre-calibrated item banks from Allenai's Fluid Benchmarking or MetaBench exist. A CAT simulation study on existing data\u2014testing how quickly ability estimates stabilize for held-out model families\u2014is feasible within 30 hours."
+  },
+  {
+    "idea_id": "gen-265",
+    "run_id": "2026-03-30T19-05-44",
+    "stage": "generate",
+    "timestamp": "2026-03-30T22:37:07Z",
+    "subfield": "AI Evaluation / Psychometrics",
+    "generation_strategy": "combinatorial_matrix",
+    "confidence": 0.78,
+    "body": "# IRT-Based Detection of Data Contamination: Aberrant Response Patterns as Contamination Signal\n\n**Problem:** P7: Data contamination inflates benchmark scores undetectably\n\n**Direction:** Apply IRT person-fit statistics (lz*, W statistics) to AI model response patterns to detect aberrant responding consistent with data contamination\u2014models that get hard items correct while missing easier items in ways that violate the IRT model.\n\n**Why it matters:** Data contamination causes models to answer specific items correctly regardless of their true ability level, producing item response patterns that violate IRT assumptions. Person-fit statistics are designed to detect exactly this kind of aberrant responding, providing an indirect contamination signal without requiring access to training data.\n\n**Relevant context:** IRT person-fit statistics (lz*, W) detect atypical response patterns in human testing (e.g., cheating, careless responding). A 2025 paper (arxiv 2510.07175) explicitly applies psychometric methods to quantify data contamination in LLM evaluations. The mirt R package computes person-fit statistics. This is a direct, novel application requiring only existing benchmark response data."
+  },
+  {
+    "idea_id": "gen-266",
+    "run_id": "2026-03-30T19-05-44",
+    "stage": "generate",
+    "timestamp": "2026-03-30T22:37:07Z",
+    "subfield": "AI Evaluation / Psychometrics",
+    "generation_strategy": "combinatorial_matrix",
+    "confidence": 0.63,
+    "body": "# G-Theory Analysis of Contamination-Induced Score Inflation: Separating Temporal Variance from True Improvement\n\n**Problem:** P7: Data contamination inflates benchmark scores undetectably\n\n**Direction:** Apply G-Theory treating benchmark release date as an 'occasion' facet, decomposing whether score variance across occasions (before/after benchmark publication) exceeds the within-person variance expected from genuine capability growth.\n\n**Why it matters:** If contamination inflates scores post-publication, then the 'occasion' variance component should be anomalously large relative to the item and residual components. A G-study design crossing models x occasions (pre/post benchmark release) x items could quantify how much of observed score increases over time are attributable to timing rather than capability.\n\n**Relevant context:** G-Theory is explicitly designed to detect anomalous occasion-related variance. Historical benchmark score data across model release dates are publicly available (Epoch AI Benchmarks). This is a pure analysis project using public data and R, feasible within the participant's skillset."
+  },
+  {
+    "idea_id": "gen-267",
+    "run_id": "2026-03-30T19-05-44",
+    "stage": "generate",
+    "timestamp": "2026-03-30T22:37:07Z",
+    "subfield": "AI Evaluation / Psychometrics",
+    "generation_strategy": "combinatorial_matrix",
+    "confidence": 0.7,
+    "body": "# DIF Analysis for Contamination Detection: Which Benchmark Items Show Architecture-Specific Anomalies\n\n**Problem:** P7: Data contamination inflates benchmark scores undetectably\n\n**Direction:** Apply DIF analysis treating model family/training corpus as the grouping variable, testing whether specific benchmark items show unexpected inter-group performance differences consistent with selective contamination rather than genuine capability differences.\n\n**Why it matters:** If a specific model family performs unexpectedly well on a subset of items even after controlling for overall ability, this pattern\u2014detectable via DIF\u2014is consistent with those items being in the training data. DIF analysis provides a statistically principled contamination screen that does not require access to training corpora.\n\n**Relevant context:** DIF is designed to detect items that function differently across groups with the same underlying ability. Treating model family as the grouping variable for DIF in the context of benchmark contamination is conceptually novel. The difR R package supports Mantel-Haenszel and logistic regression DIF methods on binary item responses."
+  },
+  {
+    "idea_id": "gen-268",
+    "run_id": "2026-03-30T19-05-44",
+    "stage": "generate",
+    "timestamp": "2026-03-30T22:37:08Z",
+    "subfield": "AI Evaluation / Psychometrics",
+    "generation_strategy": "combinatorial_matrix",
+    "confidence": 0.65,
+    "body": "# MTMM Contamination Check: Do Models That Score High on Contaminated Benchmarks Also Score High on Novel Equivalents\n\n**Problem:** P7: Data contamination inflates benchmark scores undetectably\n\n**Direction:** Construct an MTMM matrix where 'traits' are capability domains and 'methods' are original vs. isomorphic-but-novel benchmark versions, testing whether convergent validity breaks down specifically for models suspected of contamination.\n\n**Why it matters:** A contaminated model should show high scores on original benchmark items (memorized) but lower scores on novel isomorphic versions. The MTMM framework provides a principled test: low convergent validity between original and isomorphic versions, especially for specific model families, is a contamination signal.\n\n**Relevant context:** MTMM convergent validity is the established check that different measurement methods for the same trait agree. Several research groups have created paraphrased/isomorphic versions of MMLU and GSM8K for contamination testing. Computing MTMM correlations from existing leaderboard + isomorphic benchmark data requires only matrix operations in R."
+  },
+  {
+    "idea_id": "gen-269",
+    "run_id": "2026-03-30T19-05-44",
+    "stage": "generate",
+    "timestamp": "2026-03-30T22:37:08Z",
+    "subfield": "AI Safety / Psychometrics",
+    "generation_strategy": "combinatorial_matrix",
+    "confidence": 0.75,
+    "body": "# Cognitive Diagnostic Models for Safety Weakness Profiling: From Aggregate Scores to Attribute Mastery Maps\n\n**Problem:** P8: No way to diagnose specific safety weaknesses (only aggregate scores)\n\n**Direction:** Apply a Cognitive Diagnostic Model (DINA or G-DINA) to a multi-domain safety benchmark, specifying a Q-matrix of safety attributes (e.g., refusal of violence, privacy protection, deception resistance, jailbreak robustness), to generate attribute mastery probability profiles for each model.\n\n**Why it matters:** Instead of a single safety score, CDMs produce a probability vector over safety sub-skills for each model. This directly addresses P8 by providing the first principled diagnostic framework for identifying specific safety weaknesses, analogous to how educational CDMs profile student knowledge gaps.\n\n**Relevant context:** CDMs produce mastery profiles rather than aggregate scores (Cambridge Assessment). The GDINA R package is well-established. A Q-matrix mapping HarmBench or AIR-Bench items to safety attributes could be constructed by expert review. This is a novel, high-impact application that is methodologically feasible for a psychometrician within 30 hours."
+  },
+  {
+    "idea_id": "gen-270",
+    "run_id": "2026-03-30T19-05-44",
+    "stage": "generate",
+    "timestamp": "2026-03-30T22:37:08Z",
+    "subfield": "AI Safety / Psychometrics",
+    "generation_strategy": "combinatorial_matrix",
+    "confidence": 0.73,
+    "body": "# IRT Test Information Functions for Safety Weakness Localization\n\n**Problem:** P8: No way to diagnose specific safety weaknesses (only aggregate scores)\n\n**Direction:** Fit a multidimensional IRT model to a multi-domain safety benchmark, generating test information functions and ability profiles per safety dimension, identifying where on the safety ability continuum each model's measurement is most uncertain.\n\n**Why it matters:** Multidimensional IRT (MIRT) produces separate ability estimates per latent dimension, giving diagnostic profiles rather than aggregate scores. Information functions reveal which ability ranges are well-measured for each safety dimension. This directly provides the per-dimension weakness diagnosis that aggregate scores cannot.\n\n**Relevant context:** The mirt R package supports full multidimensional IRT analysis. MetaBench (ICLR 2025) applies IRT across multiple benchmark dimensions. A psychometrician could run MIRT on existing multi-domain safety benchmark response data (e.g., HELM safety subscores) and generate per-dimension information plots in a single R session."
+  },
+  {
+    "idea_id": "gen-271",
+    "run_id": "2026-03-30T19-05-44",
+    "stage": "generate",
+    "timestamp": "2026-03-30T22:37:08Z",
+    "subfield": "AI Safety / Psychometrics",
+    "generation_strategy": "combinatorial_matrix",
+    "confidence": 0.62,
+    "body": "# DIF-Based Safety Weakness Detection: Identifying Items Where Models Fail Despite Adequate Overall Safety\n\n**Problem:** P8: No way to diagnose specific safety weaknesses (only aggregate scores)\n\n**Direction:** Apply DIF analysis across safety sub-domains as groups, identifying benchmark items that function unexpectedly for specific model families even after controlling for overall safety ability\u2014revealing domain-specific blind spots.\n\n**Why it matters:** A model with adequate overall safety score may still have domain-specific weaknesses (e.g., performs well on violence refusal but poorly on privacy protection). DIF analysis with domain as the grouping variable surfaces exactly these differential patterns, providing actionable diagnostic information.\n\n**Relevant context:** DIF analysis is designed to surface group-specific item anomalies. Using safety sub-domain as the grouping variable is a novel application. Existing multi-domain safety benchmarks provide the response data. The difR R package is the tool of choice. This extends naturally to identifying model-family-specific safety weaknesses."
+  },
+  {
+    "idea_id": "gen-272",
+    "run_id": "2026-03-30T19-05-44",
+    "stage": "generate",
+    "timestamp": "2026-03-30T22:37:08Z",
+    "subfield": "AI Safety / Psychometrics",
+    "generation_strategy": "combinatorial_matrix",
+    "confidence": 0.63,
+    "body": "# CAT for Targeted Safety Weakness Assessment: Adaptive Probing of Specific Safety Dimensions\n\n**Problem:** P8: No way to diagnose specific safety weaknesses (only aggregate scores)\n\n**Direction:** Design a multidimensional CAT protocol that adaptively selects safety items to maximize information on the specific safety dimension where a model's ability is most uncertain, efficiently converging on fine-grained weakness profiles.\n\n**Why it matters:** Standard benchmarks administer the same items to all models regardless of their ability level. A safety-focused CAT would adaptively probe deeper into a model's specific weakness areas, providing much richer diagnostic information in fewer total evaluations\u2014directly solving the specificity problem.\n\n**Relevant context:** CAT adaptive item selection maximizes measurement information at the current ability estimate. The catR R package supports multidimensional CAT simulation. A simulation study using existing safety benchmark item parameters could demonstrate how quickly a CAT converges on safety weakness profiles compared to fixed-form assessment."
+  },
+  {
+    "idea_id": "gen-273",
+    "run_id": "2026-03-30T19-05-44",
+    "stage": "generate",
+    "timestamp": "2026-03-30T22:37:08Z",
+    "subfield": "AI Safety / Measurement",
+    "generation_strategy": "combinatorial_matrix",
+    "confidence": 0.67,
+    "body": "# Standard Setting for Safety Weakness Thresholds: Angoff Methods to Define Domain-Specific Safety Floors\n\n**Problem:** P8: No way to diagnose specific safety weaknesses (only aggregate scores)\n\n**Direction:** Apply Angoff standard-setting methodology separately to each safety sub-domain (violence, deception, privacy, etc.) to establish domain-specific minimum safety thresholds, enabling weakness identification as scoring below the domain-specific floor.\n\n**Why it matters:** Without domain-specific thresholds, aggregate safety scores cannot identify weaknesses because there is no reference point for what constitutes adequate domain-specific performance. Angoff methods provide these thresholds through expert consensus, directly enabling weakness diagnosis by domain.\n\n**Relevant context:** Angoff standard setting is used for domain-specific competency determination in professional licensing. Applying it separately per safety domain would operationalize 'safety weakness' as a testable claim. This is a structured expert elicitation exercise requiring no coding\u2014feasible as a workshop-based project with analysis in R or spreadsheet."
+  },
+  {
+    "idea_id": "gen-274",
+    "run_id": "2026-03-30T19-05-44",
+    "stage": "generate",
+    "timestamp": "2026-03-30T22:37:08Z",
+    "subfield": "AI Safety / Psychometrics",
+    "generation_strategy": "combinatorial_matrix",
+    "confidence": 0.8,
+    "body": "# Score Equating Across AI Safety Benchmarks: Enabling Valid Cross-Benchmark Model Comparisons\n\n**Problem:** P9: Can't compare models across different safety benchmarks\n\n**Direction:** Apply IRT-based score equating to link scores from two different AI safety benchmarks (e.g., HarmBench and MLCommons AI Safety Benchmark) using a common set of anchor models evaluated on both, placing all models on a common safety ability scale.\n\n**Why it matters:** Currently, a model's score on HarmBench cannot be directly compared to its score on MLCommons ASB. Score equating\u2014the standard psychometric solution for this problem\u2014would for the first time allow cross-benchmark model comparisons and enable tracking of safety progress across benchmark generations.\n\n**Relevant context:** IRT equating is described as 'the process of equating test forms to ensure scores are comparable no matter what set of items an examinee sees' (Assessment Systems). A 2025 paper on psychometric benchmarks for generalist medical AI (PMC 2025) applies similar linking approaches to medical AI benchmarks. Anchor models evaluated on multiple benchmarks are available via leaderboards."
+  },
+  {
+    "idea_id": "gen-275",
+    "run_id": "2026-03-30T19-05-44",
+    "stage": "generate",
+    "timestamp": "2026-03-30T22:37:08Z",
+    "subfield": "AI Safety / Psychometrics",
+    "generation_strategy": "combinatorial_matrix",
+    "confidence": 0.77,
+    "body": "# IRT Concurrent Calibration for Cross-Benchmark Safety Scale Linking\n\n**Problem:** P9: Can't compare models across different safety benchmarks\n\n**Direction:** Pool response data from multiple safety benchmarks and run concurrent IRT calibration, estimating a single set of item parameters and model ability estimates on a common scale, enabling direct comparison of models evaluated on different benchmark subsets.\n\n**Why it matters:** Concurrent calibration is the most powerful IRT equating approach, producing a unified safety ability scale from heterogeneous benchmark data. This would be the psychometric infrastructure needed for a 'safety leaderboard' analogous to HELM or Open LLM Leaderboard but with valid cross-benchmark comparisons.\n\n**Relevant context:** Concurrent calibration is supported in the mirt R package via the multipleGroup function. Multiple safety benchmark response matrices are publicly available. The ICLR 2025 MetaBench paper demonstrates pooled IRT calibration across 6 general benchmarks\u2014directly replicable for safety benchmarks."
+  },
+  {
+    "idea_id": "gen-276",
+    "run_id": "2026-03-30T19-05-44",
+    "stage": "generate",
+    "timestamp": "2026-03-30T22:37:08Z",
+    "subfield": "AI Safety / Psychometrics",
+    "generation_strategy": "combinatorial_matrix",
+    "confidence": 0.72,
+    "body": "# G-Theory Cross-Benchmark Generalizability: How Well Does a Safety Score Generalize Across Benchmarks\n\n**Problem:** P9: Can't compare models across different safety benchmarks\n\n**Direction:** Apply G-Theory treating benchmark instrument as a 'facet' alongside items and models, estimating how much variance in model safety scores is attributable to which benchmark was used vs. genuine model safety ability, yielding a generalizability coefficient across benchmarks.\n\n**Why it matters:** If most variance is attributable to benchmark choice rather than model ability, safety scores are not generalizable and cross-benchmark comparison is invalid. The G-coefficient would quantify exactly how benchmark-dependent safety measurement is, providing the empirical basis for insisting on multi-benchmark evaluation.\n\n**Relevant context:** G-Theory is ideal for this design as it can handle items nested within benchmarks crossed with models. Public leaderboard data contain many models evaluated across multiple safety-relevant benchmarks. This analysis requires only variance component estimation in R (gtheory or lme4 package) on publicly available data."
+  },
+  {
+    "idea_id": "gen-277",
+    "run_id": "2026-03-30T19-05-44",
+    "stage": "generate",
+    "timestamp": "2026-03-30T22:37:08Z",
+    "subfield": "AI Safety / Psychometrics",
+    "generation_strategy": "combinatorial_matrix",
+    "confidence": 0.77,
+    "body": "# MTMM Matrix for Cross-Benchmark Construct Validity: Are Safety Benchmarks Measuring the Same Thing\n\n**Problem:** P9: Can't compare models across different safety benchmarks\n\n**Direction:** Construct a comprehensive MTMM matrix with safety traits as rows and benchmark instruments as columns, using model scores as the data source, to formally test whether benchmarks claiming to measure the same safety trait show convergent validity.\n\n**Why it matters:** If HarmBench, MLCommons ASB, and TruthfulQA all claim to measure 'safety' but show low inter-benchmark correlations, they are measuring different constructs and cross-benchmark comparison is meaningless. The MTMM matrix would provide the first formal empirical test of whether AI safety benchmarks are measuring the same constructs.\n\n**Relevant context:** MTMM matrices require only correlation computations between benchmark scores across a common set of models\u2014available from public leaderboards. No new data collection needed. The 'Safetywashing' paper (arxiv 2407.21792) shows benchmarks correlate with capabilities\u2014MTMM would extend this to test within-safety-domain convergence."
+  },
+  {
+    "idea_id": "gen-278",
+    "run_id": "2026-03-30T19-05-44",
+    "stage": "generate",
+    "timestamp": "2026-03-30T22:37:08Z",
+    "subfield": "AI Safety / Measurement",
+    "generation_strategy": "combinatorial_matrix",
+    "confidence": 0.65,
+    "body": "# Standard Setting for Cross-Benchmark Safety Comparability: Common Reference Points Across Instruments\n\n**Problem:** P9: Can't compare models across different safety benchmarks\n\n**Direction:** Conduct parallel Angoff standard-setting exercises on multiple safety benchmarks using the same panel of experts, establishing equivalent 'minimally safe' cut scores on each benchmark, then evaluating how consistently models are classified across instruments.\n\n**Why it matters:** Even without full score equating, establishing equivalent cut scores across benchmarks would enable consistent pass/fail safety classification regardless of which benchmark is used. Agreement in classification rates across benchmarks is a meaningful form of cross-benchmark comparability that is achievable through expert-based standard setting.\n\n**Relevant context:** Angoff parallel standard setting is used in professional credentialing to ensure multiple exam forms make equivalent pass/fail decisions. Applying this to AI safety benchmarks would create the first principled multi-benchmark consistency framework. The project is structured expert elicitation + R analysis, matching participant skills."
+  },
+  {
+    "idea_id": "gen-279",
+    "run_id": "2026-03-30T19-05-44",
+    "stage": "generate",
+    "timestamp": "2026-03-30T22:37:08Z",
+    "subfield": "AI Safety / Metrology",
+    "generation_strategy": "combinatorial_matrix",
+    "confidence": 0.68,
+    "body": "# Measurement Uncertainty Budget Across Safety Benchmarks: Quantifying Why Cross-Benchmark Comparison Fails\n\n**Problem:** P9: Can't compare models across different safety benchmarks\n\n**Direction:** Construct a GUM-style measurement uncertainty budget for cross-benchmark safety comparisons, enumerating and quantifying each source of incomparability: different item pools, different prompt formats, different scoring rubrics, different sampling of harm types, and different model coverage.\n\n**Why it matters:** Before cross-benchmark comparison can be fixed, its sources of failure must be quantified. A formal uncertainty budget would rank the largest contributors to cross-benchmark incomparability, directing methodological effort where it matters most and giving practitioners a realistic estimate of how uncertain cross-benchmark comparisons are.\n\n**Relevant context:** GUM uncertainty budgets enumerate and combine component uncertainties. This is entirely a desk analysis: review published benchmark specifications, estimate component variance from sensitivity studies in the literature, combine via RSS. No coding required\u2014feasible for a participant with psychometric knowledge."
+  },
+  {
+    "idea_id": "gen-280",
+    "run_id": "2026-03-30T19-05-44",
+    "stage": "generate",
+    "timestamp": "2026-03-30T22:37:08Z",
+    "subfield": "AI Safety / Psychometrics",
+    "generation_strategy": "combinatorial_matrix",
+    "confidence": 0.75,
+    "body": "# IRT as Evidence That Better Safety Measurement Improves Model Rankings and Deployment Decisions\n\n**Problem:** P10: No evidence that better measurement improves safety decisions\n\n**Direction:** Compare model safety rankings produced by raw benchmark scores vs. IRT-estimated ability scores, quantifying how often the ranking changes and whether the changes are consistent with independent safety evaluations, providing direct evidence that measurement quality affects decisions.\n\n**Why it matters:** If raw benchmark rankings and IRT-corrected rankings produce different orderings of models, then measurement method materially affects deployment decisions. Documenting these divergences\u2014especially for models near safety thresholds\u2014is the first empirical evidence that better measurement changes which models are deployed.\n\n**Relevant context:** The Allenai Fluid Benchmarking blog shows IRT-derived rankings differ from mean-score rankings. The 'Measurement to Meaning' paper (arxiv 2505.10573) calls for consequential validity evidence. This analysis requires fitting IRT to existing benchmark data (mirt R package) and comparing rank orderings\u2014a pure analysis project on public data."
+  },
+  {
+    "idea_id": "gen-281",
+    "run_id": "2026-03-30T19-05-44",
+    "stage": "generate",
+    "timestamp": "2026-03-30T22:37:08Z",
+    "subfield": "AI Safety / Psychometrics",
+    "generation_strategy": "combinatorial_matrix",
+    "confidence": 0.7,
+    "body": "# G-Theory Evidence That Reliability Improvements Stabilize Safety Deployment Decisions\n\n**Problem:** P10: No evidence that better measurement improves safety decisions\n\n**Direction:** Use G-Theory D-study projections to show how many additional prompt variants or items would be needed to achieve a G-coefficient of 0.90 for safety benchmarks, and simulate what deployment classification decisions would change at current vs. improved reliability levels.\n\n**Why it matters:** D-studies in G-Theory can project reliability gains from measurement design improvements. Applying this to safety benchmarks would quantify how many models currently mis-classified near safety thresholds would be re-classified correctly with improved measurement\u2014direct evidence that reliability matters for deployment decisions.\n\n**Relevant context:** D-studies are the standard G-Theory tool for measurement design optimization ('Decision Studies'). The gtheory R package computes D-study projections from G-study variance components. This analysis could be run on existing prompt-sensitivity data with safety benchmark responses, requiring no new data collection."
+  },
+  {
+    "idea_id": "gen-282",
+    "run_id": "2026-03-30T19-05-44",
+    "stage": "generate",
+    "timestamp": "2026-03-30T22:37:08Z",
+    "subfield": "AI Safety / Psychometrics",
+    "generation_strategy": "combinatorial_matrix",
+    "confidence": 0.6,
+    "body": "# MTMM as Evidence for Consequential Validity: Do Better-Validated Safety Benchmarks Predict Real-World Harm Differently\n\n**Problem:** P10: No evidence that better measurement improves safety decisions\n\n**Direction:** Construct an MTMM-inspired analysis where 'methods' are benchmarks with varying levels of documented validity evidence, and 'traits' are categories of real-world harm incidents, testing whether better-validated benchmarks show stronger criterion validity against real-world harm reports.\n\n**Why it matters:** This is the consequential validity test the field is missing: do models flagged as 'unsafe' by rigorous, validity-evidenced benchmarks actually produce more harm in deployment? If so, this is direct evidence that measurement quality improves safety decisions. MTMM provides the structural framework for this analysis.\n\n**Relevant context:** The 'Measurement to Meaning' paper (arxiv 2505.10573) introduces consequential validity as the fifth key validity form for AI evaluation. The Safety by Measurement review (arxiv 2505.05541) surveys existing safety evaluation methods. Real-world AI incident databases (AIID) provide criterion data for correlation analysis."
+  },
+  {
+    "idea_id": "gen-283",
+    "run_id": "2026-03-30T19-05-44",
+    "stage": "generate",
+    "timestamp": "2026-03-30T22:37:08Z",
+    "subfield": "AI Safety / Measurement",
+    "generation_strategy": "combinatorial_matrix",
+    "confidence": 0.68,
+    "body": "# Standard Setting as Decision Support: Angoff Cutoffs That Demonstrably Change Deployment Recommendations\n\n**Problem:** P10: No evidence that better measurement improves safety decisions\n\n**Direction:** Run an Angoff standard-setting exercise for a widely-used safety benchmark, establish empirically-grounded cutoffs, then apply these cutoffs retrospectively to historical model evaluations to count how many deployment decisions would have changed relative to ad hoc thresholds.\n\n**Why it matters:** If a principled Angoff cutoff on TruthfulQA or HarmBench would have classified several deployed models differently from the ad hoc thresholds actually used, this is concrete evidence that better measurement methodology changes deployment decisions. Retrospective classification analysis is a direct form of consequential validity evidence.\n\n**Relevant context:** Angoff standard setting produces defensible, expert-grounded cutoffs. Historical model evaluation scores on major benchmarks are public. Retrospective classification with different cutoffs requires only R or spreadsheet computation. This is a feasible 30-hour project for a participant with psychometric expertise."
+  },
+  {
+    "idea_id": "gen-284",
+    "run_id": "2026-03-30T19-05-44",
+    "stage": "generate",
+    "timestamp": "2026-03-30T22:37:08Z",
+    "subfield": "AI Safety / Psychometrics",
+    "generation_strategy": "combinatorial_matrix",
+    "confidence": 0.73,
+    "body": "# Factor Analysis Corrected for Model Size: Testing Whether 'Safety' Is a Distinct Latent Dimension\n\n**Problem:** P3: Model size confounds factor analysis of capabilities\n\n**Direction:** Apply Exploratory Factor Analysis to a matrix of model scores across general capability and safety benchmarks, first without and then with model size as a control variable, testing whether a distinct 'safety' factor emerges only after controlling for the general capability/size confound.\n\n**Why it matters:** If 'safety' does not load as a distinct factor after controlling for model size, safety benchmarks are not measuring a separable construct\u2014they are measuring general model capability. This has profound implications for how safety improvements should be measured and claimed.\n\n**Relevant context:** EFA/CFA on model benchmark scores is documented (OpenReview 'Beyond Mean Scores', arxiv 2503.06378). The 'Safetywashing' paper shows safety correlates with capability. Running EFA with and without size as a covariate in R (psych package) on public leaderboard data is a direct, feasible analysis within a psychometrician's skillset."
+  },
+  {
+    "idea_id": "gen-285",
+    "run_id": "2026-03-30T19-05-44",
+    "stage": "generate",
+    "timestamp": "2026-03-30T22:37:08Z",
+    "subfield": "AI Safety / Psychometrics",
+    "generation_strategy": "combinatorial_matrix",
+    "confidence": 0.65,
+    "body": "# MTMM Analysis of Model Size vs. Safety Trait Variance: Separating Method Effects from True Safety\n\n**Problem:** P3: Model size confounds factor analysis of capabilities\n\n**Direction:** Design an MTMM-inspired analysis where 'methods' are benchmark instruments stratified by their correlation with model size, testing whether high-size-correlated benchmarks show lower discriminant validity from general capability benchmarks than low-size-correlated ones.\n\n**Why it matters:** If safety benchmarks that correlate highly with model size fail to show discriminant validity from capability benchmarks in an MTMM framework, this is direct evidence that those benchmarks are measuring capability (driven by size) rather than safety. This provides a validity screen for identifying which safety benchmarks are truly safety-sensitive.\n\n**Relevant context:** MTMM discriminant validity tests whether constructs that should be different actually are. Correlating benchmark scores with model size is a simple computation from public leaderboard data. This analysis requires only matrix correlation computation in R, feasible within the participant's skillset."
+  },
+  {
+    "idea_id": "gen-286",
+    "run_id": "2026-03-30T19-05-44",
+    "stage": "generate",
+    "timestamp": "2026-03-30T22:37:08Z",
+    "subfield": "AI Evaluation / Psychometrics",
+    "generation_strategy": "combinatorial_matrix",
+    "confidence": 0.67,
+    "body": "# G-Theory Study of Benchmark Validity: Does Item Sampling or Model Sampling Drive Validity Failures\n\n**Problem:** P4: 46.6% of benchmarks lack validity evidence\n\n**Direction:** Apply G-Theory to a benchmark's inter-rater and item-sampling reliability, distinguishing variance attributable to item selection (universe of items sampled) from variance attributable to model-specific response styles, quantifying which facet is the primary driver of invalidity.\n\n**Why it matters:** If invalidity is primarily driven by poor item sampling (too few items per domain), the fix is more items. If driven by rater/rubric variance, the fix is better scoring. G-Theory provides the variance component analysis to identify which investments in benchmark quality yield the most validity improvement.\n\n**Relevant context:** G-Theory decomposes variance into item, rater, occasion, and their interactions. The AI Measurement Science textbook discusses G-Theory for AI evaluation. Applying G-Theory to benchmark item samples requires response data from multiple models on subsets of items\u2014obtainable from any large benchmark dataset."
+  },
+  {
+    "idea_id": "gen-287",
+    "run_id": "2026-03-30T19-05-44",
+    "stage": "generate",
+    "timestamp": "2026-03-30T22:37:08Z",
+    "subfield": "AI Evaluation / Metrology",
+    "generation_strategy": "combinatorial_matrix",
+    "confidence": 0.65,
+    "body": "# Measurement Uncertainty Budget for AI Safety Benchmark Validity: Quantifying the 46.6% Invalidity Gap\n\n**Problem:** P4: 46.6% of benchmarks lack validity evidence\n\n**Direction:** Construct a GUM-style uncertainty budget that enumerates all sources contributing to invalid safety benchmark scores\u2014construct underspecification, item sampling, prompt instability, scoring inconsistency, and data contamination\u2014estimating each component's contribution to total invalidity.\n\n**Why it matters:** The 46.6% invalidity rate is documented but its sources are not quantitatively decomposed. A formal uncertainty budget would rank these sources, enabling benchmark developers to know which validity investments are most impactful. This bridges metrology and psychometrics in a novel way.\n\n**Relevant context:** GUM uncertainty budgets systematically enumerate and combine sources of measurement error. Sources of invalidity in AI benchmarks are well-documented in arxiv 2502.06559 and 2505.10573. This is a desk analysis: identify, estimate, and combine uncertainty sources from the literature, requiring no new data or coding."
+  },
+  {
+    "idea_id": "gen-288",
+    "run_id": "2026-03-30T19-05-44",
+    "stage": "generate",
+    "timestamp": "2026-03-30T22:37:08Z",
+    "subfield": "AI Safety / Psychometrics",
+    "generation_strategy": "combinatorial_matrix",
+    "confidence": 0.82,
+    "body": "# IRT for P1: Calibrating AI Safety Benchmark Items Using 1PL/2PL Models in R\n\n**Problem:** P1: No IRT applied to AI safety benchmarks\n\n**Direction:** Apply 1PL and 2PL IRT models to a major AI safety benchmark (e.g., HarmBench or MLCommons ASB), estimating item difficulty and discrimination parameters, producing an IRT-calibrated safety scale and comparing model orderings to raw score rankings.\n\n**Why it matters:** No IRT calibration has been published for dedicated AI safety benchmarks (as distinct from general capability benchmarks). Establishing IRT item parameters for safety items would reveal which items are most informative, which are too easy or hard for current models, and whether a unidimensional safety construct holds.\n\n**Relevant context:** IRT applied to AI benchmarks is well-established for capability benchmarks (ICLR 2025 MetaBench, Allenai Fluid). Safety-specific IRT calibration is absent from the literature. The mirt and ltm R packages are the standard tools. Public safety benchmark response data (HarmBench leaderboard, MLCommons) are available for analysis."
+  },
+  {
+    "idea_id": "gen-289",
+    "run_id": "2026-03-30T19-05-44",
+    "stage": "generate",
+    "timestamp": "2026-03-30T22:37:09Z",
+    "subfield": "AI Safety / Psychometrics",
+    "generation_strategy": "combinatorial_matrix",
+    "confidence": 0.75,
+    "body": "# G-Theory Reliability Study for AI Safety Benchmark Items\n\n**Problem:** P1: No IRT applied to AI safety benchmarks\n\n**Direction:** Apply G-Theory to quantify total measurement reliability of a safety benchmark by decomposing variance across items, models, and prompt variants, computing the first formal reliability coefficient for an AI safety benchmark and comparing it to accepted standards (G > 0.80).\n\n**Why it matters:** No published reliability study exists for any dedicated AI safety benchmark. A G-Theory reliability study would establish whether current safety benchmarks meet minimum psychometric standards and provide the variance component data needed to design more reliable future benchmarks.\n\n**Relevant context:** G-Theory is the appropriate multi-facet reliability method. The Stanford AI Measurement Science textbook discusses G-Theory for AI evaluation. A G-study on a safety benchmark requires response data across multiple prompt variants\u2014available from prompt sensitivity studies or collectable in R from open-source benchmark APIs."
+  },
+  {
+    "idea_id": "gen-290",
+    "run_id": "2026-03-30T19-05-44",
+    "stage": "generate",
+    "timestamp": "2026-03-30T22:37:09Z",
+    "subfield": "AI Safety / Psychometrics",
+    "generation_strategy": "combinatorial_matrix",
+    "confidence": 0.77,
+    "body": "# Exploratory Factor Analysis of AI Safety Benchmarks: Discovering the Latent Structure of Safety\n\n**Problem:** P1: No IRT applied to AI safety benchmarks\n\n**Direction:** Apply EFA to a matrix of model scores across multiple safety benchmark subscales, discovering the latent factor structure of 'AI safety' and testing whether a single safety dimension or multiple orthogonal safety dimensions best account for observed benchmark intercorrelations.\n\n**Why it matters:** The dimensionality of 'safety' is empirically unknown\u2014current benchmarks assume it is either unidimensional (single score) or fully multidimensional (independent subscales). EFA would provide the first data-driven answer to this question, directly informing whether IRT (which assumes unidimensionality) or MIRT is the appropriate framework.\n\n**Relevant context:** EFA is a standard tool in the psychometrician's toolkit. The 'General Scales' paper (arxiv 2503.06378) applies similar factor analysis to general capabilities. Applying EFA to safety-specific benchmark subscores (harmlessness, truthfulness, jailbreak, privacy, etc.) across a set of models is a novel analysis feasible with public leaderboard data and R (psych package)."
+  },
+  {
+    "idea_id": "gen-291",
+    "run_id": "2026-03-30T19-05-44",
+    "stage": "generate",
+    "timestamp": "2026-03-30T22:37:09Z",
+    "subfield": "AI Safety / Psychometrics",
+    "generation_strategy": "combinatorial_matrix",
+    "confidence": 0.72,
+    "body": "# DIF Analysis Across Model Families on Safety Benchmarks: Which Safety Items Are Architecture-Specific\n\n**Problem:** P1: No IRT applied to AI safety benchmarks\n\n**Direction:** Apply DIF analysis to safety benchmark items using model family (e.g., GPT vs. Claude vs. Llama) as the grouping variable, identifying which safety items function differently across architectures even for models with the same overall safety ability estimate.\n\n**Why it matters:** If safety benchmark items show DIF across model families, the benchmarks may be measuring RLHF-tuning artifacts or architecture-specific behaviors rather than a common safety construct. This has immediate implications for cross-family safety comparisons and model-agnostic safety evaluation.\n\n**Relevant context:** FairDIF (Springer 2026) demonstrates applying IRT and DIF concepts to AI classification fairness. Applying DIF to safety benchmark items with model family as the grouping variable is directly analogous. Public safety benchmark response data across multiple model families are available. difR R package is the analysis tool."
+  },
+  {
+    "idea_id": "gen-292",
+    "run_id": "2026-03-30T19-05-44",
+    "stage": "generate",
+    "timestamp": "2026-03-30T22:37:09Z",
+    "subfield": "AI Evaluation / Psychometrics",
+    "generation_strategy": "combinatorial_matrix",
+    "confidence": 0.73,
+    "body": "# Computerized Adaptive Safety Benchmark: Efficient Model Safety Assessment via CAT\n\n**Problem:** P1: No IRT applied to AI safety benchmarks\n\n**Direction:** Design and simulate a Computerized Adaptive Testing protocol for AI safety evaluation, using a pre-calibrated IRT item bank to select maximally informative safety items for each model, demonstrating that CAT achieves equivalent precision to full-form testing with 50% fewer items.\n\n**Why it matters:** Safety benchmarks are expensive to administer (API costs, evaluation time). A CAT-based safety benchmark would reduce costs while maintaining measurement precision. This is a natural extension of IRT calibration\u2014once items are calibrated, CAT simulation is the next step.\n\n**Relevant context:** CAT applied to AI benchmarks is explicitly proposed by Cambridge scientists (Cambridge Enterprise news). The catR R package implements full CAT simulations. MetaBench item parameters from ICLR 2025 provide the calibrated item bank needed. A simulation study comparing CAT efficiency to fixed-form testing is feasible in 30 hours."
+  },
+  {
+    "idea_id": "gen-293",
+    "run_id": "2026-03-30T19-05-44",
+    "stage": "generate",
+    "timestamp": "2026-03-30T22:37:09Z",
+    "subfield": "AI Evaluation / Metrology",
+    "generation_strategy": "combinatorial_matrix",
+    "confidence": 0.67,
+    "body": "# Measurement Uncertainty Budget for IRT-Based Safety Scores: Quantifying Total Score Uncertainty\n\n**Problem:** P1: No IRT applied to AI safety benchmarks\n\n**Direction:** Apply GUM-style uncertainty budgeting to IRT-estimated safety ability scores, quantifying uncertainty from item calibration error, model response sampling, prompt variability, and ability estimation precision, producing a principled confidence interval for each model's IRT safety score.\n\n**Why it matters:** Even when IRT is applied, the resulting ability estimates are point estimates with unacknowledged uncertainty. A GUM uncertainty budget for IRT safety scores would produce properly-calibrated confidence intervals, enabling practitioners to see that model A's safety score is not statistically distinguishable from model B's.\n\n**Relevant context:** GUM uncertainty budgeting is standard in physical measurement but novel for IRT-based AI scores. IRT standard errors of measurement are a starting point but do not account for item calibration uncertainty, prompt sensitivity, or sampling. This is a desk analysis combining GUM methodology with IRT theory\u2014no new data collection needed."
+  }
+]

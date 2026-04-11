@@ -1,0 +1,1002 @@
+[
+  {
+    "idea_id": "gen-0501",
+    "run_id": "2026-04-07T15-12-49",
+    "stage": "generate",
+    "timestamp": "2026-04-07T17:16:32Z",
+    "subfield": "Formal Methods & AI Verification",
+    "generation_strategy": "novel_direction",
+    "confidence": 0.72,
+    "body": "# Compilation Rate as a Safety Proxy: Does Lean 4 Compilability Predict Security Bug Absence?\n\n**Problem:** The Self-Optimizing Trace Agent achieves ~60% Lean 4 compilation rate vs. 12.5% baseline, but it is unknown whether compilation rate actually predicts absence of security vulnerabilities in the generated code.\n\n**Direction:** Systematically compare AI-generated code across compilation-rate tiers (0%, 12.5%, 60%+) and measure vulnerability density using static analysis (Semgrep, CodeQL) and manual review. Test whether formal compilation success is a meaningful safety proxy.\n\n**Why it matters:** If compilation rate does not correlate with security, the entire Lean-as-safety-signal paradigm needs rethinking. If it does, compilation rate becomes a cheap, automatable safety metric for AI-generated code.\n\n**Relevant context:** VeriBench (ICML 2025) found Claude 4 Sonnet compiles fewer than 15% of Lean tasks. Self-Optimizing Trace Agent reaching ~60% is a dramatic jump. Whether that translates to safer code is untested."
+  },
+  {
+    "idea_id": "gen-0502",
+    "run_id": "2026-04-07T15-12-49",
+    "stage": "generate",
+    "timestamp": "2026-04-07T17:16:32Z",
+    "subfield": "Formal Methods & AI Verification",
+    "generation_strategy": "novel_direction",
+    "confidence": 0.7,
+    "body": "# Benchmark Leakage in Formal Verification: Do LLMs Memorize Lean 4 Proofs?\n\n**Problem:** Lean 4 benchmarks like VeriBench and the HumanEval-based subsets may be in model training data. If LLMs are memorizing proofs rather than reasoning about them, benchmark scores are inflated safety signals.\n\n**Direction:** Design a contamination-detection protocol for formal verification benchmarks: compare model performance on held-out vs. publicly available Lean 4 problems, measure n-gram overlap with model training corpora, and test performance degradation on structurally similar but novel problems.\n\n**Why it matters:** If safety-relevant benchmarks are contaminated, policy and research decisions based on them (e.g., RAND benchmark incentives) rest on false foundations.\n\n**Relevant context:** VeriBench (ICML 2025) is publicly available. LLMs trained after its release could have ingested its problems. Benchmark contamination is a known issue in NLP; this is the first investigation of it in the formal verification domain."
+  },
+  {
+    "idea_id": "gen-0503",
+    "run_id": "2026-04-07T15-12-49",
+    "stage": "generate",
+    "timestamp": "2026-04-07T17:16:32Z",
+    "subfield": "Formal Methods & AI Verification",
+    "generation_strategy": "novel_direction",
+    "confidence": 0.73,
+    "body": "# Specification Drift: How AI-Generated Lean Specs Deviate from Programmer Intent\n\n**Problem:** Even when AI-generated Lean 4 code compiles and is formally verified, the spec itself may not capture programmer intent \u2014 a form of specification drift that formal verification cannot detect.\n\n**Direction:** Collect 50+ Python function specifications, have LLMs translate them to Lean 4 with formal specs, then have human CS students evaluate whether the formal spec matches intent. Measure spec-intent alignment rate and characterize failure modes.\n\n**Why it matters:** Formal verification only guarantees code matches spec. If spec generation is unreliable, the safety guarantee is hollow. This gap is the core failure mode of vericoding as a safety strategy.\n\n**Relevant context:** ATLAS (POPL 2026) synthesizes verified Dafny programs at scale but does not validate that specs capture intent. AlphaVerus also does not address spec quality. This is an under-studied failure mode."
+  },
+  {
+    "idea_id": "gen-0504",
+    "run_id": "2026-04-07T15-12-49",
+    "stage": "generate",
+    "timestamp": "2026-04-07T17:16:32Z",
+    "subfield": "Formal Methods & AI Verification",
+    "generation_strategy": "novel_direction",
+    "confidence": 0.65,
+    "body": "# Cross-Model Formal Verification Consistency: Do Different LLMs Produce Equivalent Lean 4 Proofs?\n\n**Problem:** Different LLMs (Claude, GPT-4, Mistral Leanstral) may produce formally verified Lean 4 code that compiles but encodes different implicit assumptions, leading to superficially equivalent but semantically divergent verified programs.\n\n**Direction:** Take 50 benchmark problems, have 4+ different LLMs generate Lean 4 verified implementations, then formally compare the resulting theorems using proof equivalence checking tools. Measure semantic divergence rate.\n\n**Why it matters:** If different LLMs produce semantically non-equivalent proofs for the same problem, stakeholders cannot treat any single model's verification output as ground truth. Consensus across models may be needed for safety-critical applications.\n\n**Relevant context:** Mistral released Leanstral (March 2026), the first open-source Lean 4 agent. Multiple models now produce Lean proofs. No study has compared their semantic equivalence."
+  },
+  {
+    "idea_id": "gen-0505",
+    "run_id": "2026-04-07T15-12-49",
+    "stage": "generate",
+    "timestamp": "2026-04-07T17:16:32Z",
+    "subfield": "Formal Methods & AI Verification",
+    "generation_strategy": "novel_direction",
+    "confidence": 0.74,
+    "body": "# Formal Property Hallucination: Characterizing When LLMs Fabricate Theorem Statements\n\n**Problem:** LLMs generating Lean 4 proofs may hallucinate theorem statements that are syntactically valid but semantically trivial, vacuously true, or tautological \u2014 formal proof of a useless property.\n\n**Direction:** Curate a test set of 100 programs with known security properties. Ask LLMs to generate Lean 4 theorem statements capturing those properties. Classify outputs as: correctly capturing the target property, vacuously true, semantically trivial, or wrong. Measure rates.\n\n**Why it matters:** A model can produce a valid Lean proof of a vacuously true theorem. This gives false safety assurance. Characterizing this failure mode is essential before formal verification is used as a safety signal.\n\n**Relevant context:** VeriBench evaluates compilation and proof completion, but not whether theorems are non-trivial. This is a gap in current benchmark design."
+  },
+  {
+    "idea_id": "gen-0506",
+    "run_id": "2026-04-07T15-12-49",
+    "stage": "generate",
+    "timestamp": "2026-04-07T17:16:32Z",
+    "subfield": "Formal Methods & AI Verification",
+    "generation_strategy": "novel_direction",
+    "confidence": 0.68,
+    "body": "# Proof Repair Capability: Can LLMs Fix Broken Lean 4 Proofs After API Changes?\n\n**Problem:** Real software evolves. When a library or API changes, previously verified proofs break. Whether LLMs can repair broken Lean 4 proofs automatically is unstudied.\n\n**Direction:** Create a benchmark of 50 Lean 4 proofs that were valid under one version of a library but break under a newer version. Measure LLM success rate at repairing proofs. Compare to baseline (rewriting from scratch).\n\n**Why it matters:** If proofs cannot be maintained after changes, formal verification is impractical for real software. LLM-assisted proof repair could be the key to making verified software maintainable.\n\n**Relevant context:** CSLib roadmap (2026) includes expanding to undergraduate-level algorithms and data structures. Mathlib has a precedent of proof breakage during Lean version upgrades. Proof repair tools exist (e.g., CoqHammer) but LLM-based proof repair in Lean 4 is unstudied."
+  },
+  {
+    "idea_id": "gen-0507",
+    "run_id": "2026-04-07T15-12-49",
+    "stage": "generate",
+    "timestamp": "2026-04-07T17:16:32Z",
+    "subfield": "Formal Methods & AI Verification",
+    "generation_strategy": "novel_direction",
+    "confidence": 0.76,
+    "body": "# Security-Aware Proof Obligations: Do LLMs Generate Lean Specs That Capture Memory Safety?\n\n**Problem:** Lean 4 proofs can verify functional correctness without addressing security properties like memory safety, integer overflow, or input validation. Whether LLMs spontaneously include security-relevant theorem obligations is unknown.\n\n**Direction:** Provide LLMs with 50 C-equivalent algorithm descriptions and ask them to generate Lean 4 implementations with safety theorems. Classify whether generated theorems cover memory safety, bounds checking, overflow, and input validation. Compare to security-expert-written theorems.\n\n**Why it matters:** If LLMs systematically omit security properties from their proof obligations, vericoding provides a false sense of security for security-critical applications.\n\n**Relevant context:** AlphaVerus (CMU 2024) focuses on functional correctness translation from Dafny to Verus. Security property coverage in generated proofs is not evaluated by any current benchmark."
+  },
+  {
+    "idea_id": "gen-0508",
+    "run_id": "2026-04-07T15-12-49",
+    "stage": "generate",
+    "timestamp": "2026-04-07T17:16:32Z",
+    "subfield": "Formal Methods & AI Verification",
+    "generation_strategy": "novel_direction",
+    "confidence": 0.71,
+    "body": "# The Formal Methods Capability Gap by Problem Type: Security vs. Algorithmic vs. Mathematical Tasks\n\n**Problem:** Current Lean 4 benchmarks mix algorithmic, mathematical, and security-adjacent problems. Whether AI formal verification capability varies systematically by problem type (especially for security-critical tasks) is unknown.\n\n**Direction:** Partition VeriBench tasks into three categories: mathematical/algorithmic, software correctness, and security-critical (bounds, overflow, injection). Measure LLM compilation and proof success rates per category. Identify which category is hardest.\n\n**Why it matters:** If LLMs are much worse at security-critical formal verification than algorithmic verification, the safety implications of current benchmarks are being misread.\n\n**Relevant context:** VeriBench includes 11 security challenges. The RAND report specifically calls for benchmarks covering the full spectrum of verification tasks. Comparing performance across these task types has not been done."
+  },
+  {
+    "idea_id": "gen-0509",
+    "run_id": "2026-04-07T15-12-49",
+    "stage": "generate",
+    "timestamp": "2026-04-07T17:16:32Z",
+    "subfield": "Formal Methods & AI Verification",
+    "generation_strategy": "experiment_variation",
+    "confidence": 0.7,
+    "body": "# Prompt Engineering for Lean 4: Which Prompting Strategies Most Improve Formal Verification Success?\n\n**Problem:** The Self-Optimizing Trace Agent improves Lean 4 compilation from 12.5% to ~60% using trace-based self-optimization. The relative contribution of different prompting components (chain-of-thought, few-shot, error feedback) to this gain is unknown.\n\n**Direction:** Conduct an ablation study on the Self-Optimizing Trace Agent. Remove or vary components: (a) no error feedback, (b) no few-shot examples, (c) no chain-of-thought, (d) no self-critique. Measure compilation rate with each ablation on VeriBench tasks.\n\n**Why it matters:** Understanding which prompting components drive formal verification success enables targeted improvement and identifies which components should be included in safety-critical deployment pipelines.\n\n**Relevant context:** VeriBench documents the 60% vs 12.5% gap but the underlying ablation study is not publicly available. This is a natural follow-up experiment given the availability of the benchmark."
+  },
+  {
+    "idea_id": "gen-0510",
+    "run_id": "2026-04-07T15-12-49",
+    "stage": "generate",
+    "timestamp": "2026-04-07T17:16:32Z",
+    "subfield": "Formal Methods & AI Verification",
+    "generation_strategy": "experiment_variation",
+    "confidence": 0.69,
+    "body": "# Temperature and Diversity: How Sampling Parameters Affect Lean 4 Proof Generation\n\n**Problem:** LLM sampling parameters (temperature, top-p, number of samples) significantly affect code generation quality. Their impact on formal proof generation success in Lean 4 is not systematically studied.\n\n**Direction:** Run grid search over temperature (0, 0.3, 0.7, 1.0) and sample count (1, 5, 10, 50) on VeriBench using Claude/GPT-4/Leanstral. Measure compilation rate, proof success rate, and diversity of proof strategies. Find optimal configuration.\n\n**Why it matters:** Formal verification is expensive. Understanding the sample-efficiency tradeoff could dramatically reduce compute requirements for reaching target success rates, making LLM-assisted verification economically viable.\n\n**Relevant context:** LLM sampling for code generation is well-studied (pass@k metrics). This has not been applied to Lean 4 formal proof generation. The Self-Optimizing Trace Agent implicitly uses multiple samples but does not report parameter sensitivity."
+  },
+  {
+    "idea_id": "gen-0511",
+    "run_id": "2026-04-07T15-12-49",
+    "stage": "generate",
+    "timestamp": "2026-04-07T17:16:32Z",
+    "subfield": "Formal Methods & AI Verification",
+    "generation_strategy": "experiment_variation",
+    "confidence": 0.67,
+    "body": "# Task Difficulty Scaling in Lean 4: Does Proof Complexity Predict LLM Failure?\n\n**Problem:** VeriBench contains easy, medium, and hard Lean 4 tasks. The relationship between task complexity (proof length, number of lemmas, logical depth) and LLM failure rate is not characterized.\n\n**Direction:** Compute structural complexity metrics for each VeriBench task (proof length in reference solution, dependency depth, number of auxiliary lemmas, cyclomatic complexity). Correlate these with LLM compilation and proof success rates across models.\n\n**Why it matters:** If complexity predicts failure, simple complexity metrics could serve as a proxy for 'this task requires human verification expert review' \u2014 a practical triage tool for deployment.\n\n**Relevant context:** IRT and psychometric approaches (from prior work on AI benchmark calibration) could be applied to Lean 4 benchmark tasks. No difficulty calibration exists for formal verification benchmarks."
+  },
+  {
+    "idea_id": "gen-0512",
+    "run_id": "2026-04-07T15-12-49",
+    "stage": "generate",
+    "timestamp": "2026-04-07T17:16:32Z",
+    "subfield": "Formal Methods & AI Verification",
+    "generation_strategy": "experiment_variation",
+    "confidence": 0.68,
+    "body": "# Language Transfer for Vericoding: Does Lean Performance Predict Dafny Performance?\n\n**Problem:** AlphaVerus transfers from Dafny to Verus. Mistral's Leanstral targets Lean 4. Whether LLM performance at formal verification transfers across languages (Lean 4, Dafny, Verus, Coq, Isabelle) is unknown.\n\n**Direction:** Take 30 benchmark problems with gold solutions in multiple proof languages. Measure LLM success rate per language for the same problem. Compute cross-language rank correlation. Test whether Lean performance predicts Dafny performance.\n\n**Why it matters:** If performance transfers across proof languages, a single benchmark suffices. If not, each language needs its own evaluation infrastructure, and organizations cannot compare claims across systems.\n\n**Relevant context:** VeriCoding benchmark (POPL 2026) covers Lean, Rust/Verus, and Dafny. Multiple benchmarks now exist. Cross-language LLM performance comparison has not been done systematically."
+  },
+  {
+    "idea_id": "gen-0513",
+    "run_id": "2026-04-07T15-12-49",
+    "stage": "generate",
+    "timestamp": "2026-04-07T17:16:32Z",
+    "subfield": "Formal Methods & AI Verification",
+    "generation_strategy": "experiment_variation",
+    "confidence": 0.66,
+    "body": "# Feedback Loop Quality: How Error Message Precision Affects Self-Correction in Lean 4\n\n**Problem:** The Self-Optimizing Trace Agent uses Lean 4 compiler error messages to guide self-correction. Whether error message quality/verbosity affects correction success is untested.\n\n**Direction:** Vary error message presentation to the LLM: (a) full compiler output, (b) summary only, (c) line number only, (d) no error message. Measure how many iterations are needed to reach compilation. Test on 50 VeriBench tasks.\n\n**Why it matters:** Lean 4 compiler messages are notoriously verbose. Understanding how much information is needed for self-correction guides tool design for future AI-assisted verification pipelines.\n\n**Relevant context:** Self-Optimizing Trace Agent architecture is documented in VeriBench (ICML 2025). Compiler feedback is a key component, but its informational sufficiency has not been tested."
+  },
+  {
+    "idea_id": "gen-0514",
+    "run_id": "2026-04-07T15-12-49",
+    "stage": "generate",
+    "timestamp": "2026-04-07T17:16:32Z",
+    "subfield": "Formal Methods & AI Verification",
+    "generation_strategy": "experiment_variation",
+    "confidence": 0.73,
+    "body": "# Security Challenge vs. Algorithmic Problem: Differential LLM Capability at Lean 4 Security Proofs\n\n**Problem:** VeriBench includes 11 security challenge problems out of 113 total. Whether LLMs perform systematically worse on security-specific formal verification tasks compared to general algorithmic tasks at the same complexity level is unstudied.\n\n**Direction:** Match security challenge problems to algorithmic problems of similar proof length and complexity from VeriBench. Run the same models on both sets. Measure performance gap. Collect qualitative error analysis of where security proof attempts fail.\n\n**Why it matters:** A systematic gap in security-specific formal verification would indicate that improving LLM performance on general benchmarks does not transfer to the most safety-relevant use case.\n\n**Relevant context:** VeriBench (ICML 2025) includes both categories. The 11 security challenges are a natural treatment group. This is a tractable comparison with available public benchmarks."
+  },
+  {
+    "idea_id": "gen-0515",
+    "run_id": "2026-04-07T15-12-49",
+    "stage": "generate",
+    "timestamp": "2026-04-07T17:16:32Z",
+    "subfield": "Formal Methods & AI Verification",
+    "generation_strategy": "experiment_variation",
+    "confidence": 0.71,
+    "body": "# Model Size Scaling for Lean 4 Proof Generation: Does Bigger Always Mean Better?\n\n**Problem:** LLM performance on formal verification at Lean 4 has been tested at limited model sizes. Whether performance scales predictably with model size (consistent with scaling laws) or exhibits unexpected capability jumps/plateaus is unknown.\n\n**Direction:** Run VeriBench across model size families (7B, 13B, 34B, 70B parameters for open models; Claude haiku/sonnet/opus variants) and fit scaling curves. Test whether Lean 4 proof capability follows a smooth power law or shows capability emergence.\n\n**Why it matters:** If formal verification capability emerges abruptly at some scale threshold, safety planning based on capability projections may be wrong. Identifying the scaling regime is important for forecasting when AI-assisted formal verification becomes deployment-ready.\n\n**Relevant context:** LLaMA-70B fails to compile any Lean programs in VeriBench (0%), while Claude 3.7 Sonnet achieves 12.5%. This suggests a non-smooth scaling pattern worth investigating."
+  },
+  {
+    "idea_id": "gen-0516",
+    "run_id": "2026-04-07T15-12-49",
+    "stage": "generate",
+    "timestamp": "2026-04-07T17:16:32Z",
+    "subfield": "Formal Methods & AI Verification",
+    "generation_strategy": "follow_up_experiment",
+    "confidence": 0.74,
+    "body": "# Explaining the 60% vs. 12.5% Gap: What Does the Self-Optimizing Trace Agent Do Differently?\n\n**Problem:** The Self-Optimizing Trace Agent jumps from a 12.5% baseline to ~60% compilation rate on Lean 4. The exact mechanisms responsible for this surprising improvement are not well characterized in the original paper.\n\n**Direction:** Reverse-engineer the agent's behavior by analyzing its trace logs: (1) what fraction of successful proofs required multiple iterations, (2) what types of compiler errors are successfully corrected, (3) what fraction of proofs succeed on first attempt. Build a taxonomy of the agent's correction strategies.\n\n**Why it matters:** Understanding what the 60% figure actually represents (whether it is multi-attempt success at easy problems or genuine capability on hard problems) is critical for interpreting the result as a safety signal.\n\n**Relevant context:** VeriBench (ICML 2025) documents the 60% figure. The agent architecture uses trace-based self-optimization, but the mechanism responsible for the improvement is not dissected in the paper."
+  },
+  {
+    "idea_id": "gen-0517",
+    "run_id": "2026-04-07T15-12-49",
+    "stage": "generate",
+    "timestamp": "2026-04-07T17:16:32Z",
+    "subfield": "Formal Methods & AI Verification",
+    "generation_strategy": "follow_up_experiment",
+    "confidence": 0.75,
+    "body": "# Does the 60% Compilation Rate Generalize to Real-World Code? Testing Self-Optimizing Trace Agent on Unseen Codebases\n\n**Problem:** The Self-Optimizing Trace Agent achieves 60% on VeriBench benchmarks (many derived from HumanEval). Whether this rate generalizes to real-world, non-benchmark code is a critical follow-up question.\n\n**Direction:** Apply the Self-Optimizing Trace Agent to 50 functions sampled from real open-source Python/Rust codebases (not in any benchmark). Measure compilation rate and compare to the 60% figure. Identify what properties of benchmark problems make them easier than real code.\n\n**Why it matters:** If the 60% rate is benchmark-specific and drops dramatically on real code, the gap between AI formal verification capability and real-world deployment remains larger than reported.\n\n**Relevant context:** HumanEval-derived benchmarks are known to be simpler than production code. VeriBench explicitly notes it begins with HumanEval problems. Generalization to real code is the RAND report's key concern."
+  },
+  {
+    "idea_id": "gen-0518",
+    "run_id": "2026-04-07T15-12-49",
+    "stage": "generate",
+    "timestamp": "2026-04-07T17:16:32Z",
+    "subfield": "Formal Methods & AI Verification",
+    "generation_strategy": "follow_up_experiment",
+    "confidence": 0.67,
+    "body": "# Claude Found 500+ Vulnerabilities \u2014 What Types? A Systematic Taxonomy\n\n**Problem:** Anthropic's Claude Code Security found 500+ production vulnerabilities undetected for decades. Whether these are clustered in specific vulnerability categories (memory safety, logic bugs, injection, cryptographic) is not publicly characterized.\n\n**Direction:** Analyze the public disclosure list from Claude Code Security (Anthropic 2026). Classify each vulnerability by CWE category, age, affected programming language, and detection method required. Compare distribution to CVE database baseline to identify which types semantic reasoning finds that pattern matching misses.\n\n**Why it matters:** If the 500+ vulnerabilities are concentrated in specific categories, formal verification benchmarks should prioritize those categories. The taxonomy would directly inform benchmark design and safety tool development.\n\n**Relevant context:** Claude Code Security (Anthropic 2026) found vulnerabilities including zero-days in OpenSSL. The announcement exists but vulnerability categorization is not publicly analyzed in aggregate."
+  },
+  {
+    "idea_id": "gen-0519",
+    "run_id": "2026-04-07T15-12-49",
+    "stage": "generate",
+    "timestamp": "2026-04-07T17:16:32Z",
+    "subfield": "Formal Methods & AI Verification",
+    "generation_strategy": "follow_up_experiment",
+    "confidence": 0.69,
+    "body": "# Does Self-Reflection Improve Formal Proof Generation? Testing Self-Critique Against External Verification\n\n**Problem:** Claude Code Security uses a multi-stage self-verification step to filter false positives. Whether AI self-reflection on Lean 4 proofs (spotting its own errors before submission) is effective is untested.\n\n**Direction:** Compare two conditions on 50 VeriBench tasks: (a) model generates proof and submits directly, (b) model generates proof, critiques it, revises, then submits. Measure first-pass compilation rate and final success rate. Analyze what types of errors self-reflection catches.\n\n**Why it matters:** If self-reflection significantly improves Lean 4 proof success, it could be a lightweight augmentation that does not require agentic loops. If it does not help, the overhead is unjustified.\n\n**Relevant context:** Claude Code Security's multi-stage verification (Anthropic 2026) suggests self-reflection helps for vulnerability detection. AlphaVerus uses a Critique stage. Whether this transfers to formal proof generation is unstudied."
+  },
+  {
+    "idea_id": "gen-0520",
+    "run_id": "2026-04-07T15-12-49",
+    "stage": "generate",
+    "timestamp": "2026-04-07T17:16:32Z",
+    "subfield": "Formal Methods & AI Verification",
+    "generation_strategy": "follow_up_experiment",
+    "confidence": 0.71,
+    "body": "# From 86% to 100%: What Structural Features Prevent Full Vulnerability Detection in DARPA AIxCC?\n\n**Problem:** DARPA AIxCC reached 77% vulnerability detection in the final round (up from 37%). The remaining 23% undetected vulnerabilities may have structural properties that resist both AI and formal methods approaches.\n\n**Direction:** Analyze the AIxCC competition results. Collect examples of vulnerabilities that no system detected. Characterize their structural properties: are they multi-function, require domain knowledge, involve subtle protocol logic, or are they physically distributed across files? Test whether LLM-based formal specification can capture these properties.\n\n**Why it matters:** The gap between 77% and 100% represents the hardest class of vulnerabilities. Understanding what formal or AI approach is needed to cover this gap is a key safety research question.\n\n**Relevant context:** AIxCC SoK paper (arXiv 2602.07666) provides detailed competition analysis. 7 finalist teams with open-source systems will be released. The gap represents a concrete, measurable failure mode to characterize."
+  },
+  {
+    "idea_id": "gen-0521",
+    "run_id": "2026-04-07T15-12-49",
+    "stage": "generate",
+    "timestamp": "2026-04-07T17:16:32Z",
+    "subfield": "Formal Methods & AI Verification",
+    "generation_strategy": "follow_up_experiment",
+    "confidence": 0.7,
+    "body": "# Iterative Proof Generation Failure Modes: Where Do LLMs Get Stuck in Lean 4?\n\n**Problem:** When LLMs fail on Lean 4 tasks after multiple iterations, it is unclear whether they are making progress (getting closer to a valid proof) or cycling without convergence. Understanding the failure dynamics matters for when to give up.\n\n**Direction:** Run 10-iteration traces on 30 VeriBench tasks that fail to compile. At each iteration, measure: (a) number of compiler errors, (b) error type distribution, (c) proof fragment similarity to previous attempt. Classify failures as: converging, cycling, regressing.\n\n**Why it matters:** Iterative agents need stopping criteria. If most failures cycle rather than converge, exponential compute waste can be avoided by early termination. This has direct implications for the cost-efficiency of agentic verification pipelines.\n\n**Relevant context:** Self-Optimizing Trace Agent uses multiple iterations. The agent behavior on failures is not characterized. ATLAS pipeline also uses iterative synthesis, but failure dynamics are not analyzed."
+  },
+  {
+    "idea_id": "gen-0522",
+    "run_id": "2026-04-07T15-12-49",
+    "stage": "generate",
+    "timestamp": "2026-04-07T17:16:32Z",
+    "subfield": "Formal Methods & AI Verification",
+    "generation_strategy": "replication_with_twist",
+    "confidence": 0.75,
+    "body": "# Replicating VeriBench Results on Mistral Leanstral: First Open-Source Lean 4 Agent Evaluation\n\n**Problem:** Mistral released Leanstral (March 2026) as the first open-source Lean 4 proof agent. Its performance relative to closed-source models on VeriBench has not been systematically evaluated.\n\n**Direction:** Replicate the VeriBench evaluation protocol using Leanstral. Compare its compilation rate, proof success rate, and error distribution to the published numbers for Claude 3.7 Sonnet and the Self-Optimizing Trace Agent. Document any discrepancies from replication.\n\n**Why it matters:** Leanstral being open-source enables reproducibility research and community iteration. Establishing its baseline is a prerequisite for all subsequent improvement work. If it underperforms closed models significantly, it pinpoints where open-source formal verification falls short.\n\n**Relevant context:** Mistral Leanstral was released March 16, 2026. VeriBench is publicly available on OpenReview. This is a straightforward replication study that fills an important gap in the literature."
+  },
+  {
+    "idea_id": "gen-0523",
+    "run_id": "2026-04-07T15-12-49",
+    "stage": "generate",
+    "timestamp": "2026-04-07T17:16:32Z",
+    "subfield": "Formal Methods & AI Verification",
+    "generation_strategy": "replication_with_twist",
+    "confidence": 0.66,
+    "body": "# AlphaVerus on Lean 4: Does CMU's Self-Improving Translation Approach Transfer to a Different Proof Language?\n\n**Problem:** AlphaVerus achieves 38% success on HumanEval-Verified by translating from Dafny to Verus. Whether the same self-improving translation approach works when the target is Lean 4 instead of Verus is untested.\n\n**Direction:** Implement an AlphaVerus-style pipeline (Exploration, Treefinement, Critique stages) but targeting Lean 4 instead of Verus. Run on the HumanEval-Verified subset. Compare to the original 38% Verus result. Identify where Lean 4's type theory creates additional challenges.\n\n**Why it matters:** Lean 4 is the primary target for CSLib and the AI safety formal methods community. If AlphaVerus-style bootstrapping transfers to Lean 4, it provides a training data generation strategy for the data-scarce domain.\n\n**Relevant context:** AlphaVerus (CMU 2024) is open-source. Lean 4 is more expressive than Verus but has more complex type theory. CSLib targets Lean 4. The translation from Dafny\u2192Verus could be adapted to Dafny\u2192Lean 4."
+  },
+  {
+    "idea_id": "gen-0524",
+    "run_id": "2026-04-07T15-12-49",
+    "stage": "generate",
+    "timestamp": "2026-04-07T17:16:32Z",
+    "subfield": "Formal Methods & AI Verification",
+    "generation_strategy": "replication_with_twist",
+    "confidence": 0.68,
+    "body": "# ATLAS Pipeline Replication on Security-Specific Programs: Does Scale Transfer to Security Domains?\n\n**Problem:** ATLAS (POPL 2026) synthesizes 2.7K verified Dafny programs at scale. Whether this pipeline produces reliable verified programs when applied specifically to security-critical algorithms (cryptographic, access control, input validation) is untested.\n\n**Direction:** Run the ATLAS pipeline restricted to a seed set of security-relevant function descriptions (crypto primitives, bounds checkers, input sanitizers). Compare verification success rate to ATLAS's reported rate on general programs. Manually audit 20 outputs for security property correctness.\n\n**Why it matters:** The RAND report calls for security-specific benchmarks. ATLAS could generate them at scale, but only if it works in this domain. This replication directly addresses the benchmark gap identified by RAND.\n\n**Relevant context:** ATLAS code and methodology are from POPL 2026. Dafny has good support for security reasoning. This is a targeted domain replication of an established methodology."
+  },
+  {
+    "idea_id": "gen-0525",
+    "run_id": "2026-04-07T15-12-49",
+    "stage": "generate",
+    "timestamp": "2026-04-07T17:16:32Z",
+    "subfield": "Formal Methods & AI Verification",
+    "generation_strategy": "replication_with_twist",
+    "confidence": 0.67,
+    "body": "# AIxCC Vulnerability Detection Methodology on a New Language Ecosystem: Does Java Performance Match C?\n\n**Problem:** AIxCC final round found 6 vulnerabilities in C and 12 in Java codebases. Whether the same AI Cyber Reasoning System architectures perform better in Java than C (or vice versa) due to language ecosystem differences has not been examined.\n\n**Direction:** Replicate AIxCC-style vulnerability detection using open-source finalist system architectures on a balanced test set of C and Java vulnerabilities from CVE database. Measure detection rate per language. Characterize language-specific failure modes.\n\n**Why it matters:** If detection rates differ significantly by language, language-specific formal verification tooling may be needed. This informs where formal methods investment will have the highest safety impact.\n\n**Relevant context:** AIxCC SoK paper (arXiv 2602.07666) shows 6 C vs 12 Java findings. Finalist systems will be open-sourced in August 2025. Language-specific performance analysis is a natural follow-up."
+  },
+  {
+    "idea_id": "gen-0526",
+    "run_id": "2026-04-07T15-12-49",
+    "stage": "generate",
+    "timestamp": "2026-04-07T17:16:32Z",
+    "subfield": "Formal Methods & AI Verification",
+    "generation_strategy": "tool_or_benchmark_gap",
+    "confidence": 0.78,
+    "body": "# Lean 4 Security Benchmark: A Curated Dataset of Formally Specifiable Security Properties\n\n**Problem:** No benchmark exists for evaluating AI's ability to generate formally verified Lean 4 code specifically for security-critical tasks (buffer overflows, injection vulnerabilities, cryptographic correctness). VeriBench's 11 security examples are insufficient.\n\n**Direction:** Construct a benchmark of 100 security-critical coding tasks with formal Lean 4 specifications covering: memory safety, integer overflow, SQL injection prevention, cryptographic constant-time requirements, access control logic. Write reference solutions. Measure current LLM baseline performance.\n\n**Why it matters:** RAND (Sarma & Fisher 2026) explicitly calls for security-focused formal verification benchmarks. Without one, progress toward safe AI-generated security code cannot be measured. This directly fills the gap they identify.\n\n**Relevant context:** VeriBench has 11 security challenges. CLEVER benchmark (arXiv 2505.13938) focuses on general correctness. No benchmark targets security properties specifically in Lean 4. CSLib's roadmap does not include security examples."
+  },
+  {
+    "idea_id": "gen-0527",
+    "run_id": "2026-04-07T15-12-49",
+    "stage": "generate",
+    "timestamp": "2026-04-07T17:16:32Z",
+    "subfield": "Formal Methods & AI Verification",
+    "generation_strategy": "tool_or_benchmark_gap",
+    "confidence": 0.76,
+    "body": "# VeriSpec: A Benchmark for AI Specification Writing Quality in Formal Verification\n\n**Problem:** Current benchmarks (VeriBench, CLEVER, VeriCoding) evaluate whether LLMs can complete a proof given a specification. No benchmark evaluates whether LLMs can write correct, non-trivial specifications from natural language requirements.\n\n**Direction:** Create a benchmark of 80 natural language function requirements paired with expert-written formal specifications. LLMs must generate formal specs. Evaluate: (a) syntactic correctness, (b) semantic completeness against expert spec, (c) non-triviality (not vacuously true). Establish baseline metrics.\n\n**Why it matters:** Specification writing is the hardest and most safety-critical part of formal verification. If LLMs cannot write correct specs, the entire verified code generation pipeline fails at its foundation.\n\n**Relevant context:** ATLAS (POPL 2026) generates specs automatically but does not validate spec quality against intent. VeriEquivBench (arXiv 2510.06296) measures equivalence. Spec quality as a standalone evaluation is missing."
+  },
+  {
+    "idea_id": "gen-0528",
+    "run_id": "2026-04-07T15-12-49",
+    "stage": "generate",
+    "timestamp": "2026-04-07T17:16:32Z",
+    "subfield": "Formal Methods & AI Verification",
+    "generation_strategy": "tool_or_benchmark_gap",
+    "confidence": 0.72,
+    "body": "# FormalBench-CSLib: A Benchmark Aligned to CSLib's 2026 Algorithm Coverage\n\n**Problem:** CSLib plans to cover undergraduate algorithms and data structures by end of 2026. No benchmark exists to evaluate AI's ability to generate formally verified implementations specifically for this CSLib coverage set.\n\n**Direction:** Create a benchmark of 60 algorithm problems (sorting, searching, graph traversal, data structures) aligned to CSLib's planned coverage. For each, provide: natural language description, Python reference implementation, and expert Lean 4 specification. Measure current LLM performance as a baseline.\n\n**Why it matters:** This benchmark would directly track progress toward one of the most concrete near-term formal methods milestones (CSLib completion) and would enable the community to measure whether AI assistance accelerates CSLib development.\n\n**Relevant context:** CSLib roadmap (arXiv 2602.04846) details 2026 targets. No benchmark is aligned to this roadmap. This would create infrastructure for measuring AI contribution to CSLib completion."
+  },
+  {
+    "idea_id": "gen-0529",
+    "run_id": "2026-04-07T15-12-49",
+    "stage": "generate",
+    "timestamp": "2026-04-07T17:16:32Z",
+    "subfield": "Formal Methods & AI Verification",
+    "generation_strategy": "tool_or_benchmark_gap",
+    "confidence": 0.69,
+    "body": "# Proof Complexity Metric Library: Automated Difficulty Estimation for Lean 4 Tasks\n\n**Problem:** No standardized metric library exists for estimating the difficulty of Lean 4 formal verification tasks from source code properties. Benchmark designers must manually classify difficulty.\n\n**Direction:** Build a Python library that, given a Lean 4 problem, computes: (a) proof length in reference solution, (b) number of auxiliary lemmas, (c) dependency graph depth, (d) number of unique tactics used, (e) abstraction level. Validate that these metrics correlate with LLM success rates on VeriBench.\n\n**Why it matters:** Automated difficulty estimation enables principled benchmark design, adaptive evaluation systems, and fair comparison across models. Without it, benchmark composition choices are ad hoc.\n\n**Relevant context:** IRT-based difficulty estimation has been applied to NLP benchmarks but not to formal verification. VeriBench and CLEVER have difficulty tiers but do not compute them automatically. This is a tooling gap."
+  },
+  {
+    "idea_id": "gen-0530",
+    "run_id": "2026-04-07T15-12-49",
+    "stage": "generate",
+    "timestamp": "2026-04-07T17:16:32Z",
+    "subfield": "Formal Methods & AI Verification",
+    "generation_strategy": "tool_or_benchmark_gap",
+    "confidence": 0.67,
+    "body": "# AI-Assisted Proof Debugging Tool: Localizing Lean 4 Errors to Source Intentions\n\n**Problem:** When Lean 4 proof attempts fail, compiler error messages are verbose but not always actionable. No tool exists to map Lean 4 compiler errors back to the LLM's apparent proof strategy to explain why the strategy is failing.\n\n**Direction:** Build a lightweight tool that: (a) parses Lean 4 compiler errors, (b) uses an LLM to generate a natural language explanation of which proof step failed and why, (c) suggests the nearest valid alternative tactic. Evaluate usefulness with 10 CS students attempting Lean proofs.\n\n**Why it matters:** Better error explanation tools would accelerate LLM self-correction and human-in-the-loop verification workflows. This is a prerequisite for making formal verification accessible to non-experts.\n\n**Relevant context:** Self-Optimizing Trace Agent relies on error messages for self-correction. Lean 4's error messages are known to be cryptic (noted in multiple formal verification papers). No LLM-based error explainer for Lean 4 exists."
+  },
+  {
+    "idea_id": "gen-0531",
+    "run_id": "2026-04-07T15-12-49",
+    "stage": "generate",
+    "timestamp": "2026-04-07T17:16:32Z",
+    "subfield": "Formal Methods & AI Verification",
+    "generation_strategy": "tool_or_benchmark_gap",
+    "confidence": 0.73,
+    "body": "# Verified Patch Benchmark: Does AI-Generated Security Patch Actually Fix the Vulnerability?\n\n**Problem:** AIxCC systems detected vulnerabilities and generated patches, but patch correctness verification was manual. No benchmark exists for formally verifying that a security patch eliminates the target vulnerability without introducing regressions.\n\n**Direction:** Create a benchmark of 40 (vulnerability, patch) pairs from the AIxCC competition and public CVE disclosures. For each pair, attempt to write Lean 4/Dafny specifications that prove: (a) the patch eliminates the vulnerable behavior, (b) the original functionality is preserved. Measure LLM success rate on each task.\n\n**Why it matters:** Automated patch verification is the missing link between vulnerability detection and confident remediation. If AI can both find and formally verify a patch, the security loop closes without human proof review.\n\n**Relevant context:** AIxCC patched 61% of detected vulnerabilities. Patch correctness was validated by re-running tests, not formal proofs. AIxCC open-source release scheduled for August 2025 provides the data."
+  },
+  {
+    "idea_id": "gen-0532",
+    "run_id": "2026-04-07T15-12-49",
+    "stage": "generate",
+    "timestamp": "2026-04-07T17:16:32Z",
+    "subfield": "Formal Methods & AI Verification",
+    "generation_strategy": "tool_or_benchmark_gap",
+    "confidence": 0.62,
+    "body": "# Multi-Language Formal Verification Consistency Checker: Detecting Semantic Divergence Across Proof Languages\n\n**Problem:** A program can be formally verified in Lean 4, Dafny, and Coq with proofs that appear equivalent but encode different semantic assumptions. No tool exists to cross-validate proofs across proof languages for the same program.\n\n**Direction:** Build a tool that: (a) takes a function with proofs in two languages, (b) extracts the semantic content of each proof's core theorem, (c) uses an LLM to judge whether the theorems are semantically equivalent, (d) flags divergences. Test on 20 programs with gold proofs in two languages.\n\n**Why it matters:** For safety-critical applications, proof consistency across multiple verification systems provides higher assurance. Cross-language consistency checking is an unbuilt tool in the verification toolchain.\n\n**Relevant context:** VeriCoding benchmark covers Lean, Verus, and Dafny. AlphaVerus translates between them. No tool validates semantic equivalence of cross-language proofs. This is a gap in verification tooling."
+  },
+  {
+    "idea_id": "gen-0533",
+    "run_id": "2026-04-07T15-12-49",
+    "stage": "generate",
+    "timestamp": "2026-04-07T17:16:32Z",
+    "subfield": "Formal Methods & AI Verification",
+    "generation_strategy": "failure_mode_investigation",
+    "confidence": 0.74,
+    "body": "# Lean 4 Proof Failure Taxonomy: Systematic Classification of LLM Formal Verification Errors\n\n**Problem:** When LLMs fail at Lean 4 formal verification, error types are classified loosely (compilation error, type error, proof incomplete) but no systematic taxonomy exists for what logical reasoning failures produce which error patterns.\n\n**Direction:** Collect 300 failed Lean 4 proof attempts from public datasets and LLM runs on VeriBench. Manually code each failure into a taxonomy (type mismatch, wrong induction hypothesis, missing lemma, incomplete case analysis, wrong tactic order, etc.). Compute inter-rater reliability. Release as a labeled dataset.\n\n**Why it matters:** A systematic failure taxonomy enables targeted improvement: if 40% of failures involve wrong induction hypotheses, training methods can specifically address that. Without taxonomy, improvement is undirected.\n\n**Relevant context:** Lean 4 failure modes are mentioned qualitatively in VeriBench and BRIDGE papers but never systematically categorized. DARPA AIxCC SoK provides a model for systematic failure analysis that could be adapted."
+  },
+  {
+    "idea_id": "gen-0534",
+    "run_id": "2026-04-07T15-12-49",
+    "stage": "generate",
+    "timestamp": "2026-04-07T17:16:32Z",
+    "subfield": "Formal Methods & AI Verification",
+    "generation_strategy": "failure_mode_investigation",
+    "confidence": 0.77,
+    "body": "# Vacuous Proof Failure Mode: How Often Do LLMs Prove True but Useless Properties in Lean 4?\n\n**Problem:** A specific and dangerous failure mode in formal verification is generating proofs that are syntactically valid but prove vacuously true or trivially weak properties \u2014 giving false safety assurance.\n\n**Direction:** Run 5 LLMs on 60 VeriBench tasks. For all generated proofs that compile successfully, have an expert Lean user classify each as: (a) proves the stated property correctly, (b) proves a weaker/vacuous variant of the property, (c) the property itself is trivially satisfiable. Measure vacuity rate.\n\n**Why it matters:** Vacuous proofs are invisible to automated compilation checking \u2014 they are the most dangerous class of false assurance in formal verification. If vacuity rates are high, compilation-rate benchmarks significantly overstate actual safety assurance.\n\n**Relevant context:** Vacuity detection is an active research area in model checking. It is not addressed in current Lean 4 LLM evaluation. VeriBench does not filter for vacuous proofs. This is a critical but uninvestigated failure mode."
+  },
+  {
+    "idea_id": "gen-0535",
+    "run_id": "2026-04-07T15-12-49",
+    "stage": "generate",
+    "timestamp": "2026-04-07T17:16:32Z",
+    "subfield": "Formal Methods & AI Verification",
+    "generation_strategy": "failure_mode_investigation",
+    "confidence": 0.73,
+    "body": "# Specification Underspecification: When AI-Generated Lean Proofs Miss Important Edge Cases\n\n**Problem:** LLM-generated Lean specifications systematically omit edge cases (empty inputs, overflow boundaries, null/None values), producing proofs valid only for common-case inputs. This failure mode is not characterized.\n\n**Direction:** Take 40 VeriBench problems with known edge cases. Generate Lean specs and proofs with 3 LLMs. For each successful proof, construct edge-case test inputs and run them through the verified program. Measure how often the formally verified program still fails on edge cases.\n\n**Why it matters:** A program can be formally verified and still crash on edge-case inputs if the spec omits those edge cases. This failure mode undermines the safety claims of vericoding for real applications.\n\n**Relevant context:** CLEVER benchmark (arXiv 2505.13938) focuses on curated correctness but does not specifically test edge case coverage. This is a known weakness in test-driven development that may carry over to formal verification."
+  },
+  {
+    "idea_id": "gen-0536",
+    "run_id": "2026-04-07T15-12-49",
+    "stage": "generate",
+    "timestamp": "2026-04-07T17:16:32Z",
+    "subfield": "Formal Methods & AI Verification",
+    "generation_strategy": "failure_mode_investigation",
+    "confidence": 0.72,
+    "body": "# Proof Hallucination Under Distribution Shift: Formal Verification on Modified Code\n\n**Problem:** When code is modified slightly (renaming variables, reordering functions, adding dead code), LLM-generated proofs may fail catastrophically even though the logical content is unchanged. This distributional fragility is a safety-relevant failure mode.\n\n**Direction:** Take 30 VeriBench problems with working LLM-generated proofs. Apply semantic-preserving transformations (variable rename, function reorder, dead code injection). Measure proof success rate degradation. Identify which transformations cause the most failures.\n\n**Why it matters:** If formal verification is fragile to surface-level code changes, it cannot be used as a robust safety check in real development workflows where code is constantly evolving.\n\n**Relevant context:** LLM robustness to syntactic variation is studied in code generation. In formal verification, this robustness question has not been investigated. The failure mode would indicate proofs are surface-level pattern matching rather than deep reasoning."
+  },
+  {
+    "idea_id": "gen-0537",
+    "run_id": "2026-04-07T15-12-49",
+    "stage": "generate",
+    "timestamp": "2026-04-07T17:16:32Z",
+    "subfield": "Formal Methods & AI Verification",
+    "generation_strategy": "failure_mode_investigation",
+    "confidence": 0.72,
+    "body": "# The 23% Gap in AIxCC: Structural Analysis of Undetected Vulnerabilities\n\n**Problem:** AIxCC reached 77% vulnerability detection but 23% went undetected. This gap likely represents structurally distinct vulnerability classes that resist both AI semantic reasoning and automated formal methods.\n\n**Direction:** From the AIxCC SoK paper and open-source release, identify examples of undetected vulnerabilities. Classify by: (a) structural type (inter-procedural, concurrency, cryptographic, configuration), (b) language, (c) detection approach required. Test whether LLM+formal verification hybrid could detect them.\n\n**Why it matters:** The 23% undetected class is the highest-value target for improving AI-assisted security. Understanding its structure enables focused tool development. This directly advances the RAND goal of tipping cyber balance toward defense.\n\n**Relevant context:** AIxCC SoK paper (arXiv 2602.07666) provides detailed competition analysis. Finalist systems to be open-sourced. The 23% gap is a concrete, measurable failure set to characterize."
+  },
+  {
+    "idea_id": "gen-0538",
+    "run_id": "2026-04-07T15-12-49",
+    "stage": "generate",
+    "timestamp": "2026-04-07T17:16:32Z",
+    "subfield": "Formal Methods & AI Verification",
+    "generation_strategy": "failure_mode_investigation",
+    "confidence": 0.65,
+    "body": "# Inconsistency Between Verified Spec and Runtime Behavior: A Measurement Study\n\n**Problem:** Even when Lean 4 proofs are valid, the verified program may behave differently at runtime due to implementation details not captured in the Lean model (integer semantics, floating point, I/O behavior). Measuring this gap is unstudied.\n\n**Direction:** Take 25 programs with complete Lean 4 proofs. Compile them to execution via Lean's extraction or equivalent. Run 1000 randomized inputs per program. Measure how often runtime behavior contradicts the formally verified property (e.g., via assertion violations in property-checked versions).\n\n**Why it matters:** The gap between the formal model and executable reality is where safety guarantees break down. If this gap is large, formal verification provides weaker safety guarantees than commonly assumed.\n\n**Relevant context:** Lean 4 programs can be extracted and run. The Curry-Howard correspondence is exact at the proof level but execution semantics differ. This failure mode is known in Coq/Isabelle extraction but unstudied for Lean 4 LLM-generated proofs."
+  },
+  {
+    "idea_id": "gen-0539",
+    "run_id": "2026-04-07T15-12-49",
+    "stage": "generate",
+    "timestamp": "2026-04-07T17:16:32Z",
+    "subfield": "Formal Methods & AI Verification",
+    "generation_strategy": "cross_domain_transfer",
+    "confidence": 0.64,
+    "body": "# Importing Software Model Checking into Lean 4: CBMC-Guided Proof Generation\n\n**Problem:** CBMC (C Bounded Model Checker) can automatically prove absence of specific bug classes in bounded C programs. These verification certificates could guide Lean 4 proof construction but this cross-tool integration does not exist.\n\n**Direction:** For 30 C programs with CBMC verification certificates, attempt to import the CBMC proof structure into Lean 4 as a proof scaffold. Measure whether LLMs can complete the Lean proof using CBMC output as structured hints. Compare to unaided LLM proof attempts.\n\n**Why it matters:** CBMC produces machine-checkable certificates for C programs. Bridging CBMC to Lean 4 would allow formally verified C code to feed into the CSLib ecosystem, creating a pathway from legacy code to formally verified library entries.\n\n**Relevant context:** CBMC is a mature industrial tool (Amazon uses it for AWS). Lean 4 is the target for CSLib. No bridge between bounded model checking certificates and Lean 4 proofs exists. DARPA AIxCC used CBMC-style techniques."
+  },
+  {
+    "idea_id": "gen-0540",
+    "run_id": "2026-04-07T15-12-49",
+    "stage": "generate",
+    "timestamp": "2026-04-07T17:16:32Z",
+    "subfield": "Formal Methods & AI Verification",
+    "generation_strategy": "cross_domain_transfer",
+    "confidence": 0.66,
+    "body": "# Importing Fuzzing Coverage Metrics into Formal Spec Completeness Evaluation\n\n**Problem:** Fuzzing generates coverage metrics (branch coverage, edge coverage) that indicate which program behaviors are tested. These coverage concepts could be imported into formal verification to measure spec completeness, but this transfer has not been done.\n\n**Direction:** For 30 programs, generate formal Lean 4 specs using LLMs. Then run AFL++ fuzzing to generate a coverage map. Measure whether program behaviors NOT covered by the formal spec (branches not captured by theorems) correspond to vulnerabilities or bugs found by the fuzzer.\n\n**Why it matters:** Fuzzing coverage is cheap to compute and well-understood. If fuzzing coverage gaps predict formal spec gaps, combining both tools creates a stronger safety assurance than either alone.\n\n**Relevant context:** KLEE (symbolic execution) and AFL++ (fuzzing) are standard verification tools. Lean 4 proof coverage is not a defined concept. Importing fuzzing coverage as a proxy for spec coverage is a novel cross-domain transfer."
+  },
+  {
+    "idea_id": "gen-0541",
+    "run_id": "2026-04-07T15-12-49",
+    "stage": "generate",
+    "timestamp": "2026-04-07T17:16:32Z",
+    "subfield": "Formal Methods & AI Verification",
+    "generation_strategy": "cross_domain_transfer",
+    "confidence": 0.6,
+    "body": "# Importing Cryptographic Protocol Verification Techniques into AI Behavioral Safety\n\n**Problem:** Cryptographic protocol verifiers (ProVerif, Tamarin) can prove that protocols satisfy secrecy and authentication properties under adversarial models. Similar trace-based reasoning could verify behavioral properties of AI agents but this transfer has not been attempted.\n\n**Direction:** Select 5 simple AI agent interaction scenarios (agent + tool calls + environment). Model them as protocol traces in ProVerif notation. Attempt to prove that the agent trace satisfies a behavioral property (e.g., never calls a destructive tool without authorization). Measure what properties can/cannot be expressed.\n\n**Why it matters:** If cryptographic protocol verification frameworks can express AI agent behavioral constraints, they provide a well-studied formal foundation for AI agent safety verification. This is a novel application of mature cryptographic tooling.\n\n**Relevant context:** ProVerif and Tamarin are standard tools for protocol verification. AI agent safety verification is nascent. The Boole framework (CSLib) aims for verification condition generation but does not draw on protocol verification. This is a genuine cross-domain transfer."
+  },
+  {
+    "idea_id": "gen-0542",
+    "run_id": "2026-04-07T15-12-49",
+    "stage": "generate",
+    "timestamp": "2026-04-07T17:16:32Z",
+    "subfield": "Formal Methods & AI Verification",
+    "generation_strategy": "cross_domain_transfer",
+    "confidence": 0.61,
+    "body": "# Applying Abstraction Refinement (CEGAR) to LLM-Guided Proof Search\n\n**Problem:** Counterexample-Guided Abstraction Refinement (CEGAR) is a powerful technique in model checking that automatically refines abstract models when counterexamples are found. This iterative refinement paradigm could improve LLM proof search but has not been applied.\n\n**Direction:** Implement a CEGAR-inspired Lean 4 proof search: LLM generates abstract proof sketch, Lean checker finds counterexample to sketch, LLM refines. Compare to standard iterative correction (error feedback only) on 30 VeriBench tasks. Measure iterations to success.\n\n**Why it matters:** CEGAR is provably complete for finite systems and empirically efficient. Importing it into LLM proof search could provide more principled convergence guarantees than the current ad-hoc self-correction approach.\n\n**Relevant context:** CEGAR is used in tools like SLAM, BLAST, and CPAchecker. LLM proof search uses unstructured self-correction. This is the first proposal to import CEGAR's structure into LLM-based Lean proof generation."
+  },
+  {
+    "idea_id": "gen-0543",
+    "run_id": "2026-04-07T15-12-49",
+    "stage": "generate",
+    "timestamp": "2026-04-07T17:16:32Z",
+    "subfield": "Formal Methods & AI Verification",
+    "generation_strategy": "cross_domain_transfer",
+    "confidence": 0.68,
+    "body": "# Importing Differential Privacy Proofs into AI Model Verification: Can Formal Privacy Guarantees Be Machine-Checked?\n\n**Problem:** Differential privacy proofs are often manually written and error-prone. Lean 4 and Coq have been used for formal DP proofs (e.g., SampCert). Whether LLMs can generate formal DP proofs for AI training pipelines is unexplored.\n\n**Direction:** Select 10 simple differential privacy mechanisms (Laplace, Gaussian, exponential). Use LLMs to generate Lean 4 or Coq proofs that the mechanism satisfies (\u03b5, \u03b4)-DP. Compare to reference proofs in SampCert. Measure LLM success rate and characterize where DP proofs are harder than general functional proofs.\n\n**Why it matters:** Formally verified differential privacy would give cryptographically rigorous privacy guarantees for AI training data. This cross-domain transfer bridges AI privacy and formal verification.\n\n**Relevant context:** SampCert is a Lean 4 library for formally verified DP (Amazon Web Services). DP proofs are mathematically non-trivial. This is a concrete, scoped application of LLM-assisted formal verification to AI safety."
+  },
+  {
+    "idea_id": "gen-0544",
+    "run_id": "2026-04-07T15-12-49",
+    "stage": "generate",
+    "timestamp": "2026-04-07T17:16:32Z",
+    "subfield": "Formal Methods & AI Verification",
+    "generation_strategy": "cross_domain_transfer",
+    "confidence": 0.62,
+    "body": "# Importing Type Theory Guarantees from Dependent Types into LLM Output Validation\n\n**Problem:** Dependently typed languages (Lean 4, Idris, Agda) encode correctness invariants in type signatures. If LLM-generated code outputs include dependent type signatures, the type checker enforces correctness at generation time. Whether LLMs can generate dependently typed code with enforced invariants is unstudied.\n\n**Direction:** Take 20 functions with correctness invariants (sorted list guarantee, non-negative result, etc.). Ask LLMs to generate Lean 4 implementations where the return type encodes the invariant dependently (e.g., returning a Sorted type). Measure whether the type checker enforces the invariant without separate proof obligations.\n\n**Why it matters:** If LLMs can encode safety invariants in dependent types, type checking becomes a lightweight, always-on correctness enforcement mechanism rather than a separate proof obligation. This could make formal verification more tractable.\n\n**Relevant context:** Lean 4's type system is dependently typed. Using dependent types as inline proofs is idiomatic in Lean but not standard in LLM code generation. This is a novel application mode that could reduce proof overhead."
+  },
+  {
+    "idea_id": "gen-0545",
+    "run_id": "2026-04-07T15-12-49",
+    "stage": "generate",
+    "timestamp": "2026-04-07T17:16:32Z",
+    "subfield": "Formal Methods & AI Verification",
+    "generation_strategy": "cross_domain_transfer",
+    "confidence": 0.58,
+    "body": "# Importing Software Watermarking into Formally Verified Code: Detecting AI Provenance\n\n**Problem:** AI-generated code is proliferating. Watermarking techniques from software provenance research could be adapted to formally verified code to detect AI provenance, but the interaction between watermarks and formal proofs is unstudied.\n\n**Direction:** Implement a simple proof-invariant watermarking scheme for Lean 4 code (e.g., choosing equivalent proof steps with different tactic orderings to encode a bit pattern). Measure whether the watermark survives: (a) proof refactoring, (b) human editing, (c) extraction to executable. Test detectability.\n\n**Why it matters:** If AI-generated formally verified code can be watermarked in a way that survives modification, it enables AI attribution in safety-critical code without breaking the formal proof. This has governance implications.\n\n**Relevant context:** LLM output watermarking is an active research area (Kirchenbauer et al. 2023). Proof watermarking is novel. For governance of AI-generated safety-critical code, attribution matters."
+  },
+  {
+    "idea_id": "gen-0546",
+    "run_id": "2026-04-07T15-12-49",
+    "stage": "generate",
+    "timestamp": "2026-04-07T17:16:32Z",
+    "subfield": "Formal Methods & AI Verification",
+    "generation_strategy": "causal_chain_intervention",
+    "confidence": 0.74,
+    "body": "# Decomposing the Vericoding Pipeline: Which Stage (Spec\u2192Proof\u2192Execution) Is the Bottleneck?\n\n**Problem:** The end-to-end vericoding pipeline (natural language \u2192 formal spec \u2192 proof \u2192 executable code) fails at multiple stages. Whether spec generation, proof completion, or extraction to executable code is the primary bottleneck is not characterized.\n\n**Direction:** Run 50 programs through the vericoding pipeline. At each stage, record success/failure: (1) spec generation (syntactically valid, semantically correct), (2) proof completion (proof compiles), (3) extraction (executable code runs correctly). Compute conditional probabilities across stages.\n\n**Why it matters:** Knowing the bottleneck stage focuses research effort. If spec generation fails 60% of the time but proof completion fails 80% of the time conditional on correct spec, proof completion is the bottleneck. Resource allocation follows from this analysis.\n\n**Relevant context:** VERINA (arXiv 2505.23135) decomposes verification into subtasks. ATLAS (POPL 2026) automates the full pipeline. A stage-by-stage bottleneck analysis has not been done across multiple LLMs."
+  },
+  {
+    "idea_id": "gen-0547",
+    "run_id": "2026-04-07T15-12-49",
+    "stage": "generate",
+    "timestamp": "2026-04-07T17:16:32Z",
+    "subfield": "Formal Methods & AI Verification",
+    "generation_strategy": "causal_chain_intervention",
+    "confidence": 0.71,
+    "body": "# Causal Intervention on Proof Hint Injection: At Which Proof Step Does Adding a Hint Most Help?\n\n**Problem:** Lean 4 proofs can be guided by human-provided lemma hints (sorry placeholders, partial proofs). Where in the proof search process a hint has the most impact (early, middle, late) is not characterized.\n\n**Direction:** Take 30 Lean 4 problems that LLMs fail to prove. Inject correct hints at different points: (a) first step only, (b) key lemma only, (c) last step only, (d) full proof scaffold. Measure which hint placement most reliably unlocks successful proof completion. Model as a causal graph.\n\n**Why it matters:** Understanding where humans can most efficiently assist LLM proof search identifies the minimal human intervention required. If a single key lemma hint reduces failure rate by 50%, human-AI collaboration becomes much more tractable.\n\n**Relevant context:** Lean 4's tactic system allows partial proofs (with sorry placeholders). The Self-Optimizing Trace Agent does not accept human hints. Human-in-the-loop formal verification is under-studied compared to fully automated approaches."
+  },
+  {
+    "idea_id": "gen-0548",
+    "run_id": "2026-04-07T15-12-49",
+    "stage": "generate",
+    "timestamp": "2026-04-07T17:16:32Z",
+    "subfield": "Formal Methods & AI Verification",
+    "generation_strategy": "causal_chain_intervention",
+    "confidence": 0.73,
+    "body": "# The Spec-to-Bug Causal Path: Does Spec Vagueness Cause Verifiably Insecure Code?\n\n**Problem:** The causal chain from vague specification \u2192 underspecified formal spec \u2192 incomplete proof \u2192 undetected vulnerability has not been empirically measured end-to-end.\n\n**Direction:** Take 20 programs with known vulnerabilities. Create both (a) precise natural language specs and (b) vague natural language specs. Run both through LLM vericoding pipelines. Measure whether vague specs produce formal proofs that miss the vulnerability. Measure end-to-end spec vagueness \u2192 vulnerability escape rate.\n\n**Why it matters:** If spec vagueness is a primary causal factor in formal verification security failures, the intervention point is specification requirements \u2014 a governance and process issue, not just a technical one.\n\n**Relevant context:** The spec quality problem is mentioned in ATLAS and VeriSpec papers but not causally linked to security outcomes. This closes the causal loop from spec quality to actual security."
+  },
+  {
+    "idea_id": "gen-0549",
+    "run_id": "2026-04-07T15-12-49",
+    "stage": "generate",
+    "timestamp": "2026-04-07T17:16:32Z",
+    "subfield": "Formal Methods & AI Verification",
+    "generation_strategy": "causal_chain_intervention",
+    "confidence": 0.64,
+    "body": "# Intervention at the Training Data Stage: Does Including Lean 4 Examples in SFT Data Improve Proof Generation?\n\n**Problem:** LLMs like Leanstral are fine-tuned on Lean 4 data. The causal link between training data composition (amount, quality, diversity of Lean 4 examples) and downstream proof generation success has not been established for open models.\n\n**Direction:** Using Leanstral or a smaller open model, create training datasets with varying compositions: (a) 0 Lean examples, (b) 1K Lean examples from Mathlib, (c) 1K from VeriBench, (d) 1K from CSLib. Fine-tune and measure VeriBench performance per composition. Isolate the causal contribution of training domain.\n\n**Why it matters:** If CSLib-domain training data is most effective for security-adjacent formal verification, this provides a concrete curriculum for training better safety-relevant verification models.\n\n**Relevant context:** ATLAS generates 19K+ training examples. AlphaVerus bootstraps training data. The causal impact of specific data sources (especially CSLib vs. Mathlib) on proof generation for security applications is unknown."
+  },
+  {
+    "idea_id": "gen-0550",
+    "run_id": "2026-04-07T15-12-49",
+    "stage": "generate",
+    "timestamp": "2026-04-07T17:16:32Z",
+    "subfield": "Formal Methods & AI Verification",
+    "generation_strategy": "causal_chain_intervention",
+    "confidence": 0.67,
+    "body": "# Breaking the Human Review Bottleneck: Can LLM-Generated Proof Summaries Replace Line-by-Line Review?\n\n**Problem:** Human review of Lean 4 proofs is the primary bottleneck in deploying formally verified AI-generated code. Whether natural language proof summaries generated by LLMs are sufficient for human review is unstudied.\n\n**Direction:** Take 30 complete Lean 4 proofs. Have LLMs generate natural language summaries. Ask 10 CS students to: (a) approve/reject based on summary only, (b) approve/reject after reading full proof. Measure false approval rate per condition. Test whether summary-based review catches the same errors as full-proof review.\n\n**Why it matters:** If LLM-generated summaries enable equally accurate human review in 10% of the time, the practical deployment bottleneck for formally verified AI code would be dramatically reduced.\n\n**Relevant context:** Claude Code Security uses multi-stage verification to reduce false positives. Human review of formal proofs is mentioned as a bottleneck in multiple papers. The summary-as-review approach is unexplored."
+  },
+  {
+    "idea_id": "gen-0551",
+    "run_id": "2026-04-07T15-12-49",
+    "stage": "generate",
+    "timestamp": "2026-04-07T17:16:32Z",
+    "subfield": "Formal Methods & AI Verification",
+    "generation_strategy": "causal_chain_intervention",
+    "confidence": 0.68,
+    "body": "# Tracing the China-US Formal Verification Gap: A Benchmarked Comparison of Top Models\n\n**Problem:** RAND's Sarma & Fisher (2026) report that China leads in AI-integrated theorem proving while US frontier labs have not prioritized this domain. This claim has not been empirically verified on standardized benchmarks.\n\n**Direction:** Run VeriBench on available Chinese AI models with theorem proving capabilities (DeepSeek, ByteDance models) vs US frontier models (Claude, GPT-4, Gemini). Measure compilation rate, proof success rate, and failure mode distribution. Produce a structured comparison.\n\n**Why it matters:** If the China-US gap is real and measurable, this supports RAND's policy recommendation for increased US investment in formal verification AI. If the gap is overstated, different policy priorities may be warranted.\n\n**Relevant context:** RAND (February 2026) specifically calls out DeepSeek and ByteDance as leading in this domain. VeriBench provides a standardized evaluation platform. No published comparison exists."
+  },
+  {
+    "idea_id": "gen-0552",
+    "run_id": "2026-04-07T15-12-49",
+    "stage": "generate",
+    "timestamp": "2026-04-07T17:16:32Z",
+    "subfield": "Formal Methods & AI Verification",
+    "generation_strategy": "backcast_from_success",
+    "confidence": 0.71,
+    "body": "# Formal Verification as a Safety Assurance Floor: Success State Definition and Backward Gap Analysis\n\n**Problem:** Define a concrete success state: AI-generated Lean 4 code for security-critical systems achieves 95% formally verified correct specs with zero vacuous proofs and full edge-case coverage. Map the gaps from current state to this target.\n\n**Direction:** Define a measurable success state for vericoding in security-critical applications. Then measure current performance on each dimension (compilation rate: ~60%, vacuity rate: unknown, edge case coverage: unknown). Compute the delta. Use gap analysis to prioritize which intervention would most advance toward the success state.\n\n**Why it matters:** Without a defined success state, research effort is unfocused. The RAND report defines a goal (tipping cyber balance toward defense) but not measurable technical milestones. This operationalizes that goal.\n\n**Relevant context:** RAND (2026) defines a strategic success state but not technical metrics. VeriBench provides partial metrics. This is a structured gap analysis between current capability and deployment-ready formal verification."
+  },
+  {
+    "idea_id": "gen-0553",
+    "run_id": "2026-04-07T15-12-49",
+    "stage": "generate",
+    "timestamp": "2026-04-07T17:16:32Z",
+    "subfield": "Formal Methods & AI Verification",
+    "generation_strategy": "backcast_from_success",
+    "confidence": 0.69,
+    "body": "# From Vibe Coding to Vericoding: What Infrastructure Is Missing for Mainstream Adoption?\n\n**Problem:** The community has defined the goal of replacing vibe coding (unverified AI code) with vericoding (formally verified AI code). The specific infrastructure gaps blocking mainstream adoption are not systematically mapped.\n\n**Direction:** Survey 20 software developers on: what would make formal verification of AI-generated code practical for their workflow? Complement with a technical gap analysis: spec writing tools, proof debugging, proof maintenance, compute cost, language coverage. Prioritize gaps by impact \u00d7 feasibility.\n\n**Why it matters:** Knowing the actual adoption blockers directs research toward what would make the largest practical difference. Without this mapping, researchers optimize technically interesting problems that may not remove the adoption blockers.\n\n**Relevant context:** The vericoding concept (POPL 2026) defines the goal. ATLAS, AlphaVerus, CSLib address technical components. The adoption infrastructure gap analysis has not been done. This is analogous to the role of user studies in HCI research."
+  },
+  {
+    "idea_id": "gen-0554",
+    "run_id": "2026-04-07T15-12-49",
+    "stage": "generate",
+    "timestamp": "2026-04-07T17:16:32Z",
+    "subfield": "Formal Methods & AI Verification",
+    "generation_strategy": "backcast_from_success",
+    "confidence": 0.67,
+    "body": "# Backward Engineering a Safety Case for AI-Generated Cryptographic Code\n\n**Problem:** Define success: a complete formal safety case for AI-generated AES-256 implementation. Work backward to identify what formal specifications, proof obligations, and verification tools are minimally necessary.\n\n**Direction:** Write a complete safety case argument structure for an AI-generated AES-256 implementation. Identify each assurance claim and the formal proof required to discharge it. Attempt to generate those proofs using Lean 4/Dafny. Measure which claims are provable today vs. which require future tool development.\n\n**Why it matters:** Cryptographic implementations are the highest-stakes target for formally verified code. A complete safety case study reveals exactly which formal methods tools are missing and which are ready to deploy.\n\n**Relevant context:** ATLAS pipeline generates verified Dafny programs including cryptographic examples. CSLib roadmap does not include cryptographic algorithms. RAND benchmarks include cryptographic implementations. This is a concrete backward engineering exercise."
+  },
+  {
+    "idea_id": "gen-0555",
+    "run_id": "2026-04-07T15-12-49",
+    "stage": "generate",
+    "timestamp": "2026-04-07T17:16:32Z",
+    "subfield": "Formal Methods & AI Verification",
+    "generation_strategy": "backcast_from_success",
+    "confidence": 0.66,
+    "body": "# Defining Done for CSLib: What Would a Complete Formally Verified Undergraduate CS Curriculum Look Like?\n\n**Problem:** CSLib aims to cover undergraduate algorithms and data structures by 2026. The definition of 'complete' (how many algorithms, which edge cases, which security-relevant variants) is underspecified.\n\n**Direction:** Survey 5 undergraduate CS curricula. Extract the complete list of algorithms and data structures taught. Compare against current CSLib coverage. Define a precise specification of 'complete CSLib' including security-relevant variants. Measure current coverage percentage as a baseline.\n\n**Why it matters:** A precise definition of completion enables tracking CSLib progress and identifies whether AI assistance can accelerate the timeline. Without a definition, 'complete CSLib' is not a measurable goal.\n\n**Relevant context:** CSLib paper (arXiv 2602.04846) describes 2026 roadmap at a high level. No precise specification of what constitutes undergraduate-level coverage exists. This is foundational planning work."
+  },
+  {
+    "idea_id": "gen-0556",
+    "run_id": "2026-04-07T15-12-49",
+    "stage": "generate",
+    "timestamp": "2026-04-07T17:16:32Z",
+    "subfield": "Formal Methods & AI Verification",
+    "generation_strategy": "backcast_from_success",
+    "confidence": 0.64,
+    "body": "# Working Backward from Verified AI Model Evaluation: What Would Cryptographic Proof of AI Evaluation Require?\n\n**Problem:** RAND's Sarma & Fisher (2026) propose using formal methods to cryptographically prove AI models underwent approved evaluations without tampering \u2014 enabling credible verification in international AI governance agreements. The technical requirements for this are undefined.\n\n**Direction:** Define a minimal technical stack for a 'verified AI evaluation protocol': (1) formal specification of evaluation procedure, (2) cryptographic commitment to model weights, (3) proof of evaluation execution. Identify each technical component's current readiness level. Estimate which components are 10-year vs. 2-year problems.\n\n**Why it matters:** This is a critical governance application of formal methods to AI safety. If the technical components exist, deployment planning can begin. If they do not, early-stage research can be motivated by this concrete goal.\n\n**Relevant context:** RAND (2026) proposes this as a future direction. Zero-knowledge proofs (SNARKs, STARKs) could provide the cryptographic component. Lean 4 could provide the formal specification. No synthesis of these components has been proposed."
+  },
+  {
+    "idea_id": "gen-0557",
+    "run_id": "2026-04-07T15-12-49",
+    "stage": "generate",
+    "timestamp": "2026-04-07T17:16:32Z",
+    "subfield": "Formal Methods & AI Verification",
+    "generation_strategy": "backcast_from_success",
+    "confidence": 0.7,
+    "body": "# Success State for Lean 4 HumanEval: What Would 95% Compilation Rate Require?\n\n**Problem:** Define a success state of 95% Lean 4 HumanEval compilation rate. Work backward to identify: what training data, prompting improvements, and architecture changes are each contributing an expected X% improvement?\n\n**Direction:** Analyze the error distribution in current Lean 4 HumanEval failures across 3 models. For each error class, estimate the maximum improvement achievable through: (a) better prompting, (b) more training data, (c) architectural improvements. Build a simple additive contribution model. Identify the highest-leverage intervention.\n\n**Why it matters:** 95% compilation rate is the threshold at which Lean 4 proof generation would become practically usable for most software verification tasks. Understanding the path from 60% to 95% directs research investment.\n\n**Relevant context:** Self-Optimizing Trace Agent achieves ~60%. VeriBench provides baseline error analysis. This backcasting approach is used in roadmapping but has not been applied to formal verification capability improvement."
+  },
+  {
+    "idea_id": "gen-0558",
+    "run_id": "2026-04-07T15-12-49",
+    "stage": "generate",
+    "timestamp": "2026-04-07T17:16:32Z",
+    "subfield": "Formal Methods & AI Verification",
+    "generation_strategy": "compounding_risks",
+    "confidence": 0.74,
+    "body": "# Proof Generation Failure \u00d7 Model Homogeneity: Do All LLMs Fail on the Same Lean 4 Problems?\n\n**Problem:** If multiple LLMs fail on the same Lean 4 problems, a single LLM ensemble is unlikely to solve them. The overlap between different models' failure sets would indicate whether diverse ensembles can close the gap.\n\n**Direction:** Run 5 LLMs on all VeriBench tasks. Compute Jaccard similarity of their failure sets. Identify problems that all models fail (irreducible hard set) vs. problems where at least one model succeeds (coverage-improvable set). Measure what fraction of failures could be solved by an oracle ensemble.\n\n**Why it matters:** High overlap in failure sets would indicate systematic reasoning gaps common to all current LLMs \u2014 a genuine AI safety concern suggesting model homogeneity risks. Low overlap would indicate ensemble strategies are a viable path to near-term improvement.\n\n**Relevant context:** AI homogeneity as a risk (from previous idea generation) applies here: if all LLMs have the same formal reasoning blind spots, the safety signal from any single model is correlated with all others. This compounds the risk."
+  },
+  {
+    "idea_id": "gen-0559",
+    "run_id": "2026-04-07T15-12-49",
+    "stage": "generate",
+    "timestamp": "2026-04-07T17:16:32Z",
+    "subfield": "Formal Methods & AI Verification",
+    "generation_strategy": "compounding_risks",
+    "confidence": 0.75,
+    "body": "# Vague Spec \u00d7 Vulnerable Code: Compounding Failure When Specification and Implementation Both Come from the Same LLM\n\n**Problem:** When the same LLM generates both the formal specification and the implementation, systematic biases (same omissions, same incorrect assumptions) may propagate across both, causing proofs to pass while missing the same class of vulnerabilities.\n\n**Direction:** Compare two conditions on 30 security-critical programs: (a) spec and implementation generated by the same LLM, (b) spec generated by one LLM and implementation by a different LLM. Measure whether cross-model pairs catch more vulnerabilities in subsequent analysis. Test statistical significance.\n\n**Why it matters:** Self-verification is a known limitation in AI safety. If same-model spec+implementation pairs produce correlated blind spots, all-in-one vericoding pipelines are systematically overconfident. Cross-model diversity would be required for safety-critical applications.\n\n**Relevant context:** Claude Code Security's self-reflection step uses the same model that generated the code. AlphaVerus uses translation between languages (Dafny\u2192Verus) which may introduce cross-model diversity. The compounding risk of correlated spec+implementation failures is not studied."
+  },
+  {
+    "idea_id": "gen-0560",
+    "run_id": "2026-04-07T15-12-49",
+    "stage": "generate",
+    "timestamp": "2026-04-07T17:16:32Z",
+    "subfield": "Formal Methods & AI Verification",
+    "generation_strategy": "compounding_risks",
+    "confidence": 0.76,
+    "body": "# Hallucination \u00d7 Formal Proof: When Confident Wrong Proofs Fool Non-Expert Reviewers\n\n**Problem:** LLMs hallucinate confidently. In formal verification, a confident but wrong proof (that fails Lean's checker) would be caught. But a confident wrong specification might pass all automated checks while missing the intended safety property. Non-expert reviewers may not catch this.\n\n**Direction:** Generate 20 formally verified programs where the spec is subtly wrong (verified but missing a key safety property). Present to 15 CS students for review with 5 minutes per program. Measure false approval rate. Compare to a condition where the correct spec is provided. Test whether confidence language in LLM output affects approval rate.\n\n**Why it matters:** If non-expert reviewers of LLM-generated formal specs systematically approve subtly wrong specs (especially when the LLM expresses high confidence), formal verification provides a false safety guarantee that may be worse than no verification.\n\n**Relevant context:** AI sycophancy research shows LLM outputs influence human judgment. Formal verification is being positioned as an accessible safety tool for non-experts. The compounding risk of LLM hallucination and non-expert review is not studied in this context."
+  },
+  {
+    "idea_id": "gen-0561",
+    "run_id": "2026-04-07T15-12-49",
+    "stage": "generate",
+    "timestamp": "2026-04-07T17:16:32Z",
+    "subfield": "Formal Methods & AI Verification",
+    "generation_strategy": "compounding_risks",
+    "confidence": 0.72,
+    "body": "# Benchmark Gaming \u00d7 Safety Signal: If LLMs Overfit to Lean Benchmarks, Can They Still Verify Novel Code?\n\n**Problem:** If LLMs improve on Lean 4 benchmarks through benchmark-specific optimization (few-shot memorization, dataset leakage) rather than genuine formal reasoning, the safety signal from benchmark performance would be misleading. Compounding this with deployment of such models in safety-critical verification creates a dangerous situation.\n\n**Direction:** Train a lightweight model variant on VeriBench training examples (benchmark-specific SFT). Compare its performance on VeriBench vs. on a held-out set of novel Lean 4 tasks created after the benchmark. Measure generalization gap. Determine whether the VeriBench score overstates actual formal reasoning capability.\n\n**Why it matters:** If state-of-the-art Lean 4 performance is partially explained by benchmark overfitting, safety decisions based on these scores (e.g., deploying AI-assisted formal verification in critical systems) rest on inflated capability estimates.\n\n**Relevant context:** Benchmark contamination is documented in NLP. VeriBench is publicly available since ICML 2025. The compounding risk of overfitting and safety-critical deployment has not been studied for formal verification benchmarks specifically."
+  },
+  {
+    "idea_id": "gen-0562",
+    "run_id": "2026-04-07T15-12-49",
+    "stage": "generate",
+    "timestamp": "2026-04-07T17:16:32Z",
+    "subfield": "Formal Methods & AI Verification",
+    "generation_strategy": "compounding_risks",
+    "confidence": 0.73,
+    "body": "# Legacy Code \u00d7 Formal Verification: Can AI Generate Lean 4 Specs for Code Without Documentation?\n\n**Problem:** Much security-critical legacy code has no documentation or specifications. Whether LLMs can reverse-engineer formal specifications from undocumented legacy code \u2014 a necessary step for formally verifying legacy systems \u2014 is unstudied.\n\n**Direction:** Take 30 well-known open-source C functions with no inline documentation. Have LLMs: (1) generate natural language descriptions, (2) convert to Lean 4 formal specs, (3) complete proofs. Compare generated specs to expert-written gold specs. Measure accuracy without any documentation as input.\n\n**Why it matters:** The RAND report specifically mentions converting legacy code as a key application of formal methods. If AI cannot handle undocumented code, the most important safety target (legacy critical infrastructure) remains unreachable.\n\n**Relevant context:** RAND (2026) lists converting legacy code to memory-safe languages as a benchmark target. Claude Code Security analyzed undocumented production codebases. The interaction of legacy code's lack of spec and formal verification requirements is a specific gap."
+  },
+  {
+    "idea_id": "gen-0563",
+    "run_id": "2026-04-07T15-12-49",
+    "stage": "generate",
+    "timestamp": "2026-04-07T17:16:32Z",
+    "subfield": "Formal Methods & AI Verification",
+    "generation_strategy": "compounding_risks",
+    "confidence": 0.65,
+    "body": "# Formally Verified Code \u00d7 AI Model Tampering: Can Formal Methods Verify Model Evaluation Integrity?\n\n**Problem:** RAND proposes using formal methods to verify AI model evaluations without tampering. A compounding risk: if the verification framework itself uses AI to generate proofs, those AI components could be tampered with, undermining the integrity guarantee.\n\n**Direction:** Design a minimal threat model for a tamper-evident AI evaluation verification system. Identify which components must be formally verified by humans vs. which could be AI-assisted. Test whether a Lean 4 proof of a simple evaluation protocol can be generated, reviewed, and validated without AI in the critical path.\n\n**Why it matters:** An AI-generated proof of AI evaluation integrity creates a circular dependency. If the proof generator is the AI being evaluated, the safety case collapses. This is a foundational governance design question.\n\n**Relevant context:** RAND (2026) proposes cryptographic proof of AI evaluations. Zero-knowledge proofs (SNARKs) could provide non-AI-dependent verification. The circular dependency between AI formal verification tools and AI governance applications is an unexplored compounding risk."
+  },
+  {
+    "idea_id": "gen-0564",
+    "run_id": "2026-04-07T15-12-49",
+    "stage": "generate",
+    "timestamp": "2026-04-07T17:16:32Z",
+    "subfield": "Formal Methods & AI Verification",
+    "generation_strategy": "novel_direction",
+    "confidence": 0.72,
+    "body": "# LLM Calibration for Lean 4 Proofs: Is Stated Confidence Correlated with Proof Success?\n\n**Problem:** LLMs can be asked to express confidence in their Lean 4 proofs before submitting. Whether this expressed confidence is calibrated (higher confidence predicts higher success rate) is unknown and has safety implications.\n\n**Direction:** Run 80 VeriBench tasks. For each task, ask the LLM to express confidence (0-10) that its proof will compile, then submit the proof. Measure calibration: plot confidence vs. actual compilation rate. Compute Expected Calibration Error. Test across 3 models.\n\n**Why it matters:** If LLMs are poorly calibrated on formal proofs, expressed confidence cannot be used as a filter or triage signal. Calibration is a key safety property for human-AI collaboration in verification workflows.\n\n**Relevant context:** LLM calibration is studied for factual claims and code generation, but not for formal proof generation. Given that proof success is binary and verifiable, this is an ideal domain for calibration measurement."
+  },
+  {
+    "idea_id": "gen-0565",
+    "run_id": "2026-04-07T15-12-49",
+    "stage": "generate",
+    "timestamp": "2026-04-07T17:16:32Z",
+    "subfield": "Formal Methods & AI Verification",
+    "generation_strategy": "novel_direction",
+    "confidence": 0.67,
+    "body": "# Formal Verification of AI Agent Tool Calls: Can Lean 4 Specify Safe Tool-Call Sequences?\n\n**Problem:** AI agents executing tool calls (file I/O, network, code execution) can cause irreversible harm. Whether Lean 4 formal specifications can express and verify safety properties of tool-call sequences (e.g., 'never delete a file without prior confirmation') is unexplored.\n\n**Direction:** Model 10 AI agent scenarios as state machines. Write Lean 4 specifications for safety properties (reachability, invariants, forbidden states). Attempt to prove these properties using Lean 4. Measure which agent safety properties are expressible and provable in Lean 4's type theory.\n\n**Why it matters:** If formal methods can verify AI agent safety properties at the specification level, this provides a rigorous complement to runtime guardrails. This connects the formal verification field directly to AI agent safety.\n\n**Relevant context:** Claude Code (Anthropic) executes tools with significant system access. Lean 4's dependent types can express state machine properties. No work applies formal specification to AI agent tool-call safety."
+  },
+  {
+    "idea_id": "gen-0566",
+    "run_id": "2026-04-07T15-12-49",
+    "stage": "generate",
+    "timestamp": "2026-04-07T17:16:32Z",
+    "subfield": "Formal Methods & AI Verification",
+    "generation_strategy": "experiment_variation",
+    "confidence": 0.66,
+    "body": "# The Proof Size Problem: Are LLM-Generated Lean 4 Proofs Unnecessarily Long?\n\n**Problem:** LLM-generated Lean 4 proofs may be systematically longer than necessary (redundant lemmas, unnecessary case splits). Proof size correlates with maintainability and readability, both safety-relevant for long-term code maintenance.\n\n**Direction:** For 30 problems where LLMs generate working Lean 4 proofs, measure proof length (lines of code, number of tactics, lemma count). Compare to reference (shortest known) proofs. Compute size inflation factor. Test whether shorter prompting strategies reduce proof size.\n\n**Why it matters:** Excessively long proofs are harder for humans to review, increasing the probability of undetected errors. Proof minimization is a safety engineering concern that is not addressed by current benchmarks.\n\n**Relevant context:** Human-written Lean proofs tend to be more concise than LLM-generated ones (observed qualitatively in Mathlib contributions). No quantitative study of LLM proof verbosity vs. human expert proofs exists."
+  },
+  {
+    "idea_id": "gen-0567",
+    "run_id": "2026-04-07T15-12-49",
+    "stage": "generate",
+    "timestamp": "2026-04-07T17:16:32Z",
+    "subfield": "Formal Methods & AI Verification",
+    "generation_strategy": "experiment_variation",
+    "confidence": 0.69,
+    "body": "# Multi-Step Proof Planning vs. Tactic-by-Tactic Generation: Which Architecture Succeeds More on Lean 4?\n\n**Problem:** LLMs can generate Lean 4 proofs either by planning the full proof structure first then filling details, or by generating tactic by tactic. Whether planning-first architecture outperforms tactic-sequential generation on VeriBench is not tested.\n\n**Direction:** Implement two Lean 4 proof generation architectures: (a) plan-then-fill (generate proof outline with sorry placeholders, then fill each sorry), (b) sequential tactic generation (standard left-to-right). Run both on 50 VeriBench tasks. Measure compilation rate and iterations required.\n\n**Why it matters:** Identifying the superior proof generation architecture is a prerequisite for building better verification tools. Proof planning mirrors how human Lean experts work \u2014 if it helps LLMs, it suggests a path to human-level formal reasoning.\n\n**Relevant context:** Chain-of-thought prompting (planning) improves LLM reasoning across domains. For Lean 4, planning-first is used informally but not systematically compared to sequential generation. This is a concrete architectural experiment."
+  },
+  {
+    "idea_id": "gen-0568",
+    "run_id": "2026-04-07T15-12-49",
+    "stage": "generate",
+    "timestamp": "2026-04-07T17:16:32Z",
+    "subfield": "Formal Methods & AI Verification",
+    "generation_strategy": "experiment_variation",
+    "confidence": 0.68,
+    "body": "# CSLib Completion Acceleration: Does AI Assistance Measurably Speed Up New CSLib Theorem Additions?\n\n**Problem:** CSLib is being developed manually. Whether AI assistance (LLM-generated proof drafts reviewed by humans) measurably accelerates CSLib theorem entry development vs. human-only development is untested.\n\n**Direction:** Recruit 6 graduate students for a within-subject experiment. Each adds 5 new CSLib-style theorems to Lean 4: (a) fully manually, (b) using LLM-generated proof drafts. Measure time, number of Lean compiler errors, and final proof quality. Compare conditions.\n\n**Why it matters:** CSLib is a key building block for the safe AI code ecosystem. If AI assistance halves development time, the 2026 target is achievable. If AI-generated drafts require so much correction that they offer no speedup, different development strategies are needed.\n\n**Relevant context:** CSLib roadmap (arXiv 2602.04846) has concrete 2026 milestones. Mistral Leanstral and similar tools exist. No experiment measures AI-assisted CSLib development productivity. This is a direct test of AI assistance value for a safety-critical infrastructure project."
+  },
+  {
+    "idea_id": "gen-0569",
+    "run_id": "2026-04-07T15-12-49",
+    "stage": "generate",
+    "timestamp": "2026-04-07T17:16:32Z",
+    "subfield": "Formal Methods & AI Verification",
+    "generation_strategy": "experiment_variation",
+    "confidence": 0.71,
+    "body": "# Natural Language Spec Precision and Proof Success: Measuring the Correlation\n\n**Problem:** Formal proof success likely depends on the precision of natural language input specifications. Whether more precise natural language specs lead to higher LLM proof success rates \u2014 and by how much \u2014 is not quantified.\n\n**Direction:** Take 25 VeriBench problems. Create 3 natural language specification variants per problem: (a) minimal (docstring only), (b) medium (docstring + examples), (c) maximum (docstring + examples + edge cases + invariants). Run the same LLM on all 75 inputs. Measure compilation rate per spec level.\n\n**Why it matters:** If spec precision is a strong predictor of proof success, the intervention is clear: improve input spec quality. This would motivate spec-elicitation tools as a component of safe AI code generation pipelines.\n\n**Relevant context:** ATLAS generates specs from examples. AlphaVerus starts from Dafny specs. VeriBench uses consistent problem descriptions. Spec precision as an independent variable has not been systematically tested."
+  },
+  {
+    "idea_id": "gen-0570",
+    "run_id": "2026-04-07T15-12-49",
+    "stage": "generate",
+    "timestamp": "2026-04-07T17:16:32Z",
+    "subfield": "Formal Methods & AI Verification",
+    "generation_strategy": "experiment_variation",
+    "confidence": 0.67,
+    "body": "# Few-Shot Example Selection for Lean 4: Does Domain Proximity of Examples Improve Proof Success?\n\n**Problem:** Few-shot examples in Lean 4 proof prompts can be chosen from: (a) same problem domain, (b) similar proof structure, (c) random selection. Which selection strategy most improves proof success is unknown.\n\n**Direction:** For 30 VeriBench tasks, generate proofs under three few-shot conditions: (a) 3 examples from the same domain (sorting, graph algorithms, etc.), (b) 3 examples with similar proof structure (induction, case analysis, etc.), (c) 3 random examples. Measure compilation rate per condition.\n\n**Why it matters:** Optimal few-shot selection would maximize Lean 4 proof success without additional compute. For safety applications where each proof attempt is expensive, selection strategy matters.\n\n**Relevant context:** Few-shot example selection is studied in code generation (e.g., retrieving semantically similar examples). For formal verification, this has not been tested. The Self-Optimizing Trace Agent uses fixed examples."
+  },
+  {
+    "idea_id": "gen-0571",
+    "run_id": "2026-04-07T15-12-49",
+    "stage": "generate",
+    "timestamp": "2026-04-07T17:16:32Z",
+    "subfield": "Formal Methods & AI Verification",
+    "generation_strategy": "experiment_variation",
+    "confidence": 0.7,
+    "body": "# Leanstral vs. General LLM: Is Domain-Specific Fine-Tuning Worth the Cost for Formal Verification?\n\n**Problem:** Mistral's Leanstral is fine-tuned specifically for Lean 4. Whether the domain-specific fine-tuning provides sufficient improvement over general LLMs (prompted with Lean examples) to justify the specialization cost is untested.\n\n**Direction:** Compare on VeriBench: (a) Leanstral (specialized), (b) Mistral base model with Lean 4 few-shot examples, (c) Mistral base model with no specific prompting. Measure compilation rate, proof success, and failure modes. Compute marginal improvement from specialization.\n\n**Why it matters:** If specialization provides only marginal improvement over good prompting, the field should focus on prompting strategies. If specialization is large, dedicated Lean 4 models are worth training. This informs resource allocation.\n\n**Relevant context:** Leanstral was released March 2026. Mistral base models are available for comparison. The specialization-vs-prompting tradeoff is a fundamental question in applied LLM research."
+  },
+  {
+    "idea_id": "gen-0572",
+    "run_id": "2026-04-07T15-12-49",
+    "stage": "generate",
+    "timestamp": "2026-04-07T17:16:32Z",
+    "subfield": "Formal Methods & AI Verification",
+    "generation_strategy": "replication_with_twist",
+    "confidence": 0.71,
+    "body": "# Reproducing VeriBench on Smaller Models: Minimum Model Scale for Any Lean 4 Compilation\n\n**Problem:** LLaMA-70B achieves 0% compilation on Lean 4 VeriBench tasks. Claude 3.7 Sonnet achieves 12.5%. The minimum model scale at which any Lean 4 compilation occurs \u2014 a capability emergence threshold \u2014 is not characterized for open models.\n\n**Direction:** Test VeriBench subset (50 tasks) on 7B, 13B, 34B models from two open model families. Find the smallest model that achieves non-zero compilation rate. Characterize which tasks (easy/medium/hard) the smallest successful model can handle. Plot compilation rate vs. model size.\n\n**Why it matters:** Identifying the capability emergence threshold for formal verification informs when this capability should appear in smaller deployable models. If the threshold is higher than current open models, on-device formal verification remains far off.\n\n**Relevant context:** LLaMA-70B at 0% vs. Claude at 12.5% suggests a threshold between these scales. VeriBench's easy set provides tractable tasks for smaller models. This is a replication with scale variation."
+  },
+  {
+    "idea_id": "gen-0573",
+    "run_id": "2026-04-07T15-12-49",
+    "stage": "generate",
+    "timestamp": "2026-04-07T17:16:32Z",
+    "subfield": "Formal Methods & AI Verification",
+    "generation_strategy": "replication_with_twist",
+    "confidence": 0.7,
+    "body": "# Vericoding for Rust vs. Lean 4: Does Verus-Style Verification Outperform Lean for Security Code?\n\n**Problem:** Verus (Rust-based formal verification) and Lean 4 are both active formal verification targets for LLMs. Whether Verus-style verification (closer to systems programming) achieves higher LLM success rates for security-critical code than Lean 4 is unknown.\n\n**Direction:** Select 30 security-critical algorithm implementations (buffer handling, crypto, input parsing). Run AlphaVerus (Verus target) and a Lean 4 pipeline on the same problems. Measure compilation rate, proof success, and \u2014 crucially \u2014 whether the security properties captured differ between the two frameworks.\n\n**Why it matters:** Rust is increasingly used for security-critical systems code. If Verus (Rust-native verification) achieves higher LLM success than Lean 4 for security-relevant programs, it may be a better fit for the RAND vision of verified security code.\n\n**Relevant context:** AlphaVerus achieves 38% on HumanEval-Verified in Verus. Lean 4 Self-Optimizing Agent achieves 60%. But these are different benchmarks. A direct head-to-head comparison on security-relevant tasks does not exist."
+  },
+  {
+    "idea_id": "gen-0574",
+    "run_id": "2026-04-07T15-12-49",
+    "stage": "generate",
+    "timestamp": "2026-04-07T17:16:32Z",
+    "subfield": "Formal Methods & AI Verification",
+    "generation_strategy": "replication_with_twist",
+    "confidence": 0.68,
+    "body": "# Replicating Claude Code Security Findings on a Different Codebase Family: Does the Approach Generalize?\n\n**Problem:** Claude Code Security found 500+ vulnerabilities in production codebases. Whether this performance replicates on codebases not used in Anthropic's experiments (e.g., scientific Python libraries, embedded systems code, recently written code) is unknown.\n\n**Direction:** Apply Claude Code Security (or its documented approach: semantic reasoning with multi-stage verification) to 5 mid-sized open-source codebases in domains not covered in Anthropic's announcement. Measure vulnerability discovery rate. Compare to Semgrep and CodeQL on the same codebases.\n\n**Why it matters:** If semantic vulnerability detection generalizes broadly, it should be integrated into standard CI/CD pipelines. If it is domain-specific, deployment should be targeted to high-value codebases only.\n\n**Relevant context:** Claude Code Security analyzed production open-source software (Anthropic 2026). The codebases used are not all disclosed. This is a standard generalization replication of a surprising result."
+  },
+  {
+    "idea_id": "gen-0575",
+    "run_id": "2026-04-07T15-12-49",
+    "stage": "generate",
+    "timestamp": "2026-04-07T17:16:32Z",
+    "subfield": "Formal Methods & AI Verification",
+    "generation_strategy": "replication_with_twist",
+    "confidence": 0.63,
+    "body": "# Reproducing AlphaVerus Self-Improvement Loop with Different Source Languages: CBMC \u2192 Lean vs. Dafny \u2192 Verus\n\n**Problem:** AlphaVerus bootstraps from Dafny (high-resource) to Verus (low-resource). Whether starting from a different high-resource language (e.g., CBMC counterexample traces as source) produces similar or better results when targeting Lean 4 is untested.\n\n**Direction:** Implement an AlphaVerus-style self-improving translation pipeline starting from CBMC verification output (rather than Dafny) and targeting Lean 4. Run on 20 simple C programs with CBMC certificates. Compare to direct LLM-to-Lean 4 translation. Measure success rate.\n\n**Why it matters:** CBMC certificates for C code are widely available (Amazon uses CBMC in AWS). If CBMC certificates can bootstrap Lean 4 proof generation, a pathway exists from verified C legacy code to CSLib entries.\n\n**Relevant context:** AlphaVerus paper describes the bootstrapping approach in detail. CBMC is a standard industrial verification tool. The CBMC\u2192Lean 4 pathway has never been explored. This is a replication with a novel source language."
+  },
+  {
+    "idea_id": "gen-0576",
+    "run_id": "2026-04-07T15-12-49",
+    "stage": "generate",
+    "timestamp": "2026-04-07T17:16:32Z",
+    "subfield": "Formal Methods & AI Verification",
+    "generation_strategy": "replication_with_twist",
+    "confidence": 0.69,
+    "body": "# CLEVER Benchmark Replication on Security-Extended Task Set\n\n**Problem:** CLEVER (Curated Benchmark for Formally Verified Code Generation, arXiv 2505.13938) measures general correctness. Whether its evaluation methodology replicates on a set specifically augmented with security-critical tasks is untested.\n\n**Direction:** Extend CLEVER by adding 30 security-relevant tasks. Run the CLEVER evaluation protocol on both the original and extended set. Measure whether security task performance is proportional to general performance (test for systematic security task penalty). Report results with the CLEVER leaderboard metrics.\n\n**Why it matters:** If security tasks require special capabilities beyond general verified code generation, CLEVER and similar benchmarks systematically underweight security readiness. This replication with twist reveals whether security is a distinct capability dimension.\n\n**Relevant context:** CLEVER (arXiv 2505.13938) is publicly available. The extension methodology is clearly defined. Security-specific formal verification remains underrepresented in all current benchmarks."
+  },
+  {
+    "idea_id": "gen-0577",
+    "run_id": "2026-04-07T15-12-49",
+    "stage": "generate",
+    "timestamp": "2026-04-07T17:16:32Z",
+    "subfield": "Formal Methods & AI Verification",
+    "generation_strategy": "tool_or_benchmark_gap",
+    "confidence": 0.71,
+    "body": "# Formal Methods Tool Accessibility Benchmark: Can Novice CS Students Use Lean 4 with AI Assistance?\n\n**Problem:** A key constraint in this subfield: Lean 4 expertise is rare and the learning curve is steep. Whether CS students with only basic Python and CS fundamentals can productively use AI-assisted Lean 4 verification tools (Leanstral, VSCode Lean plugin + Claude) is unknown.\n\n**Direction:** Recruit 15 CS students (intro-level). Give them 4 hours to solve 5 Lean 4 programming problems using AI assistance (Leanstral + Claude). Measure: problems solved, time per problem, number of compiler error loops, subjective difficulty rating. Compare to 0% vs. expert baseline.\n\n**Why it matters:** If novice CS students can solve basic Lean 4 problems with AI assistance, formal verification can be democratized. If not, AI tools remain gated by Lean expertise, preventing the broad adoption the RAND vision requires.\n\n**Relevant context:** RAND (2026) calls for broad adoption of formal methods. Current tools are expert-oriented. The VeriBench paper notes that even sophisticated models struggle; a user study of novice+AI is missing."
+  },
+  {
+    "idea_id": "gen-0578",
+    "run_id": "2026-04-07T15-12-49",
+    "stage": "generate",
+    "timestamp": "2026-04-07T17:16:32Z",
+    "subfield": "Formal Methods & AI Verification",
+    "generation_strategy": "tool_or_benchmark_gap",
+    "confidence": 0.68,
+    "body": "# AI-Assisted Formal Spec Writing Interface: Measuring Whether Structured Prompting Reduces Spec Errors\n\n**Problem:** Writing formal specifications is the hardest step in vericoding. No structured tool guides users through spec writing (capturing preconditions, postconditions, invariants, edge cases) with AI assistance. Building and evaluating such a tool is unstudied.\n\n**Direction:** Build a simple structured prompting interface (Python/Jupyter) that walks users through: (1) identifying preconditions, (2) postconditions, (3) edge cases, (4) invariants, then combines responses into a Lean 4 specification. Compare spec quality (rated by expert) with and without the structured interface on 20 tasks.\n\n**Why it matters:** If a structured elicitation interface reduces spec errors, it addresses the most critical bottleneck in the vericoding pipeline without requiring Lean expertise.\n\n**Relevant context:** ATLAS pipeline generates specs automatically but does not allow user input. No user-in-the-loop spec writing interface exists for Lean 4. HCI research on structured AI elicitation tools exists in other domains but not formal verification."
+  },
+  {
+    "idea_id": "gen-0579",
+    "run_id": "2026-04-07T15-12-49",
+    "stage": "generate",
+    "timestamp": "2026-04-07T17:16:32Z",
+    "subfield": "Formal Methods & AI Verification",
+    "generation_strategy": "tool_or_benchmark_gap",
+    "confidence": 0.7,
+    "body": "# Lean 4 Proof Replay Tool: Checking Reproducibility of Published LLM Verification Results\n\n**Problem:** Published results for Lean 4 proof generation are difficult to reproduce because proof checker behavior can vary across Lean 4 versions. No standardized reproduction protocol exists for formal verification LLM benchmarks.\n\n**Direction:** Develop a lightweight reproduction protocol: (a) standardize Lean 4 version, (b) containerized evaluation environment, (c) automated re-run of published VeriBench results with 3 models. Measure result stability across Lean 4 minor versions (1.1 vs 1.2 vs 1.3). Document discrepancies.\n\n**Why it matters:** Reproducibility is a prerequisite for science. Lean 4's active development means proofs that compile on one version may not compile on another. A standardized protocol prevents benchmark inflation through version selection.\n\n**Relevant context:** Lean 4 is under active development. Mathlib proofs break during Lean upgrades. VeriBench was evaluated on a specific Lean version. No reproduction kit exists. This is infrastructure for the field."
+  },
+  {
+    "idea_id": "gen-0580",
+    "run_id": "2026-04-07T15-12-49",
+    "stage": "generate",
+    "timestamp": "2026-04-07T17:16:32Z",
+    "subfield": "Formal Methods & AI Verification",
+    "generation_strategy": "tool_or_benchmark_gap",
+    "confidence": 0.72,
+    "body": "# Adversarial Lean 4 Problems: Generating Test Cases Designed to Trick LLM Proof Generation\n\n**Problem:** Current Lean 4 benchmarks (VeriBench, CLEVER) are designed to test capability, not robustness. No adversarial test set exists for Lean 4 designed to exploit known LLM failure modes (misleading variable names, tricky induction, proof by contradiction).\n\n**Direction:** Create an adversarial benchmark of 50 Lean 4 tasks designed to exploit known LLM weaknesses: (a) misleading variable/function names, (b) proofs requiring non-obvious lemmas, (c) problems where the most natural proof approach is wrong. Measure performance gap vs. non-adversarial counterparts.\n\n**Why it matters:** Safety-critical formal verification must be robust to adversarial conditions. If LLM provers fail systematically on adversarially designed problems, their use in security-critical contexts is limited to routine tasks.\n\n**Relevant context:** Adversarial benchmarks exist for NLP (ANLI) and code generation. No adversarial formal verification benchmark exists. Robustness under adversarial conditions is particularly relevant for security applications."
+  },
+  {
+    "idea_id": "gen-0581",
+    "run_id": "2026-04-07T15-12-49",
+    "stage": "generate",
+    "timestamp": "2026-04-07T17:16:32Z",
+    "subfield": "Formal Methods & AI Verification",
+    "generation_strategy": "tool_or_benchmark_gap",
+    "confidence": 0.7,
+    "body": "# Formal Spec from Test Suites: Can LLMs Infer Lean 4 Specifications from Existing Unit Tests?\n\n**Problem:** Most code has unit tests but no formal specifications. Whether LLMs can infer formal Lean 4 specifications from existing test suites \u2014 enabling retro-fitting of formal verification to existing code \u2014 is unstudied.\n\n**Direction:** Take 30 open-source functions with comprehensive test suites. Ask LLMs to generate Lean 4 specifications inferred from the tests. Compare inferred specs to expert-written specs on: completeness (do they cover all tested behaviors?), correctness (are they accurate?), and additional coverage (do they capture behaviors not in tests?).\n\n**Why it matters:** The practical path to verified legacy code runs through existing tests. If LLMs can infer specs from tests, existing test coverage becomes a foundation for formal verification without requiring spec-writing expertise.\n\n**Relevant context:** ATLAS generates specs from examples. AlphaVerus starts from Dafny. Neither uses existing unit tests as specification sources. This represents a practical pathway for brownfield code adoption."
+  },
+  {
+    "idea_id": "gen-0582",
+    "run_id": "2026-04-07T15-12-49",
+    "stage": "generate",
+    "timestamp": "2026-04-07T17:16:32Z",
+    "subfield": "Formal Methods & AI Verification",
+    "generation_strategy": "failure_mode_investigation",
+    "confidence": 0.78,
+    "body": "# Characterizing the 'Sorry' Failure Mode: How Often Do LLMs Use Lean 4's Proof Escape Hatch?\n\n**Problem:** Lean 4 allows 'sorry' as a proof escape hatch that makes any goal provable without actual proof. LLMs may systematically overuse sorry to produce compilable-but-unproven programs, inflating compilation rate metrics.\n\n**Direction:** Run 5 LLMs on all VeriBench tasks. For each compilable output, scan for sorry usage. Measure: (a) sorry frequency per model, (b) whether sorry-using outputs are filtered from benchmarks, (c) whether removing sorry reduces the 60% figure. Test whether sorry rate increases with problem difficulty.\n\n**Why it matters:** If a significant fraction of the 60% compilation success involves sorry placeholders, the safety signal from compilation rate is weaker than reported. This is a critical quality assurance check on the benchmark.\n\n**Relevant context:** Lean 4's sorry is widely known in the Lean community as a dangerous escape hatch. VeriBench documentation is unclear on whether sorry is filtered. Self-Optimizing Trace Agent may use sorry to bootstrap compilation. This is a concrete failure mode to characterize."
+  },
+  {
+    "idea_id": "gen-0583",
+    "run_id": "2026-04-07T15-12-49",
+    "stage": "generate",
+    "timestamp": "2026-04-07T17:16:32Z",
+    "subfield": "Formal Methods & AI Verification",
+    "generation_strategy": "failure_mode_investigation",
+    "confidence": 0.68,
+    "body": "# Proof Reuse Failure: Do LLMs Apply Correct Lemmas Proved Earlier in a Session?\n\n**Problem:** In long proof sessions, Lean 4 provers can prove auxiliary lemmas and reuse them. Whether LLMs in iterative proof sessions actually reuse lemmas they proved earlier (or redundantly reprove them) is a failure mode not characterized.\n\n**Direction:** Set up 20 multi-lemma Lean 4 proof tasks where earlier proved lemmas are relevant to later steps. Track whether LLMs: (a) reference earlier lemmas by name, (b) redundantly reprove them, (c) fail to use them when relevant. Measure reuse failure rate.\n\n**Why it matters:** Proof reuse is a fundamental efficiency mechanism in formal verification. If LLMs fail to exploit earlier work, proof sessions are wasteful and the self-optimizing trace architecture may not scale to longer proofs.\n\n**Relevant context:** Human Lean 4 provers build on lemma libraries (Mathlib). LLM proof generation is typically single-shot or short-horizon iterative. Long-horizon proof session behavior is not studied."
+  },
+  {
+    "idea_id": "gen-0584",
+    "run_id": "2026-04-07T15-12-49",
+    "stage": "generate",
+    "timestamp": "2026-04-07T17:16:32Z",
+    "subfield": "Formal Methods & AI Verification",
+    "generation_strategy": "failure_mode_investigation",
+    "confidence": 0.69,
+    "body": "# Type Universe Confusion: Characterizing LLM Mistakes in Lean 4's Hierarchy of Types\n\n**Problem:** Lean 4's type universe hierarchy (Prop, Type, Type 1, ...) is a common source of errors for novices. Whether LLMs systematically confuse universe levels \u2014 a specific and identifiable failure mode \u2014 is not characterized.\n\n**Direction:** Collect 100 failed LLM Lean 4 proof attempts. Manually classify errors that are attributable to universe confusion (mixing Prop and Type, incorrect universe polymorphism). Measure what fraction of failures are universe-related. Compare across models.\n\n**Why it matters:** Universe errors are a specific, teachable failure mode. If they account for 20%+ of LLM failures, targeted training or prompting interventions (e.g., universe-level annotations in prompts) could provide a quick win for improving compilation rates.\n\n**Relevant context:** Universe confusion is documented in Lean 4 learning resources as a common novice error. Whether it is also a common LLM error is assumed but not measured. VeriBench error analysis does not break down universe errors specifically."
+  },
+  {
+    "idea_id": "gen-0585",
+    "run_id": "2026-04-07T15-12-49",
+    "stage": "generate",
+    "timestamp": "2026-04-07T17:16:32Z",
+    "subfield": "Formal Methods & AI Verification",
+    "generation_strategy": "failure_mode_investigation",
+    "confidence": 0.7,
+    "body": "# Multi-Turn Proof Session Degradation: Does Extended Context Hurt Lean 4 Proof Quality?\n\n**Problem:** In long iterative proof sessions, LLMs accumulate context (error messages, partial proofs, revisions). Whether performance degrades over extended context windows \u2014 context window saturation as a failure mode \u2014 is unstudied for formal verification.\n\n**Direction:** Compare single-turn vs. multi-turn (5, 10, 20 turns) proof generation on 20 VeriBench tasks. Measure whether compilation rate decreases as context grows. Track whether later iterations introduce errors not present in early iterations. Test with models of different context window sizes.\n\n**Why it matters:** Real deployment of AI-assisted formal verification will involve long sessions. If quality degrades over session length, tools need context summarization or proof-state checkpointing strategies. This is a practical deployment failure mode.\n\n**Relevant context:** LLM long-context degradation is studied for factual tasks but not for formal proof generation. Self-Optimizing Trace Agent uses growing context. Long-session failure modes are not characterized in VeriBench."
+  },
+  {
+    "idea_id": "gen-0586",
+    "run_id": "2026-04-07T15-12-49",
+    "stage": "generate",
+    "timestamp": "2026-04-07T17:16:32Z",
+    "subfield": "Formal Methods & AI Verification",
+    "generation_strategy": "failure_mode_investigation",
+    "confidence": 0.73,
+    "body": "# Formal Methods Blind Spot: Which Lean 4 Tactic Categories Are LLMs Worst At?\n\n**Problem:** Lean 4 proofs use diverse tactics (simp, omega, ring, induction, cases, apply, exact). Whether LLMs have systematic weaknesses in specific tactic categories \u2014 producing characteristic failure patterns \u2014 is not characterized.\n\n**Direction:** Classify 200 LLM Lean 4 proof failures by which tactic was needed at the point of failure. Compute failure rates per tactic category. Identify the top 3 tactic categories where LLMs fail most. Compare across models to determine whether weaknesses are universal or model-specific.\n\n**Why it matters:** Tactic-level failure analysis enables targeted training data curation (add more examples of hard tactics) and prompting improvements (hint about which tactic to use). This is the most actionable form of failure characterization.\n\n**Relevant context:** Lean 4 has a rich tactic system. Human Lean experts know that omega (arithmetic), ring (ring equations), and induction (recursive structures) have different difficulty levels. Whether LLMs match human difficulty perception is unknown."
+  },
+  {
+    "idea_id": "gen-0587",
+    "run_id": "2026-04-07T15-12-49",
+    "stage": "generate",
+    "timestamp": "2026-04-07T17:16:32Z",
+    "subfield": "Formal Methods & AI Verification",
+    "generation_strategy": "cross_domain_transfer",
+    "confidence": 0.62,
+    "body": "# Applying Static Type Analysis Patterns to AI-Generated Formal Spec Checking\n\n**Problem:** Static type analysis (Hindley-Milner, gradual typing) uses inference to detect type errors without explicit annotations. Analogous inference techniques could detect likely specification errors (underspecification, missing preconditions) before proof attempt.\n\n**Direction:** Develop a lightweight static analysis pass for Lean 4 specifications that detects: missing preconditions (implied by postconditions), potentially vacuous properties, and missing edge case patterns. Apply to 50 LLM-generated specs. Compare detection rate to manual expert review.\n\n**Why it matters:** If static spec analysis can catch specification errors before the expensive proof stage, it would provide a cheap filter in the vericoding pipeline. This imports well-understood type inference techniques into a new domain.\n\n**Relevant context:** Type inference is a mature field. Lean 4 already uses type inference for terms. Extending inference to specification quality is a novel cross-domain transfer. Spec quality analysis tools do not currently exist."
+  },
+  {
+    "idea_id": "gen-0588",
+    "run_id": "2026-04-07T15-12-49",
+    "stage": "generate",
+    "timestamp": "2026-04-07T17:16:32Z",
+    "subfield": "Formal Methods & AI Verification",
+    "generation_strategy": "cross_domain_transfer",
+    "confidence": 0.72,
+    "body": "# Applying Mutation Testing to Formally Verified Code: Does Mutant Survival Indicate Spec Weakness?\n\n**Problem:** Mutation testing (introducing small bugs and checking if tests catch them) is a standard method for evaluating test suite quality. Applied to formal verification, surviving mutants would indicate specification incompleteness.\n\n**Direction:** Take 20 programs with Lean 4 proofs. Generate program mutants (bit flips, off-by-one errors, operator changes). For each mutant, check whether the formal proof still compiles (it should not if the spec is complete). Measure mutant survival rate as a spec completeness metric.\n\n**Why it matters:** If formal proofs compile for mutated versions of the program (proof-surviving mutants), the specification does not capture the property that was changed. High mutant survival rates indicate dangerously incomplete specs.\n\n**Relevant context:** Mutation testing is standard in software engineering. Applying it to formal specifications is novel. Lean 4 proofs should fail for semantically different programs. This cross-domain transfer creates a practical spec quality metric."
+  },
+  {
+    "idea_id": "gen-0589",
+    "run_id": "2026-04-07T15-12-49",
+    "stage": "generate",
+    "timestamp": "2026-04-07T17:16:32Z",
+    "subfield": "Formal Methods & AI Verification",
+    "generation_strategy": "cross_domain_transfer",
+    "confidence": 0.68,
+    "body": "# Importing Contract Programming Principles into LLM Prompt Engineering for Formal Specs\n\n**Problem:** Design-by-Contract (DbC) from Eiffel/Bertrand Meyer provides structured templates for preconditions, postconditions, and invariants. Importing DbC templates as prompting scaffolds for LLM spec generation might improve spec quality.\n\n**Direction:** Compare two prompting conditions for Lean 4 spec generation on 40 tasks: (a) standard prompting, (b) DbC-structured prompting (fill in preconditions, postconditions, invariants, error states as separate fields). Measure spec completeness, correctness, and proof success rate under each condition.\n\n**Why it matters:** DbC is proven to elicit more complete specifications in human programming practice. If DbC templates improve LLM spec quality in Lean 4, a simple prompting template could close the spec quality gap at zero engineering cost.\n\n**Relevant context:** Design-by-Contract originated with Eiffel and is used in Java (contracts4j), Scala, and Dafny. Dafny's precondition/postcondition syntax is DbC-inspired. Importing this into Lean 4 prompting has not been tried."
+  },
+  {
+    "idea_id": "gen-0590",
+    "run_id": "2026-04-07T15-12-49",
+    "stage": "generate",
+    "timestamp": "2026-04-07T17:16:32Z",
+    "subfield": "Formal Methods & AI Verification",
+    "generation_strategy": "cross_domain_transfer",
+    "confidence": 0.71,
+    "body": "# Applying Property-Based Testing (QuickCheck) to Discover Formal Spec Gaps Before Proof\n\n**Problem:** Property-based testing (QuickCheck, Hypothesis) discovers counterexamples to property claims quickly and cheaply. Using property-based testing to validate LLM-generated formal specs before attempting expensive Lean proofs could identify spec errors early.\n\n**Direction:** For 30 programs, use an LLM to generate both: (a) formal Lean 4 spec and (b) equivalent Python property (for Hypothesis). Run Hypothesis on the property with 1000 test cases. If Hypothesis finds a counterexample, revise the spec. Compare final proof success rate with vs. without Hypothesis pre-validation.\n\n**Why it matters:** Property-based testing is cheap and fast. If it catches 50% of spec errors before the proof stage, it eliminates half the wasted proof attempts. This creates a hybrid testing/verification pipeline more efficient than pure formal methods.\n\n**Relevant context:** Hypothesis is widely used in Python. QuickCheck is standard in Haskell. Neither has been used as a pre-validation step for Lean 4 spec generation. This is a natural cross-domain pipeline improvement."
+  },
+  {
+    "idea_id": "gen-0591",
+    "run_id": "2026-04-07T15-12-49",
+    "stage": "generate",
+    "timestamp": "2026-04-07T17:16:32Z",
+    "subfield": "Formal Methods & AI Verification",
+    "generation_strategy": "cross_domain_transfer",
+    "confidence": 0.61,
+    "body": "# Applying Interval Arithmetic Techniques to Formal Verification of Floating-Point AI Safety Properties\n\n**Problem:** Floating-point arithmetic is notoriously non-associative and error-prone. AI models use floating-point extensively. Interval arithmetic (a formal method for bounding floating-point errors) could be applied to formally verify safety properties of AI computation, but this transfer has not been made.\n\n**Direction:** Select 5 simple neural network computations (softmax, attention score, normalization). Use Lean 4 or Coq with interval arithmetic libraries to formally bound the floating-point error. Measure whether LLMs can generate these proofs with appropriate numeric bounds. Assess what safety properties can be guaranteed.\n\n**Why it matters:** If formal interval arithmetic can bound AI computation errors, it provides a rigorous foundation for AI safety properties related to numerical stability. This bridges floating-point formal methods and AI safety.\n\n**Relevant context:** Coq's Flocq library and Lean's Float library support formal floating-point reasoning. Interval arithmetic is used in scientific computing verification. No work applies it to AI model computation verification."
+  },
+  {
+    "idea_id": "gen-0592",
+    "run_id": "2026-04-07T15-12-49",
+    "stage": "generate",
+    "timestamp": "2026-04-07T17:16:32Z",
+    "subfield": "Formal Methods & AI Verification",
+    "generation_strategy": "causal_chain_intervention",
+    "confidence": 0.73,
+    "body": "# Identifying and Targeting the Causal Root of LLM Lean Proof Failure: Wrong Induction Structure\n\n**Problem:** A significant fraction of Lean 4 proof failures appear to involve choosing the wrong induction hypothesis or induction variable. Whether 'wrong induction structure' is the single most common root cause of LLM proof failures \u2014 and whether targeted hints address it \u2014 is not tested.\n\n**Direction:** Analyze 100 LLM Lean 4 failures. Classify by root cause using a structured taxonomy. Test whether 'wrong induction structure' is most common. For that class, implement a single targeted intervention: system prompt addition that describes how to select induction variables. Measure improvement.\n\n**Why it matters:** If one failure mode dominates, fixing it provides the largest marginal improvement in compilation rate. A targeted, narrow intervention (vs. broad architecture redesign) is more tractable for student researchers and more actionable for tool developers.\n\n**Relevant context:** Induction is the most common proof technique in Lean 4 for recursive programs. Human Lean novices consistently struggle with induction hypothesis selection. Whether LLMs share this failure is assumed but not measured."
+  },
+  {
+    "idea_id": "gen-0593",
+    "run_id": "2026-04-07T15-12-49",
+    "stage": "generate",
+    "timestamp": "2026-04-07T17:16:32Z",
+    "subfield": "Formal Methods & AI Verification",
+    "generation_strategy": "causal_chain_intervention",
+    "confidence": 0.68,
+    "body": "# Intervening at the Tactic Search Stage: Do Proof Search Hints from Lean's `decide` Tactic Improve LLM Performance?\n\n**Problem:** Lean 4's `decide` tactic can automatically decide certain propositions by computation. Whether prompting LLMs to first attempt `decide` before complex tactics \u2014 using it as a cheap screening step \u2014 improves overall compilation rate is untested.\n\n**Direction:** Implement a modified proof generation pipeline that first attempts `decide` on all goals (with timeout). For goals where `decide` succeeds, stop. For others, pass to the main LLM proof generation. Compare overall compilation rate vs. standard pipeline on 50 VeriBench tasks.\n\n**Why it matters:** If `decide` can handle 20%+ of goals automatically, it reduces the load on expensive LLM proof generation. This is a tractable, concrete pipeline optimization with a clear causal mechanism.\n\n**Relevant context:** Lean 4's decide tactic is well-documented. It is used in Mathlib for decidable propositions. No study has measured what fraction of VeriBench goals are decide-tractable. This is a low-effort intervention with potentially large payoff."
+  },
+  {
+    "idea_id": "gen-0594",
+    "run_id": "2026-04-07T15-12-49",
+    "stage": "generate",
+    "timestamp": "2026-04-07T17:16:32Z",
+    "subfield": "Formal Methods & AI Verification",
+    "generation_strategy": "causal_chain_intervention",
+    "confidence": 0.7,
+    "body": "# Causal Decomposition of the AIxCC Security Gap: Human vs. AI Bottleneck in Finding the Hardest Bugs\n\n**Problem:** AIxCC reached 77% detection. The 23% gap could be caused by: (a) insufficient formal specification of the target behavior, (b) lack of deep domain knowledge (protocol-specific logic), (c) structural limitations of current LLM reasoning. These causes require different interventions.\n\n**Direction:** Select 10 AIxCC undetected vulnerabilities from the SoK paper. For each, attempt to detect it using: (a) enhanced formal specification, (b) domain expert hint injection, (c) an LLM with extended context (full codebase). Measure which intervention closes more of the gap.\n\n**Why it matters:** Knowing the causal structure of the 23% gap directs research toward the right intervention. If formal spec is the bottleneck, invest in better spec tools. If domain knowledge is the bottleneck, invest in specialized models.\n\n**Relevant context:** AIxCC SoK paper (arXiv 2602.07666) analyzes undetected vulnerabilities at a structural level but does not test targeted interventions. Open-source finalist systems are being released, enabling experimentation."
+  },
+  {
+    "idea_id": "gen-0595",
+    "run_id": "2026-04-07T15-12-49",
+    "stage": "generate",
+    "timestamp": "2026-04-07T17:16:32Z",
+    "subfield": "Formal Methods & AI Verification",
+    "generation_strategy": "causal_chain_intervention",
+    "confidence": 0.72,
+    "body": "# Proof Decomposition as a Capability Scaffold: Does Breaking Proofs into Smaller Obligations Help LLMs?\n\n**Problem:** Large monolithic Lean 4 proof goals are harder than small, decomposed ones. Whether automatically decomposing proof goals into smaller sub-obligations (proof splitting) before passing to an LLM improves success rate is not tested.\n\n**Direction:** For 30 VeriBench tasks, implement two conditions: (a) full proof goal passed to LLM, (b) goal automatically split into sub-goals (using Lean's intro, cases, constructor tactics as scaffolding), then each sub-goal passed to LLM. Compare compilation rate and total tokens used.\n\n**Why it matters:** If decomposition improves success without additional compute, it is a free improvement to the verification pipeline. This mirrors how human Lean experts work (decompose first, prove each piece). Understanding this causal mechanism informs agent design.\n\n**Relevant context:** Proof decomposition is standard practice in interactive theorem proving. LLM performance on smaller context problems is known to be better. Whether this transfers to formal verification is the untested causal link."
+  },
+  {
+    "idea_id": "gen-0596",
+    "run_id": "2026-04-07T15-12-49",
+    "stage": "generate",
+    "timestamp": "2026-04-07T17:16:32Z",
+    "subfield": "Formal Methods & AI Verification",
+    "generation_strategy": "backcast_from_success",
+    "confidence": 0.65,
+    "body": "# The Benchmark Incentive Hypothesis: Do RAND-Style Competition Incentives Actually Accelerate Formal Verification Progress?\n\n**Problem:** RAND (2026) recommends government benchmark competitions to accelerate formal verification AI development, analogous to how AIxCC accelerated vulnerability detection from 37% to 86% in one year. Whether this incentive mechanism actually works for formal verification is untested.\n\n**Direction:** Survey the formal verification AI research community on: (a) awareness of RAND's proposal, (b) what incentive structure (prize, challenge, grant) would most accelerate their work, (c) what benchmark would best capture meaningful progress. Synthesize responses into a structured policy recommendation.\n\n**Why it matters:** The AIxCC model is a concrete precedent. Whether it transfers to formal verification depends on which bottlenecks competition incentives address. This analysis would inform RAND's recommendation with empirical evidence from the research community.\n\n**Relevant context:** RAND (Sarma & Fisher 2026) explicitly calls for benchmark competitions. AIxCC ran for two years with $18.5M in prizes. A survey of formal verification researchers would calibrate whether the competition model applies."
+  },
+  {
+    "idea_id": "gen-0597",
+    "run_id": "2026-04-07T15-12-49",
+    "stage": "generate",
+    "timestamp": "2026-04-07T17:16:32Z",
+    "subfield": "Formal Methods & AI Verification",
+    "generation_strategy": "backcast_from_success",
+    "confidence": 0.71,
+    "body": "# Minimal Viable Proof: What Is the Simplest Lean 4 Capability Needed to Formally Verify a Real Security Property?\n\n**Problem:** Current benchmarks target impressive but complex proofs. A minimal viable proof capability \u2014 the simplest formal verification task with genuine security relevance \u2014 would identify the entry point for near-term deployment.\n\n**Direction:** Survey the landscape of security properties. Find the simplest property (e.g., 'this function never returns negative', 'this function terminates') that: (a) has genuine security implications, (b) is expressible in Lean 4, (c) current LLMs can prove with >90% success. Document this minimal viable proof capability.\n\n**Why it matters:** Defining the minimal viable capability creates a deployment threshold: 'AI can now reliably prove property X; that covers Y% of common buffer overflow cases.' This progress signal enables practical safety decisions.\n\n**Relevant context:** VeriBench's easiest problems have high LLM success rates. Claude Code Security proves simple properties during verification. Identifying the simplest deployable security proof capability is a prerequisite for staged deployment planning."
+  },
+  {
+    "idea_id": "gen-0598",
+    "run_id": "2026-04-07T15-12-49",
+    "stage": "generate",
+    "timestamp": "2026-04-07T17:16:32Z",
+    "subfield": "Formal Methods & AI Verification",
+    "generation_strategy": "backcast_from_success",
+    "confidence": 0.72,
+    "body": "# Success State for Human-AI Collaborative Formal Verification: A Time-to-Verify Benchmark\n\n**Problem:** Define a success state: a developer with no Lean expertise can formally verify a 50-line security-critical function in under 2 hours using AI assistance. Measure current baseline and identify the largest gap.\n\n**Direction:** Recruit 10 CS students (no Lean experience). Each attempts to formally verify a 50-line security-critical function using available AI tools (Leanstral, Claude + VSCode Lean plugin). Measure time-to-proof, whether they succeed, and where they get stuck. Compare to the 2-hour success state.\n\n**Why it matters:** Defining the success state in human terms (time, expertise required) makes the goal concrete and actionable. Current benchmarks measure AI capability in isolation; this measures the human-AI system's practical utility.\n\n**Relevant context:** RAND's vision requires that formal verification become accessible to non-expert developers. No user study measures the time cost for a novice+AI to complete a real security verification task. This establishes the baseline gap."
+  },
+  {
+    "idea_id": "gen-0599",
+    "run_id": "2026-04-07T15-12-49",
+    "stage": "generate",
+    "timestamp": "2026-04-07T17:16:32Z",
+    "subfield": "Formal Methods & AI Verification",
+    "generation_strategy": "compounding_risks",
+    "confidence": 0.77,
+    "body": "# Compounding Risk: AI-Generated Code \u00d7 AI-Generated Tests = Correlated False Assurance\n\n**Problem:** When the same or similar LLMs generate both code and tests, both may share systematic blind spots. The resulting test suite provides correlated rather than independent assurance. Combined with AI-generated formal specs (same model), all three layers of assurance are correlated.\n\n**Direction:** Compare three conditions on 20 programs: (a) AI-generated code + AI-generated tests + AI-generated spec (same model), (b) AI code + human tests + AI spec, (c) AI code + AI tests + human spec. Inject 30 known bugs per program. Measure bug detection rate per condition. Test whether correlated assurance (condition a) is significantly worse.\n\n**Why it matters:** Security stacks assume independent layers of assurance. If AI homogenization makes all assurance layers correlated, the stack provides the appearance of multi-layer assurance with the effective assurance of a single layer. This is a critical AI safety \u00d7 formal verification compounding risk.\n\n**Relevant context:** AI homogeneity as a systemic risk is discussed in AI safety literature. The specific compounding of correlated code+test+spec generation from the same model is not studied. This is directly relevant to vibe coding pipeline risks."
+  },
+  {
+    "idea_id": "gen-0600",
+    "run_id": "2026-04-07T15-12-49",
+    "stage": "generate",
+    "timestamp": "2026-04-07T17:16:32Z",
+    "subfield": "Formal Methods & AI Verification",
+    "generation_strategy": "compounding_risks",
+    "confidence": 0.7,
+    "body": "# Capability Jump \u00d7 Deployment Rush: When Rapid Progress in Lean 4 AI Outpaces Validation of Formal Tools\n\n**Problem:** Rapid progress in Lean 4 AI capability (from 12.5% to 60% in one generation) may cause premature deployment in safety-critical contexts before the validity of the capability signal (compilation rate as safety proxy) is established.\n\n**Direction:** Model the compounding risk: (a) measure rate of capability improvement in Lean 4 benchmarks over time (using published results), (b) measure rate of validation research (papers studying safety signal validity), (c) compute the widening gap between capability claims and validation evidence. Survey researchers on deployment readiness criteria.\n\n**Why it matters:** The pattern of AI capability outpacing safety validation is a general AI safety concern. This quantifies it specifically for formal verification AI, where premature deployment could lead to falsely verified safety-critical code.\n\n**Relevant context:** VeriBench (ICML 2025) documents rapid capability progress. RAND calls for immediate benchmark development. But the papers studying whether Lean 4 compilation rate is a valid safety signal are sparse. This gap could lead to premature deployment."
+  }
+]

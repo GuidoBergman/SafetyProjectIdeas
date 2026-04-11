@@ -2,7 +2,7 @@
 
 > Generated: 2026-03-30
 > Requested by: coordinator
-> Papers analyzed: 27
+> Papers analyzed: 31
 
 ## Topic Definition
 
@@ -479,15 +479,15 @@ The field is rapidly growing (most papers from 2024-2026) and sits at the inters
 
 | Dimension | Finding |
 |-----------|---------|
-| Methodology | Multi-dimensional survey/taxonomy. Categorized 125+ papers across goals, methodologies, and research cultures. Identified six distinct evaluation paradigms. |
-| AI capability targeted | General AI evaluation across all capability types. |
-| Key findings | Six distinct paradigms exist, often developing in isolation with conflicting terminology. Fragmentation leads to insular research and communication barriers. Field lacks standardization. |
-| Validity evidence | Does not directly address psychometric validity. Maps how different communities approach evaluation differently. |
-| Open questions | Whether additional dimensions reveal sub-paradigms. How to foster cross-paradigm pollination. |
-| Evaluation approach | Expert annotation and classification of 125+ papers. |
+| Methodology | Multi-dimensional taxonomic survey. 125+ papers annotated across structured dimensions using Jaccard distance matrices and UMAP visualization to identify paradigm clusters. Dimensions organized into Goals (indicator type, distribution summarization, evaluation subject), Methodologies (measurement type, task origin, protocol, reference type, task mode), and Cultures (evaluator type, motivation, discipline). |
+| AI capability targeted | Meta-level: does not evaluate AI capabilities directly but maps HOW capabilities are evaluated across the field. Covers all capability types as evaluated by others. |
+| Key findings | Six distinct evaluation paradigms identified: Benchmarking, Evals (red-teaming/safety), Construct-Oriented (psychometric), Exploratory, Real-World Impact, and TEVV (formal verification). The Construct-Oriented paradigm is distinguished by reliance on human psychology theories and "latent construct" measurement -- this is where IRT/psychometric approaches live. "Evals" paradigm (safety-focused) and "Construct-Oriented" paradigm rarely cross-pollinate despite complementary strengths. |
+| Validity evidence | Validity explicitly excluded from analysis framework: "We do not focus on these issues here, as they apply broadly to all AI evaluation tools." Identifies validity concerns within the Construct-Oriented paradigm but does not develop a cross-paradigm framework. |
+| Open questions | Whether additional dimensions reveal sub-paradigms. How to foster cross-paradigm pollination (especially Construct-Oriented <-> Evals). Moral evaluations and data dignity underdeveloped. Formal verification (TEVV) barely applied to LLMs. |
+| Evaluation approach | Qualitative taxonomy with quantitative clustering (Jaccard + UMAP). Expert-driven paper selection aimed at diversity. |
 | Benchmark size requirements | Not addressed. |
 
-**Relevance to topic:** Essential context for understanding why construct validity is inconsistently applied -- different paradigms have different goals and cultures.
+**Relevance to topic:** Essential context for understanding why construct validity is inconsistently applied -- different paradigms have different goals and cultures. The key insight for this report is that the Construct-Oriented and Evals paradigms need cross-pollination.
 
 ---
 
@@ -596,24 +596,24 @@ The field is rapidly growing (most papers from 2024-2026) and sits at the inters
 
 ---
 
-### 28. Recent Progress on the Science of Evaluations (ADELE)
+### 28. General Scales Unlock AI Evaluation with Explanatory and Predictive Power (ADELE)
 
-- **Authors:** (Alignment Forum)
-- **Source:** Alignment Forum
+- **Authors:** Hernandez-Orallo et al. (incl. Microsoft Research)
+- **Source:** ArXiv (full paper) + Alignment Forum (blog post)
 - **Year:** 2025
-- **URL:** https://www.alignmentforum.org/posts/m2qMj7ovncbqKtzNt/recent-progress-on-the-science-of-evaluations
+- **URL:** https://arxiv.org/abs/2503.06378 (paper), https://www.alignmentforum.org/posts/m2qMj7ovncbqKtzNt/ (blog)
 
 | Dimension | Finding |
 |-----------|---------|
-| Methodology | ADELE: theory-driven cognitive dimension scales from psychometrics literature. 18 hierarchically organized dimensions with rubrics ranking task demands 0-5. AI annotator evaluates task demands. Random forest trained on demand profiles to predict model success. Contrasted with data-driven factor analysis. |
-| AI capability targeted | Universal cognitive capabilities: knowledge, reasoning, planning, execution, metacognition, social abilities (18 dimensions). Extending to propensities: deception, goal-directedness, self-control. |
-| Key findings | Random forest on ADELE scales outperforms finetuned LLaMA-3.1-8B on OOD calibration (ECE: 0.022 vs 0.075). Achieves simultaneous predictive and explanatory power. 11 broader dimensions achieve comparable prediction to 18. All 18 features retain relative importance. Computationally cheaper than running benchmarks directly. |
-| Validity evidence | Predictive validity (AUROC, ECE). Construct validity via theory-driven dimensions. Explanatory validity through interpretable rubrics. External validity discussed. |
-| Open questions | Calibration against human populations. Extending scales to higher demand levels. Extending to propensities. Whether "alien" capabilities might emerge in superhuman AI. Dual-use risk. |
-| Evaluation approach | Rubric-based annotation (0-5 per dimension) using AI annotators. Random forest validated against LLM baseline. |
-| Benchmark size requirements | Current battery: 16,000 examples from 20 benchmarks. "Sufficient variety" required but no formal minimum. |
+| Methodology | Theory-driven rubric annotation across 18 cognitive/knowledge dimensions derived from CHC (Cattell-Horn-Carroll) theory. Rubrics rate task instance demands 0-5+ per dimension. GPT-4o applies rubrics automatically per instance (289,944 total annotations: 16,108 items x 18 dimensions). Random Forest classifier trained on 18-dimensional + unguessability demand profile predicts binary success/failure per model-instance pair. Explicitly contrasted with data-driven factor analysis. |
+| AI capability targeted | Universal cognitive capabilities: 11 primordial capabilities (attention/scan, comprehension/expression, conceptualization/learning, metacognition x3, mind modeling, quantitative/logical reasoning x2, spatial reasoning), 5 knowledge domains (applied, customary, formal, natural, social sciences), 2 extraneous dimensions (atypicality for contamination, volume for task length). Extending to propensities: deception, goal-directedness, self-control. |
+| Key findings | In-distribution AUROC: 0.839, ECE: 0.011. Task-holdout OOD: AUROC 0.81, ECE 0.02. Benchmark-holdout OOD: AUROC 0.75, ECE 0.04. Matches finetuned LLaMA-3.1-8B on discrimination but vastly superior calibration (ECE 0.011 vs 0.043). 40-75x faster training. 11 broader dimensions achieve comparable prediction to 18. All 18 features retain non-zero importance. |
+| Validity evidence | Human inter-rater agreement (rWG 0.83 avg) via 5-person Delphi panel. GPT-4o vs Delphi consensus Spearman 0.86. Predictive validity via AUROC/ECE across in-distribution, task-OOD, and benchmark-OOD. Construct distinctiveness: most inter-dimension correlations are low-moderate (only 2 pairs above 0.8). Theory grounded in established CHC framework. |
+| Open questions | Limited modality coverage (text only). Few high-demand (5+) items; scales need extension for superhuman AI. Mind Modeling dimension has only ~300 instances. Extension to propensities for safety. Dual-use risk of demand profiles. |
+| Evaluation approach | Random Forest with 10-fold CV (in-distribution), leave-one-task-out (task OOD), leave-one-benchmark-out (benchmark OOD). Human validation via Delphi method. |
+| Benchmark size requirements | Full battery: 16,108 items from 20 benchmarks across 63 tasks. ADeLe-Light reduces via redundant profile removal but exact count undisclosed. For 11 items: 11 items x 15 models = 165 training rows with 19 features -- technically trainable but severe overfitting risk. No formal minimum analysis provided. |
 
-**Relevance to topic:** Most psychometrically sophisticated community post. Theory-driven scales extending from capabilities to safety-relevant propensities -- a novel direction linking measurement science to alignment evaluation.
+**Relevance to topic:** The most psychometrically sophisticated approach in the literature. Theory-driven scales grounded in CHC provide both predictive and explanatory power. The extension to propensities (deception, goal-directedness) is a novel direction for safety measurement. The demand-annotation approach is item-count-agnostic in principle (annotate any item's demands), but the RF assessor needs sufficient diverse training data.
 
 ---
 
@@ -638,6 +638,48 @@ The field is rapidly growing (most papers from 2024-2026) and sits at the inters
 
 ---
 
+### 30. Capabilities Ain't All You Need: Measuring Propensities in AI
+
+- **Authors:** Daniel Romero-Alvarado et al.
+- **Source:** ArXiv
+- **Year:** 2026
+- **URL:** https://arxiv.org/abs/2602.18182
+
+| Dimension | Finding |
+|-----------|---------|
+| Methodology | Introduces the 2x2PL model, a bilogistic extension of IRT's 2PL. Instead of a single monotonic difficulty threshold (higher ability = higher success), propensities are modeled as an "ideal band" [b_l, b_u] -- success is highest when a model's propensity falls within that interval, with both excess and deficiency reducing performance. When b_u approaches infinity, reduces exactly to standard 2PL, so capabilities are a special case. Propensity demands annotated via 7-point rubrics (-3 to +3) by GPT-4.1. Estimation via MLE with gradient-based optimization. |
+| AI capability targeted | Model propensities (behavioral tendencies) as distinct from capabilities. Non-monotonic traits where "too much" or "too little" both cause failures. Four dimensions tested: red-vs-blue color bias, risk aversion/seeking, extraversion/introversion, ultracrepidarianism/prudence. Safety-relevant propensities (e.g., ultracrepidarianism -- tendency to answer when you shouldn't) explicitly targeted. |
+| Key findings | System prompts at incitation levels -3 to +3 produce monotonic shifts in measured propensity. Combining propensities with capabilities improves prediction by +1.6-2.0% AUROC over capabilities alone. Ultracrepidarianism is the most impactful propensity for QA tasks. Some models resist certain incitations (Llama 3.2 failed ultracrepidarianism incitation). The model mathematically unifies capabilities and propensities under a single IRT framework. |
+| Validity evidence | Construct validity via mathematical proof of 2PL generalization. Convergent validity: incitation levels produce expected monotonic shifts. Criterion/predictive validity: cross-dataset prediction from synthetic benchmarks to TimeQA/MentalQA. Boundary behavior confirms probability ~0.5 at interval edges. |
+| Open questions | Should model propensities also have two parameters (theta_l, theta_u) instead of one? Estimation error conflated with sample size effects. Only short-horizon single-item tasks tested -- agent-based scenarios likely show stronger effects. Only 4 propensity dimensions tested. No human validation of GPT-4.1 annotations. |
+| Evaluation approach | Rubric-based annotation (-3 to +3) via GPT-4.1, MLE estimation, 10-fold cross-validation with Random Forest assessors, cross-dataset prediction experiments. |
+| Benchmark size requirements | Synthetic datasets ~250 items each; main evaluation 360 items. Cross-validation enforces minimum ~50 samples per split. No formal minimum sample size analysis for MLE convergence. No evidence the approach works below ~250 items. |
+
+**Relevance to topic:** First paper to formally extend IRT to non-monotonic propensity measurement in AI. The 2x2PL model mathematically unifies capabilities and propensities, directly addressing the gap identified in Papers 18 and 28. Critical for safety evaluation where traits like ultracrepidarianism (answering when uncertain) are safety-relevant.
+
+---
+
+### 31. No Answer Needed: Predicting LLM Answer Accuracy from Question-Only Linear Probes
+
+- **Authors:** Ivan Vicente Moreno Cencerrado, Arnau Padres Masdemont, Anton Gonzalvez Hawthorne, David Demitri Africa, Lorenzo Pacchiardi
+- **Source:** ArXiv
+- **Year:** 2025
+- **URL:** https://arxiv.org/abs/2509.10625
+
+| Dimension | Finding |
+|-----------|---------|
+| Methodology | Extracts residual stream activations at the final question token BEFORE any answer generation. Computes centroids (mean activations) for questions answered correctly vs. incorrectly. "Correctness direction" defined as w = mu_true - mu_false. New questions scored by projecting activations onto this direction. Deliberately linear (difference-of-means, not logistic regression) to test whether correctness is linearly separable in activation space. Not psychometric per se, but complementary -- predicts item difficulty from model internals rather than response patterns. |
+| AI capability targeted | Pre-generation anticipation of correctness -- whether models "know that they know." Tests the Linear Representation Hypothesis for correctness as a latent trait. |
+| Key findings | In-distribution AUROC: 0.758-0.826 (TriviaQA). Strong OOD generalization to factual domains: Cities 0.732-0.880, Notable People 0.708-0.825. Complete failure on GSM8K math reasoning (0.499-0.601, near random). "Factual correctness" and "arithmetic correctness" appear to be distinct, orthogonal internal representations. "I don't know" responses cluster at negative extreme of correctness direction. Performance saturates at intermediate layers (~midpoint to 2/3 depth). Outperforms verbalized confidence by 10-39 AUROC points on some datasets. |
+| Validity evidence | Outperforms multiple baselines (OpenAI embeddings + logistic regression, XGBoost, verbalized confidence). Cross-dataset generalization. Linear separability as evidence for the Linear Representation Hypothesis. 5-fold cross-validation. |
+| Open questions | Why does the signal fail for mathematical reasoning? Only open-source models tested. Correctness treated as binary from single samples, ignoring generation stochasticity. Linear probes may underestimate actual predictive power. |
+| Evaluation approach | AUROC as primary metric. 5-fold CV for in-distribution, direct transfer for OOD. No calibration analysis (ECE not reported). |
+| Benchmark size requirements | Robust performance at 160 samples. 2,560 samples match full 48,540-sample performance. Larger models require fewer samples. At 11 items, you'd have ~5-6 correct and ~5-6 incorrect for centroids -- likely too few for reliable estimation. Minimum tested was 160. |
+
+**Relevance to topic:** Offers a complementary "inside-out" approach to item analysis -- rather than inferring item difficulty from response patterns (IRT), it predicts correctness from model internals before any response. Could augment IRT by providing item difficulty estimates from a single model's representations, potentially useful for cold-start calibration. The factual/reasoning orthogonality finding supports multidimensional measurement.
+
+---
+
 ## Dimension Synthesis
 
 ### 1. Methodology
@@ -650,7 +692,7 @@ The field is rapidly growing (most papers from 2024-2026) and sits at the inters
 - Factor analysis reveals a single dominant factor explaining 72-79% of variance -- from Papers 9, 13
 - Model scale (parameter count) confounds latent factor analysis if not controlled -- from Paper 13
 
-**Gaps:** Multidimensional IRT is discussed but rarely applied. G-Theory has a single theoretical paper (26) with no empirical AI application. Cognitive Diagnostic Models are mentioned (Papers 2, 24) but not applied to AI. No paper uses Generalizability Theory empirically for AI evaluation.
+**Gaps:** Multidimensional IRT is discussed but rarely applied. G-Theory has a single theoretical paper (26) with no empirical AI application. Cognitive Diagnostic Models are mentioned (Papers 2, 24) but not applied to AI. No paper uses Generalizability Theory empirically for AI evaluation. The 2x2PL propensity model (Paper 30) is a single paper with no follow-up validation yet.
 
 ### 2. AI Capability Targeted
 
@@ -662,7 +704,7 @@ The field is rapidly growing (most papers from 2024-2026) and sits at the inters
 - Safety capabilities (deception, power-seeking, scheming) are mapped conceptually but lack psychometric measurement -- from Papers 18, 19
 - ADELE extends from capabilities to propensities (deception, goal-directedness) -- from Paper 28
 
-**Gaps:** No paper applies IRT, CAT, or factor analysis to AI safety benchmarks. The safety literature documents what to measure but not how to measure it psychometrically. Agentic capabilities are mostly untouched.
+**Gaps:** Paper 30 (2x2PL) is the first to formally measure propensities via IRT, but only on synthetic/curated benchmarks, not existing safety benchmarks. No paper applies standard IRT, CAT, or factor analysis to AI safety benchmarks directly. Agentic capabilities are mostly untouched. Paper 31 reveals that factual and reasoning correctness are orthogonal internal representations, suggesting safety-relevant capabilities may also be internally separable.
 
 ### 3. Key Findings
 
@@ -733,7 +775,7 @@ The field is rapidly growing (most papers from 2024-2026) and sits at the inters
 - **Psychometric safety evaluation:** No paper applies IRT, CAT, or factor analysis to AI safety benchmarks specifically. The safety literature (Papers 18, 19) maps what to measure but uses ad hoc methods. This is the single largest gap.
 - **Agentic capability measurement:** Only Paper 28 (ADELE) discusses extending to agentic dimensions (planning, execution). No IRT application to agentic benchmarks.
 - **Multimodal AI evaluation:** All IRT applications are on text-based benchmarks. Vision, audio, and multimodal capabilities are psychometrically unmapped.
-- **Propensity measurement:** Paper 28 proposes extending to deception, goal-directedness, self-control. No empirical work exists.
+- **Propensity measurement:** Paper 28 (ADELE) proposes extending to deception, goal-directedness, self-control. Paper 30 (2x2PL) provides the first formal IRT model for propensities, demonstrating empirical results on 4 propensity dimensions including safety-relevant ultracrepidarianism.
 
 ### Methodological Gaps
 - **Generalizability Theory:** One theoretical paper (26) but zero empirical AI applications. G-Theory's variance decomposition is uniquely suited to the prompt sensitivity problem -- it could quantify how much evaluation variance comes from the model vs. prompt vs. evaluator vs. context.
@@ -754,7 +796,7 @@ The field is rapidly growing (most papers from 2024-2026) and sits at the inters
 
 **Most promising open directions:**
 
-1. **Psychometric safety evaluation instruments** -- Apply IRT and CAT to existing safety benchmarks (toxicity, deception, power-seeking). The capabilities/propensities distinction (Paper 18) provides the construct framework; IRT provides the measurement machinery. No one has combined them yet. Supported by: the safety benchmarking critique (Paper 19) showing 81% of safety benchmarks evaluate only known risks, and the total absence of IRT applications to safety.
+1. **Psychometric safety evaluation instruments** -- Apply IRT and CAT to existing safety benchmarks (toxicity, deception, power-seeking). The capabilities/propensities distinction (Paper 18) provides the construct framework; IRT provides the measurement machinery; the 2x2PL model (Paper 30) provides the first formal propensity-IRT model. Next step: apply 2x2PL to existing safety benchmarks rather than synthetic ones. Supported by: the safety benchmarking critique (Paper 19) showing 81% of safety benchmarks evaluate only known risks, and Paper 30 demonstrating that propensity measurement via IRT is feasible.
 
 2. **G-Theory for prompt sensitivity** -- Use Generalizability Theory to decompose evaluation variance into model, prompt, evaluator, and context facets. This would directly quantify the prompt sensitivity problem (up to 76 accuracy points, Paper 29) and determine how many prompt variations are needed for reliable measurement. Supported by: Paper 26 providing the theoretical foundation, and multiple papers flagging prompt sensitivity as the #1 measurement reliability threat.
 
@@ -805,5 +847,7 @@ The field is rapidly growing (most papers from 2024-2026) and sits at the inters
 | 25 | Psychometrics-Based Professional Competency Benchmark | -- | 2024 | ArXiv | https://arxiv.org/abs/2411.00045 | -- |
 | 26 | Revisiting Generalizability Theory in the Age of AI | -- | 2025 | ScienceDirect | https://www.sciencedirect.com/science/article/pii/S2666557325000370 | -- |
 | 27 | Epoch Capabilities Index (ECI) | Epoch AI | 2025 | LessWrong | https://www.lesswrong.com/posts/2RtuThoZwP4o8aEpS/ | -- |
-| 28 | Recent Progress on Science of Evaluations (ADELE) | -- | 2025 | Alignment Forum | https://www.alignmentforum.org/posts/m2qMj7ovncbqKtzNt/ | -- |
+| 28 | General Scales Unlock AI Evaluation (ADELE) | Hernandez-Orallo et al. | 2025 | ArXiv + AF | https://arxiv.org/abs/2503.06378 | -- |
 | 29 | We Need a Science of Evals | Hobbhahn, Scheurer | 2024 | LessWrong | https://www.lesswrong.com/posts/fnc6Sgt3CGCdFmmgX/ | -- |
+| 30 | Capabilities Ain't All You Need: Measuring Propensities in AI | Romero-Alvarado et al. | 2026 | ArXiv | https://arxiv.org/abs/2602.18182 | -- |
+| 31 | No Answer Needed: Question-Only Linear Probes | Vicente Moreno Cencerrado et al. | 2025 | ArXiv | https://arxiv.org/abs/2509.10625 | -- |

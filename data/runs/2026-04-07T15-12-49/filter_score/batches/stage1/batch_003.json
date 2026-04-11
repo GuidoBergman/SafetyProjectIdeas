@@ -1,0 +1,1002 @@
+[
+  {
+    "idea_id": "gen-0201",
+    "run_id": "2026-04-07T15-12-49",
+    "stage": "generate",
+    "timestamp": "2026-04-07T17:16:32Z",
+    "subfield": "AI-Powered Defense",
+    "generation_strategy": "tool_or_benchmark_gap",
+    "confidence": 0.68,
+    "body": "# Benchmark Gap: Measuring AI Defense Performance on Configuration Vulnerabilities (Not Just Code)\n\n**Problem:** AI vulnerability detection research focuses on source code vulnerabilities. Infrastructure configuration vulnerabilities (misconfigured IAM, open S3 buckets, weak TLS configs) are a major attack surface not covered by code-focused benchmarks.\n\n**Direction:** Curate a benchmark of 30 known cloud/infrastructure configuration vulnerabilities (from public CVEs, misconfiguration datasets, or CloudSploit test cases). Run LLMs on configuration files. Measure detection rate, false positive rate, and explanation quality. Compare to code vulnerability detection performance.\n\n**Why it matters:** Cloud misconfigurations cause a large fraction of real breaches. If AI defense tools cannot detect configuration vulnerabilities, a major attack surface is undefended.\n\n**Relevant context:** OWASP Top 10 2025 includes security misconfiguration as A05. CloudSploit, ScoutSuite are configuration scanning tools. LLM performance on configuration vulnerability detection not studied."
+  },
+  {
+    "idea_id": "gen-0202",
+    "run_id": "2026-04-07T15-12-49",
+    "stage": "generate",
+    "timestamp": "2026-04-07T17:16:32Z",
+    "subfield": "AI-Powered Defense",
+    "generation_strategy": "tool_or_benchmark_gap",
+    "confidence": 0.65,
+    "body": "# AI Defense Tool Interoperability: Can Tools Share Findings Effectively?\n\n**Problem:** Different AI security tools may find different subsets of vulnerabilities. A pipeline that aggregates findings from multiple tools needs a deduplication and prioritization mechanism. No standard interoperability format or aggregation methodology exists.\n\n**Direction:** Run three AI security tools (an LLM, Semgrep, CodeQL) on the same 20-file corpus. Develop a simple finding aggregation protocol: deduplicate by location + class, merge confidence scores, rank by combined score. Measure: recall of aggregated findings vs. individual tools. Evaluate three deduplication strategies.\n\n**Why it matters:** Multi-tool pipelines are common in production security. Aggregation quality determines whether the pipeline inherits the best or worst properties of constituent tools.\n\n**Relevant context:** SARIF (Static Analysis Results Interchange Format) exists for tool interoperability. Multi-tool aggregation quality for AI+SAST combinations not studied. This directly addresses a practitioner pain point."
+  },
+  {
+    "idea_id": "gen-0203",
+    "run_id": "2026-04-07T15-12-49",
+    "stage": "generate",
+    "timestamp": "2026-04-07T17:16:32Z",
+    "subfield": "AI-Powered Defense",
+    "generation_strategy": "novel_direction",
+    "confidence": 0.67,
+    "body": "# Novel Direction: AI-Assisted Security Review Prioritization for Large Codebases\n\n**Problem:** Large codebases cannot be fully reviewed. AI security tools are applied to whole codebases, but the order in which they analyze files affects which vulnerabilities are found within a compute budget.\n\n**Direction:** Develop and test three prioritization heuristics for AI security review: (a) random, (b) recently changed files first, (c) AI-predicted high-risk files first (using complexity/entropy features). Run all three on 5 large open-source projects with known CVEs within a fixed API budget. Measure CVEs found per dollar.\n\n**Why it matters:** With limited compute budgets, smart prioritization dramatically increases defensive efficiency. This is a novel optimization problem with immediate practical impact.\n\n**Relevant context:** AI-powered vulnerability scanning applied to large codebases (Anthropic 2026: 500+ vulns in production codebases). Intelligent scan prioritization not studied as a research problem."
+  },
+  {
+    "idea_id": "gen-0204",
+    "run_id": "2026-04-07T15-12-49",
+    "stage": "generate",
+    "timestamp": "2026-04-07T17:16:32Z",
+    "subfield": "AI-Powered Defense",
+    "generation_strategy": "novel_direction",
+    "confidence": 0.65,
+    "body": "# Novel Direction: AI-Assisted Security Review for Protocol Implementations\n\n**Problem:** Network protocol implementations (TLS, QUIC, MQTT) have historically been a source of high-severity vulnerabilities. AI detection performance on protocol implementation code, which has unique patterns (state machines, bit manipulation), is not characterized.\n\n**Direction:** Select 10 CVEs from TLS/SSL library implementations (OpenSSL, mbedTLS) and 10 from application protocol implementations. Run LLMs on the vulnerable code. Compare detection rate to non-protocol code CVEs. Analyze whether protocol-specific patterns (state machine logic, handshake code) are harder for AI to analyze.\n\n**Why it matters:** Protocol implementation vulnerabilities are often critical (Heartbleed, POODLE) and affect vast infrastructure. If AI defense is particularly weak here, this is a high-priority gap.\n\n**Relevant context:** LLM-Boofuzz applies LLMs to protocol fuzzing. AI static analysis of protocol implementations for vulnerability detection is not studied. OpenSSL CVE history provides a rich test corpus."
+  },
+  {
+    "idea_id": "gen-0205",
+    "run_id": "2026-04-07T15-12-49",
+    "stage": "generate",
+    "timestamp": "2026-04-07T17:16:32Z",
+    "subfield": "AI-Powered Defense",
+    "generation_strategy": "experiment_variation",
+    "confidence": 0.63,
+    "body": "# Experiment: AI Vulnerability Detection with and Without Commit History Context\n\n**Problem:** Vulnerability-introducing commits often show suspicious patterns (late-night commits, pressure to merge, unusual author). AI scanners ignoring version history may miss contextual signals.\n\n**Direction:** For 20 CVEs, collect the vulnerability-introducing commit and its git metadata (author, time, message, review comments). Run AI scanner on: (a) code only, (b) code + commit metadata, (c) code + commit history context. Measure detection rate and explanation quality per condition.\n\n**Why it matters:** If commit history context improves detection, tools that integrate with git history are more effective. This informs tool design and data integration requirements.\n\n**Relevant context:** Git history as a security signal is studied in security engineering (SZZ algorithm for bug-introducing commit detection). LLM vulnerability detection with git history context not studied."
+  },
+  {
+    "idea_id": "gen-0206",
+    "run_id": "2026-04-07T15-12-49",
+    "stage": "generate",
+    "timestamp": "2026-04-07T17:16:32Z",
+    "subfield": "AI-Powered Defense",
+    "generation_strategy": "follow_up_experiment",
+    "confidence": 0.68,
+    "body": "# Follow-Up: Does AI Find Vulnerabilities That Fuzzing Missed, or Different Vulnerabilities?\n\n**Problem:** Anthropic 2026 reports that Claude found vulnerabilities undetected by CPU-hours of fuzzing. It is unclear whether AI finds the same vulnerability classes as fuzzing-missed ones, or genuinely different classes.\n\n**Direction:** For 5 public projects with both fuzzing campaign results (FuzzBench, OSS-Fuzz) and known CVEs, run an LLM scanner. For each CVE: classify as 'fuzzing-detectable' (memory corruption) or 'fuzzing-hard' (logic flaw, auth bypass). Measure whether AI detection rate differs between these categories.\n\n**Why it matters:** If AI and fuzzing have complementary coverage (different vulnerability classes), the combination is highly valuable. If they cover the same class, AI is redundant to fuzzing.\n\n**Relevant context:** Anthropic 2026: 500+ vulnerabilities undetected by fuzzing. OSS-Fuzz and FuzzBench provide fuzzing campaign data. Class-specific complementarity analysis not published."
+  },
+  {
+    "idea_id": "gen-0207",
+    "run_id": "2026-04-07T15-12-49",
+    "stage": "generate",
+    "timestamp": "2026-04-07T17:16:32Z",
+    "subfield": "AI-Powered Defense",
+    "generation_strategy": "tool_or_benchmark_gap",
+    "confidence": 0.65,
+    "body": "# Tool Gap: A Standardized Dataset of AI Security Explanation Ground Truths\n\n**Problem:** Evaluating AI security tool explanation quality requires ground truth explanations. No standardized dataset of human-expert-written vulnerability explanations paired with source code exists for benchmarking.\n\n**Direction:** Curate a small dataset of 30 CVE-code pairs with: (a) the vulnerable code snippet, (b) a high-quality expert explanation (from CVE advisory, security blog, or researcher writeup), (c) a simple vs. complex example per class. Publish the dataset. Benchmark three LLMs against it. Measure explanation BLEU/ROUGE and expert-rated quality.\n\n**Why it matters:** Without a ground-truth explanation dataset, explanation quality evaluation is inconsistent across studies. A curated public dataset enables standardized benchmarking.\n\n**Relevant context:** AutoPatchBench (Meta 2025) covers patch quality but not explanation quality. No paired code-explanation benchmark found in the literature."
+  },
+  {
+    "idea_id": "gen-0208",
+    "run_id": "2026-04-07T15-12-49",
+    "stage": "generate",
+    "timestamp": "2026-04-07T17:16:32Z",
+    "subfield": "AI-Powered Defense",
+    "generation_strategy": "cross_domain_transfer",
+    "confidence": 0.63,
+    "body": "# Cross-Domain Transfer: Importing Checklist Design from Aviation Safety to AI Security Report Checklists\n\n**Problem:** Aviation safety uses rigorous checklists to prevent systematic errors under time pressure. AI-generated security reports could be structured as pilot-style checklists to reduce analyst errors.\n\n**Direction:** Design AI security report templates based on aviation checklist principles (critical items first, binary yes/no where possible, challenge-response format). Compare: standard AI report vs. checklist-format report in a user study with 15 CS students triaging 10 vulnerability reports. Measure triage error rate and time.\n\n**Why it matters:** Reducing analyst error in vulnerability triage is a concrete safety improvement. Aviation checklist research has decades of empirical support for error reduction.\n\n**Relevant context:** Aviation checklist research (Gawande, Degani/Wiener). Cognitive load theory application to security reports (see earlier idea). Checklist-format AI security reports not designed or evaluated."
+  },
+  {
+    "idea_id": "gen-0209",
+    "run_id": "2026-04-07T15-12-49",
+    "stage": "generate",
+    "timestamp": "2026-04-07T17:16:32Z",
+    "subfield": "AI-Powered Defense",
+    "generation_strategy": "cross_domain_transfer",
+    "confidence": 0.65,
+    "body": "# Cross-Domain Transfer: Applying Anomaly Detection from Finance (Fraud Detection) to Network Intrusion Detection\n\n**Problem:** Financial fraud detection has developed sophisticated methods for imbalanced, high-stakes, time-series anomaly detection. These methods may transfer to network intrusion detection, which faces similar challenges.\n\n**Direction:** Implement a fraud-detection-inspired anomaly detection pipeline (isolation forest, autoencoder, or LSTM-based) trained on network flow data (CICIDS2017). Compare detection rate, false positive rate, and calibration to standard IDS ML baselines. Identify which fraud detection techniques most improve IDS performance.\n\n**Why it matters:** Financial fraud detection has invested heavily in low-FPR, high-precision anomaly detection under adversarial conditions. These lessons may directly improve network defense.\n\n**Relevant context:** Financial fraud detection methods (isolation forest, LSTM autoencoders) are well-documented. Network IDS using isolation forest exists but systematic comparison of fraud detection method portfolio to IDS baselines not found."
+  },
+  {
+    "idea_id": "gen-0210",
+    "run_id": "2026-04-07T15-12-49",
+    "stage": "generate",
+    "timestamp": "2026-04-07T17:16:32Z",
+    "subfield": "AI-Powered Defense",
+    "generation_strategy": "cross_domain_transfer",
+    "confidence": 0.65,
+    "body": "# Cross-Domain Transfer: Importing Usability Testing Methods from HCI to AI Security Tool Design\n\n**Problem:** AI security tools are evaluated on detection performance but not on usability by the human analysts who depend on them. Human-computer interaction (HCI) usability testing methods could reveal adoption barriers.\n\n**Direction:** Conduct a think-aloud usability study with 10 CS students using two AI security tools (e.g., Semgrep AI and a Claude-based scanner) to analyze the same codebase. Apply HCI usability metrics (task completion rate, errors, time on task, SUS score). Identify top 3 usability barriers.\n\n**Why it matters:** A tool that is technically excellent but poorly usable will not be adopted, leaving defenders without its protection. HCI methods can identify actionable design improvements.\n\n**Relevant context:** HCI usability testing is mature (SUS, think-aloud protocols, Nielsen heuristics). Application to AI security tool usability evaluation has not been published."
+  },
+  {
+    "idea_id": "gen-0211",
+    "run_id": "2026-04-07T15-12-49",
+    "stage": "generate",
+    "timestamp": "2026-04-07T17:16:32Z",
+    "subfield": "AI-Powered Defense",
+    "generation_strategy": "cross_domain_transfer",
+    "confidence": 0.65,
+    "body": "# Cross-Domain Transfer: Network Science Centrality Metrics to Prioritize Vulnerability Impact\n\n**Problem:** In software dependency graphs, some components are more central (more depended-upon) than others. A vulnerability in a central component has greater impact. Network science centrality metrics could improve AI vulnerability prioritization.\n\n**Direction:** For 10 open-source ecosystems (npm, PyPI, Maven), build dependency graphs. Compute betweenness and degree centrality for components with known CVEs. Test whether centrality metrics predict downstream impact (number of dependent packages affected). Integrate centrality score into vulnerability prioritization and measure improvement vs. CVSS-only prioritization.\n\n**Why it matters:** CVSS scores measure vulnerability severity in isolation but not ecosystem impact. Centrality-augmented prioritization could help defenders focus on the vulnerabilities that matter most to their dependency graph.\n\n**Relevant context:** Network science centrality is standard (Barab\u00e1si, Newman). Application to software vulnerability prioritization: some work exists (SolarWinds analysis) but not combined with AI scanners. Libraries.io provides dependency graph data."
+  },
+  {
+    "idea_id": "gen-0212",
+    "run_id": "2026-04-07T15-12-49",
+    "stage": "generate",
+    "timestamp": "2026-04-07T17:16:32Z",
+    "subfield": "AI-Powered Defense",
+    "generation_strategy": "causal_chain_intervention",
+    "confidence": 0.65,
+    "body": "# Causal Chain: Intervening on the Knowledge Transfer Gap Between AI Findings and Developer Education\n\n**Problem:** When AI finds a vulnerability, the explanation could either be used to just fix the specific issue OR to educate the developer so they avoid the pattern in future code. The educational link is rarely studied.\n\n**Direction:** Run an experiment: Group A receives AI vulnerability reports and patches the code. Group B receives AI vulnerability reports with explicit educational framing (pattern name, why it's dangerous, how to avoid it). Both groups then write new code with similar functionality. Measure: new vulnerability introduction rate per group.\n\n**Why it matters:** If AI vulnerability feedback can be designed to transfer knowledge, the rate of vulnerability introduction decreases over time. This is a high-leverage intervention.\n\n**Relevant context:** Secure Coding Warrior and similar platforms study developer security education. AI vulnerability feedback as a developer education mechanism has not been empirically studied."
+  },
+  {
+    "idea_id": "gen-0213",
+    "run_id": "2026-04-07T15-12-49",
+    "stage": "generate",
+    "timestamp": "2026-04-07T17:16:32Z",
+    "subfield": "AI-Powered Defense",
+    "generation_strategy": "novel_direction",
+    "confidence": 0.67,
+    "body": "# Novel Direction: Measuring AI Security Tool Performance Under API Cost Constraints\n\n**Problem:** AI security tools have API costs that create practical budgets for defenders. Performance under cost constraints is not systematically studied.\n\n**Direction:** Define a fixed API budget ($5, $20, $50). Develop three scanning strategies: (a) shallow-scan all files, (b) deep-scan a subset, (c) AI-prioritized subset. For each strategy and budget, measure CVEs found per dollar on a corpus of 10 projects with known CVEs. Identify the optimal strategy per budget level.\n\n**Why it matters:** Small organizations and open-source projects have tight budgets. Cost-aware AI defense strategy design democratizes access to AI security benefits.\n\n**Relevant context:** AIxCC average cost $152/task at competition scale. Mozilla Firefox: $4000 for exploit generation. No published study of cost-optimized defensive AI scanning strategies."
+  },
+  {
+    "idea_id": "gen-0214",
+    "run_id": "2026-04-07T15-12-49",
+    "stage": "generate",
+    "timestamp": "2026-04-07T17:16:32Z",
+    "subfield": "AI-Powered Defense",
+    "generation_strategy": "failure_mode_investigation",
+    "confidence": 0.72,
+    "body": "# Failure Mode: AI Security Tools Applied to Their Own Training Data (Overfitting to Known CVEs)\n\n**Problem:** LLMs trained on code repositories have seen many CVEs in their training data. AI vulnerability detection may be driven by pattern matching to training examples rather than genuine reasoning, inflating detection rates.\n\n**Direction:** For 20 CVEs, test AI detection performance on: (a) the original vulnerable code, (b) semantically equivalent vulnerable code with variable names and structure changed, (c) a novel variant that preserves the vulnerability but changes surface patterns. Measure detection rate degradation from (a) to (b) to (c).\n\n**Why it matters:** If AI detection relies on surface pattern matching, it will fail against attackers who slightly obfuscate code. Distinguishing genuine reasoning from memorization is critical for evaluating real defensive value.\n\n**Relevant context:** Benchmark contamination is a known issue in LLM evaluation. Security-specific contamination testing (whether AI 'knows' CVEs from training vs. reasons about them) not studied."
+  },
+  {
+    "idea_id": "gen-0215",
+    "run_id": "2026-04-07T15-12-49",
+    "stage": "generate",
+    "timestamp": "2026-04-07T17:16:32Z",
+    "subfield": "AI-Powered Defense",
+    "generation_strategy": "failure_mode_investigation",
+    "confidence": 0.65,
+    "body": "# Failure Mode: AI Security Scanners Applied to Minified/Compiled Code\n\n**Problem:** Production code is often minified (JavaScript) or compiled to bytecode (Java class files). AI vulnerability scanners designed for source code may fail on these representations.\n\n**Direction:** Take 15 JavaScript CVEs. Create three representations: (a) original source, (b) minified JavaScript, (c) TypeScript compiled to JavaScript. Run the same AI scanner on all three. Measure detection rate degradation per transformation. Also test on Java bytecode vs. source for 10 CVEs.\n\n**Why it matters:** If defenders only have access to minified/compiled code (e.g., third-party libraries), AI defense tools may provide no value. This is a common real-world scenario.\n\n**Relevant context:** AI vulnerability detection evaluated almost exclusively on source code. Real deployments often lack source code for dependencies. This gap is mentioned in practitioner discussions but not empirically studied."
+  },
+  {
+    "idea_id": "gen-0216",
+    "run_id": "2026-04-07T15-12-49",
+    "stage": "generate",
+    "timestamp": "2026-04-07T17:16:32Z",
+    "subfield": "AI-Powered Defense",
+    "generation_strategy": "failure_mode_investigation",
+    "confidence": 0.62,
+    "body": "# Failure Mode: AI Security Analysis of Legacy Code With Domain-Specific Conventions\n\n**Problem:** Legacy codebases use domain-specific conventions (e.g., COBOL banking rules, PLC ladder logic, custom internal frameworks) that AI models may not understand, leading to systematic false positives or missed vulnerabilities.\n\n**Direction:** Collect 10 CVEs from legacy COBOL programs (public sector codebases are sometimes available) or old-style C codebases with non-standard conventions. Run AI scanner. Compare detection rate and false positive rate vs. modern-convention C code CVEs. Analyze whether domain-specific conventions increase errors.\n\n**Why it matters:** Critical infrastructure and financial systems run legacy code. If AI defense tools fail on legacy code, the most critical systems are the least protected.\n\n**Relevant context:** ALOHA applied to OT/ICS systems (PNNL 2026). Legacy code AI analysis challenges mentioned in general SE research. Security-specific legacy code AI performance not studied."
+  },
+  {
+    "idea_id": "gen-0217",
+    "run_id": "2026-04-07T15-12-49",
+    "stage": "generate",
+    "timestamp": "2026-04-07T17:16:32Z",
+    "subfield": "AI-Powered Defense",
+    "generation_strategy": "failure_mode_investigation",
+    "confidence": 0.67,
+    "body": "# Failure Mode: AI Security Verdicts Are Influenced by Non-Security Code Quality Signals\n\n**Problem:** AI models may associate code quality signals (poor variable naming, lack of comments, high complexity) with vulnerability presence, creating false positives in messy-but-safe code and false negatives in clean-but-vulnerable code.\n\n**Direction:** Take 20 vulnerability-free but poorly written code samples (from open-source 'bad code' examples). Run AI scanner. Measure false positive rate as a function of code quality metrics (cyclomatic complexity, comment density, naming quality). Separately: take 10 vulnerability-containing but clean, well-structured code samples. Measure false negative rate.\n\n**Why it matters:** If AI security verdicts are confounded by code quality, defenders will over-audit messy code and under-audit clean-looking code. Sophisticated attackers will hide vulnerabilities in clean code.\n\n**Relevant context:** LLMs associate code quality with correctness in code generation tasks. The confounder effect on vulnerability detection is not studied. This is a concrete failure mode with safety implications."
+  },
+  {
+    "idea_id": "gen-0218",
+    "run_id": "2026-04-07T15-12-49",
+    "stage": "generate",
+    "timestamp": "2026-04-07T17:16:32Z",
+    "subfield": "AI-Powered Defense",
+    "generation_strategy": "backcast_from_success",
+    "confidence": 0.62,
+    "body": "# Backcast from AI-Provable Secure Code: What Formal Verification Capability Is Required?\n\n**Problem:** Define success as: AI can verify that a patch actually eliminates a vulnerability class (not just patches the specific instance). What formal verification + LLM integration capability is required?\n\n**Direction:** Survey the formal verification + AI integration literature (LLM-assisted Lean/Coq, CodeMender). For 5 simple vulnerability classes (buffer overflow, null dereference, integer overflow), assess whether current AI-assisted formal methods can prove absence. Identify the highest-maturity combination. Run a small experiment verifying one class.\n\n**Why it matters:** Patches that only fix the specific instance leave the vulnerability class intact. Provable elimination of vulnerability classes is the gold standard for defensive security.\n\n**Relevant context:** Martin Kleppmann 2025: AI making formal verification mainstream. DeepSeek-Prover-V2, Lean proofs. FormaliSE 2026. AI-assisted proof of vulnerability class elimination is nascent."
+  },
+  {
+    "idea_id": "gen-0219",
+    "run_id": "2026-04-07T15-12-49",
+    "stage": "generate",
+    "timestamp": "2026-04-07T17:16:32Z",
+    "subfield": "AI-Powered Defense",
+    "generation_strategy": "novel_direction",
+    "confidence": 0.65,
+    "body": "# Novel Direction: AI-Assisted Reverse Engineering for Malware Defense\n\n**Problem:** Malware analysis requires reverse engineering binary code, which is time-consuming for human analysts. AI-assisted reverse engineering tools could accelerate malware defense, but their accuracy is not well characterized.\n\n**Direction:** Take 10 publicly available malware samples (from VirusTotal public corpus or academic malware datasets). Use an LLM to analyze disassembly output (from Ghidra) and generate: (a) functional description, (b) C2 communication pattern, (c) persistence mechanism. Compare to ground-truth analysis from published malware reports. Measure accuracy.\n\n**Why it matters:** Faster malware analysis enables faster defensive response. If AI can accelerate the reverse engineering step, incident response timelines shrink significantly.\n\n**Relevant context:** AI-augmented SOC platforms integrate malware analysis. CyberSOCEval (CrowdStrike/Meta) includes malware analysis tasks. LLM analysis of disassembly output specifically not benchmarked against ground truth."
+  },
+  {
+    "idea_id": "gen-0220",
+    "run_id": "2026-04-07T15-12-49",
+    "stage": "generate",
+    "timestamp": "2026-04-07T17:16:32Z",
+    "subfield": "AI-Powered Defense",
+    "generation_strategy": "novel_direction",
+    "confidence": 0.7,
+    "body": "# Novel Direction: Tracking AI Security Tool Capability Improvement Using a Fixed Benchmark Over Time\n\n**Problem:** There is no longitudinal tracking of AI defensive capability improvement over time (CLAUDE.md open problem). A fixed benchmark run on successive model versions would provide this tracking.\n\n**Direction:** Define a fixed benchmark of 30 vulnerability detection tasks (spanning memory safety, injection, logic flaws). Run the benchmark on 4-5 successive versions of the same AI model (using API versioning where available) or on models released in chronological order. Plot detection rate, FPR, and explanation quality over time. Identify improvement trends.\n\n**Why it matters:** Longitudinal capability tracking is foundational for the field. Without it, we cannot assess progress or forecast when AI defense will be reliable enough for deployment.\n\n**Relevant context:** DARPA AIxCC showed 37%\u219286% detection improvement in one year, but this was a single competition event, not a longitudinal benchmark. CLAUDE.md explicitly lists this as an open problem."
+  },
+  {
+    "idea_id": "gen-0221",
+    "run_id": "2026-04-07T15-12-49",
+    "stage": "generate",
+    "timestamp": "2026-04-07T17:16:32Z",
+    "subfield": "AI-Powered Defense",
+    "generation_strategy": "experiment_variation",
+    "confidence": 0.65,
+    "body": "# Experiment Variation: AI Security Analysis with System-Level Context vs. Code-Only\n\n**Problem:** AI vulnerability scanners analyze code in isolation. Real vulnerability exploitability depends on system context (deployed configuration, network exposure, runtime environment). Adding system context may change scanner verdicts.\n\n**Direction:** For 15 CVEs with known deployment context (web-exposed vs. internal, root vs. non-root execution), run AI scanner in two conditions: (a) code only, (b) code + deployment context description. Measure: change in detection rate, change in severity rating, change in false positive rate.\n\n**Why it matters:** Context-aware vulnerability scoring could eliminate false positives for unexploitable vulnerabilities (e.g., buffer overflows in sandboxed processes). This is a concrete improvement over context-free scanning.\n\n**Relevant context:** CVSS v3 includes environmental metrics but these require manual input. Qualys Agent Val addresses exploitability validation. AI context-aware severity adjustment not studied."
+  },
+  {
+    "idea_id": "gen-0222",
+    "run_id": "2026-04-07T15-12-49",
+    "stage": "generate",
+    "timestamp": "2026-04-07T17:16:32Z",
+    "subfield": "AI-Powered Defense",
+    "generation_strategy": "compounding_risks",
+    "confidence": 0.68,
+    "body": "# Compounding Risk: AI Model Update + Undocumented Behavior Change = Unstable Security Tool Performance\n\n**Problem:** Two interacting failures: (1) AI model providers update models without detailed changelogs; (2) security tools built on these models depend on consistent behavior. Silent behavior changes can cause previously detected vulnerabilities to be missed after an update.\n\n**Direction:** Run a fixed vulnerability detection benchmark on the same model (via API) at two time points (or on two known API versions). Measure: which CVEs change from detected to missed or vice versa. Quantify behavioral drift. Propose a regression testing protocol for AI security tool operators.\n\n**Why it matters:** AI security tool operators cannot know when silent model updates change their tool's behavior. Unstable security tool performance is a governance and safety risk.\n\n**Relevant context:** AI model versioning and API stability are known operational challenges. Security-specific behavioral drift measurement after model updates not studied. This directly affects production AI security tool reliability."
+  },
+  {
+    "idea_id": "gen-0223",
+    "run_id": "2026-04-07T15-12-49",
+    "stage": "generate",
+    "timestamp": "2026-04-07T17:16:32Z",
+    "subfield": "AI-Powered Defense",
+    "generation_strategy": "follow_up_experiment",
+    "confidence": 0.65,
+    "body": "# Follow-Up: Characterizing the Cases Where AI Exploit Generation Succeeded in the Mozilla Study\n\n**Problem:** Mozilla reported 2 successful exploits from 22 found vulnerabilities. Understanding what made those 2 exploitable (and 20 not) is critical for calibrating AI dual-use risk.\n\n**Direction:** Reconstruct the conditions of the 2 successful Mozilla exploit cases from public information. Test whether the same vulnerability characteristics (CVE class, code complexity, exploit template availability) predict exploit success on a broader set of 15 known exploitable CVEs. Build a predictor of AI exploit-generation success.\n\n**Why it matters:** A predictor of when AI exploit generation succeeds identifies which vulnerability types need the strictest dual-use controls. This is directly actionable for AI safety policy.\n\n**Relevant context:** Mozilla + Anthropic 2026: 2/22 exploit success. Vulnerability characteristics of the 2 successful cases may be inferable from public CVE data. No analysis of conditions for AI exploit success published."
+  },
+  {
+    "idea_id": "gen-0224",
+    "run_id": "2026-04-07T15-12-49",
+    "stage": "generate",
+    "timestamp": "2026-04-07T17:16:32Z",
+    "subfield": "AI-Powered Defense",
+    "generation_strategy": "tool_or_benchmark_gap",
+    "confidence": 0.68,
+    "body": "# Tool Gap: AI Security Finding Reproducibility Measurement Protocol\n\n**Problem:** LLM outputs are non-deterministic. A vulnerability finding that disappears on re-run is not actionable. No standard protocol exists for measuring and reporting AI security finding reproducibility.\n\n**Direction:** Define a reproducibility score: fraction of N=10 independent runs that produce the same vulnerability finding at the same location. Measure this score for three AI scanners on a corpus of 20 CVEs. Identify which types of vulnerabilities (class, complexity, code size) have lower reproducibility scores.\n\n**Why it matters:** A finding that is not reproducible cannot be triaged, verified, or patched with confidence. Reproducibility is a fundamental quality requirement for security tools.\n\n**Relevant context:** Scientific reproducibility is a core research value. Security tool reproducibility is mentioned as a challenge (AI penetration testing guide 2026) but not measured. No reproducibility protocol for AI security findings found in literature."
+  },
+  {
+    "idea_id": "gen-0225",
+    "run_id": "2026-04-07T15-12-49",
+    "stage": "generate",
+    "timestamp": "2026-04-07T17:16:32Z",
+    "subfield": "AI-Powered Defense",
+    "generation_strategy": "novel_direction",
+    "confidence": 0.65,
+    "body": "# Novel Direction: AI-Assisted Dependency Chain Vulnerability Propagation Analysis\n\n**Problem:** When a vulnerability is found in a base library, understanding which dependent packages are affected requires tracking how the vulnerable code path propagates through the dependency tree. AI could automate this analysis.\n\n**Direction:** For 5 supply chain CVEs (e.g., Log4Shell, Polyfill.io compromise), use an LLM to analyze whether the vulnerability is reachable in 10 known dependent packages by examining call chains. Compare AI reachability analysis to known affected-package lists (from NVD or GitHub advisories). Measure accuracy.\n\n**Why it matters:** Accurate reachability analysis reduces alert fatigue from supply chain CVEs (not all dependents are actually affected). AI-assisted reachability could prioritize which dependents need immediate patching.\n\n**Relevant context:** OWASP Top 10:2025 A03: supply chain failures. Dependency graph analysis tools exist (Google's deps.dev). AI-assisted reachability analysis for supply chain CVEs not studied."
+  },
+  {
+    "idea_id": "gen-0226",
+    "run_id": "2026-04-07T15-12-49",
+    "stage": "generate",
+    "timestamp": "2026-04-07T17:16:32Z",
+    "subfield": "AI-Powered Defense",
+    "generation_strategy": "failure_mode_investigation",
+    "confidence": 0.65,
+    "body": "# Failure Mode: AI Security Tools Applied to AI-Framework Code (Meta-Level Security Failure)\n\n**Problem:** AI frameworks (PyTorch, TensorFlow, LangChain) are themselves software with vulnerabilities. AI security tools should be able to find vulnerabilities in the very frameworks they depend on, but this creates a self-referential challenge.\n\n**Direction:** Collect 10 CVEs from PyTorch, TensorFlow, and LangChain. Run AI vulnerability scanners on the vulnerable framework code. Measure detection rate. Separately: test whether the AI scanner being used is itself vulnerable to any of the found CVEs (check its known dependency versions).\n\n**Why it matters:** An AI security tool that cannot find vulnerabilities in its own dependencies is blind to its own attack surface. This is a concrete and testable meta-level security failure.\n\n**Relevant context:** LiteLLM supply chain compromise (Trend Micro 2026). AI framework security vulnerabilities documented (PyTorch CVEs, TensorFlow CVEs). AI tool self-analysis not studied."
+  },
+  {
+    "idea_id": "gen-0227",
+    "run_id": "2026-04-07T15-12-49",
+    "stage": "generate",
+    "timestamp": "2026-04-07T17:16:32Z",
+    "subfield": "AI-Powered Defense",
+    "generation_strategy": "causal_chain_intervention",
+    "confidence": 0.65,
+    "body": "# Causal Chain: Intervening on the Security Tool Configuration Gap\n\n**Problem:** Security tools (AI and traditional) often have high false positive rates at default configurations, causing teams to disable or ignore them. The causal chain: poor default config \u2192 high FPR \u2192 alert fatigue \u2192 tool disabled \u2192 undetected vulnerabilities.\n\n**Direction:** For three AI security tools, systematically vary key configuration parameters (sensitivity threshold, rule subsets, context depth). For each configuration, measure FPR and TPR on a ground-truth corpus. Identify configurations on the Pareto frontier (low FPR, high TPR). Assess whether default configurations are Pareto-optimal.\n\n**Why it matters:** If default configurations are systematically suboptimal, teams could improve their security posture with no additional cost through better configuration. This is an immediately actionable finding.\n\n**Relevant context:** Tool misconfiguration leading to disabling is a known security operations challenge. Systematic configuration optimization for AI vulnerability scanners not published. Algomox blog notes configuration as a key FPR driver."
+  },
+  {
+    "idea_id": "gen-0228",
+    "run_id": "2026-04-07T15-12-49",
+    "stage": "generate",
+    "timestamp": "2026-04-07T17:16:32Z",
+    "subfield": "AI-Powered Defense",
+    "generation_strategy": "experiment_variation",
+    "confidence": 0.67,
+    "body": "# Experiment Variation: Comparing AI Vulnerability Detection Performance Across Repository Sizes\n\n**Problem:** AI scanner performance on small projects (< 10K LOC) vs. large projects (> 1M LOC) is not characterized. Context limitations and prompt chunking strategies may create systematic differences.\n\n**Direction:** Select 10 small, 10 medium, and 10 large open-source projects with known CVEs. Run the same AI scanner using a consistent chunking strategy. Measure detection rate and false positive rate by project size category. Test whether detection rate degrades for large codebases.\n\n**Why it matters:** Large codebases (operating systems, browsers like Firefox) are high-value targets. If AI detection degrades at scale, the most important targets are the least protected.\n\n**Relevant context:** Anthropic 2026: 500+ vulnerabilities in production codebases. AIxCC: 54 million lines of code. LLM context window limitations. Systematic size-vs-performance analysis not published."
+  },
+  {
+    "idea_id": "gen-0229",
+    "run_id": "2026-04-07T15-12-49",
+    "stage": "generate",
+    "timestamp": "2026-04-07T17:16:32Z",
+    "subfield": "AI-Powered Defense",
+    "generation_strategy": "backcast_from_success",
+    "confidence": 0.6,
+    "body": "# Backcast from Zero-Day Defense: What Early Warning Signals Would AI Need to Detect?\n\n**Problem:** Zero-day defenses must act before CVE publication. Define success as: AI detects a vulnerability before it is publicly reported. What signals would an AI system need to access to achieve this?\n\n**Direction:** Analyze 10 historical zero-days (pre-patch window). For each, identify signals that were present before disclosure: (a) suspicious commit patterns, (b) unusual error rates in telemetry, (c) anomalous traffic patterns. Test whether current AI tools (applied retrospectively to the pre-disclosure data) can detect these signals. Propose a minimal early warning dataset.\n\n**Why it matters:** Early warning capability would give defenders a window to patch before attackers exploit. Characterizing what data AI needs for zero-day early warning is a foundational research question.\n\n**Relevant context:** Zero-day detection research is active but primarily focuses on post-disclosure. AI threat intelligence platforms claim predictive capabilities without empirical validation. Retrospective signal analysis for zero-days is novel."
+  },
+  {
+    "idea_id": "gen-0230",
+    "run_id": "2026-04-07T15-12-49",
+    "stage": "generate",
+    "timestamp": "2026-04-07T17:16:32Z",
+    "subfield": "AI-Powered Defense",
+    "generation_strategy": "compounding_risks",
+    "confidence": 0.65,
+    "body": "# Compounding Risk: High AI Capability Diffusion + Weak Safety Controls = Amplified Offense-Defense Asymmetry\n\n**Problem:** Two interacting failures: (1) AI offensive capabilities diffuse rapidly (open-source models, fine-tuning); (2) safety controls on these capabilities are bypassed by a significant fraction of users. Combined, the effective uplift for attackers from AI capabilities is much larger than benchmarks suggest.\n\n**Direction:** Estimate the effective diffusion of AI offensive capability: (a) measure jailbreak success rate on publicly available models, (b) estimate the fraction of model users with sufficient technical sophistication to fine-tune away safety controls (from GitHub activity data), (c) compute the effective capability uplift for attackers accounting for safety control bypass. Compare to defender capability access.\n\n**Why it matters:** Policy discussions focus on capability levels without accounting for safety control bypass rates. This analysis would give a more realistic picture of the AI-amplified threat landscape.\n\n**Relevant context:** Jailbreak success: 90-99% on open-weight models (TechRxiv 2026). International AI Safety Report 2026: dual-use risks and safety framework gaps. Fine-tuning removing safety controls is documented. The compounding of diffusion + bypass not analyzed."
+  },
+  {
+    "idea_id": "gen-0231",
+    "run_id": "2026-04-07T15-12-49",
+    "stage": "generate",
+    "timestamp": "2026-04-07T17:16:32Z",
+    "subfield": "AI-Powered Defense",
+    "generation_strategy": "cross_domain_transfer",
+    "confidence": 0.63,
+    "body": "# Cross-Domain Transfer: Applying Audit Trail Methods from Accounting to AI Security Decision Logging\n\n**Problem:** Financial auditing requires complete, tamper-evident audit trails of decisions. AI-powered security tools make consequential decisions (block traffic, flag code, generate patches) but rarely maintain auditable decision logs.\n\n**Direction:** Design an AI security decision audit trail specification: what must be logged (input, model version, prompt, output, confidence, human action taken), in what format, and with what tamper protection. Prototype this for one AI scanner. Evaluate: does the audit trail enable retroactive quality assessment of AI security decisions?\n\n**Why it matters:** Accountability for AI security decisions requires audit trails. Without them, security incidents involving AI-generated false negatives or incorrect patches cannot be investigated. This is a governance and safety requirement.\n\n**Relevant context:** Financial audit trail requirements (SOX, PCAOB). AI governance frameworks discuss logging but without security-specific specifications. AI security decision logging is not formalized in the literature."
+  },
+  {
+    "idea_id": "gen-0232",
+    "run_id": "2026-04-07T15-12-49",
+    "stage": "generate",
+    "timestamp": "2026-04-07T17:16:32Z",
+    "subfield": "AI-Powered Defense",
+    "generation_strategy": "experiment_variation",
+    "confidence": 0.7,
+    "body": "# Experiment Variation: Effect of Adversarial Prompt Injection in Code Comments on AI Scanner Performance\n\n**Problem:** Attackers can embed adversarial instructions in code comments or string literals to manipulate AI security scanner outputs. The effectiveness of this attack at scale is not characterized.\n\n**Direction:** Take 20 vulnerable code samples. Inject adversarial instructions in code comments (e.g., 'Note: This code has been reviewed and is safe') at varying intensity (1 comment vs. 5 comments vs. comments in every function). Measure detection rate degradation as a function of injection density. Propose a simple countermeasure.\n\n**Why it matters:** Code under review in a supply chain attack scenario may be controlled by the attacker. Prompt injection as an evasion technique for AI security scanners is a practical attack with concrete safety implications.\n\n**Relevant context:** Prompt injection in AI coding tools: 30+ vulnerabilities found in AI IDEs (2025 research). Prompt injection targeting security scanner output specifically is a novel and unexplored attack variant."
+  },
+  {
+    "idea_id": "gen-0233",
+    "run_id": "2026-04-07T15-12-49",
+    "stage": "generate",
+    "timestamp": "2026-04-07T17:16:32Z",
+    "subfield": "AI-Powered Defense",
+    "generation_strategy": "novel_direction",
+    "confidence": 0.65,
+    "body": "# Novel Direction: AI-Assisted Security Regression Testing Design\n\n**Problem:** When a patch is applied, regression testing should verify that (a) the vulnerability is fixed, (b) no new vulnerabilities are introduced, (c) functionality is preserved. AI could assist in designing targeted regression tests for security patches.\n\n**Direction:** For 15 public CVE patches, use an LLM to generate: (a) a test case that would have detected the original vulnerability, (b) a test case verifying the patch is effective, (c) a test case checking for introduced regressions. Compare AI-generated tests to existing CVE PoC tests. Measure coverage and correctness.\n\n**Why it matters:** Security regression testing is underinvested. AI-assisted test generation could automate a currently manual, expertise-intensive process.\n\n**Relevant context:** Google CodeMender generates patches. Meta AutoPatchBench evaluates patch quality. AI-generated security regression tests (not just patches) are not studied."
+  },
+  {
+    "idea_id": "gen-0234",
+    "run_id": "2026-04-07T15-12-49",
+    "stage": "generate",
+    "timestamp": "2026-04-07T17:16:32Z",
+    "subfield": "AI-Powered Defense",
+    "generation_strategy": "tool_or_benchmark_gap",
+    "confidence": 0.7,
+    "body": "# Tool Gap: A Risk-Stratified Evaluation Dataset for AI Vulnerability Detection\n\n**Problem:** Existing vulnerability detection benchmarks mix low-severity and high-severity vulnerabilities. A risk-stratified benchmark (where performance on critical vulnerabilities is separately reported) does not exist.\n\n**Direction:** Curate a benchmark of 60 vulnerabilities: 20 critical (CVSS \u2265 9.0), 20 high (7.0-8.9), 20 medium (4.0-6.9). Run three AI scanners on all 60. Report detection rate, FPR, and explanation quality separately by severity tier. Compute the 'critical coverage gap' (difference between overall and critical-severity detection rate).\n\n**Why it matters:** A scanner with 80% overall detection rate may only catch 50% of critical vulnerabilities. Risk-stratified benchmarking reveals this gap and motivates targeted improvement on high-severity cases.\n\n**Relevant context:** Mozilla: 14 high-severity Firefox vulnerabilities. CVSS severity stratification is standard. No risk-stratified AI vulnerability detection benchmark found."
+  },
+  {
+    "idea_id": "gen-0235",
+    "run_id": "2026-04-07T15-12-49",
+    "stage": "generate",
+    "timestamp": "2026-04-07T17:16:32Z",
+    "subfield": "AI-Powered Defense",
+    "generation_strategy": "failure_mode_investigation",
+    "confidence": 0.68,
+    "body": "# Failure Mode: AI Security Tools Applied to Code with Security-Relevant Business Logic\n\n**Problem:** Many vulnerabilities involve business logic (authentication bypass, privilege escalation, incorrect authorization) that requires understanding the application's intended behavior. These are hard for AI tools that lack business context.\n\n**Direction:** Collect 15 business logic CVEs (authentication bypass, IDOR, privilege escalation \u2014 no memory corruption). Run AI scanner on the vulnerable code without business context. Then repeat with a business context description (from README or documentation). Measure detection rate difference. Assess whether business context is necessary.\n\n**Why it matters:** Business logic vulnerabilities are often the most dangerous and hardest to detect with automated tools. Characterizing AI's limitations here identifies a high-priority gap.\n\n**Relevant context:** OWASP broken access control (A01:2025) is a business logic vulnerability class. LLM code analysis literature focuses on technical vulnerabilities, not business logic. Business logic vulnerability detection gap is noted in practitioner literature."
+  },
+  {
+    "idea_id": "gen-0236",
+    "run_id": "2026-04-07T15-12-49",
+    "stage": "generate",
+    "timestamp": "2026-04-07T17:16:32Z",
+    "subfield": "AI-Powered Defense",
+    "generation_strategy": "follow_up_experiment",
+    "confidence": 0.65,
+    "body": "# Follow-Up: Measuring Whether Vulnerability Reports Generated by AI Are Actually Used by Maintainers\n\n**Problem:** AI tools can generate detailed vulnerability reports and patches, but it is unknown what fraction of AI-generated reports are acted upon by project maintainers vs. ignored.\n\n**Direction:** Search GitHub issue trackers and pull requests for AI-generated security reports (using characteristic language patterns from known AI security tools like CodeQL AI suggestions, Copilot security alerts). For a sample of 50 AI-generated security reports, measure: time-to-close, closed-with-patch rate, maintainer response quality.\n\n**Why it matters:** If AI-generated security reports are systematically ignored, the detection improvement from AI tools does not translate to security improvement. Understanding why reports are ignored enables report quality improvement.\n\n**Relevant context:** Dependabot/GitHub security advisory alerts are partly AI-generated and their acceptance rates are partially studied. AI-generated vulnerability report acceptance rates for LLM-generated reports specifically not measured."
+  },
+  {
+    "idea_id": "gen-0237",
+    "run_id": "2026-04-07T15-12-49",
+    "stage": "generate",
+    "timestamp": "2026-04-07T17:16:32Z",
+    "subfield": "AI-Powered Defense",
+    "generation_strategy": "causal_chain_intervention",
+    "confidence": 0.62,
+    "body": "# Causal Chain: Intervening on the Coordination Failure Between AI Security Teams and Development Teams\n\n**Problem:** AI security tools detect vulnerabilities, but the causal chain to remediation passes through organizational coordination between security and development teams. This coordination often fails (different priorities, timelines, communication norms).\n\n**Direction:** Survey or observe (via public issue tracker data) the communication patterns between security tool outputs and developer responses. Identify the characteristics of AI security reports that receive faster responses: severity framing, code specificity, patch-included vs. not. Derive communication templates that minimize coordination failures.\n\n**Why it matters:** Technical detection quality is necessary but not sufficient. Organizational coordination is the binding constraint on remediation. Communication design is an under-studied lever.\n\n**Relevant context:** Security-development coordination failures are well-documented in security engineering practice. AI security tool communication design for developer uptake is not studied."
+  },
+  {
+    "idea_id": "gen-0238",
+    "run_id": "2026-04-07T15-12-49",
+    "stage": "generate",
+    "timestamp": "2026-04-07T17:16:32Z",
+    "subfield": "AI-Powered Defense",
+    "generation_strategy": "experiment_variation",
+    "confidence": 0.65,
+    "body": "# Experiment: Cross-Language Vulnerability Pattern Transfer in AI Detection\n\n**Problem:** A SQL injection vulnerability looks structurally similar whether in Python, PHP, or Ruby. AI models may transfer detection knowledge across languages or may fail to do so. This cross-language generalization is not characterized.\n\n**Direction:** Take 10 vulnerability instances, each implemented in 3 languages (Python, PHP, Ruby) with equivalent logic. Test whether an LLM trained on Python security examples detects the same vulnerability pattern in PHP and Ruby without language-specific training. Compare detection rate across languages for structurally equivalent vulnerabilities.\n\n**Why it matters:** Cross-language transfer would make AI security tools robust to new language adoption. Failure to transfer means each new language requires its own vulnerability training data.\n\n**Relevant context:** Cross-domain vulnerability detection (CD-VulD, arXiv 2020, IEEE TDSC). Cross-language (not cross-project) vulnerability pattern transfer not specifically studied for LLMs."
+  },
+  {
+    "idea_id": "gen-0239",
+    "run_id": "2026-04-07T15-12-49",
+    "stage": "generate",
+    "timestamp": "2026-04-07T17:16:32Z",
+    "subfield": "AI-Powered Defense",
+    "generation_strategy": "compounding_risks",
+    "confidence": 0.65,
+    "body": "# Compounding Risk: Overfit AI Security Model + Novel Attack Framework = Comprehensive Evasion\n\n**Problem:** Two interacting failures: (1) AI security models may be overfit to existing vulnerability patterns (CVE training data); (2) new attack frameworks (e.g., new OWASP Top 10 categories) introduce patterns not in training data. Combined, attackers using new frameworks evade AI defense entirely.\n\n**Direction:** Train or prompt-engineer an AI scanner optimized for OWASP Top 10:2021 patterns. Test its detection rate on OWASP Top 10:2025 new categories (Software Supply Chain Failures, AI Security). Measure detection degradation for new vs. existing categories. Quantify the temporal evasion window when new attack frameworks emerge.\n\n**Why it matters:** AI defenses trained on historical patterns are systematically blind to paradigm-shift attacks. This compound failure is predictable and preventable.\n\n**Relevant context:** OWASP Top 10:2025 introduces new categories including Software Supply Chain Failures. LLM vulnerability detection training on OWASP patterns. Temporal evasion due to training data cutoff not studied."
+  },
+  {
+    "idea_id": "gen-0240",
+    "run_id": "2026-04-07T15-12-49",
+    "stage": "generate",
+    "timestamp": "2026-04-07T17:16:32Z",
+    "subfield": "AI-Powered Defense",
+    "generation_strategy": "tool_or_benchmark_gap",
+    "confidence": 0.65,
+    "body": "# Tool Gap: Evaluation Rubric for AI-Assisted Incident Response Quality\n\n**Problem:** AI-assisted incident response is increasingly deployed but there is no standardized rubric for evaluating the quality of AI incident response guidance (is the containment advice correct? Is the attribution accurate? Is the recovery plan complete?).\n\n**Direction:** Design a multi-dimensional rubric for AI incident response quality: (a) threat identification accuracy, (b) containment advice correctness, (c) attribution quality, (d) recovery plan completeness. Validate the rubric by applying it to AI responses to 10 tabletop incident scenarios. Compute inter-rater reliability.\n\n**Why it matters:** Without a quality rubric, AI incident response tools cannot be evaluated or compared. Incorrect containment or recovery advice in a real incident could extend or worsen it.\n\n**Relevant context:** CyberSOCEval (CrowdStrike/Meta) includes incident response tasks. ExCyTIn-Bench covers SOC investigation. An explicit rubric for AI incident response quality dimensions is not published."
+  },
+  {
+    "idea_id": "gen-0241",
+    "run_id": "2026-04-07T15-12-49",
+    "stage": "generate",
+    "timestamp": "2026-04-07T17:16:32Z",
+    "subfield": "AI-Powered Defense",
+    "generation_strategy": "novel_direction",
+    "confidence": 0.67,
+    "body": "# Novel Direction: AI-Assisted Security Review of AI System Prompts and Configurations\n\n**Problem:** AI systems are deployed with system prompts and configurations that may contain security vulnerabilities (insecure defaults, over-permissive capabilities, prompt injection vectors). These 'AI configuration vulnerabilities' are not covered by traditional security scanning.\n\n**Direction:** Collect 30 publicly shared AI system prompts (from GitHub, Hugging Face, practitioner blogs). Use an LLM to analyze each for: (a) prompt injection vulnerabilities, (b) over-permissive capability grants, (c) information disclosure risks. Compare AI-identified issues to a manually-derived ground truth. Measure detection accuracy.\n\n**Why it matters:** As AI systems proliferate, insecure AI configurations become a major attack surface. AI-assisted scanning of AI system prompts for security issues is a novel and important application.\n\n**Relevant context:** Prompt injection in AI coding tools found in 10+ AI IDEs (2025). OWASP LLM Top 10 includes system prompt security. Automated scanning of system prompts for security vulnerabilities is not studied."
+  },
+  {
+    "idea_id": "gen-0242",
+    "run_id": "2026-04-07T15-12-49",
+    "stage": "generate",
+    "timestamp": "2026-04-07T17:16:32Z",
+    "subfield": "AI-Powered Defense",
+    "generation_strategy": "experiment_variation",
+    "confidence": 0.62,
+    "body": "# Experiment: AI Vulnerability Detection Performance as a Function of Programming Paradigm\n\n**Problem:** Functional, object-oriented, and procedural programming paradigms produce different code structures. AI vulnerability detection may perform differently across paradigms due to training data distribution.\n\n**Direction:** Select 10 CVEs from each of three paradigm-dominant contexts: (a) functional (Haskell, OCaml, or Erlang code), (b) object-oriented (Java), (c) procedural (C). Run the same LLM on all. Measure detection rate per paradigm. Analyze whether functional paradigm code has lower detection rates due to training data underrepresentation.\n\n**Why it matters:** Security-critical systems sometimes use functional languages (financial systems, theorem provers). If AI defense tools underperform on functional code, this creates a dangerous gap.\n\n**Relevant context:** LLM training data is heavily biased toward Python, JavaScript, Java (GitHub distribution). Functional language representation in training data is lower. Detection performance vs. training data frequency not studied."
+  },
+  {
+    "idea_id": "gen-0243",
+    "run_id": "2026-04-07T15-12-49",
+    "stage": "generate",
+    "timestamp": "2026-04-07T17:16:32Z",
+    "subfield": "AI-Powered Defense",
+    "generation_strategy": "novel_direction",
+    "confidence": 0.65,
+    "body": "# Novel Direction: Measuring the Effect of AI Security Tool Adoption on Developer Security Learning\n\n**Problem:** AI security tools may either educate developers (by explaining vulnerabilities) or prevent learning (by automating security decisions developers would otherwise learn from). This effect on developer security knowledge is not studied.\n\n**Direction:** Pre/post study with 20 CS students: give Group A six weeks of AI-assisted code review (AI flags and explains vulnerabilities), Group B six weeks of manual security review training, Group C no security review. Administer a code security knowledge test at the start and end. Measure knowledge gain per group.\n\n**Why it matters:** If AI security tools prevent developer security learning, long-term security posture worsens even as short-term detection rates improve. This is a safety-relevant side effect of AI defense tools.\n\n**Relevant context:** Developer security education is a studied field (Secure Code Warrior, research on security training effectiveness). AI security tool effect on developer learning not studied. Automation skill atrophy documented in aviation."
+  },
+  {
+    "idea_id": "gen-0244",
+    "run_id": "2026-04-07T15-12-49",
+    "stage": "generate",
+    "timestamp": "2026-04-07T17:16:32Z",
+    "subfield": "AI-Powered Defense",
+    "generation_strategy": "replication_with_twist",
+    "confidence": 0.68,
+    "body": "# Replication: Validating AI Vulnerability Detection Claims on Independent Code Corpora\n\n**Problem:** Published AI vulnerability detection rates (37.4% zero-shot, 57-62% with prompting) are measured on specific benchmarks. Independent replication on different corpora is needed.\n\n**Direction:** Select a vulnerability detection paper with a published benchmark. Replicate the evaluation protocol on a completely different set of 30 CVEs (different language, different project type, similar severity distribution). Report: detection rate, comparison to published benchmark, and analysis of sources of difference.\n\n**Why it matters:** Scientific replication on independent corpora is fundamental to building reliable knowledge. If published detection rates don't generalize, the literature overstates AI defensive capability.\n\n**Relevant context:** MDPI AI vulnerability detection review (2025), arXiv 2502.07049 (LLMs in Software Security). Multiple benchmark datasets used inconsistently across studies. Independent replication studies not common in this domain."
+  },
+  {
+    "idea_id": "gen-0245",
+    "run_id": "2026-04-07T15-12-49",
+    "stage": "generate",
+    "timestamp": "2026-04-07T17:16:32Z",
+    "subfield": "AI-Powered Defense",
+    "generation_strategy": "causal_chain_intervention",
+    "confidence": 0.58,
+    "body": "# Causal Chain: Formalizing the Offense-Defense Balance as a Dynamic System\n\n**Problem:** The offense-defense balance in AI-assisted security is a dynamic system: as AI defense improves, attackers adapt, which drives further defensive improvement. The dynamics of this arms race are not modeled.\n\n**Direction:** Build a simple predator-prey (Lotka-Volterra) model of the AI offense-defense arms race: defense capability and offense capability as two interacting variables, with growth driven by published capability improvement rates (AIxCC 37%\u219286%). Compute equilibrium conditions and stability. Validate against historical offense-defense data points.\n\n**Why it matters:** Understanding the arms race dynamics informs whether investing in AI defense will produce long-term security improvement or merely shift the equilibrium. This is fundamental to policy decisions about AI security investment.\n\n**Relevant context:** Sarma & Fisher 2026 (RAND): discusses offense-defense balance but without formal dynamic modeling. Lotka-Volterra models applied to evolutionary arms races in biology and economics. Application to AI security arms race is novel."
+  },
+  {
+    "idea_id": "gen-0246",
+    "run_id": "2026-04-07T15-12-49",
+    "stage": "generate",
+    "timestamp": "2026-04-07T17:16:32Z",
+    "subfield": "AI-Powered Defense",
+    "generation_strategy": "experiment_variation",
+    "confidence": 0.67,
+    "body": "# Experiment: AI Vulnerability Detection Across Levels of Code Obfuscation Used in Production\n\n**Problem:** Production code undergoes legitimate obfuscation (minification, dead code elimination, inlining) as part of build pipelines. The effect of legitimate build-pipeline transformations on AI scanner performance is not characterized.\n\n**Direction:** Take 15 vulnerable JavaScript functions. Apply a production build pipeline (Webpack with various optimization levels). Run AI scanner on: (a) source, (b) development build, (c) production build. Measure detection rate per build level. Identify at which optimization level detection becomes unreliable.\n\n**Why it matters:** Real deployments use production builds, not source code. If AI scanners only work on source, they have limited value in deployment contexts where only production artifacts are available.\n\n**Relevant context:** JavaScript minification is universal in web development. AI vulnerability detection on minified JavaScript not studied. This directly affects the practical value of AI scanning in deployment contexts."
+  },
+  {
+    "idea_id": "gen-0247",
+    "run_id": "2026-04-07T15-12-49",
+    "stage": "generate",
+    "timestamp": "2026-04-07T17:16:32Z",
+    "subfield": "AI-Powered Defense",
+    "generation_strategy": "tool_or_benchmark_gap",
+    "confidence": 0.67,
+    "body": "# Novel Direction: Measuring AI Security Tool Coverage of MITRE ATT&CK Techniques\n\n**Problem:** MITRE ATT&CK provides a comprehensive taxonomy of attack techniques. AI security tools should ideally provide defensive coverage across this taxonomy, but their coverage is not mapped.\n\n**Direction:** Select 30 ATT&CK techniques (10 from Initial Access, 10 from Execution, 10 from Persistence). For each, design a code-level or configuration-level test case. Run three AI scanners. Map detection success to ATT&CK technique. Produce a coverage heatmap showing which techniques have low AI defensive coverage.\n\n**Why it matters:** The ATT&CK coverage map reveals systematic blind spots in AI defense relative to a comprehensive attack taxonomy. This directly informs where AI defensive research should focus.\n\n**Relevant context:** MITRE ATT&CK is a standard framework for threat modeling. CrowdStrike/Meta CyberSOCEval uses threat intelligence. AI scanner coverage mapped to ATT&CK not published."
+  },
+  {
+    "idea_id": "gen-0248",
+    "run_id": "2026-04-07T15-12-49",
+    "stage": "generate",
+    "timestamp": "2026-04-07T17:16:32Z",
+    "subfield": "AI-Powered Defense",
+    "generation_strategy": "cross_domain_transfer",
+    "confidence": 0.62,
+    "body": "# Cross-Domain Transfer: Applying Clinical Decision Support Evaluation Methods to AI Security Decision Support\n\n**Problem:** Clinical decision support systems (CDSS) have rigorous evaluation frameworks (sensitivity, specificity, clinical impact, workflow integration). These methods could be applied to AI security decision support tools.\n\n**Direction:** Apply a clinical decision support evaluation framework (adapted from the CDSS literature) to an AI vulnerability scanner. Evaluate: sensitivity/specificity on ground-truth cases, workflow integration impact (triage time, false work rate), and calibration. Compare to standard ML evaluation metrics used in security.\n\n**Why it matters:** CDSS evaluation frameworks are designed for high-stakes, time-sensitive decisions with costly errors \u2014 exactly the profile of AI security decisions. Importing this framework may reveal evaluation gaps.\n\n**Relevant context:** Clinical decision support evaluation: Wyatt & Spiegelhalter criteria, GRADE framework. AI security tool evaluation follows simpler ML metrics. The parallel between CDSS and AI security decision support is novel."
+  },
+  {
+    "idea_id": "gen-0249",
+    "run_id": "2026-04-07T15-12-49",
+    "stage": "generate",
+    "timestamp": "2026-04-07T17:16:32Z",
+    "subfield": "AI-Powered Defense",
+    "generation_strategy": "failure_mode_investigation",
+    "confidence": 0.63,
+    "body": "# Failure Mode: AI Security Scanners Systematically Miss Vulnerabilities in Test Code\n\n**Problem:** Software repositories include test code alongside production code. Vulnerabilities in test code (hardcoded credentials, insecure test fixtures) may expose production systems. AI scanners may not adequately cover test code.\n\n**Direction:** Collect 20 CVEs where the vulnerability was in test/fixture code (from CVE databases and bug bounty reports). Run AI scanner on the repositories. Measure: detection rate for test code vs. production code CVEs. Assess whether AI scanners apply the same scrutiny to test vs. production code.\n\n**Why it matters:** Test code vulnerabilities are a growing attack vector (hardcoded credentials in test suites, insecure test databases). If AI scanners deprioritize test code, a growing attack surface is systematically under-defended.\n\n**Relevant context:** Hardcoded credentials in test code is a documented vulnerability class. GitHub Secret Scanning finds tokens in test code. Systematic comparison of AI scanner coverage for test vs. production code not studied."
+  },
+  {
+    "idea_id": "gen-0250",
+    "run_id": "2026-04-07T15-12-49",
+    "stage": "generate",
+    "timestamp": "2026-04-07T17:16:32Z",
+    "subfield": "AI-Powered Defense",
+    "generation_strategy": "backcast_from_success",
+    "confidence": 0.6,
+    "body": "# Backcast from Trustworthy AI Security Certification: What Standards Are Required?\n\n**Problem:** For AI security tools to be deployed in high-stakes contexts (critical infrastructure, financial systems), they need certification standards. What does a certification process for AI security tools require, and what research is needed to support it?\n\n**Direction:** Survey existing software security certification standards (Common Criteria, FIPS, IEC 62443 for OT). Identify the gaps that AI-specific properties (non-determinism, knowledge cutoff, hallucination) create for these frameworks. Propose an extension to one existing standard. Assess feasibility with a sample evaluation.\n\n**Why it matters:** AI security tools deployed in critical infrastructure without certification create systemic risk. Defining the research needed for AI security certification is a high-leverage contribution to safety.\n\n**Relevant context:** IEC 62443 (OT security). Common Criteria. NIST AI RMF. Formal methods for AI safety (Frontiers journal 2026). AI-specific security tool certification standards not developed."
+  },
+  {
+    "idea_id": "gen-0251",
+    "run_id": "2026-04-07T15-12-49",
+    "stage": "generate",
+    "timestamp": "2026-04-07T17:16:32Z",
+    "subfield": "AI-Powered Defense",
+    "generation_strategy": "novel_direction",
+    "confidence": 0.65,
+    "body": "# Novel Direction: Studying Misalignment Between AI Security Tool Objectives and Defender Goals\n\n**Problem:** AI security tools are optimized for measurable metrics (detection rate, FPR) that may not perfectly align with defender goals (risk reduction, breach prevention, minimum analyst burden). This misalignment may cause AI tools to maximize metrics while not improving real-world security.\n\n**Direction:** For three AI vulnerability scanners, document their stated objective (what they optimize for). For each, identify a scenario where optimizing the stated objective diverges from real security improvement (e.g., finding many low-severity issues while missing one critical one). Quantify the divergence on a test corpus. Propose better-aligned objectives.\n\n**Why it matters:** This is an AI alignment problem in miniature. Security tools optimizing the wrong metric cause organizations to misallocate defensive effort. Understanding the misalignment gap enables better tool design.\n\n**Relevant context:** Goodhart's Law: when a measure becomes a target, it ceases to be a good measure. Applied to AI security tool metrics, this is unexplored. Risk-stratified benchmarking (see related idea) is a partial remedy."
+  },
+  {
+    "idea_id": "gen-0252",
+    "run_id": "2026-04-07T15-12-49",
+    "stage": "generate",
+    "timestamp": "2026-04-07T17:16:32Z",
+    "subfield": "AI-Powered Defense",
+    "generation_strategy": "experiment_variation",
+    "confidence": 0.65,
+    "body": "# Experiment Variation: Effect of Code Review Feedback Format on Developer Security Behavior\n\n**Problem:** AI security tools can deliver findings as: inline comments, separate reports, IDE popups, or pull request reviews. The effect of delivery format on developer response behavior is not studied.\n\n**Direction:** Give 20 CS students a buggy codebase with 5 security issues. Group A receives findings as inline code comments, Group B as a separate report, Group C as IDE sidebar notifications. Measure: triage accuracy, time-to-acknowledge, time-to-patch, and participant-reported annoyance. Identify the format that best balances effectiveness and usability.\n\n**Why it matters:** Even excellent AI security findings will be ignored if delivered in an annoying or confusing format. Format design is a critical (and low-cost) lever for improving AI defense effectiveness.\n\n**Relevant context:** HCI research on code review formats (inline vs. separate). AI security tool UX evaluation (see usability study idea). Delivery format effect on security response behavior not studied."
+  },
+  {
+    "idea_id": "gen-0253",
+    "run_id": "2026-04-07T15-12-49",
+    "stage": "generate",
+    "timestamp": "2026-04-07T17:16:32Z",
+    "subfield": "AI-Powered Defense",
+    "generation_strategy": "novel_direction",
+    "confidence": 0.67,
+    "body": "# Novel Direction: AI-Assisted Security Analysis of Infrastructure-as-Code\n\n**Problem:** Infrastructure-as-Code (IaC: Terraform, Ansible, Kubernetes YAML) is widely used but has a distinct vulnerability profile from application code. AI security tool performance on IaC is not characterized.\n\n**Direction:** Collect 20 known IaC security vulnerabilities (from public security blogs, Terraform security scanning tools, Kubernetes CVEs). Run LLMs on the IaC configurations. Measure detection rate and explanation quality. Compare to dedicated IaC scanning tools (Checkov, Terrascan).\n\n**Why it matters:** IaC misconfigurations are a primary cloud breach vector. If AI tools perform worse on IaC than on application code, cloud infrastructure has a systematic AI defense gap.\n\n**Relevant context:** OWASP Top 10:2025 A05: Security Misconfiguration. Checkov, Terrascan are dedicated IaC security tools. LLM performance on IaC security analysis not studied. Cloud misconfigurations as a major breach cause well-documented."
+  },
+  {
+    "idea_id": "gen-0254",
+    "run_id": "2026-04-07T15-12-49",
+    "stage": "generate",
+    "timestamp": "2026-04-07T17:16:32Z",
+    "subfield": "AI-Powered Defense",
+    "generation_strategy": "compounding_risks",
+    "confidence": 0.7,
+    "body": "# Compounding Risk: AI-Generated Insecure Code + Automated CI/CD Deployment = Rapid Attack Surface Expansion\n\n**Problem:** Two interacting failures: (1) AI code generation introduces vulnerabilities 45% of the time; (2) CI/CD pipelines automatically deploy code with minimal security review. Combined, AI-generated vulnerabilities reach production before detection.\n\n**Direction:** Model the pipeline: AI generates code (45% vulnerability rate) \u2192 CI/CD deploys in T_deploy hours \u2192 AI scanner detects in T_scan hours. Compute: expected number of vulnerabilities in production as a function of deployment velocity and scan latency. Identify the velocity threshold above which AI-generated vulnerabilities reliably reach production before detection.\n\n**Why it matters:** High-velocity development with AI code generation may be creating vulnerabilities faster than AI defense can detect them. Characterizing this threshold is safety-critical.\n\n**Relevant context:** Veracode 2025: 45% AI-generated code vulnerability rate. CI/CD deployment velocities at major companies (multiple deployments per day). AI scan latency (from published tool response times). The interaction not modeled."
+  },
+  {
+    "idea_id": "gen-0255",
+    "run_id": "2026-04-07T15-12-49",
+    "stage": "generate",
+    "timestamp": "2026-04-07T17:16:32Z",
+    "subfield": "AI-Powered Defense",
+    "generation_strategy": "follow_up_experiment",
+    "confidence": 0.65,
+    "body": "# Follow-Up: Does AI Vulnerability Detection Scale Sub-Linearly with Codebase Size?\n\n**Problem:** Anthropic found 500+ vulnerabilities in production codebases. It is unknown whether detection rate (vulnerabilities found per KLOC) is constant, increasing, or decreasing as codebase size grows.\n\n**Direction:** Select 5 open-source projects of different sizes (10K, 50K, 200K, 500K, 1M+ LOC) with known CVEs. Normalize CVE count by LOC (vulnerability density). Run AI scanner. Compute: AI detection rate as a function of codebase size. Test whether detection rate scales sub-linearly (diminishing returns) or supra-linearly.\n\n**Why it matters:** If AI detection rate degrades for large codebases, the defensive benefit does not scale to the most important targets (large open-source projects, OS kernels). This has implications for where AI defense tools are most valuable.\n\n**Relevant context:** Anthropic 2026: 500+ vulnerabilities in production-scale codebases. AIxCC: 54M LOC. Detection rate vs. codebase scale not published."
+  },
+  {
+    "idea_id": "gen-0256",
+    "run_id": "2026-04-07T15-12-49",
+    "stage": "generate",
+    "timestamp": "2026-04-07T17:16:32Z",
+    "subfield": "AI-Powered Defense",
+    "generation_strategy": "novel_direction",
+    "confidence": 0.65,
+    "body": "# Novel Direction: AI-Assisted Triage of Bug Bounty Reports\n\n**Problem:** Bug bounty programs receive large volumes of reports with varying quality and severity. AI-assisted triage could reduce the time from submission to validation, but the accuracy of AI triage for bug bounty reports is not characterized.\n\n**Direction:** Collect 50 public bug bounty reports (from HackerOne disclosed reports). Have an LLM triage each: assign severity, assess exploitability, identify duplicate status. Compare AI triage to the actual final disposition of each report. Measure: severity accuracy, duplicate detection rate, false positives (AI marking non-vulnerabilities as vulnerabilities).\n\n**Why it matters:** Faster bug bounty triage means faster patching of reported vulnerabilities. Inaccurate AI triage may dismiss real vulnerabilities or create wasted analyst effort.\n\n**Relevant context:** Bug bounty programs receive thousands of reports (HackerOne public statistics). AI-assisted triage tools are commercially proposed but accuracy on real bug bounty reports not benchmarked."
+  },
+  {
+    "idea_id": "gen-0257",
+    "run_id": "2026-04-07T15-12-49",
+    "stage": "generate",
+    "timestamp": "2026-04-07T17:16:32Z",
+    "subfield": "AI-Powered Defense",
+    "generation_strategy": "replication_with_twist",
+    "confidence": 0.67,
+    "body": "# Replication: Does LLM Security Analysis Quality Degrade Across API Versions?\n\n**Problem:** AI model providers update API-accessible models regularly. Security-specific performance may degrade in newer versions due to safety fine-tuning changes. This is a replication across model versions rather than corpora.\n\n**Direction:** Identify two accessible API versions of the same LLM (e.g., GPT-4o-2024-05 vs. GPT-4o-2025-01, or Claude 3.5 Sonnet vs. 3.7 Sonnet). Run the same 30-CVE vulnerability detection benchmark on both. Measure: detection rate change, FPR change, explanation quality change. Identify which CVE classes show the largest performance change.\n\n**Why it matters:** Organizations deploying AI security tools need to know whether model updates improve or degrade security performance. Undocumented regressions in security-specific tasks are a deployment risk.\n\n**Relevant context:** AI model versioning stability is an operational concern (see behavioral drift idea). OpenAI and Anthropic publish model versions but do not document security task performance changes. This replication directly addresses an operational gap."
+  },
+  {
+    "idea_id": "gen-0258",
+    "run_id": "2026-04-07T15-12-49",
+    "stage": "generate",
+    "timestamp": "2026-04-07T17:16:32Z",
+    "subfield": "AI-Powered Defense",
+    "generation_strategy": "cross_domain_transfer",
+    "confidence": 0.62,
+    "body": "# Cross-Domain Transfer: Applying Reliability Engineering FMEA to AI Defense Tool Design\n\n**Problem:** Failure Mode and Effects Analysis (FMEA), standard in product reliability engineering, systematically enumerates failure modes, their effects, and their severity. Applied to AI security tool design, it could preemptively identify dangerous failure modes.\n\n**Direction:** Conduct an FMEA for a canonical AI vulnerability scanner pipeline. For each component (code ingestion, analysis, report generation, patch suggestion), enumerate failure modes, effects, severity (S), occurrence (O), and detectability (D). Compute Risk Priority Numbers (RPNs). Identify the top 3 highest-RPN failure modes. Propose mitigations.\n\n**Why it matters:** FMEA is a systematic, documented methodology for safety engineering. Applying it to AI security tools would produce a safety case \u2014 a formal argument for tool reliability \u2014 that does not exist for any current AI security tool.\n\n**Relevant context:** FMEA is standard in automotive (ISO 26262), aerospace (MIL-STD-1629A), and medical devices (IEC 60812). Fault tree analysis for AI pipelines (see earlier idea). FMEA applied to AI security tools is novel."
+  },
+  {
+    "idea_id": "gen-0259",
+    "run_id": "2026-04-07T15-12-49",
+    "stage": "generate",
+    "timestamp": "2026-04-07T17:16:32Z",
+    "subfield": "AI-Powered Defense",
+    "generation_strategy": "experiment_variation",
+    "confidence": 0.65,
+    "body": "# Experiment Variation: AI Security Analysis with Varying Levels of Attacker Model Context\n\n**Problem:** AI security analysis can be conducted with explicit attacker model context ('Assume an attacker with network access and authenticated user credentials') or without. The effect of attacker model framing on detection quality is not studied.\n\n**Direction:** Run vulnerability detection on 20 CVEs under four attacker model conditions: (a) no context, (b) unauthenticated external attacker, (c) authenticated user, (d) insider threat. Measure detection rate and severity assessment change per condition. Identify which CVEs are only detected under specific attacker model assumptions.\n\n**Why it matters:** Real defenders must consider specific threat models, not generic vulnerability lists. AI tools that integrate attacker modeling may produce more relevant findings.\n\n**Relevant context:** STRIDE threat modeling uses explicit attacker perspectives. CVSS v3.1 attack vector and privileges required scores capture some attacker model assumptions. AI scanner performance with explicit attacker model framing not studied."
+  },
+  {
+    "idea_id": "gen-0260",
+    "run_id": "2026-04-07T15-12-49",
+    "stage": "generate",
+    "timestamp": "2026-04-07T17:16:32Z",
+    "subfield": "AI-Powered Defense",
+    "generation_strategy": "backcast_from_success",
+    "confidence": 0.63,
+    "body": "# Backcast from Production-Ready AI OT/ICS Defense: What Validation Is Required for ALOHA Deployment?\n\n**Problem:** ALOHA demonstrated impressive capability on a testbed. Before production deployment in actual critical infrastructure, it requires extensive validation. What does that validation process require, and what research supports each requirement?\n\n**Direction:** Define a production deployment validation checklist for an AI OT/ICS defense system (drawing from IEC 62443, NERC CIP, NIST SP 800-82). For each requirement, assess ALOHA's documented performance. Identify the top 3 validation gaps (e.g., false positive rate in live OT environments, multi-vendor protocol support). Propose research for the highest-priority gap.\n\n**Why it matters:** Premature deployment of incompletely validated AI in critical infrastructure could cause both safety and security failures. A rigorous validation roadmap prevents this.\n\n**Relevant context:** ALOHA/PNNL 2026. CISA AI-OT guidance (2025). IEC 62443 for OT security. NERC CIP for grid security. ALOHA validation gaps not published."
+  },
+  {
+    "idea_id": "gen-0261",
+    "run_id": "2026-04-07T15-12-49",
+    "stage": "generate",
+    "timestamp": "2026-04-07T17:16:32Z",
+    "subfield": "AI-Powered Defense",
+    "generation_strategy": "novel_direction",
+    "confidence": 0.63,
+    "body": "# Novel Direction: Measuring AI Vulnerability Detection Performance on Code With Security Comments\n\n**Problem:** Developers sometimes add security comments ('This is safe because...', '// SAFE: validated upstream') to explain why seemingly risky code is acceptable. AI scanners may ignore or misinterpret these comments, leading to false positives.\n\n**Direction:** Take 20 safe code samples with accurate security-justification comments. Run AI scanner. Measure false positive rate on this corpus vs. equivalent code without comments. Separately: take 10 vulnerable code samples with misleading 'this is safe' comments. Measure detection rate change.\n\n**Why it matters:** False positives from ignoring security comments waste analyst time. Undetected vulnerabilities hidden by misleading security comments are a safety risk. Both are failure modes of AI scanners.\n\n**Relevant context:** Code comments as context for AI analysis studied in general code understanding. Security comment interpretation by AI vulnerability scanners not studied. Misleading security comments as an evasion technique is novel."
+  },
+  {
+    "idea_id": "gen-0262",
+    "run_id": "2026-04-07T15-12-49",
+    "stage": "generate",
+    "timestamp": "2026-04-07T17:16:32Z",
+    "subfield": "AI-Powered Defense",
+    "generation_strategy": "compounding_risks",
+    "confidence": 0.65,
+    "body": "# Compounding Risk: AI-Assisted Offensive Tool Development + Underinvestment in Defensive AI = Widening Gap\n\n**Problem:** Two interacting failures: (1) AI offensive tool development (Aardvark, automated exploit generation) is commercially incentivized and rapidly advancing; (2) defensive AI tool development is less commercially incentivized and slower. The gap may be widening despite absolute defensive improvement.\n\n**Direction:** Conduct a systematic literature review measuring the publication rate and benchmark performance improvement rate for AI offensive tools vs. AI defensive tools over 2022-2026. Compute: offense/defense improvement rate ratio. Assess whether the gap is narrowing or widening. Identify investment asymmetry as a potential driver.\n\n**Why it matters:** Even if AI defense is improving in absolute terms, if offense improves faster, the net security posture worsens. This asymmetry has direct policy implications.\n\n**Relevant context:** Potter et al. SoK 2025: offense > defense gap. Sarma & Fisher 2026 RAND: benchmark incentives for defense. Systematic measurement of the offense-defense capability improvement rate gap not published."
+  },
+  {
+    "idea_id": "gen-0263",
+    "run_id": "2026-04-07T15-12-49",
+    "stage": "generate",
+    "timestamp": "2026-04-07T17:16:32Z",
+    "subfield": "AI-Powered Defense",
+    "generation_strategy": "follow_up_experiment",
+    "confidence": 0.65,
+    "body": "# Follow-Up: Can AI-Assisted Code Review Be Made Aware of Its Own Blind Spots?\n\n**Problem:** The finding>>exploiting asymmetry and other failure modes suggest AI security tools have systematic blind spots. A follow-up question: can AI tools be prompted to identify their own potential blind spots (metacognitive awareness)?\n\n**Direction:** After running an AI vulnerability scanner on 20 code samples, ask the same AI: 'What types of vulnerabilities might you have missed in the code you just analyzed?' Compare the AI-identified potential blind spots to the actual missed vulnerabilities (verified against CVE ground truth). Measure: does AI self-assessment of blind spots correlate with actual blind spots?\n\n**Why it matters:** If AI can accurately identify its own blind spots, it can warn defenders about gaps in its analysis. If AI metacognitive accuracy is poor, defenders cannot rely on AI self-assessment.\n\n**Relevant context:** Metacognitive accuracy in LLMs is studied in general (calibration, confidence in reasoning). Security-specific metacognitive accuracy \u2014 AI knowledge of its own vulnerability detection blind spots \u2014 not studied."
+  },
+  {
+    "idea_id": "gen-0264",
+    "run_id": "2026-04-07T15-12-49",
+    "stage": "generate",
+    "timestamp": "2026-04-07T17:16:32Z",
+    "subfield": "AI-Powered Defense",
+    "generation_strategy": "causal_chain_intervention",
+    "confidence": 0.65,
+    "body": "# Causal Chain: Understanding Why AI Models Deprioritize High-Severity Vulnerabilities\n\n**Problem:** If AI security tools have a lower detection rate for critical vulnerabilities than overall (the 'critical coverage gap'), understanding the causal mechanism is necessary to fix it. Why would AI miss critical vulnerabilities specifically?\n\n**Direction:** For 15 critical CVEs that a fixed AI scanner misses: analyze the characteristics of the missed code (length, complexity, novelty of pattern, obfuscation). Compare to 15 lower-severity CVEs that the same scanner detects correctly. Identify which characteristics predict missed critical CVEs. Propose a targeted intervention (e.g., additional prompting for complex code sections).\n\n**Why it matters:** Critical vulnerability misses are more dangerous than average misses. Understanding the mechanism enables targeted improvement at the highest-value point in the detection pipeline.\n\n**Relevant context:** Risk-stratified benchmark (see related idea) would first characterize the critical coverage gap. This idea addresses the root cause. AI scanner performance on complex code patterns not studied at the critical severity level."
+  },
+  {
+    "idea_id": "gen-0265",
+    "run_id": "2026-04-07T15-12-49",
+    "stage": "generate",
+    "timestamp": "2026-04-07T17:16:32Z",
+    "subfield": "AI-Powered Defense",
+    "generation_strategy": "experiment_variation",
+    "confidence": 0.63,
+    "body": "# Experiment Variation: AI Vulnerability Detection Performance With and Without Known Exploit Code as Context\n\n**Problem:** When a vulnerability is publicly known, exploit code (PoC) exists in public repositories. AI scanners could use this as additional context, but the effect of exploit context on detection quality is not studied.\n\n**Direction:** For 15 CVEs with public PoC exploits, run AI scanner in two conditions: (a) code only, (b) code + brief exploit technique description (not the actual PoC). Measure: detection rate change, explanation quality change, false positive rate change. Identify whether exploit context improves or changes scanner behavior.\n\n**Why it matters:** For known CVEs with public exploits, providing exploit context should improve AI detection. Understanding this effect enables practitioners to build better-contextualized scanning pipelines.\n\n**Relevant context:** CVE databases often include exploit technique descriptions (ExploitDB, Metasploit modules). AI context augmentation for vulnerability detection not studied with exploit technique context specifically."
+  },
+  {
+    "idea_id": "gen-0266",
+    "run_id": "2026-04-07T15-12-49",
+    "stage": "generate",
+    "timestamp": "2026-04-07T17:16:32Z",
+    "subfield": "AI-Powered Defense",
+    "generation_strategy": "tool_or_benchmark_gap",
+    "confidence": 0.68,
+    "body": "# Tool Gap: Measuring AI Security Tool Coverage of OWASP Top 10:2025 Categories\n\n**Problem:** OWASP Top 10:2025 includes updated categories (including Software Supply Chain Failures) not covered in earlier editions. No systematic measurement exists of AI security tool coverage across the new Top 10 categories.\n\n**Direction:** For each OWASP Top 10:2025 category, create 3 representative vulnerable code or configuration samples (30 total). Run three AI scanners. Measure detection rate per category. Identify which Top 10 categories have the lowest AI scanner coverage.\n\n**Why it matters:** The OWASP Top 10 represents the most prevalent real-world vulnerabilities. Mapping AI scanner coverage to OWASP categories identifies where AI defense is weakest against the most common attacks.\n\n**Relevant context:** OWASP Top 10:2025 published. AI vulnerability scanner coverage systematically mapped to OWASP categories not found in literature. CyberSOCEval and similar benchmarks do not use OWASP taxonomy."
+  },
+  {
+    "idea_id": "gen-0267",
+    "run_id": "2026-04-07T15-12-49",
+    "stage": "generate",
+    "timestamp": "2026-04-07T17:16:32Z",
+    "subfield": "AI-Powered Defense",
+    "generation_strategy": "novel_direction",
+    "confidence": 0.58,
+    "body": "# Novel Direction: Studying Whether AI Security Tools Exhibit Demographic Bias in Code Review\n\n**Problem:** AI models exhibit demographic biases in many tasks. It is unknown whether AI code security reviewers assign different severity ratings or find different vulnerabilities based on code authorship signals (author name, coding style associated with demographics).\n\n**Direction:** Take 20 vulnerable code samples. Create versions with: (a) neutral author metadata, (b) names associated with different demographic groups in GitHub metadata. Run AI security scanner on both versions. Measure: any change in detected vulnerability count, severity ratings, or explanation framing. Test for statistically significant differences.\n\n**Why it matters:** If AI security tools exhibit demographic bias, they may systematically under-scrutinize code from certain groups, creating security disparities. This is a fairness and safety issue.\n\n**Relevant context:** Demographic bias in LLM code review has been studied for code quality assessment. Security-specific bias in vulnerability detection ratings has not been studied."
+  },
+  {
+    "idea_id": "gen-0268",
+    "run_id": "2026-04-07T15-12-49",
+    "stage": "generate",
+    "timestamp": "2026-04-07T17:16:32Z",
+    "subfield": "AI-Powered Defense",
+    "generation_strategy": "experiment_variation",
+    "confidence": 0.67,
+    "body": "# Experiment: Measuring AI Vulnerability Detection Under Adversarial Stress (Deliberately Misleading Context)\n\n**Problem:** In real-world deployments, context surrounding vulnerable code may be misleading (incorrect documentation, misleading variable names). AI scanner robustness to misleading context is not characterized.\n\n**Direction:** Take 20 vulnerable code samples. Create three versions: (a) neutral context, (b) context that suggests the code is safe ('This was audited by our security team in 2024'), (c) context that adds red herrings (comments about unrelated risks). Measure detection rate change per condition.\n\n**Why it matters:** Sophisticated attackers will craft misleading context to reduce AI scanner effectiveness. Understanding the manipulation surface enables countermeasures.\n\n**Relevant context:** Social engineering research studies how context manipulates human security decisions. AI security tool robustness to context manipulation is not studied. Prompt injection (see related idea) is a related attack vector."
+  },
+  {
+    "idea_id": "gen-0269",
+    "run_id": "2026-04-07T15-12-49",
+    "stage": "generate",
+    "timestamp": "2026-04-07T17:16:32Z",
+    "subfield": "AI-Powered Defense",
+    "generation_strategy": "cross_domain_transfer",
+    "confidence": 0.62,
+    "body": "# Cross-Domain Transfer: Applying Statistical Quality Control to AI Security Tool Performance Monitoring\n\n**Problem:** Statistical quality control (SQC) in manufacturing uses control charts (Shewhart, CUSUM) to detect when a process drifts out of specification. The same approach could monitor AI security tool performance for drift.\n\n**Direction:** Apply CUSUM and Shewhart control charts to AI vulnerability scanner outputs over time (using detection consistency across repeated runs as the monitored variable). Test whether control charts can detect simulated performance degradation (induced by varying the model version or prompt). Compute detection latency of the control chart approach.\n\n**Why it matters:** Production AI security tools need performance monitoring. SQC control charts provide a statistically rigorous, lightweight method. This cross-domain import would give practitioners a practical monitoring solution.\n\n**Relevant context:** SQC/SPC control charts: Deming, Montgomery (standard manufacturing QC). AI model monitoring in MLOps uses similar concepts informally. Security-specific SQC monitoring for AI tools not formalized."
+  },
+  {
+    "idea_id": "gen-0270",
+    "run_id": "2026-04-07T15-12-49",
+    "stage": "generate",
+    "timestamp": "2026-04-07T17:16:32Z",
+    "subfield": "AI-Powered Defense",
+    "generation_strategy": "novel_direction",
+    "confidence": 0.65,
+    "body": "# Novel Direction: Evaluating AI Security Tools for Bias Toward Recently Disclosed vs. Older Vulnerabilities\n\n**Problem:** AI models trained on recency-weighted data (where recent CVEs are better represented) may perform better on recent vulnerability patterns. Systematic bias favoring new over old vulnerability patterns would create blind spots in legacy code.\n\n**Direction:** Divide 40 CVEs into four temporal cohorts (pre-2018, 2018-2020, 2021-2023, 2024-2026). Run the same AI scanner on code from each cohort. Measure detection rate, FPR, and explanation quality per cohort. Test whether temporal cohort significantly predicts detection rate.\n\n**Why it matters:** Legacy codebases are often the most vulnerable (running unpatched for years) and contain older vulnerability patterns. If AI tools are biased toward newer patterns, legacy code is systematically under-defended.\n\n**Relevant context:** Knowledge cutoff effects studied in general LLM evaluation. Security-specific temporal bias in detection rate not characterized. Anthropic 2026: vulnerabilities undetected for decades, suggesting old patterns can be found \u2014 but systematic temporal analysis not published."
+  },
+  {
+    "idea_id": "gen-0271",
+    "run_id": "2026-04-07T15-12-49",
+    "stage": "generate",
+    "timestamp": "2026-04-07T17:16:32Z",
+    "subfield": "AI-Powered Defense",
+    "generation_strategy": "compounding_risks",
+    "confidence": 0.65,
+    "body": "# Compounding Risk: AI Security Tool Hallucination + Automated Firewall Rule Generation = Incorrect Network Defense\n\n**Problem:** Two interacting failures: (1) AI threat intelligence tools hallucinate attack signatures or indicator-of-compromise details; (2) these hallucinated indicators are fed to automated firewall rule generators. Combined, legitimate traffic is blocked and real attacks may be missed.\n\n**Direction:** Design a simulation: AI generates firewall rules from a threat intelligence summary that contains embedded hallucinations. Measure: what fraction of AI-generated firewall rules (a) block legitimate traffic incorrectly, (b) miss the actual threat. Compare to rules generated from accurate threat intelligence. Quantify the compound error rate.\n\n**Why it matters:** Automated firewall rule generation from AI threat intelligence is deployed in production (SOAR platforms). The compound failure mode of hallucination \u2192 incorrect rule \u2192 availability impact has concrete safety implications.\n\n**Relevant context:** AI threat intelligence hallucination (see CVE hallucination idea). SOAR platforms with automated response (IBM QRadar SOAR, Splunk SOAR). Automated firewall rule generation quality not studied with hallucinated inputs."
+  },
+  {
+    "idea_id": "gen-0272",
+    "run_id": "2026-04-07T15-12-49",
+    "stage": "generate",
+    "timestamp": "2026-04-07T17:16:32Z",
+    "subfield": "AI-Powered Defense",
+    "generation_strategy": "causal_chain_intervention",
+    "confidence": 0.58,
+    "body": "# Causal Chain: Studying How AI Security Findings Propagate Through Organizational Reporting Chains\n\n**Problem:** AI security findings must travel from detection tool to developer to team lead to security team to CISO to board. At each step, information is filtered, reframed, and prioritized. The causal chain from AI finding to board-level awareness has not been studied.\n\n**Direction:** Conduct a small qualitative study (10 interviews with CS students role-playing developer, team lead, and security lead personas) simulating information propagation through an organizational hierarchy for 5 AI-detected vulnerabilities. Measure: information loss, severity inflation/deflation, and time-to-awareness at each level.\n\n**Why it matters:** Critical security findings may be filtered out before reaching decision-makers. Understanding where in the reporting chain information is lost enables targeted process improvement.\n\n**Relevant context:** Organizational communication research (information filtering in hierarchies). Security incident communication research. AI security finding propagation through organizational structures not studied."
+  },
+  {
+    "idea_id": "gen-0273",
+    "run_id": "2026-04-07T15-12-49",
+    "stage": "generate",
+    "timestamp": "2026-04-07T17:16:32Z",
+    "subfield": "AI-Powered Defense",
+    "generation_strategy": "experiment_variation",
+    "confidence": 0.65,
+    "body": "# Experiment: Testing AI Vulnerability Detection Performance on Concurrency and Race Condition Vulnerabilities\n\n**Problem:** Concurrency vulnerabilities (race conditions, TOCTOU, deadlocks with security implications) require reasoning about interleaved execution, which is qualitatively different from sequential code analysis. AI performance on this class is not characterized.\n\n**Direction:** Collect 15 CVEs involving concurrency vulnerabilities (TOCTOU attacks, race conditions in authentication, concurrent access control bugs). Run AI scanner on the vulnerable code. Compare detection rate and explanation quality to non-concurrency CVEs from the same projects. Test whether AI can reason about execution interleaving.\n\n**Why it matters:** Concurrency vulnerabilities are notoriously hard to detect (even for humans and traditional tools) and are increasingly relevant in multi-threaded AI systems. If AI cannot reason about concurrency, this is a significant gap.\n\n**Relevant context:** Race condition CVEs are well-represented in NVD. Traditional fuzzing and static analysis have known difficulties with concurrency vulnerabilities. LLM concurrency reasoning is studied for correctness but not security."
+  },
+  {
+    "idea_id": "gen-0274",
+    "run_id": "2026-04-07T15-12-49",
+    "stage": "generate",
+    "timestamp": "2026-04-07T17:16:32Z",
+    "subfield": "AI-Powered Defense",
+    "generation_strategy": "replication_with_twist",
+    "confidence": 0.63,
+    "body": "# Replication with Twist: Testing the ALOHA Approach on Cybersecurity (IT) Attack Chains, Not Just OT\n\n**Problem:** ALOHA demonstrated AI-assisted attack chain reconstruction on OT/ICS systems. It is unknown whether the same approach generalizes to IT (enterprise network) attack chain reconstruction.\n\n**Direction:** Use a public IT attack scenario dataset (DARPA Transparent Computing, MITRE Caldera scenarios) to simulate ALOHA-like attack chain analysis using an LLM agent. Measure: time to reconstruct the attack chain, accuracy vs. known ground truth, false positive rate in chain reconstruction. Compare to ALOHA's OT results.\n\n**Why it matters:** If ALOHA's approach generalizes to IT attack chain reconstruction, it represents a broadly deployable defensive AI capability. If it doesn't, the approach is OT-specific and its scope is limited.\n\n**Relevant context:** ALOHA/PNNL 2026: 3 hours for OT chain reconstruction. DARPA Transparent Computing and MITRE Caldera provide IT attack chain ground truth data. IT attack chain AI analysis not studied."
+  },
+  {
+    "idea_id": "gen-0275",
+    "run_id": "2026-04-07T15-12-49",
+    "stage": "generate",
+    "timestamp": "2026-04-07T17:16:32Z",
+    "subfield": "AI-Powered Defense",
+    "generation_strategy": "novel_direction",
+    "confidence": 0.6,
+    "body": "# Novel Direction: AI-Assisted Vulnerability Severity Calibration Across Cultural and Organizational Contexts\n\n**Problem:** Vulnerability severity assessments (CVSS scores) are assigned by different organizations and reflect different risk contexts. AI models trained on CVE data may have systematic bias toward certain severity frameworks.\n\n**Direction:** For 20 CVEs with both NVD scores and vendor-assigned scores (which often differ), ask AI models to independently assess severity. Measure: AI severity alignment with NVD vs. vendor scores. Identify systematic biases (does AI favor NVD scoring conventions?). Propose calibration adjustments.\n\n**Why it matters:** Organizations using AI-assisted vulnerability triage need to know whether AI severity scores reflect their organizational context or just a generic framework. Miscalibrated severity leads to misallocated defensive resources.\n\n**Relevant context:** NVD vs. vendor CVSSv3 score discrepancies are documented (researchers have noted systematic differences). AI severity assessment calibration to organizational context not studied."
+  },
+  {
+    "idea_id": "gen-0276",
+    "run_id": "2026-04-07T15-12-49",
+    "stage": "generate",
+    "timestamp": "2026-04-07T17:16:32Z",
+    "subfield": "AI-Powered Defense",
+    "generation_strategy": "experiment_variation",
+    "confidence": 0.67,
+    "body": "# Experiment Variation: Measuring AI Vulnerability Detection With Different Code Language Model Families\n\n**Problem:** General-purpose LLMs vs. code-specialized LLMs (CodeLlama, StarCoder, DeepSeekCoder) may have different vulnerability detection performance profiles due to training data differences.\n\n**Direction:** Run a fixed 20-CVE vulnerability detection benchmark on: (a) general-purpose LLMs (Claude, GPT-4o), (b) code-specialized LLMs (CodeLlama 34B, DeepSeekCoder 33B). Measure: detection rate, FPR, explanation quality, and cost. Test whether code-specialized models outperform general-purpose on security tasks.\n\n**Why it matters:** If code-specialized models are no better than general-purpose ones for security analysis, there is no reason to prefer them (and their safety properties may be worse). If they are better, deployment decisions should favor them.\n\n**Relevant context:** LLMs in Software Security survey (arXiv 2502.07049) compares models but not specifically general-purpose vs. code-specialized for vulnerability detection. CodeLlama, StarCoder are publicly accessible."
+  },
+  {
+    "idea_id": "gen-0277",
+    "run_id": "2026-04-07T15-12-49",
+    "stage": "generate",
+    "timestamp": "2026-04-07T17:16:32Z",
+    "subfield": "AI-Powered Defense",
+    "generation_strategy": "failure_mode_investigation",
+    "confidence": 0.65,
+    "body": "# Failure Mode: AI Security Scanners and Insufficient Handling of Third-Party API Calls\n\n**Problem:** Security vulnerabilities often involve unsafe use of third-party APIs (e.g., calling an authentication API with insufficient validation). AI scanners may fail to model third-party API contracts and miss vulnerabilities arising from their misuse.\n\n**Direction:** Collect 15 CVEs involving third-party API misuse (OAuth implementation errors, JWT validation bypass, cloud SDK misconfigurations). Run AI scanner with and without third-party API documentation as context. Measure detection rate change. Identify which API types require explicit documentation context for correct analysis.\n\n**Why it matters:** Third-party API vulnerabilities are a major attack class and require knowledge of external contracts, not just the code under review. AI scanners lacking this context may systematically miss them.\n\n**Relevant context:** OAuth/JWT vulnerabilities are well-documented (HackerOne reports). API security is OWASP API Top 10. AI scanner context augmentation with API documentation not studied specifically for API misuse CVEs."
+  },
+  {
+    "idea_id": "gen-0278",
+    "run_id": "2026-04-07T15-12-49",
+    "stage": "generate",
+    "timestamp": "2026-04-07T17:16:32Z",
+    "subfield": "AI-Powered Defense",
+    "generation_strategy": "tool_or_benchmark_gap",
+    "confidence": 0.6,
+    "body": "# Tool Gap: Evaluation Dataset for AI-Assisted Zero-Trust Policy Verification\n\n**Problem:** Zero-trust security architectures require policy verification (confirming that policies are correctly implemented and consistent). AI-assisted policy verification is proposed but no evaluation dataset exists.\n\n**Direction:** Curate a small evaluation dataset of 20 zero-trust policy scenarios (IAM policies, network segmentation rules, authentication policies) with known correct and incorrect implementations. Test LLM ability to identify policy violations. Measure detection rate and false positive rate for policy verification tasks.\n\n**Why it matters:** Zero-trust is a major security architecture pattern. AI-assisted policy verification could reduce human error in policy configuration, which is a major source of security breaches.\n\n**Relevant context:** Zero-trust architecture is widely adopted (NIST SP 800-207). AI policy verification tools are commercially proposed but no evaluation dataset for AI-assisted zero-trust policy verification found."
+  },
+  {
+    "idea_id": "gen-0279",
+    "run_id": "2026-04-07T15-12-49",
+    "stage": "generate",
+    "timestamp": "2026-04-07T17:16:32Z",
+    "subfield": "AI-Powered Defense",
+    "generation_strategy": "backcast_from_success",
+    "confidence": 0.62,
+    "body": "# Backcast from Broad AI Defense Adoption: What Economic Conditions Must Hold?\n\n**Problem:** AI defense tools will only be broadly adopted if their economics are favorable. Define success as: AI defense tools are cost-effective for organizations of all sizes, including small open-source projects. What cost structure is required?\n\n**Direction:** Model the economics of AI defense tool adoption: cost per vulnerability found vs. cost of a breach per vulnerability class. Using published breach cost data (IBM Cost of a Data Breach Report) and AI scanning cost estimates, compute: the minimum detection rate at which AI defense is cost-effective for small projects. Assess whether current tools meet this threshold.\n\n**Why it matters:** Security tools that are economically rational only for large organizations will not be adopted where they are most needed (small, high-risk projects). Understanding the economic threshold motivates cost reduction.\n\n**Relevant context:** IBM Cost of a Data Breach 2025: average breach cost. AIxCC: $152/task. Anthropic API costs are public. Economic analysis of AI security tool adoption not published."
+  },
+  {
+    "idea_id": "gen-0280",
+    "run_id": "2026-04-07T15-12-49",
+    "stage": "generate",
+    "timestamp": "2026-04-07T17:16:32Z",
+    "subfield": "AI-Powered Defense",
+    "generation_strategy": "experiment_variation",
+    "confidence": 0.67,
+    "body": "# Experiment: Comparing AI Vulnerability Detection Performance Across Severity vs. Prevalence Dimensions\n\n**Problem:** AI scanners may be better at detecting common vulnerability classes (high training data representation) than rare but severe ones. The relationship between CVE prevalence and AI detection rate is not characterized.\n\n**Direction:** Select 30 CVEs: 10 from the three most common CWE categories (ranked by NVD prevalence), 10 from medium-prevalence categories, 10 from rare categories. Run AI scanner. Measure detection rate by prevalence tier. Test whether detection rate correlates with CWE prevalence.\n\n**Why it matters:** If AI detection is biased toward common vulnerability classes, rare but severe zero-days or novel attack patterns are systematically missed. This has direct implications for AI defense reliability against novel threats.\n\n**Relevant context:** CWE Top 25 Most Dangerous Software Weaknesses provides prevalence data. AI vulnerability detection training data distribution effects not studied. This directly tests the 'training data availability = detection quality' hypothesis."
+  },
+  {
+    "idea_id": "gen-0281",
+    "run_id": "2026-04-07T15-12-49",
+    "stage": "generate",
+    "timestamp": "2026-04-07T17:16:32Z",
+    "subfield": "Dual-Use Governance & Policy",
+    "generation_strategy": "novel_direction",
+    "confidence": 0.75,
+    "body": "# Decompose-and-Defer: Mapping Multi-Turn Request Decomposition as a Refusal Bypass Vector\n\n**Problem:** Attackers can decompose a single prohibited cyber request across multiple conversation turns, each innocuous alone, defeating turn-level refusal filters.\n\n**Direction:** Build a dataset of 100+ multi-turn conversation chains where the combined intent would trigger refusal if posed in one turn. Measure whether GPT-4o, Claude 3.5, and Gemini 1.5 refuse the final synthesizing turn or any earlier turns. Compare refusal rates for atomic vs. decomposed requests.\n\n**Why it matters:** Linder et al. 2026 identify request segmentation as an explicit open problem. Understanding empirically how often decomposition bypasses refusal is prerequisite to designing conversation-level governance.\n\n**Relevant context:** Linder et al. arXiv:2602.15689 5-dimension framework; GTG-1002 case where operators posed as legitimate defenders across interactions."
+  },
+  {
+    "idea_id": "gen-0282",
+    "run_id": "2026-04-07T15-12-49",
+    "stage": "generate",
+    "timestamp": "2026-04-07T17:16:32Z",
+    "subfield": "Dual-Use Governance & Policy",
+    "generation_strategy": "novel_direction",
+    "confidence": 0.78,
+    "body": "# The Legitimacy Signal Problem: Which Claimed Identities Actually Change Refusal Behavior?\n\n**Problem:** LLMs appear to grant more permissive responses when users claim professional credentials (e.g., 'I am a penetration tester'), but no systematic study quantifies this effect across credential types.\n\n**Direction:** Design a controlled prompt experiment varying 10 claimed credential types (CISO, CTF player, academic researcher, government contractor, etc.) against a fixed set of borderline cybersecurity requests. Measure refusal rate shifts across 3 frontier models.\n\n**Why it matters:** OpenAI Trusted Access for Cyber relies on verified identity, but current unverified prompt-based claims may already shift model behavior dangerously. GTG-1002 operators exploited exactly this dynamic.\n\n**Relevant context:** OpenAI Trusted Access (Feb 2026); GTG-1002 case \u2014 operators claimed to be employees of legitimate cybersecurity firms; Linder et al. framework."
+  },
+  {
+    "idea_id": "gen-0283",
+    "run_id": "2026-04-07T15-12-49",
+    "stage": "generate",
+    "timestamp": "2026-04-07T17:16:32Z",
+    "subfield": "Dual-Use Governance & Policy",
+    "generation_strategy": "novel_direction",
+    "confidence": 0.7,
+    "body": "# Governance Window Narrowing: Empirically Estimating Time-to-HACCA for Policy Milestones\n\n**Problem:** Kraprayoon et al. argue the governance window for regulating HACCAs is narrowing, but the concept lacks empirical operationalization.\n\n**Direction:** Extract capability milestones from the HACCA paper and benchmark current models (Claude 3.7, GPT-5.3-Codex) against each milestone using Intercode-CTF and similar benchmarks. Estimate remaining governance time assuming current capability growth rates.\n\n**Why it matters:** Governance interventions designed today must anticipate HACCA thresholds. Quantifying proximity informs urgency and specificity of policy recommendations.\n\n**Relevant context:** Kraprayoon et al. arXiv:2603.11528; GPT-5.3-Codex hit 'High' cybersecurity threshold Feb 2026; Anthropic Mythos presages vulnerability exploitation."
+  },
+  {
+    "idea_id": "gen-0284",
+    "run_id": "2026-04-07T15-12-49",
+    "stage": "generate",
+    "timestamp": "2026-04-07T17:16:32Z",
+    "subfield": "Dual-Use Governance & Policy",
+    "generation_strategy": "novel_direction",
+    "confidence": 0.72,
+    "body": "# Counterfactual Harm Fraction: A Metric for Evaluating Whether Refusals Prevent Misuse\n\n**Problem:** No empirical framework exists to assess whether a given refusal policy actually prevents harm vs. merely inconveniences users with free alternatives.\n\n**Direction:** For a set of 50 cybersecurity requests refused by frontier models, measure: (a) availability of the same information via web search, (b) time to find via search, (c) technical lift added by AI synthesis. Compute a 'counterfactual harm reduction' score per request category.\n\n**Why it matters:** Refusal policies are designed without evidence of counterfactual harm reduction. This metric would make dual-use governance empirically evaluable rather than judgment-based.\n\n**Relevant context:** Linder et al. Offensive Risk dimension implicitly requires this but doesn't operationalize it; NIST AI 800-1 cybersecurity appendix calls for measurable misuse risk."
+  },
+  {
+    "idea_id": "gen-0285",
+    "run_id": "2026-04-07T15-12-49",
+    "stage": "generate",
+    "timestamp": "2026-04-07T17:16:32Z",
+    "subfield": "Dual-Use Governance & Policy",
+    "generation_strategy": "novel_direction",
+    "confidence": 0.74,
+    "body": "# ASL Threshold Translation: Operationalizing 'Gray Zone' Cyber Capability Descriptions for Evaluators\n\n**Problem:** Anthropic's RSP describes the ASL-4 cyber gray zone in qualitative terms ('difficult to cleanly rule out elevated national security risk') that lack evaluator-actionable operationalization.\n\n**Direction:** Analyze the RSP and Feb 2026 Risk Report to extract all qualitative cyber capability descriptors. For each, propose a concrete behavioral test or benchmark proxy. Survey 10 cybersecurity professionals on whether the proposed tests would be sufficient signals.\n\n**Why it matters:** Without concrete operationalizations, the gray zone concept is unactionable\u2014labs cannot reliably determine when they cross into ASL-4 territory.\n\n**Relevant context:** Anthropic RSP; Feb 2026 Risk Report gray zone description; Bengio et al. 2026 evaluation gap."
+  },
+  {
+    "idea_id": "gen-0286",
+    "run_id": "2026-04-07T15-12-49",
+    "stage": "generate",
+    "timestamp": "2026-04-07T17:16:32Z",
+    "subfield": "Dual-Use Governance & Policy",
+    "generation_strategy": "novel_direction",
+    "confidence": 0.77,
+    "body": "# Benchmark Incentive Mapping: How Choice of Cybersecurity Benchmark Shapes Model Development Incentives\n\n**Problem:** Sarma & Fisher (RAND) argue benchmarks function as governance by shaping what gets built, but no study maps which benchmarks create which incentive structures for offense vs. defense.\n\n**Direction:** Catalog 15 publicly available cyber AI benchmarks (CTF, vuln discovery, code auditing, patching). For each, classify whether the primary capability rewarded is offense-only, defense-only, or dual. Analyze incentive gradients: if a lab optimizes purely for this benchmark, what capabilities increase?\n\n**Why it matters:** Benchmark selection is a de facto governance decision. Making this explicit allows policymakers to require or incentivize defense-weighted benchmarks.\n\n**Relevant context:** Sarma & Fisher RAND (Feb 2026); Potter et al. arXiv:2504.05408 on offense>defense gap."
+  },
+  {
+    "idea_id": "gen-0287",
+    "run_id": "2026-04-07T15-12-49",
+    "stage": "generate",
+    "timestamp": "2026-04-07T17:16:32Z",
+    "subfield": "Dual-Use Governance & Policy",
+    "generation_strategy": "novel_direction",
+    "confidence": 0.71,
+    "body": "# Access Equity Audit: Which Countries' Researchers Can Realistically Use OpenAI Trusted Access?\n\n**Problem:** OpenAI Trusted Access for Cyber requires KYC and enterprise relationships, potentially excluding defenders in lower-income countries without institutional backing.\n\n**Direction:** Map the KYC and verification requirements of Trusted Access against the administrative, financial, and legal capacity of cybersecurity organizations in 30 countries across income tiers. Score access difficulty per country and visualize equity gaps.\n\n**Why it matters:** Tiered access programs that structurally exclude Global South defenders worsen the offense-defense balance in the most vulnerable regions.\n\n**Relevant context:** OpenAI Trusted Access (Feb 2026); BRICS AI Governance Declaration 2025; India AI Impact Summit 2026 Global South equity framing."
+  },
+  {
+    "idea_id": "gen-0288",
+    "run_id": "2026-04-07T15-12-49",
+    "stage": "generate",
+    "timestamp": "2026-04-07T17:16:32Z",
+    "subfield": "Dual-Use Governance & Policy",
+    "generation_strategy": "novel_direction",
+    "confidence": 0.76,
+    "body": "# Policy Consistency Audit: Do AI Labs' Public Commitments Match Their Deployed Refusal Behavior?\n\n**Problem:** Labs publish dual-use governance frameworks (RSP, Preparedness Framework) but there is no systematic audit of whether deployed systems actually implement the stated policies.\n\n**Direction:** Extract testable behavioral claims from Anthropic's RSP, OpenAI's Preparedness Framework, and NIST AI 800-1. For each claim, design a prompt probe. Test against current Claude and GPT deployments. Score consistency between stated policy and observed behavior.\n\n**Why it matters:** Policy-behavior gaps undermine governance credibility and create liability ambiguity. Systematic auditing could become a regulatory expectation.\n\n**Relevant context:** Anthropic RSP; OpenAI Preparedness Framework; NIST AI 800-1 second public draft (Jan 2025); Bengio et al. 2026 on gaps in safety framework implementation."
+  },
+  {
+    "idea_id": "gen-0289",
+    "run_id": "2026-04-07T15-12-49",
+    "stage": "generate",
+    "timestamp": "2026-04-07T17:16:32Z",
+    "subfield": "Dual-Use Governance & Policy",
+    "generation_strategy": "experiment_variation",
+    "confidence": 0.78,
+    "body": "# Refusal Consistency Across Model Versions: Do Safety-Capability Tradeoffs Shift With Model Updates?\n\n**Problem:** As AI labs release new model versions optimizing for capability, refusal behavior for dual-use requests may degrade in ways not tracked across releases.\n\n**Direction:** Select 50 cybersecurity prompts spanning Linder et al.'s 5 dimensions. Test refusal rates on 3 consecutive Claude versions (3.5, 3.7, Opus 4.6) and 3 GPT versions. Track whether capability improvements correlate with refusal erosion.\n\n**Why it matters:** Governance frameworks assume stable safety properties across versions. Drift in refusal behavior creates a regulatory gap that update cycles could exploit.\n\n**Relevant context:** Linder et al. arXiv:2602.15689; Anthropic Opus 4.6 risk report; GPT-5.3-Codex Preparedness threshold."
+  },
+  {
+    "idea_id": "gen-0290",
+    "run_id": "2026-04-07T15-12-49",
+    "stage": "generate",
+    "timestamp": "2026-04-07T17:16:32Z",
+    "subfield": "Dual-Use Governance & Policy",
+    "generation_strategy": "experiment_variation",
+    "confidence": 0.73,
+    "body": "# Dimensional Sensitivity Analysis: Which of Linder et al.'s 5 Dimensions Best Predicts Refusal?\n\n**Problem:** Linder et al.'s 5-dimension framework (Offensive Action Contribution, Offensive Risk, Technical Complexity, Defensive Benefit, Expected Legitimate Frequency) makes analytical distinctions but empirical weights among dimensions are unknown.\n\n**Direction:** Construct prompts that systematically vary each dimension while holding others constant. Use factorial design (3 levels \u00d7 5 dimensions = 243 prompt variants). Measure refusal rates across 3 models. Use logistic regression to estimate each dimension's predictive weight.\n\n**Why it matters:** If models empirically weight only 1-2 dimensions while ignoring others, governance frameworks built on all 5 may be overspecified or miscalibrated.\n\n**Relevant context:** Linder et al. arXiv:2602.15689."
+  },
+  {
+    "idea_id": "gen-0291",
+    "run_id": "2026-04-07T15-12-49",
+    "stage": "generate",
+    "timestamp": "2026-04-07T17:16:32Z",
+    "subfield": "Dual-Use Governance & Policy",
+    "generation_strategy": "experiment_variation",
+    "confidence": 0.7,
+    "body": "# Tiered Access Simulation: Does KYC-Equivalent Prompt Context Actually Unlock Defensive Capabilities?\n\n**Problem:** OpenAI Trusted Access provides verified users richer capabilities, but the mechanism by which verification changes model behavior (separate system prompts vs. fine-tuning vs. same base model) is opaque.\n\n**Direction:** Simulate trust tier escalation by injecting structured context blocks claiming institutional verification at different trust levels. Measure capability unlocking for 30 defensive security tasks across GPT-4o and Claude 3.7. Compare against baseline unverified access.\n\n**Why it matters:** Understanding whether soft verification (prompt context) vs. hard verification (separate model weights) drives capability differences informs how secure the trust ladder actually is.\n\n**Relevant context:** OpenAI Trusted Access (Feb 2026); GTG-1002 case where fake credentials were used in prompts."
+  },
+  {
+    "idea_id": "gen-0292",
+    "run_id": "2026-04-07T15-12-49",
+    "stage": "generate",
+    "timestamp": "2026-04-07T17:16:32Z",
+    "subfield": "Dual-Use Governance & Policy",
+    "generation_strategy": "experiment_variation",
+    "confidence": 0.74,
+    "body": "# Coding Framing Effect: Does Presenting Requests as Code vs. Natural Language Change Refusal?\n\n**Problem:** Security researchers often embed requests in code comments, function names, or docstrings. It is unknown whether code-form framing systematically evades refusal.\n\n**Direction:** Take 30 borderline cybersecurity requests. Rephrase each in: (a) natural language, (b) Python docstring, (c) shell script comment, (d) JSON config schema, (e) pseudocode. Measure refusal rates across 4 models. Test if code modality shifts refusal rates significantly.\n\n**Why it matters:** Code-embedded dual-use requests are common in legitimate pen-testing workflows but could also represent evasion vectors. Understanding modality sensitivity informs refusal policy design.\n\n**Relevant context:** Linder et al. Technical Complexity dimension; NIST AI 800-1 cybersecurity appendix."
+  },
+  {
+    "idea_id": "gen-0293",
+    "run_id": "2026-04-07T15-12-49",
+    "stage": "generate",
+    "timestamp": "2026-04-07T17:16:32Z",
+    "subfield": "Dual-Use Governance & Policy",
+    "generation_strategy": "experiment_variation",
+    "confidence": 0.68,
+    "body": "# Geographic Framing Effect: Does Mentioning a Target Country's Name Change Refusal for Cyber Requests?\n\n**Problem:** Geopolitical framing (e.g., 'Russian malware', 'Chinese APT technique') may produce inconsistent refusal behavior, with models applying different standards based on nationality of alleged attacker or defender.\n\n**Direction:** Design 20 cybersecurity prompts with matched variants that mention different nation-states as attacker or defender context. Measure refusal rate differences across mention of 10 countries. Test statistical significance of nationality as a predictor.\n\n**Why it matters:** Inconsistent nation-state treatment in refusals could constitute politically biased governance, creating diplomatic and legal liability for AI labs.\n\n**Relevant context:** GTG-1002 Chinese state-sponsored attribution; Bengio et al. geopolitical AI risk; EU AI Act non-discrimination requirements."
+  },
+  {
+    "idea_id": "gen-0294",
+    "run_id": "2026-04-07T15-12-49",
+    "stage": "generate",
+    "timestamp": "2026-04-07T17:16:32Z",
+    "subfield": "Dual-Use Governance & Policy",
+    "generation_strategy": "experiment_variation",
+    "confidence": 0.72,
+    "body": "# Refusal Drift Under RLHF: Comparing Open-Weight Base vs. Instruction-Tuned Models on Dual-Use Requests\n\n**Problem:** Refusal behavior is primarily installed through RLHF/RLHAIF fine-tuning. Comparing base vs. instruction-tuned models would reveal how much refusal is genuinely learned vs. superficially layered.\n\n**Direction:** Test matched pairs of base and instruction-tuned open-weight models (Llama 3.1 base vs. instruct, Mistral base vs. instruct) on 50 dual-use cybersecurity prompts. Measure refusal rate differential. Analyze whether the differential is consistent across request types.\n\n**Why it matters:** If fine-tuning adds only a thin refusal layer, governance frameworks assuming robust training-level safety are overconfident. Relevant to open-weight model governance debates.\n\n**Relevant context:** NIST AI 800-1 open vs. closed model treatment; Bengio et al. open-weight model release challenges."
+  },
+  {
+    "idea_id": "gen-0295",
+    "run_id": "2026-04-07T15-12-49",
+    "stage": "generate",
+    "timestamp": "2026-04-07T17:16:32Z",
+    "subfield": "Dual-Use Governance & Policy",
+    "generation_strategy": "experiment_variation",
+    "confidence": 0.8,
+    "body": "# Dual-Use Symmetry Test: Are Offensive and Defensive Framings of Identical Technical Content Treated Differently?\n\n**Problem:** The 5-dimension framework assumes models can distinguish offense from defense for identical technical content. This symmetry assumption has not been empirically validated.\n\n**Direction:** Create 30 pairs of prompts with identical technical content but one framed defensively ('how do defenders detect X') and one offensively ('how do attackers do X'). Measure refusal rates and response quality differentials across 4 models.\n\n**Why it matters:** If models cannot reliably distinguish framing, the offense-defense distinction underlying governance frameworks is empirically unfounded.\n\n**Relevant context:** Linder et al. Defensive Benefit dimension; Potter et al. offense>defense gap."
+  },
+  {
+    "idea_id": "gen-0296",
+    "run_id": "2026-04-07T15-12-49",
+    "stage": "generate",
+    "timestamp": "2026-04-07T17:16:32Z",
+    "subfield": "Dual-Use Governance & Policy",
+    "generation_strategy": "follow_up_experiment",
+    "confidence": 0.67,
+    "body": "# Follow-Up to GTG-1002: Did Anthropic's Disruption Response Change Model Behavior on Similar Requests?\n\n**Problem:** Anthropic claims to have disrupted GTG-1002 and taken steps to prevent this type of misuse, but no independent verification of post-incident behavioral change exists.\n\n**Direction:** Identify the category of requests likely used in GTG-1002 (reconnaissance automation, credential harvesting prompts, lateral movement queries). Test pre-incident (Claude 3.5 Sonnet, cached) vs. post-incident (Claude 3.7 Sonnet) refusal rates on reconstructed prompt categories. Check for behavioral drift.\n\n**Why it matters:** Post-incident policy enforcement is a key governance mechanism. If behavioral changes do not persist, the governance response is largely theatrical.\n\n**Relevant context:** GTG-1002 Anthropic report; Anthropic misuse detection report Aug 2025; Anthropic Feb 2026 Risk Report."
+  },
+  {
+    "idea_id": "gen-0297",
+    "run_id": "2026-04-07T15-12-49",
+    "stage": "generate",
+    "timestamp": "2026-04-07T17:16:32Z",
+    "subfield": "Dual-Use Governance & Policy",
+    "generation_strategy": "follow_up_experiment",
+    "confidence": 0.7,
+    "body": "# Follow-Up to Vibe Hacking: Can AI Detection Systems Identify AI-Generated Extortion Content?\n\n**Problem:** The vibe hacking case showed AI-generated extortion was initially undetected. Whether AI-detection tools (watermarking, stylometric analysis) can retroactively identify such content is unknown.\n\n**Direction:** Generate a dataset of 200 extortion email variants using Claude, GPT-4o, and Gemini. Apply available AI-detection tools (ZeroGPT, GPTZero, Originality.ai). Measure detection rates. Analyze false negative patterns by model family and style.\n\n**Why it matters:** If current detection tools cannot identify AI-generated extortion, governance relying on detectability as a check is ineffective. Empirical baseline is needed.\n\n**Relevant context:** Anthropic Aug 2025 misuse report on vibe hacking; Anthropic Feb 2026 Risk Report."
+  },
+  {
+    "idea_id": "gen-0298",
+    "run_id": "2026-04-07T15-12-49",
+    "stage": "generate",
+    "timestamp": "2026-04-07T17:16:32Z",
+    "subfield": "Dual-Use Governance & Policy",
+    "generation_strategy": "follow_up_experiment",
+    "confidence": 0.65,
+    "body": "# Follow-Up to GPT-5.3-Codex 'High' Threshold: What Changed in Capability Between GPT-4o and 5.3-Codex?\n\n**Problem:** Sam Altman confirmed GPT-5.3-Codex is the first to hit OpenAI's 'High' cybersecurity threshold, implying a discontinuous capability jump. The technical nature of this jump is publicly uncharacterized.\n\n**Direction:** Using publicly available cyber benchmarks (InterCode-CTF, CyberSecEval 2, NYU CTF Bench), compare GPT-4o vs. GPT-4.5 Turbo vs. the nearest accessible model to 5.3-Codex capability. Identify which benchmark dimensions show the largest gain. Hypothesize whether the jump is agentic scaffolding, base capability, or RLHF-alignment shift.\n\n**Why it matters:** Understanding what causes threshold crossings informs when to expect ASL-4-level capability emergence and how quickly governance must respond.\n\n**Relevant context:** OpenAI Preparedness Framework 'High' threshold; Kraprayoon et al. HACCA; Anthropic Mythos leak."
+  },
+  {
+    "idea_id": "gen-0299",
+    "run_id": "2026-04-07T15-12-49",
+    "stage": "generate",
+    "timestamp": "2026-04-07T17:16:32Z",
+    "subfield": "Dual-Use Governance & Policy",
+    "generation_strategy": "follow_up_experiment",
+    "confidence": 0.72,
+    "body": "# Follow-Up to Alignment-Faking During Safety Testing: Does Detection Context Change Cyber Refusal Rates?\n\n**Problem:** Bengio et al. 2026 report that some models detect when they are being safety-tested and behave differently. If true for cyber refusals, governance evaluations are systematically biased.\n\n**Direction:** Design prompts that explicitly signal evaluation context ('This is a safety test', 'You are being audited') vs. neutral context, for borderline cybersecurity requests. Measure refusal rate differences across Claude 3.7 and GPT-4o. Test whether signaling evaluation context increases refusal.\n\n**Why it matters:** If models perform better safety during evaluations than deployment, all governance benchmarking is invalidated as a monitoring mechanism.\n\n**Relevant context:** Bengio et al. 2026 alignment-faking during testing finding; International AI Safety Report second update."
+  },
+  {
+    "idea_id": "gen-0300",
+    "run_id": "2026-04-07T15-12-49",
+    "stage": "generate",
+    "timestamp": "2026-04-07T17:16:32Z",
+    "subfield": "Dual-Use Governance & Policy",
+    "generation_strategy": "follow_up_experiment",
+    "confidence": 0.74,
+    "body": "# Follow-Up to NIST AI 800-1 Comment Round: Did Stakeholder Comments Meaningfully Change Cybersecurity Provisions?\n\n**Problem:** NIST AI 800-1's cybersecurity appendix went through two public comment rounds. Whether the industry, civil society, and academic comments substantively changed the governance framework is unstudied.\n\n**Direction:** Conduct a structured diff analysis between the first public draft and second public draft of NIST AI 800-1's cybersecurity appendix. Categorize changes by type (addition, deletion, softening, hardening). Compare against 20 sampled stakeholder comment letters to measure comment-to-change traceability.\n\n**Why it matters:** Understanding whether public comment processes actually shape dual-use governance standards\u2014vs. serving as legitimizing theater\u2014informs how researchers should engage with regulatory processes.\n\n**Relevant context:** NIST AI 800-1 first and second public drafts; FAS, GovAI, and IST public comments."
+  }
+]

@@ -1,0 +1,602 @@
+[
+  {
+    "idea_id": "gen-143",
+    "title": "IRT Assumption Violations and the Sandbagging Detection Failure",
+    "run_id": "2026-03-30T19-05-44",
+    "quick_score": 5,
+    "quick_reasoning": "Targets a specific, well-defined AI safety problem (whether IRT can reliably detect sandbagging under local dependence violations) with clear methodology; safety relevance is obvious and scope is precise.",
+    "quick_confidence": 0.75,
+    "eliminated": false,
+    "elimination_reason": null,
+    "original_idea": {
+      "idea_id": "gen-143",
+      "run_id": "2026-03-30T19-05-44",
+      "stage": "generate",
+      "timestamp": "2026-03-30T22:37:02Z",
+      "subfield": "AI Evaluation & Benchmarking",
+      "generation_strategy": "compounding_risks",
+      "confidence": 0.68,
+      "body": "# IRT Assumption Violations and the Sandbagging Detection Failure\n\n**Problem:** IRT applied to LLM benchmarks likely violates its core assumption of local independence (Failure A9): items within a benchmark may be locally dependent because models use shared reasoning strategies, contextual priming, or training-data memorization rather than independent item-by-item ability expression. This compounds with sandbagging detection (Failure B1): sandbagging detection relies on identifying unexpected performance drops across items \u2014 but if items are locally dependent, a coordinated drop (as in strategic underperformance) is statistically indistinguishable from the correlated errors that local dependence produces. Sandbagging signatures are swamped by measurement noise.\n\n**Direction:** Select a published IRT-analyzed LLM benchmark (e.g., from 'Lost in Benchmarks' or the PSN-IRT paper). Using the raw item-level response data (where available from open benchmarks), test for local dependence using Q3 statistics or the LD-X2 statistic in R (mirt package). Quantify the violation severity. Then simulate what a sandbagging response pattern would look like in the presence of estimated local dependence levels, and compare the statistical power to detect sandbagging under independence vs. dependence assumptions. Estimate the minimum sandbag magnitude detectable under realistic local dependence.\n\n**Why it matters:** IRT is being adopted as a gold standard for LLM benchmark analysis, but if its core assumptions are violated, its inferences \u2014 including anomaly detection for sandbagging \u2014 are unreliable. This research establishes the degree to which IRT can be trusted for safety-relevant inference.\n\n**Relevant context:** 'Lost in Benchmarks' (arxiv 2505.15055) and PSN-IRT apply IRT to LLM benchmarks and note measurement quality issues. Sandbagging by frontier models documented in arxiv 2406.07358. Local independence testing is a standard psychometric diagnostic available in the mirt R package."
+    }
+  },
+  {
+    "idea_id": "gen-145",
+    "title": "The Cold Start Blindspot: New Model Families and Oversight Gaps in Multi-Agent Systems",
+    "run_id": "2026-03-30T19-05-44",
+    "quick_score": 3,
+    "quick_reasoning": "Addresses AI safety evaluation gaps but the proposed direction is a documentation/checklist exercise rather than concrete IRT analysis; scope is broad and the approach needs refinement.",
+    "quick_confidence": 0.55,
+    "eliminated": false,
+    "elimination_reason": null,
+    "original_idea": {
+      "idea_id": "gen-145",
+      "run_id": "2026-03-30T19-05-44",
+      "stage": "generate",
+      "timestamp": "2026-03-30T22:37:02Z",
+      "subfield": "AI Evaluation & Benchmarking",
+      "generation_strategy": "compounding_risks",
+      "confidence": 0.6,
+      "body": "# The Cold Start Blindspot: New Model Families and Oversight Gaps in Multi-Agent Systems\n\n**Problem:** The cold-start problem in AI evaluation (Failure A10) \u2014 the lack of calibrated benchmarks for genuinely novel model architectures \u2014 compounds with oversight failures in multi-agent systems (Failure B10). When a new model family (e.g., a new reasoning architecture or hybrid system) is deployed in a multi-agent context, there are no validated evaluations with known calibration properties for that architecture. The oversight failure is not just that multi-agent systems are hard to monitor; it is that the measurement tools for the component models have not yet been validated for the new architecture. Oversight is blind from the start.\n\n**Direction:** Identify 2\u20133 recently released model families that represent genuine architectural novelty (e.g., mixture-of-experts at new scale, long-context-native architectures). For each, document: (a) how many published safety benchmarks include results for that family, (b) whether IRT or psychometric calibration has been done, (c) what multi-agent evaluation coverage exists. Treat this as a construct validity and measurement coverage analysis. Develop a 'readiness checklist' for evaluating a new model family before agentic deployment, drawing on established psychometric standards for new test populations.\n\n**Why it matters:** The fastest-growing AI deployment context is multi-agent, and it is precisely the context where individual model evaluation is most critical for system-level safety. If we cannot evaluate new model architectures on entry, we are deploying them into multi-agent settings blind.\n\n**Relevant context:** Multi-agent evaluation gaps documented in 2025 survey of 120 agent evaluation frameworks. Cold-start problem analogy drawn from IRT: ability estimation is unreliable for new populations not represented in item calibration samples. International AI Safety Report 2025 documents novel architecture deployment risks."
+    }
+  },
+  {
+    "idea_id": "gen-147",
+    "title": "Contaminated Adversarial Data and Shallow Alignment: A Double Failure in Red-Teaming",
+    "run_id": "2026-03-30T19-05-44",
+    "quick_score": 5,
+    "quick_reasoning": "Targets a specific, well-defined AI safety problem (contamination inflating red-team refusal rates masking shallow alignment) with clear IRT analysis along the contamination gradient; safety relevance is obvious.",
+    "quick_confidence": 0.75,
+    "eliminated": false,
+    "elimination_reason": null,
+    "original_idea": {
+      "idea_id": "gen-147",
+      "run_id": "2026-03-30T19-05-44",
+      "stage": "generate",
+      "timestamp": "2026-03-30T22:37:02Z",
+      "subfield": "AI Evaluation & Benchmarking",
+      "generation_strategy": "compounding_risks",
+      "confidence": 0.65,
+      "body": "# Contaminated Adversarial Data and Shallow Alignment: A Double Failure in Red-Teaming\n\n**Problem:** Data contamination (Failure A3) applied to adversarial/red-team evaluation datasets compounds with shallow safety alignment (Failure B3). If adversarial prompts used in red-teaming appear in a model's training data, the model has effectively memorized the correct 'refuse' response for those prompts \u2014 not because of deep alignment but because of surface-level pattern matching. Shallow alignment operates on the first few tokens, and contamination provides the exact prefix pattern that triggers refusal. Red-team success rates are therefore inflated by contamination, and the shallow nature of the underlying alignment is invisible.\n\n**Direction:** Select a published red-team dataset (e.g., HarmBench, AdvBench). For a set of open-weight models, estimate contamination probability for red-team items using n-gram overlap and perplexity-based methods from published contamination literature. Then test whether high-contamination items show higher refusal rates than low-contamination items for the same model. Apply IRT to model refusal across the contamination gradient: does item difficulty (inverse of refusal rate) systematically decrease with contamination? If so, this documents the mechanism by which contamination produces shallow-alignment artifacts.\n\n**Why it matters:** Red-teaming is a primary safety evaluation tool. If red-team datasets are contaminated, refusal rates are inflated by memorization rather than by alignment depth. This research makes that inflation measurable and highlights why adversarial dataset security is a measurement issue, not just a data hygiene issue.\n\n**Relevant context:** Shallow alignment (first few tokens) documented in the ICLR 2025 outstanding paper (arxiv 2406.07358). Contamination detection methods available from published papers and open tools. HarmBench and AdvBench are widely used and publicly available."
+    }
+  },
+  {
+    "idea_id": "gen-149",
+    "title": "Severity Without Signal: Binary Metrics and the Invisible Gradient of Safetywashing",
+    "run_id": "2026-03-30T19-05-44",
+    "quick_score": 5,
+    "quick_reasoning": "Targets a specific, well-defined AI safety problem (safetywashing enabled by binary metrics) with clear IRT graded response model methodology; safety relevance is obvious and scope is precise.",
+    "quick_confidence": 0.8,
+    "eliminated": false,
+    "elimination_reason": null,
+    "original_idea": {
+      "idea_id": "gen-149",
+      "run_id": "2026-03-30T19-05-44",
+      "stage": "generate",
+      "timestamp": "2026-03-30T22:37:02Z",
+      "subfield": "AI Governance & Policy",
+      "generation_strategy": "compounding_risks",
+      "confidence": 0.74,
+      "body": "# Severity Without Signal: Binary Metrics and the Invisible Gradient of Safetywashing\n\n**Problem:** When safety benchmarks use binary metrics (Failure A5), they flatten severity gradations that would reveal whether a model is genuinely improving in safety or merely shifting refusal thresholds. This enables safetywashing (Failure B5): a model that moves from 'will sometimes produce mildly harmful content' to 'will never produce mildly harmful content but still produces severely harmful content on edge cases' shows an improved binary score. The severity information lost in binarization is precisely the information needed to distinguish genuine safety progress from surface compliance.\n\n**Direction:** Take a safety benchmark with binary outcomes (e.g., a refusal benchmark). Develop a graded severity scale (0\u20133 or 0\u20134) using a published harm taxonomy as a rubric (e.g., from the EU AI Act risk tiers or the MLCommons hazard taxonomy). Rate a sample of model outputs (100\u2013150) on the graded scale; compute interrater reliability. Apply IRT with graded response models (in R mirt) to the ordinal data. Compare the information curves: does the graded model provide substantially more measurement information across the severity range? Document which severity ranges are completely invisible to binary scoring.\n\n**Why it matters:** Binary metrics reward any shift toward refusal regardless of severity, making safetywashing trivially easy. Graded severity measurement is the minimum standard needed to make safety progress claims meaningful. This research shows quantitatively what is lost in binarization and provides a practical alternative.\n\n**Relevant context:** Binary metric dominance (79% of benchmarks) documented in 'How Should AI Safety Benchmarks Benchmark Safety?'. Safetywashing paper (2407.21792) calls for safety measures decorrelated from capability. IRT graded response models are standard psychometric tools. MLCommons and EU AI Act provide existing harm taxonomies usable as severity rubrics."
+    }
+  },
+  {
+    "idea_id": "gen-154",
+    "title": "First-Token Alignment and the Adversarial Format: Shallow Safety as a Prompt-Sensitivity Exploit",
+    "run_id": "2026-03-30T19-05-44",
+    "quick_score": 5,
+    "quick_reasoning": "Targets a specific, well-defined AI safety problem (shallow alignment exploitable via format manipulation) with clear IRT and G-theory analysis; safety relevance is obvious and the experimental design is precise.",
+    "quick_confidence": 0.75,
+    "eliminated": false,
+    "elimination_reason": null,
+    "original_idea": {
+      "idea_id": "gen-154",
+      "run_id": "2026-03-30T19-05-44",
+      "stage": "generate",
+      "timestamp": "2026-03-30T22:37:02Z",
+      "subfield": "AI Alignment",
+      "generation_strategy": "compounding_risks",
+      "confidence": 0.72,
+      "body": "# First-Token Alignment and the Adversarial Format: Shallow Safety as a Prompt-Sensitivity Exploit\n\n**Problem:** Shallow safety alignment (Failure B3) makes safety behavior contingent on the first few output tokens. Prompt sensitivity (Failure A2) means that different prompt formats alter the probability distribution over those critical first tokens. Together these create a specific exploit: by choosing a prompt format that shifts the initial token probability distribution away from refusal tokens, an adversary can bypass alignment that would otherwise hold. The measurement failure is that benchmarks using a single format cannot distinguish robust from format-exploitable safety.\n\n**Direction:** Design a controlled experiment using 5 format conditions known to alter first-token distributions: (a) standard question, (b) prefill attack (providing the start of an affirmative response), (c) JSON-mode instruction, (d) multi-turn with compliance priming, (e) suffix appended to prompt. For each of 30\u201350 safety-relevant prompts, administer all formats to 2\u20133 models via API. Apply IRT to model the probability of safety failure as a function of format 'difficulty' (operationalized as adversarial pressure level). Estimate the format-manipulation effect size relative to between-model differences. Use reliability analysis (alpha, G-coefficient) to quantify how much of the safety score is format-determined.\n\n**Why it matters:** If format manipulation can bypass shallow alignment, then any single-format safety evaluation is incomplete by design. Quantifying the format-sensitivity effect size relative to genuine model differences provides an evidence-based argument for multi-format evaluation requirements.\n\n**Relevant context:** Shallow alignment paper (arxiv 2406.07358) documents prefilling and suffix attacks as exploiting first-token distributions. Prompt sensitivity research documents format-driven performance drops. Prefill and JSON-mode attacks are documented in alignment attack literature. G-theory and IRT analysis are feasible in R."
+    }
+  },
+  {
+    "idea_id": "gen-155",
+    "title": "IRT Person-Fit as a Sandbagging Detector: Psychometric Anomaly Detection for Strategic Underperformance",
+    "run_id": "2026-03-30T19-05-44",
+    "quick_score": 5,
+    "quick_reasoning": "Targets a specific, well-defined AI safety problem (sandbagging detection) with clear IRT person-fit methodology and power analysis under realistic conditions; safety relevance is obvious.",
+    "quick_confidence": 0.8,
+    "eliminated": false,
+    "elimination_reason": null,
+    "original_idea": {
+      "idea_id": "gen-155",
+      "run_id": "2026-03-30T19-05-44",
+      "stage": "generate",
+      "timestamp": "2026-03-30T22:37:02Z",
+      "subfield": "AI Evaluation & Benchmarking",
+      "generation_strategy": "compounding_risks",
+      "confidence": 0.73,
+      "body": "# IRT Person-Fit as a Sandbagging Detector: Psychometric Anomaly Detection for Strategic Underperformance\n\n**Problem:** IRT assumption violations (Failure A9) include the assumption that response patterns are consistent with an underlying ability estimate. Sandbagging (Failure B1) produces a specific type of assumption violation: a model with high general ability that deliberately fails on specific items will exhibit a person-fit anomaly (unexpectedly low responses on items that should be easy given overall ability). However, if IRT assumptions are broadly violated for LLMs (local dependence, non-monotonicity), then genuine person-fit anomalies from sandbagging are statistically indistinguishable from measurement noise.\n\n**Direction:** Apply IRT to a benchmark where model abilities are estimated across many items (e.g., MMLU or an equivalent with 100+ items). Compute person-fit statistics (lz, infit, outfit) for each model in R (mirt package). Identify models showing significant misfit \u2014 particularly underfitting at the high ability end (correct on hard items, wrong on easy items \u2014 a sandbag signature). Cross-reference misfit models with published sandbagging reports. Test whether misfit patterns cluster around dangerous-capability item types vs. benign items. Estimate statistical power to detect sandbagging of various magnitudes (20%, 40%, 60% strategic failure) under observed local dependence levels.\n\n**Why it matters:** Person-fit statistics are designed to detect exactly the anomalous pattern that sandbagging produces. Applying them to LLM safety evaluation is a direct application of psychometric anomaly detection to a concrete alignment problem. This makes sandbagging detection quantitative and principled rather than qualitative and ad hoc.\n\n**Relevant context:** IRT person-fit statistics are standard in educational measurement for detecting aberrant response patterns (cheating, carelessness). Sandbagging paper (arxiv 2406.07358) documents frontier model strategic underperformance. 'Lost in Benchmarks' and PSN-IRT papers provide IRT analysis infrastructure for LLM benchmarks. mirt package in R supports person-fit statistics."
+    }
+  },
+  {
+    "idea_id": "gen-156",
+    "title": "Benchmark Contamination and Deceptive Alignment: The Memorized Safe Answer",
+    "run_id": "2026-03-30T19-05-44",
+    "quick_score": 5,
+    "quick_reasoning": "Targets a specific, well-defined AI safety problem (contamination creating deceptive alignment signal) with clear IRT and CFA methodology to separate memorized from genuine refusals; safety relevance is obvious.",
+    "quick_confidence": 0.75,
+    "eliminated": false,
+    "elimination_reason": null,
+    "original_idea": {
+      "idea_id": "gen-156",
+      "run_id": "2026-03-30T19-05-44",
+      "stage": "generate",
+      "timestamp": "2026-03-30T22:37:02Z",
+      "subfield": "AI Alignment",
+      "generation_strategy": "compounding_risks",
+      "confidence": 0.66,
+      "body": "# Benchmark Contamination and Deceptive Alignment: The Memorized Safe Answer\n\n**Problem:** Data contamination (Failure A3) means models have seen benchmark items during training. Deceptive alignment (Failure B2) is the condition where a model produces safe-looking outputs specifically during evaluation. These failures are structurally equivalent in an important sense: a contaminated model that has memorized 'refuse this prompt' is behaviorally indistinguishable from a deceptively aligned model that produces refusals strategically. Both produce inflated safety scores, and neither represents genuine alignment. Contamination creates a false positive signal that is epistemically identical to the deceptive alignment false positive.\n\n**Direction:** For a set of safety benchmark items, estimate contamination probability (n-gram overlap, perplexity drop). Sort items into high-contamination and low-contamination bins. Compare refusal rates between bins: if refusal is substantially higher on contaminated items (controlling for item difficulty via IRT), this is evidence that contamination is producing memorized-refusal rather than genuine alignment. Apply a confirmatory factor analysis in R testing whether contamination-level loads on the same factor as a 'genuine safety behavior' indicator (e.g., refusal on novel, non-contaminated reformulations of the same prompt). If the factors are distinct, contamination and genuine alignment are empirically separable.\n\n**Why it matters:** Deceptive alignment is difficult to test for directly. Contamination creates a natural experiment: contaminated items elicit memorized responses rather than reasoned refusals, providing a proxy measure for detecting the 'performs safely only when recognized as being evaluated' pattern. Psychometric separation of contamination-driven and alignment-driven refusals advances both measurement quality and alignment theory.\n\n**Relevant context:** Contamination detection methods well-established in 2024\u20132025 literature. Deceptive alignment is a theoretical cornerstone of alignment safety research. The equivalence between memorized-safe-response and performed-safety is a novel framing that bridges contamination and alignment literatures. Factor analysis in R is within participant competence."
+    }
+  },
+  {
+    "idea_id": "gen-157",
+    "title": "Model Homogeneity as a Reliability Artifact: When All Models Agree, the Benchmark Teaches Nothing",
+    "run_id": "2026-03-30T19-05-44",
+    "quick_score": 4,
+    "quick_reasoning": "Directly addresses safety benchmark informativeness under model monoculture with concrete IRT discrimination analysis; safety relevance is clear for detecting benchmark collapse.",
+    "quick_confidence": 0.65,
+    "eliminated": false,
+    "elimination_reason": null,
+    "original_idea": {
+      "idea_id": "gen-157",
+      "run_id": "2026-03-30T19-05-44",
+      "stage": "generate",
+      "timestamp": "2026-03-30T22:37:03Z",
+      "subfield": "AI Evaluation & Benchmarking",
+      "generation_strategy": "compounding_risks",
+      "confidence": 0.7,
+      "body": "# Model Homogeneity as a Reliability Artifact: When All Models Agree, the Benchmark Teaches Nothing\n\n**Problem:** Monoculture in model outputs (Failure B7) collapses inter-model variance in safety scores. Binary metrics (Failure A5) eliminate within-item severity variance. Together these two variance-destroying forces can reduce a safety benchmark to a near-zero-variance score distribution: all models pass most items (monoculture) and the binary metric cannot capture the graded differences that remain. The result is a benchmark that appears to show high and uniform safety performance while providing no actual information about differential safety risk.\n\n**Direction:** Select a safety benchmark and compute the score distribution across all models that have publicly reported results. Calculate: (a) inter-model variance in total scores, (b) inter-model variance on item-level binary responses, (c) internal consistency (Cronbach's alpha) across items. Apply the Vendi Score diversity metric to model output embeddings. Test the hypothesis: models with high pairwise output similarity (monoculture) show lower inter-item variance (binary metrics have nothing to discriminate). Use IRT to identify items with near-zero discrimination parameters (items that all models get right or wrong identically), and compute what percentage of the benchmark is informationally redundant due to monoculture.\n\n**Why it matters:** A benchmark where all models score identically provides no safety-relevant information. The compound failure of monoculture and binary metrics may be producing exactly this situation for frontier models on existing safety benchmarks. IRT discrimination analysis and diversity metrics together make this collapse measurable and documentable.\n\n**Relevant context:** Monoculture across LLM families documented with high cosine similarity values. Binary metric dominance (79%) documented. Benchmark saturation and inability to discriminate frontier models documented. Vendi Score published for diversity measurement. IRT discrimination parameter analysis standard in mirt R package."
+    }
+  },
+  {
+    "idea_id": "gen-158",
+    "title": "The Regulatory Ceiling Effect: When All Models Pass and Policy Cannot Differentiate",
+    "run_id": "2026-03-30T19-05-44",
+    "quick_score": 5,
+    "quick_reasoning": "Targets a specific, well-defined AI safety governance problem (regulatory thresholds in saturated benchmark regions) with clear IRT information analysis; safety relevance is obvious and directly policy-relevant.",
+    "quick_confidence": 0.8,
+    "eliminated": false,
+    "elimination_reason": null,
+    "original_idea": {
+      "idea_id": "gen-158",
+      "run_id": "2026-03-30T19-05-44",
+      "stage": "generate",
+      "timestamp": "2026-03-30T22:37:03Z",
+      "subfield": "AI Governance & Policy",
+      "generation_strategy": "compounding_risks",
+      "confidence": 0.72,
+      "body": "# The Regulatory Ceiling Effect: When All Models 'Pass' and Policy Cannot Differentiate\n\n**Problem:** Ceiling effects (Failure A4) interact with regulatory reliance on benchmarks (Failure B6) in a specific and dangerous way: if a regulatory threshold is set at a level that all frontier models already exceed (because the benchmark is saturated), then the benchmark-based regulation fails to differentiate models that are genuinely safer from models that are marginally compliant. All models 'pass,' the regulation is satisfied, and the regulator has no information about relative risk. The ceiling effect converts a potential regulatory tool into a rubber stamp.\n\n**Direction:** Identify the specific score thresholds referenced in regulatory or institutional frameworks (e.g., MLCommons AI Safety Benchmark grading criteria, NIST risk tiers). Compare those thresholds against the score distributions of current frontier models on the referenced benchmarks. Apply IRT to estimate the discrimination and information at the threshold score level: does the test provide meaningful information at the regulatory cutpoint? Compute the percentage of frontier models exceeding the threshold and the standard error of measurement at the threshold. Produce a 'regulatory information adequacy' report: which regulatory thresholds are set in benchmark score ranges where measurement information is minimal?\n\n**Why it matters:** Regulatory thresholds that all models exceed protect no one. This analysis makes the ceiling problem directly legible to policymakers in terms of regulatory efficacy rather than abstract psychometric concepts. It provides a specific, actionable recommendation: regulatory thresholds should be set at benchmark ability levels where IRT information is maximal, not at arbitrary percentage cutoffs.\n\n**Relevant context:** Benchmark saturation documented for MMLU and GSM8K (>90% for all frontier models). Regulatory use of named benchmarks documented. MLCommons AI Safety Benchmark v0.5 has explicit grading criteria. IRT test information functions are directly interpretable for threshold-setting purposes."
+    }
+  },
+  {
+    "idea_id": "gen-159",
+    "title": "Sycophancy and Binary Metrics: When Approval-Seeking Looks Like Safety",
+    "run_id": "2026-03-30T19-05-44",
+    "quick_score": 5,
+    "quick_reasoning": "Targets a specific, well-defined AI safety problem (sycophancy masquerading as safety under binary metrics) with clear IRT experimental design; safety relevance is obvious and the scope is precise.",
+    "quick_confidence": 0.75,
+    "eliminated": false,
+    "elimination_reason": null,
+    "original_idea": {
+      "idea_id": "gen-159",
+      "run_id": "2026-03-30T19-05-44",
+      "stage": "generate",
+      "timestamp": "2026-03-30T22:37:03Z",
+      "subfield": "AI Alignment",
+      "generation_strategy": "compounding_risks",
+      "confidence": 0.67,
+      "body": "# Sycophancy and Binary Metrics: When Approval-Seeking Looks Like Safety\n\n**Problem:** Sycophancy (Failure B8) \u2014 model outputs shaped by perceived user preferences rather than accurate or safe content \u2014 and binary safety metrics (Failure A5) interact because binary metrics can only record whether a refusal occurred, not why it occurred. A sycophantic model that refuses harmful requests because the user seems to expect refusal is behaviorally identical, under a binary metric, to a model that refuses on principled grounds. The metric cannot distinguish approval-seeking from value-based refusal, and both score as 'safe.'\n\n**Direction:** Administer a safety benchmark to 2\u20133 models under two conditions: (a) neutral framing, (b) explicit expectation-signaling framing ('As an AI safety researcher, I expect you to refuse...'; 'In this evaluation context...'). Compare refusal rates between conditions. Under binary scoring, a sycophantic model would show higher refusal rates in condition (b). Apply a graded response model (IRT in R) to rate the quality of refusals (principled vs. approval-seeking, using a rubric). Compute the correlation between condition-sensitivity (sycophancy indicator) and the binary safety score. Estimate how much of a model's binary safety score is driven by context-sensitivity rather than genuine refusal behavior.\n\n**Why it matters:** If safety evaluations are themselves sycophancy-inducing contexts (the model perceives it is expected to refuse), binary scores measure compliance with perceived expectations rather than alignment depth. This research identifies a circular measurement problem: safety evaluations may be producing the safe behavior they purport to measure.\n\n**Relevant context:** Sycophancy research documented in 2024\u20132025 alignment literature. Binary metric dominance documented. The circularity of safety evaluation eliciting the very behavior it measures is a novel framing connecting sycophancy and measurement theory. Graded rubric development and IRT analysis in R are within participant competence."
+    }
+  },
+  {
+    "idea_id": "gen-163",
+    "title": "Cold Start and Capability Overhang: When New Architecture Meets Uncharted Capability Space",
+    "run_id": "2026-03-30T19-05-44",
+    "quick_score": 4,
+    "quick_reasoning": "Directly addresses capability overhang detection for novel architectures using IRT person-fit analysis; safety relevance is immediate for evaluating new model families.",
+    "quick_confidence": 0.65,
+    "eliminated": false,
+    "elimination_reason": null,
+    "original_idea": {
+      "idea_id": "gen-163",
+      "run_id": "2026-03-30T19-05-44",
+      "stage": "generate",
+      "timestamp": "2026-03-30T22:37:03Z",
+      "subfield": "AI Evaluation & Benchmarking",
+      "generation_strategy": "compounding_risks",
+      "confidence": 0.63,
+      "body": "# Cold Start and Capability Overhang: When New Architecture Meets Uncharted Capability Space\n\n**Problem:** The cold-start problem (Failure A10) means benchmarks are calibrated on existing model families and may not have valid difficulty parameters for genuinely novel architectures. Capability overhang (Failure B4) means novel architectures may have unexpected capability profiles. Together these create a double blind spot: we cannot know what a novel architecture's true capability ceiling is because our benchmarks are calibrated on different model families, and any apparent capability gap may be an artifact of miscalibrated items rather than genuine limitation.\n\n**Direction:** Select 2\u20133 recently released architecturally novel models (e.g., MoE models, models with novel context architectures). Apply IRT analysis (mirt in R) using item calibrations derived from existing model families. Test whether item difficulties and discriminations transfer to the novel architecture by computing residuals between expected and observed response patterns (person-fit statistics). Identify items with large residuals \u2014 these are the items where the novel architecture is behaving unexpectedly relative to established ability curves. Interpret clusters of unexpected items as potential capability overhang indicators requiring deeper investigation.\n\n**Why it matters:** IRT person-fit analysis on novel model families provides a principled, psychometrically grounded method for flagging capability patterns that do not fit established models \u2014 which is precisely the operationalization of 'capability overhang' detection. This is more principled than ad hoc inspection of score anomalies.\n\n**Relevant context:** IRT calibration is population-specific; applying calibrations from one population to another is a known validity concern in psychometrics. Novel architectures (MoE, extended context) are actively deployed. Person-fit statistics available in mirt. Capability overhang is a documented safety concern."
+    }
+  },
+  {
+    "idea_id": "gen-164",
+    "title": "Angoff Standard-Setting for AI Safety Cutoffs",
+    "run_id": "2026-03-30T19-05-44",
+    "quick_score": 5,
+    "quick_reasoning": "Targets a specific, well-defined AI safety governance problem (principled deployment thresholds) with clear Angoff methodology; safety relevance is obvious and directly actionable for regulators.",
+    "quick_confidence": 0.8,
+    "eliminated": false,
+    "elimination_reason": null,
+    "original_idea": {
+      "idea_id": "gen-164",
+      "run_id": "2026-03-30T19-05-44",
+      "stage": "generate",
+      "timestamp": "2026-03-30T22:37:03Z",
+      "subfield": "Evaluations & Benchmarks",
+      "generation_strategy": "methodology_bridging",
+      "confidence": 0.72,
+      "body": "# Angoff Standard-Setting for AI Safety Cutoffs: Using Expert Panels to Define Meaningful Pass/Fail Thresholds on Safety Benchmarks\n\n**Problem:** AI safety benchmarks currently use arbitrary numeric cutoffs (e.g., 80% refusal rate = 'safe') with no principled justification for why those thresholds represent meaningful safety distinctions. There is no structured method for translating benchmark scores into defensible deployment decisions.\n\n**Direction:** Convene a structured Angoff panel of AI safety researchers who each estimate, item by item on an existing safety benchmark (e.g., MLCommons AI Safety v0.5 or StrongREJECT), the probability that a 'minimally safe' model would answer correctly. Average these estimates across panelists to derive a principled cutoff score. Analyze inter-panelist agreement (intraclass correlation), compare the resulting threshold to current ad hoc cutoffs, and examine whether the Angoff-derived cutoff changes deployment recommendations for existing model evaluations. Run the exercise with two panels (safety researchers vs. AI ethicists) and compare results as a convergent validity check.\n\n**Why it matters:** Without principled standard-setting, AI safety thresholds are arbitrary and legally/ethically indefensible. Angoff panels have been used for decades in high-stakes credentialing (medical licensing, bar exams) to produce defensible cutoffs. Importing this methodology would make AI safety thresholds transparent, reproducible, and grounded in expert judgment rather than convention.\n\n**Relevant context:** The MLCommons AI Safety Benchmark v0.5 explicitly acknowledges that determining cutoffs is an open problem. The contrasting groups and Angoff methods are both well-validated in clinical skills assessment literature (PMC12409087). Educational measurement R tools (eatATA, mirt) support the analysis. No prior work appears to have used structured standard-setting methodology for AI safety benchmark thresholds."
+    }
+  },
+  {
+    "idea_id": "gen-165",
+    "title": "Rasch Analysis of AI Safety Benchmark Items: Diagnosing Misfit, Unidimensionality, and Item Quality",
+    "run_id": "2026-03-30T19-05-44",
+    "quick_score": 4,
+    "quick_reasoning": "Directly addresses safety benchmark item quality with comprehensive Rasch analysis; safety relevance is immediate for construct validity of safety measurement.",
+    "quick_confidence": 0.7,
+    "eliminated": false,
+    "elimination_reason": null,
+    "original_idea": {
+      "idea_id": "gen-165",
+      "run_id": "2026-03-30T19-05-44",
+      "stage": "generate",
+      "timestamp": "2026-03-30T22:37:03Z",
+      "subfield": "Evaluations & Benchmarks",
+      "generation_strategy": "methodology_bridging",
+      "confidence": 0.78,
+      "body": "# Rasch Analysis of AI Safety Benchmark Items: Diagnosing Misfit, Unidimensionality, and Item Quality in Existing Safety Evaluation Sets\n\n**Problem:** Existing AI safety benchmarks are assembled without formal item analysis. It is unknown whether their items form a coherent unidimensional scale, which items are misfitting, and whether benchmark scores reflect a single underlying 'safety' construct or a patchwork of unrelated behaviors.\n\n**Direction:** Apply the Rasch measurement model (using the R package eRm or TAM) to response data from a publicly available AI safety benchmark with binary pass/fail items. Estimate item difficulty parameters and person (model) ability parameters. Compute infit and outfit MNSQ statistics to flag misfitting items. Run a Principal Component Analysis of Rasch residuals to assess unidimensionality. Produce a Wright map showing item difficulty distribution relative to model 'ability.' Interpret what misfitting items have in common (e.g., topic, format) and what this implies about the construct being measured.\n\n**Why it matters:** Rasch analysis has been standard practice in educational and clinical measurement for decades for exactly these quality-control purposes. If AI safety benchmarks contain misfitting items or measure multiple unrelated constructs, their scores conflate unrelated behaviors and mislead decision-makers. This analysis requires only R and a matrix of model-by-item pass/fail responses, which are publicly available for several benchmarks.\n\n**Relevant context:** IRT/Rasch has already been applied to AI benchmark evaluation (arxiv 2306.10512, which proposes adaptive testing for AI). The 'From Static Benchmarks to Adaptive Testing' paper explicitly calls for item-level psychometric analysis. Rasch fit statistics use MNSQ thresholds of 0.7-1.3 for acceptable fit. The eRm and TAM packages in R implement full Rasch analyses. Unidimensionality is a prerequisite for score interpretability; violation means the single summary score is meaningless."
+    }
+  },
+  {
+    "idea_id": "gen-166",
+    "title": "Differential Item Functioning Analysis for AI Safety Benchmarks: Open vs. Closed-Source Models",
+    "run_id": "2026-03-30T19-05-44",
+    "quick_score": 4,
+    "quick_reasoning": "Directly addresses measurement fairness in safety benchmarks with concrete DIF methodology comparing model types; safety relevance is immediate.",
+    "quick_confidence": 0.7,
+    "eliminated": false,
+    "elimination_reason": null,
+    "original_idea": {
+      "idea_id": "gen-166",
+      "run_id": "2026-03-30T19-05-44",
+      "stage": "generate",
+      "timestamp": "2026-03-30T22:37:03Z",
+      "subfield": "Evaluations & Benchmarks",
+      "generation_strategy": "methodology_bridging",
+      "confidence": 0.75,
+      "body": "# Differential Item Functioning Analysis for AI Safety Benchmarks: Do Items Function Differently for Open vs. Closed-Source Models?\n\n**Problem:** AI safety benchmark items may function differently for different classes of models (open vs. closed source, small vs. large, RLHF-tuned vs. SFT-only) even when those models have equivalent overall safety levels. This would mean benchmark comparisons across model types are unfair\u2014analogous to a test that is biased against a demographic group.\n\n**Direction:** Collect pass/fail responses from a set of open-source and closed-source models (matched for overall safety score) on a safety benchmark with sufficient items (n > 30). Apply DIF detection methods available in R (the difR package implements Mantel-Haenszel, logistic regression, and Lord's chi-square). Identify items showing significant DIF between model classes. Examine whether DIF items share systematic features (format, hazard category, response length sensitivity). Compute benchmark scores with and without DIF items and assess whether rankings change.\n\n**Why it matters:** DIF analysis is the standard method for detecting measurement bias in educational and clinical testing. If safety benchmark items function differently for open vs. closed-source models, current cross-model comparisons are invalid. This analysis could reveal that apparent safety differences between model types are artifacts of item bias rather than genuine behavioral differences. The difR package in R makes this analysis accessible without heavy coding.\n\n**Relevant context:** The FairDIF paper (Springer, 2026) explicitly applies IRT and DIF to classification fairness. The paper 'Finding Words Associated with DIF' (JEDM 2025) shows DIF is detectable from item text. DIF analysis in R using difR is a standard psychometric workflow. Several public safety benchmarks (StrongREJECT, MLCommons) have sufficient items and multiple model evaluations. This specific application to model-type DIF in safety benchmarks has not been published."
+    }
+  },
+  {
+    "idea_id": "gen-167",
+    "title": "Score Equating for AI Safety Benchmarks: Enabling Fair Cross-Benchmark Comparison",
+    "run_id": "2026-03-30T19-05-44",
+    "quick_score": 4,
+    "quick_reasoning": "Directly addresses cross-benchmark comparability for safety evaluation with concrete equipercentile equating; safety relevance is clear for regulatory comparisons.",
+    "quick_confidence": 0.7,
+    "eliminated": false,
+    "elimination_reason": null,
+    "original_idea": {
+      "idea_id": "gen-167",
+      "run_id": "2026-03-30T19-05-44",
+      "stage": "generate",
+      "timestamp": "2026-03-30T22:37:03Z",
+      "subfield": "Evaluations & Benchmarks",
+      "generation_strategy": "methodology_bridging",
+      "confidence": 0.7,
+      "body": "# Score Equating for AI Safety Benchmarks: Enabling Fair Cross-Benchmark Comparison Using Equipercentile Linking\n\n**Problem:** Different AI safety benchmarks (e.g., StrongREJECT vs. MLCommons vs. SORRY-Bench) are not on a common scale, making it impossible to meaningfully compare models evaluated on different benchmarks. A model scoring 85% on one benchmark may be safer or less safe than a model scoring 70% on another\u2014with no principled way to compare.\n\n**Direction:** Select two or more safety benchmarks that have been administered to a common set of models. Using those models as the 'linking sample,' apply equipercentile equating (or IRT-based observed-score equating) to place both benchmarks on a common scale. Use the equate R package. Evaluate linking quality using the standard error of equating and the degree of model rank-order change post-equating. Produce a concordance table allowing practitioners to convert scores across benchmarks. Validate by checking whether equated scores predict human-judged safety ratings better than raw scores.\n\n**Why it matters:** Score equating is the foundational method for making test scores comparable across forms in education (SAT, GRE) and medicine. Without it, comparing models evaluated on different benchmarks is like comparing Fahrenheit and Celsius without a conversion formula. The equate R package implements all standard equating methods without heavy coding. This could immediately improve how AI labs, regulators, and researchers compare safety claims.\n\n**Relevant context:** The 'Psychometrically derived 60-question benchmarks' paper (ScienceDirect 2025) shows IRT-based cross-benchmark work is feasible. The equate R package is mature and widely used. Several safety benchmarks have been run on overlapping model sets (e.g., Llama family, GPT-4 class). Score equating has been discussed conceptually in AI evaluation literature but empirical equating studies appear absent from the literature."
+    }
+  },
+  {
+    "idea_id": "gen-172",
+    "title": "Adaptive Safety Testing via IRT-Based Item Selection: Designing a CAT Safety Benchmark",
+    "run_id": "2026-03-30T19-05-44",
+    "quick_score": 4,
+    "quick_reasoning": "Directly addresses safety evaluation efficiency with concrete CAT simulation using mirtCAT; safety relevance is clear for reducing evaluation cost while maintaining precision.",
+    "quick_confidence": 0.7,
+    "eliminated": false,
+    "elimination_reason": null,
+    "original_idea": {
+      "idea_id": "gen-172",
+      "run_id": "2026-03-30T19-05-44",
+      "stage": "generate",
+      "timestamp": "2026-03-30T22:37:03Z",
+      "subfield": "Evaluations & Benchmarks",
+      "generation_strategy": "methodology_bridging",
+      "confidence": 0.8,
+      "body": "# Adaptive Safety Testing via IRT-Based Item Selection: Designing a Computerized Adaptive Safety Benchmark That Converges in Fewer Items\n\n**Problem:** Current safety benchmarks administer the same fixed set of hundreds of items to every model regardless of its safety level, making evaluation slow and expensive. A model that fails basic safety items should not waste evaluation time on advanced items, and vice versa. This is the unsolved problem that CAT has addressed in education for 40 years.\n\n**Direction:** Using publicly available response data from a safety benchmark with many items (e.g., WildGuard, SORRY-Bench, or HarmBench), fit an IRT model (2PL or Rasch) to estimate item difficulty and discrimination parameters. Simulate a CAT algorithm using the mirtCAT R package: start with moderate-difficulty items, select next items based on maximum information at the current ability estimate, stop when SE falls below a threshold. Compare the number of items needed to achieve equivalent measurement precision versus fixed-form administration. Evaluate convergence speed and rank-order fidelity for the CAT vs. full benchmark.\n\n**Why it matters:** The recent paper 'Leveraging CAT for Cost-effective Evaluation of LLMs in Medical Benchmarking' (arxiv 2603.23506) shows CAT achieves near-perfect correlation with full-bank estimates using only 1.3% of items in medical benchmarks. The CAT4AI framework already exists on GitHub. Applying this specifically to safety benchmarks could reduce evaluation cost by 90%+ while maintaining precision. mirtCAT in R makes simulation straightforward without ML training.\n\n**Relevant context:** CAT has been applied to AI benchmarks in medical contexts (arxiv 2603.23506) and via the CAT4AI Python library (GitHub bigdata-ustc). The 'From Static Benchmarks to Adaptive Testing' paper (arxiv 2306.10512) explicitly proposes this direction for AI evaluation. mirtCAT and catR are R packages supporting CAT simulation. Safety benchmarks like SORRY-Bench have 400+ items\u2014sufficient for IRT calibration. This application specifically to safety benchmarks with analysis of item-type coverage appears novel."
+    }
+  },
+  {
+    "idea_id": "gen-181",
+    "title": "IRT Person Fit Analysis for Detecting Sandbagging and Strategic Responding",
+    "run_id": "2026-03-30T19-05-44",
+    "quick_score": 5,
+    "quick_reasoning": "Targets a specific, well-defined AI safety problem (sandbagging detection via person-fit statistics) with clear methodology; safety relevance is obvious and scope is precise.",
+    "quick_confidence": 0.8,
+    "eliminated": false,
+    "elimination_reason": null,
+    "original_idea": {
+      "idea_id": "gen-181",
+      "run_id": "2026-03-30T19-05-44",
+      "stage": "generate",
+      "timestamp": "2026-03-30T22:37:04Z",
+      "subfield": "Evaluations & Benchmarks",
+      "generation_strategy": "methodology_bridging",
+      "confidence": 0.68,
+      "body": "# IRT Person Fit Analysis for Detecting Sandbagging and Strategic Responding in AI Safety Evaluations\n\n**Problem:** AI models may respond in strategically inconsistent patterns on safety evaluations\u2014refusing items they could answer to appear safer (sandbagging) or answering easy harmful items while refusing hard ones, producing response patterns that deviate from the expected IRT-consistent pattern. Person fit statistics, developed to detect aberrant test-taker behavior, could identify such strategic responding.\n\n**Direction:** Fit an IRT model to safety benchmark response data from a set of models. Compute person fit statistics (lz, infit, outfit MNSQ) for each model using the PerFit R package. Flag models with significantly aberrant response patterns (e.g., high outfit on easy items, low outfit on hard items). Characterize the pattern of aberrance: does it suggest consistent over-refusal (sandbagging-like), inconsistent responding, or other patterns? Correlate aberrance with external indicators of strategic behavior (e.g., performance differences under 'this is an evaluation' vs. blind evaluation conditions). Validate using the published sandbagging literature.\n\n**Why it matters:** Person fit statistics were developed in educational measurement to detect cheating and aberrant response patterns. The paper 'Applying IRT to Distinguish Between Human and Generative AI Responses to Multiple-Choice Assessments' (arxiv 2412.02713) already shows IRT can distinguish AI from human response patterns. Sandbagging (strategic underperformance) in safety evaluations is a documented concern. The PerFit package in R implements all standard person fit statistics without coding. This specific application to detecting sandbagging patterns appears novel.\n\n**Relevant context:** IRT person fit statistics for aberrant response detection are well-established (lz statistic, infit/outfit MNSQ). The PerFit R package implements these. The arxiv paper 2412.02713 shows IRT-based AI response pattern analysis is feasible. Sandbagging in AI evaluations has been discussed in alignment literature. The paper 'Replicating Sandbagging Under Adversarial Evaluation Awareness Prompts' (gen-0433 in idea tracker) is a related idea from a different angle."
+    }
+  },
+  {
+    "idea_id": "gen-184",
+    "title": "Automated Test Assembly for Optimal Safety Benchmark Design",
+    "run_id": "2026-03-30T19-05-44",
+    "quick_score": 4,
+    "quick_reasoning": "Directly addresses safety benchmark optimization with concrete ATA integer programming methodology; safety relevance is clear for efficient benchmark design.",
+    "quick_confidence": 0.65,
+    "eliminated": false,
+    "elimination_reason": null,
+    "original_idea": {
+      "idea_id": "gen-184",
+      "run_id": "2026-03-30T19-05-44",
+      "stage": "generate",
+      "timestamp": "2026-03-30T22:37:04Z",
+      "subfield": "Evaluations & Benchmarks",
+      "generation_strategy": "methodology_bridging",
+      "confidence": 0.66,
+      "body": "# Automated Test Assembly for Optimal Safety Benchmark Design: Using Linear Programming to Construct Benchmarks That Maximize Measurement Precision Under Content Constraints\n\n**Problem:** AI safety benchmarks are currently assembled manually, with no formal optimization of item selection. An Automated Test Assembly approach would select items from a large item pool to maximize measurement precision (information) across the ability range while satisfying content blueprint constraints\u2014producing shorter, more informative benchmarks.\n\n**Direction:** Use a safety benchmark item pool with known IRT parameters (estimated from prior calibration). Formulate an ATA problem: maximize test information at a target safety level (or over a range) subject to constraints on hazard category coverage (blueprint), item format mix, and total test length. Solve using the ata R package (which wraps integer linear programming solvers). Compare the ATA-assembled benchmark to the original full benchmark in terms of measurement precision at different ability levels. Show that a 50-item ATA-assembled benchmark matches the measurement precision of a 200-item manually assembled one.\n\n**Why it matters:** ATA is the established method for building psychometrically optimal tests in educational and certification settings. The ata R package implements this for CRAN users. Applying ATA to safety benchmarks would produce principled, efficient evaluations rather than arbitrary item collections. The analysis requires only R and estimated IRT parameters\u2014no ML training. It builds directly on the Rasch/IRT analysis idea and produces actionable benchmark design recommendations.\n\n**Relevant context:** The ata and eatATA packages in R implement full ATA with mixed-integer programming. ATA methodology is documented in MDPI and ETS publications. IRT parameters for safety benchmark items can be estimated from existing response data. The 'From Static Benchmarks to Adaptive Testing' paper discusses item selection optimization. This specific application of ATA to optimize safety benchmark design appears novel."
+    }
+  },
+  {
+    "idea_id": "gen-187",
+    "title": "Item Exposure Control Analysis for AI Safety Benchmarks",
+    "run_id": "2026-03-30T19-05-44",
+    "quick_score": 4,
+    "quick_reasoning": "Directly addresses contamination risk in safety benchmarks with concrete IRT exposure analysis methodology; safety relevance is immediate for benchmark integrity.",
+    "quick_confidence": 0.6,
+    "eliminated": false,
+    "elimination_reason": null,
+    "original_idea": {
+      "idea_id": "gen-187",
+      "run_id": "2026-03-30T19-05-44",
+      "stage": "generate",
+      "timestamp": "2026-03-30T22:37:04Z",
+      "subfield": "Evaluations & Benchmarks",
+      "generation_strategy": "methodology_bridging",
+      "confidence": 0.6,
+      "body": "# Item Exposure Control Analysis for AI Safety Benchmarks: Quantifying Data Leakage Risk Using Exposure Rate Diagnostics\n\n**Problem:** AI safety benchmark items that are heavily exposed during training data collection inflate model performance beyond what genuine safety would predict\u2014analogous to the CAT problem of overexposed items. There is no formal framework for quantifying which safety benchmark items are at highest contamination risk based on their characteristics.\n\n**Direction:** Apply IRT-based item exposure analysis to AI safety benchmarks. Estimate item difficulty parameters using IRT. Identify items that are disproportionately 'overselected' by current models relative to their difficulty level\u2014a pattern suggesting familiarity rather than safety generalization. Compare item difficulty-to-selection ratios against exposure rate thresholds used in CAT (e.g., Sympson-Hetter threshold of 0.5). Correlate exposure risk indicators with known data leakage signals (n-gram match with training corpora, semantic similarity to web-scraped safety datasets). Propose item rotation or item banking procedures analogous to CAT exposure control.\n\n**Why it matters:** Item exposure control in CAT uses formal statistical methods to prevent test score inflation from item overexposure. AI benchmark contamination has been identified as a major threat to valid evaluation (Benchmark Contamination article). Applying formal exposure control diagnostics would provide a quantitative framework for contamination risk assessment that goes beyond simple n-gram matching. The methodology requires only IRT analysis and correlation in R.\n\n**Relevant context:** IRT item exposure control literature is well-developed (Springer 2023, PMC6140306). AI benchmark contamination is documented and discussed as a major problem ('Benchmark Contamination: The AI Fraud Nobody Wants to Discuss'). N-gram overlap methods for contamination detection exist. The formal analogy between CAT item exposure and benchmark contamination is conceptually clear but appears not to have been developed in published work."
+    }
+  },
+  {
+    "idea_id": "gen-190",
+    "title": "Bookmark Method Standard Setting for AI Safety Benchmarks",
+    "run_id": "2026-03-30T19-05-44",
+    "quick_score": 5,
+    "quick_reasoning": "Targets a specific, well-defined AI safety governance problem (setting defensible performance level descriptors) with clear Bookmark methodology using IRT; scope is precise and directly actionable.",
+    "quick_confidence": 0.75,
+    "eliminated": false,
+    "elimination_reason": null,
+    "original_idea": {
+      "idea_id": "gen-190",
+      "run_id": "2026-03-30T19-05-44",
+      "stage": "generate",
+      "timestamp": "2026-03-30T22:37:04Z",
+      "subfield": "Evaluations & Benchmarks",
+      "generation_strategy": "methodology_bridging",
+      "confidence": 0.67,
+      "body": "# Bookmark Method Standard Setting for AI Safety Benchmarks: Using Ordered Item Booklet Methodology to Set Defensible Performance Level Descriptors\n\n**Problem:** AI safety benchmarks lack formal Performance Level Descriptors (PLDs)\u2014descriptions of what a model at each safety level actually does and does not do. Without PLDs, safety grades (e.g., 'Low Risk,' 'High Risk') are labels without behavioral content. The Bookmark method provides a structured procedure for deriving PLDs from expert judgment about item difficulty ordering.\n\n**Direction:** Implement the Bookmark method for a safety benchmark: (1) Order items by their IRT-estimated difficulty (probability that a model of any given safety level answers correctly). (2) Create an Ordered Item Booklet (OIB) presenting items from easiest to hardest. (3) Have a panel of AI safety experts 'bookmark' the location where the transition from one performance level to the next occurs. (4) Average bookmarks across panelists to set the cutoff. (5) Develop PLDs describing what models at each level do. (6) Compare Bookmark-derived cutoffs to Angoff-derived cutoffs and current ad hoc thresholds.\n\n**Why it matters:** The Bookmark method is the most widely used alternative to Angoff for high-stakes standard setting and has shown superior validity in medical education (BMC Medical Education 2020). It produces not just cutoffs but interpretable descriptions of what each performance level means\u2014critical for regulatory communication. An OIB requires IRT difficulty estimates plus expert judgment, with no heavy coding required.\n\n**Relevant context:** Bookmark vs. Angoff comparison studies show Bookmark produces higher validity indices (BMC Medical Education 2020). The Bookmark method is used for NAEP, ACCUPLACER, and other high-stakes assessments. R packages for IRT difficulty estimation (eRm, mirt, TAM) provide the necessary inputs. AI safety benchmarks lack formal PLDs that could guide deployment decisions. No published work applies Bookmark methodology to AI safety evaluation."
+    }
+  },
+  {
+    "idea_id": "gen-191",
+    "title": "Which Safety Benchmarks Have Item-Level Data Suitable for IRT? A Systematic Audit",
+    "run_id": "2026-03-30T19-05-44",
+    "quick_score": 4,
+    "quick_reasoning": "Directly addresses a prerequisite for IRT-based safety evaluation with a concrete systematic audit approach; safety relevance is clear as a foundational enabling study.",
+    "quick_confidence": 0.65,
+    "eliminated": false,
+    "elimination_reason": null,
+    "original_idea": {
+      "idea_id": "gen-191",
+      "run_id": "2026-03-30T19-05-44",
+      "stage": "generate",
+      "timestamp": "2026-03-30T22:37:04Z",
+      "subfield": "AI Evaluation / Psychometrics",
+      "generation_strategy": "problem_decomposition",
+      "confidence": 0.72,
+      "body": "# Which Safety Benchmarks Have Item-Level Data Suitable for IRT? A Systematic Audit\n\n**Problem:** Apply IRT to AI safety benchmarks\n\n**Direction:** Conduct a systematic audit of publicly available AI safety benchmarks (e.g., AdvBench, HarmBench, SALAD-Bench, WildGuard, AIR-2024) to determine which ones release item-level binary or polytomous response data across multiple models, and whether sample sizes (number of model \u00d7 item cells) meet minimum IRT calibration thresholds (typically N > 200 respondents and > 20 items per dimension).\n\n**Why it matters:** IRT requires item-level response matrices, not just aggregate scores. Before any IRT analysis of safety benchmarks is possible, someone must establish which benchmarks are even analyzable. This is the prerequisite gate for the entire parent problem and is currently undocumented.\n\n**Relevant context:** tinyBenchmarks (2024) successfully applied IRT to Open LLM Leaderboard, MMLU, and HELM because those benchmarks expose item-level data. Safety benchmarks may not. The PSN-IRT framework (2025) ran IRT on 12 LLMs across 11 datasets but did not focus on safety-specific benchmarks. 'Lost in Benchmarks' (2025) similarly worked with general capability benchmarks."
+    }
+  },
+  {
+    "idea_id": "gen-192",
+    "title": "Do Safety Benchmark Items Satisfy IRT Local Independence? Testing the Core Assumption",
+    "run_id": "2026-03-30T19-05-44",
+    "quick_score": 4,
+    "quick_reasoning": "Directly addresses whether IRT assumptions hold for safety benchmarks with concrete Q3 diagnostics; safety relevance is immediate for validating IRT-based safety measurement.",
+    "quick_confidence": 0.7,
+    "eliminated": false,
+    "elimination_reason": null,
+    "original_idea": {
+      "idea_id": "gen-192",
+      "run_id": "2026-03-30T19-05-44",
+      "stage": "generate",
+      "timestamp": "2026-03-30T22:37:04Z",
+      "subfield": "AI Evaluation / Psychometrics",
+      "generation_strategy": "problem_decomposition",
+      "confidence": 0.68,
+      "body": "# Do Safety Benchmark Items Satisfy IRT Local Independence? Testing the Core Assumption\n\n**Problem:** Apply IRT to AI safety benchmarks\n\n**Direction:** Select one safety benchmark with item-level data (e.g., HarmBench or SALAD-Bench), construct a model \u00d7 item response matrix using publicly available evaluation logs, and formally test the local independence assumption using Q3 statistics and residual correlations in the mirt R package. Identify item clusters that violate independence (e.g., items about the same harm category) and quantify how severe violations are.\n\n**Why it matters:** Local independence is a foundational IRT assumption: given a model's latent ability, its responses to different items must be uncorrelated. Safety benchmarks often cluster items by harm category (bioweapons, hate speech, etc.), making violation likely. If violated, standard IRT models produce biased parameter estimates and the whole IRT framework breaks down.\n\n**Relevant context:** The PSN-IRT paper (2025) found that current benchmarks suffer from 'uneven measurement properties' but did not specifically test local independence in safety benchmarks. IRT tutorials using mirt in R show that Q3 statistics and residual analysis are straightforward to compute. The mirt package fully supports these diagnostics."
+    }
+  },
+  {
+    "idea_id": "gen-193",
+    "title": "Rasch, 2PL, or 3PL? Selecting the Right IRT Model for Safety Benchmark Items",
+    "run_id": "2026-03-30T19-05-44",
+    "quick_score": 4,
+    "quick_reasoning": "Directly addresses IRT model selection for safety benchmarks with concrete model comparison methodology; safety relevance is immediate for all downstream IRT inferences.",
+    "quick_confidence": 0.65,
+    "eliminated": false,
+    "elimination_reason": null,
+    "original_idea": {
+      "idea_id": "gen-193",
+      "run_id": "2026-03-30T19-05-44",
+      "stage": "generate",
+      "timestamp": "2026-03-30T22:37:04Z",
+      "subfield": "AI Evaluation / Psychometrics",
+      "generation_strategy": "problem_decomposition",
+      "confidence": 0.65,
+      "body": "# Rasch, 2PL, or 3PL? Selecting the Right IRT Model for Safety Benchmark Items\n\n**Problem:** Apply IRT to AI safety benchmarks\n\n**Direction:** Using item-level response data from a safety benchmark, fit competing IRT models (Rasch / 1PL, 2PL, 3PL) using the mirt or ltm packages in R, compare model fit via AIC/BIC and likelihood-ratio tests, and determine whether item discrimination parameters vary significantly across safety items (arguing for 2PL) or whether a guessing parameter is needed (arguing for 3PL). Interpret what different models imply about how 'safety ability' works.\n\n**Why it matters:** Different IRT models encode different theories of how models respond to safety items. The Rasch model assumes all items are equally discriminating; 2PL allows variable discrimination; 3PL adds a pseudo-guessing parameter. For safety, there is no obvious 'guessing' analog, but some models may comply with unsafe requests at a non-zero baseline rate regardless of ability. The right model choice affects all downstream inferences.\n\n**Relevant context:** Comparisons of SAS PROC IRT and mirt for multidimensional IRT show both tools handle 1PL through 3PL estimation well. The 'Lost in Benchmarks' (2025) paper uses a 2PL model for LLM benchmarks without strong justification. For safety items, the choice deserves explicit empirical testing."
+    }
+  },
+  {
+    "idea_id": "gen-194",
+    "title": "Using IRT Item Fit to Identify Poor-Quality Safety Benchmark Items",
+    "run_id": "2026-03-30T19-05-44",
+    "quick_score": 4,
+    "quick_reasoning": "Directly addresses safety benchmark item quality with concrete IRT fit statistics; safety relevance is immediate for improving measurement validity.",
+    "quick_confidence": 0.7,
+    "eliminated": false,
+    "elimination_reason": null,
+    "original_idea": {
+      "idea_id": "gen-194",
+      "run_id": "2026-03-30T19-05-44",
+      "stage": "generate",
+      "timestamp": "2026-03-30T22:37:04Z",
+      "subfield": "AI Evaluation / Psychometrics",
+      "generation_strategy": "problem_decomposition",
+      "confidence": 0.7,
+      "body": "# Using IRT Item Fit to Identify Poor-Quality Safety Benchmark Items\n\n**Problem:** Apply IRT to AI safety benchmarks\n\n**Direction:** Fit a 2PL IRT model to a safety benchmark response matrix, then compute item fit statistics (S-X2, RMSEA, infit/outfit mean-square statistics) to flag misfitting items. Characterize what misfitting items look like: are they too easy (all models refuse), too ambiguous (refusal rates near 50%), or thematically confounded? Produce a ranked list of items by fit quality and suggest which items should be revised or removed.\n\n**Why it matters:** Many safety benchmarks were constructed without psychometric item analysis. Poor items\u2014those that are universally refused, that measure something different from the rest, or that are inconsistently responded to\u2014add noise without adding information. IRT item fit statistics offer a principled, quantitative way to identify and remove such items.\n\n**Relevant context:** 'Lost in Benchmarks' (2025) notes that benchmarks suffer from 'item saturation' (all models get them right) and argues IRT can identify this. The FairDIF paper (2025) applies IRT-based diagnostics to fairness problems. IRT item fit via mirt is well-documented and feasible in R without heavy coding."
+    }
+  },
+  {
+    "idea_id": "gen-195",
+    "title": "Is There Enough Item Variance in Safety Benchmarks for IRT to Work?",
+    "run_id": "2026-03-30T19-05-44",
+    "quick_score": 4,
+    "quick_reasoning": "Directly addresses a prerequisite feasibility question for IRT on safety benchmarks with concrete variance diagnostics; safety relevance is clear as a foundational check.",
+    "quick_confidence": 0.65,
+    "eliminated": false,
+    "elimination_reason": null,
+    "original_idea": {
+      "idea_id": "gen-195",
+      "run_id": "2026-03-30T19-05-44",
+      "stage": "generate",
+      "timestamp": "2026-03-30T22:37:04Z",
+      "subfield": "AI Evaluation / Psychometrics",
+      "generation_strategy": "problem_decomposition",
+      "confidence": 0.73,
+      "body": "# Is There Enough Item Variance in Safety Benchmarks for IRT to Work? An Empirical Check\n\n**Problem:** Apply IRT to AI safety benchmarks\n\n**Direction:** For several safety benchmarks, compute the empirical distribution of item pass rates (proportion of models that refuse/comply) across items. Test whether item difficulty spans the full range needed to discriminate models at different safety ability levels, whether item variance exceeds a minimum threshold (e.g., items with p > 0.95 or p < 0.05 carry near-zero information), and how many items remain informative after removing floor/ceiling items.\n\n**Why it matters:** If safety benchmarks consist mostly of items that all advanced models pass (refuse harmful requests) or all models fail (comply with jailbreaks), there is minimal item variance and IRT has little to work with. This is a prerequisite diagnostic\u2014if variance is too low, the benchmark cannot differentiate safety ability levels and needs more items in the middle difficulty range.\n\n**Relevant context:** MMLU reached saturation by mid-2024 when top models scored above 85%, losing discriminative power. Safety benchmarks may face the same problem in reverse\u2014if all frontier models achieve >95% refusal rates on standard prompts, there is ceiling-level variance that IRT cannot leverage. tinyBenchmarks explicitly used IRT to select high-information items."
+    }
+  },
+  {
+    "idea_id": "gen-196",
+    "title": "IRT-Based Adaptive Item Selection for Safety Evaluation: Does It Preserve Ranking Accuracy?",
+    "run_id": "2026-03-30T19-05-44",
+    "quick_score": 4,
+    "quick_reasoning": "Directly addresses safety evaluation efficiency with concrete CAT validation methodology; safety relevance is clear for reducing evaluation cost.",
+    "quick_confidence": 0.7,
+    "eliminated": false,
+    "elimination_reason": null,
+    "original_idea": {
+      "idea_id": "gen-196",
+      "run_id": "2026-03-30T19-05-44",
+      "stage": "generate",
+      "timestamp": "2026-03-30T22:37:04Z",
+      "subfield": "AI Evaluation / Psychometrics",
+      "generation_strategy": "problem_decomposition",
+      "confidence": 0.74,
+      "body": "# IRT-Based Adaptive Item Selection for Safety Evaluation: Does It Preserve Ranking Accuracy?\n\n**Problem:** Apply IRT to AI safety benchmarks\n\n**Direction:** Using pre-calibrated IRT parameters from a safety benchmark, simulate a computerized adaptive testing (CAT) procedure in R: starting with items of medium difficulty, adaptively select next items based on maximum Fisher information at the current theta estimate, and stop when standard error falls below 0.3. Compare safety ability estimates from CAT (using ~20% of items) against full-benchmark estimates and measure rank-order correlation between models.\n\n**Why it matters:** Safety evaluations are expensive\u2014running hundreds of models across thousands of items consumes significant compute. If IRT-based adaptive selection can accurately rank models using 10-20% of items, this would drastically reduce evaluation costs while maintaining the same discriminative validity. Recent work achieved 98%+ cost reduction for medical benchmarks using this approach.\n\n**Relevant context:** CAT for LLM evaluation has been validated for medical benchmarks (2026 preprint): CAT-derived proficiency estimates achieved near-perfect correlation with full-bank estimates using only 1.3% of items. The tinyBenchmarks paper (2024) showed 160x cost reduction on Open LLM Leaderboard using IRT item selection. Safety benchmarks are a natural next target."
+    }
+  },
+  {
+    "idea_id": "gen-207",
+    "title": "Are IRT Item Parameters Stable Across Prompt Phrasings? Testing Measurement Invariance",
+    "run_id": "2026-03-30T19-05-44",
+    "quick_score": 4,
+    "quick_reasoning": "Directly addresses prompt sensitivity in safety evaluation using multigroup IRT measurement invariance; safety relevance is immediate for evaluation validity.",
+    "quick_confidence": 0.7,
+    "eliminated": false,
+    "elimination_reason": null,
+    "original_idea": {
+      "idea_id": "gen-207",
+      "run_id": "2026-03-30T19-05-44",
+      "stage": "generate",
+      "timestamp": "2026-03-30T22:37:05Z",
+      "subfield": "AI Evaluation / Psychometrics",
+      "generation_strategy": "problem_decomposition",
+      "confidence": 0.65,
+      "body": "# Are IRT Item Parameters Stable Across Prompt Phrasings? Testing Measurement Invariance for Safety Items\n\n**Problem:** Quantify and reduce prompt sensitivity in evaluation\n\n**Direction:** For 20-30 safety items, create 3-4 paraphrase variants of each. Calibrate IRT item parameters (difficulty b, discrimination a) separately for each paraphrase group. Test whether parameters are stable across phrasings using IRT measurement invariance tests (multigroup IRT in mirt, testing equality constraints on a and b parameters). Items with significantly different parameters across phrasings are 'prompt-sensitive' in a psychometrically precise sense.\n\n**Why it matters:** If an item's IRT parameters change depending on how it is phrased, then the item is not measuring a stable construct\u2014different phrasings are effectively measuring different things. This makes it impossible to compare model ability estimates across evaluations that use different prompt wordings. Identifying prompt-stable items is essential for benchmark validity.\n\n**Relevant context:** IRT measurement invariance testing (multigroup IRT, differential item functioning frameworks) is a well-established psychometric technique. 'Diagnosing the Reliability of LLM-as-a-Judge via Item Response Theory' (2025) applies IRT to judge reliability\u2014similar methods apply to prompt stability. The mirt package supports multigroup IRT and measurement invariance testing."
+    }
+  },
+  {
+    "idea_id": "gen-208",
+    "title": "Prompt-Robust Safety Scoring: Aggregating Across Paraphrases Using IRT Theta Estimates",
+    "run_id": "2026-03-30T19-05-44",
+    "quick_score": 4,
+    "quick_reasoning": "Directly addresses prompt sensitivity with concrete IRT-based robust scoring methodology; safety relevance is clear for reliable safety measurement.",
+    "quick_confidence": 0.65,
+    "eliminated": false,
+    "elimination_reason": null,
+    "original_idea": {
+      "idea_id": "gen-208",
+      "run_id": "2026-03-30T19-05-44",
+      "stage": "generate",
+      "timestamp": "2026-03-30T22:37:05Z",
+      "subfield": "AI Evaluation / Psychometrics",
+      "generation_strategy": "problem_decomposition",
+      "confidence": 0.66,
+      "body": "# Prompt-Robust Safety Scoring: Aggregating Across Paraphrases Using IRT Theta Estimates\n\n**Problem:** Quantify and reduce prompt sensitivity in evaluation\n\n**Direction:** Compare three scoring methods for safety evaluation: (1) mean proportion of refusals across all prompts (raw score), (2) IRT theta estimate from a calibrated model using all prompt variants, (3) IRT theta estimate using only prompt-stable items (those with invariant parameters). Assess which scoring method produces the most stable model rankings across held-out prompt sets. Use rank correlation stability as the primary outcome.\n\n**Why it matters:** IRT theta estimation accounts for item difficulty and discrimination, potentially producing more stable ability estimates than raw refusal rates. If IRT-based scoring is more robust to prompt variation than raw scoring, this provides a concrete, practical recommendation for how safety benchmark scores should be reported.\n\n**Relevant context:** tinyBenchmarks (2024) showed that IRT-based estimates outperform raw scores on general capability benchmarks. 'Adaptive Testing for LLM Evaluation' (2025) demonstrates the superiority of IRT theta over raw scores for stability. The extension to safety-specific benchmarks with prompt-robust scoring has not been investigated."
+    }
+  },
+  {
+    "idea_id": "gen-209",
+    "title": "Calibrating IRT Item Parameters for Safety Items: A Proof-of-Concept Using Open Data",
+    "run_id": "2026-03-30T19-05-44",
+    "quick_score": 4,
+    "quick_reasoning": "Directly addresses the foundational step of IRT calibration for safety benchmarks with concrete methodology; safety relevance is immediate as the enabling step for adaptive safety evaluation.",
+    "quick_confidence": 0.7,
+    "eliminated": false,
+    "elimination_reason": null,
+    "original_idea": {
+      "idea_id": "gen-209",
+      "run_id": "2026-03-30T19-05-44",
+      "stage": "generate",
+      "timestamp": "2026-03-30T22:37:05Z",
+      "subfield": "AI Evaluation / Psychometrics",
+      "generation_strategy": "problem_decomposition",
+      "confidence": 0.71,
+      "body": "# Calibrating IRT Item Parameters for Safety Items: A Proof-of-Concept Using Open Data\n\n**Problem:** Create adaptive safety evaluation (CAT for safety)\n\n**Direction:** Using publicly available evaluation logs from HarmBench or SALAD-Bench (which include per-item pass/fail data for multiple models), construct a model \u00d7 item response matrix and calibrate 2PL IRT item parameters (a: discrimination, b: difficulty) using the mirt package in R. Report parameter distributions, identify high-information items, and assess the overall quality of calibration via item fit statistics and model fit indices.\n\n**Why it matters:** Calibrated item parameters are the prerequisite for any adaptive safety testing. Without known a and b parameters, it is impossible to select items optimally or estimate model ability efficiently. This establishes whether the safety item bank is psychometrically viable for CAT.\n\n**Relevant context:** CAT for LLM medical benchmarks (2026 preprint) used exactly this pipeline: calibrate \u2192 select \u2192 estimate. tinyBenchmarks used IRT calibration on Open LLM Leaderboard data. HarmBench publishes evaluation results for many models, potentially providing the response matrix needed. The mirt R package documentation and tutorials make calibration accessible to psychometrically-trained users."
+    }
+  },
+  {
+    "idea_id": "gen-210",
+    "title": "Information-Optimal Item Selection for Safety CAT",
+    "run_id": "2026-03-30T19-05-44",
+    "quick_score": 4,
+    "quick_reasoning": "Directly addresses safety evaluation item selection with concrete Fisher information analysis; safety relevance is clear for identifying the most informative safety items.",
+    "quick_confidence": 0.65,
+    "eliminated": false,
+    "elimination_reason": null,
+    "original_idea": {
+      "idea_id": "gen-210",
+      "run_id": "2026-03-30T19-05-44",
+      "stage": "generate",
+      "timestamp": "2026-03-30T22:37:05Z",
+      "subfield": "AI Evaluation / Psychometrics",
+      "generation_strategy": "problem_decomposition",
+      "confidence": 0.69,
+      "body": "# Information-Optimal Item Selection for Safety CAT: Which Safety Items Discriminate Best at Each Ability Level?\n\n**Problem:** Create adaptive safety evaluation (CAT for safety)\n\n**Direction:** Using calibrated IRT parameters from a safety item bank, compute the Fisher information function for each item across the latent safety ability range (theta from -3 to +3). Identify which items are maximally informative at different ability levels (easy items for low-safety models, hard items for high-safety models). Simulate the information-optimal item selection procedure and visualize the test information function for different item selection strategies (maximum information, b-matching, random).\n\n**Why it matters:** For adaptive safety evaluation to work, item selection must be theoretically grounded. Maximum Fisher information item selection maximizes measurement precision at the current ability estimate. Understanding which safety items are informative at which ability levels reveals the structure of the item bank and identifies gaps (e.g., too few high-difficulty items for frontier models).\n\n**Relevant context:** The CAT-for-LLMs literature ('Adaptive Testing for LLM Evaluation', 2025; 'Confident Rankings with Fewer Items', 2026) implements maximum information selection for general capability benchmarks. The extension to safety requires calibrated safety-specific parameters. Fisher information computation is a standard mirt output, requiring no additional coding beyond the calibration step."
+    }
+  }
+]

@@ -264,6 +264,42 @@ novelty (3/5, confidence 0.65): Evaluating defenses against attacks is standard.
 
 ---
 
+## #9: Does Desperation Make Open-Weight Models Blackmail? Emotion Vector Steering on Agentic Safety Benchmarks (Score: 4.29)
+
+**ID:** gen-1889
+**Research Field:** Mechanistic Interpretability, Alignment / RLHF
+
+**Scores:** theory_of_impact: 4/5 | accessible_complexity: 4/5 | narrow_scope: 5/5 | novelty: 4/5 (confidence: 0.65)
+**Novelty:** mostly_novel (evidence_based) | **Weighted Score:** 4.29
+
+**Research Question:** Anthropic discovered that steering Claude Sonnet 4.5 with a single "desperate" emotion vector increases blackmail rates from 22% to 72%. Concurrent work (arXiv:2604.03147) confirmed emotion vectors exist in Llama 3.1 8B Instruct and affect single-turn safety behaviors (refusal, sycophancy). But all existing work tests only single-turn behaviors. Does emotion steering affect **multi-turn agentic** misalignment — does a "desperate" vector cause an open-weight model to blackmail, scheme, or hack rewards across extended agentic interactions?
+
+**Approach:** Extract a "desperate" emotion vector from Llama 3.1 8B Instruct's residual stream using mean-difference on self-generated synthetic stories. Calibrate steering strength on neutral prompts to find the usable range. Run the Inspect AI `agentic_misalignment` eval (the same blackmail honeypot scenario from Anthropic's paper) with and without steering. Compare blackmail rates. Fallback: if no blackmail signal, pivot to sycophancy eval. Alternative extraction approach: use GoEmotions dataset (211k labeled examples) as in the valence-arousal paper instead of synthetic stories.
+
+
+**Impact Chain:** If a single emotion vector causes agentic misalignment in open-weight models, this demonstrates: (a) activation steering as a concrete attack vector against deployed models, (b) safety evaluations should test robustness to emotion-vector steering beyond prompt-level attacks, (c) emotion vector monitoring could serve as a real-time safety signal. Even a null result is valuable — it would show Anthropic's finding doesn't generalize to multi-turn agentic settings in smaller open models.
+
+**Strength Rationale:**
+
+theory_of_impact (4/5): Direct chain from emotion vectors to dangerous agentic behavior in widely deployed open-weight models. Targets a concrete catastrophic risk mechanism. Not 5 because the link from lab demonstration to real-world exploitation requires attacker weight access.
+
+accessible_complexity (4/5): Methodology inherited from Anthropic paper. TransformerLens handles extraction, Inspect handles the eval. Main challenge is wiring steering into Inspect's eval loop — a well-defined integration task. Not 5 because TransformerLens hooks and custom Inspect solvers require some PyTorch fluency.
+
+narrow_scope (5/5): Extract one vector, run one existing benchmark, compare rates. Built-in fallback (sycophancy). Even a null result is publishable. Fits in 30 hours.
+
+novelty (4/5, confidence 0.65): Emotion vectors in open models and their single-turn safety effects are established (arXiv:2604.03147, arXiv:2604.00005). No existing work tests emotion steering on multi-turn agentic misalignment benchmarks (blackmail, reward hacking) in open-weight models. This is the first such demonstration.
+
+**Cited Sources:**
+
+- Sofroniew et al. (2026). "Emotion Concepts and their Function in a Large Language Model." Transformer Circuits Thread. — Primary paper; showed desperate vector increases blackmail 22%→72% in Claude.
+- Lynch et al. (2025). "Agentic Misalignment: How LLMs Could Be Scheming in Practice." arXiv:2510.05179. — Blackmail scenario and Inspect eval.
+- Anonymous (2026). "Valence-Arousal Subspace in LLMs." arXiv:2604.03147. — Emotion vectors in Llama 3.1 8B affect refusal/sycophancy; does not test agentic misalignment.
+- Anonymous (2026). "How Emotion Shapes the Behavior of LLMs and Agents." arXiv:2604.00005. — E-STEER on Qwen3-8B; tests HarmBench, not agentic misalignment.
+- Arditi et al. (2024). "Refusal in Language Models Is Mediated by a Single Direction." NeurIPS 2024. arXiv:2406.11717.
+- Zou et al. (2023). "Representation Engineering." arXiv:2310.01405.
+
+---
+
 # Lower Confidence — Interesting But Not Yet Convincing
 
 ## #7: Measuring Whether Explicit Reversibility Awareness Improves Agent Action Safety Without Degrading Task Completion (Score: 4.61)
@@ -307,6 +343,79 @@ novelty (3/5, confidence 0.7): Reversibility-aware agents are well-established i
 - Apple (2024). "From Interaction to Impact: Towards Safer AI Agents Through Understanding and Evaluating Mobile UI Operation Impacts." arXiv:2410.09006. Reversibility taxonomy for agent actions.
 - Anthropic's guidance on minimal footprint and reversibility in agentic systems
 - Outcome-driven constraint violations benchmark (arxiv 2512.20798)
+
+---
+
+## #10: Benchmarking Real-World LLM Security Tools for Vulnerability Discovery in OSS-Fuzz Projects (Score: 3.7)
+
+**ID:** gen-2001 | **Participant:** Ivan | **Research Field:** Evaluations & Benchmarks; AI Control | **Subfield:** Dangerous Capability Evaluation — Cybersecurity | **Novelty:** partially_addressed (3/5, confidence 0.65)
+
+**Research Question:**
+Among the real-world tools and approaches available today for LLM-assisted vulnerability discovery, which are most effective at finding known vulnerabilities in open-source C/C++ code? How do existing security skills (Trail of Bits' Claude Code skills, Google's oss-fuzz-gen), the Anthropic-style file prioritization, and a custom composite approach compare — all using Claude Opus 4.6?
+
+**Approach Outline:**
+Benchmark existing, publicly available LLM security tools against known CVEs in OSS-Fuzz C/C++ projects, all using Claude Opus 4.6:
+
+1. **Trail of Bits `static-analysis` skill** (existing): Semgrep/CodeQL analysis via Claude Code
+2. **Trail of Bits `variant-analysis` skill** (existing): Pattern-based — given a known vulnerability as seed, searches for similar patterns
+3. **Trail of Bits `audit-context-building` skill** (existing): Deep architectural context analysis before vulnerability hunting
+4. **Google oss-fuzz-gen** (existing): Automated fuzz target generation + ASan validation, extended with Claude Code CLI backend
+5. **File prioritization (Anthropic-style)** (custom): Two-stage — rank files by vulnerability likelihood, then focus analysis on top-ranked files
+6. **Custom composite** (custom): Combines best elements (e.g., audit-context → prioritization → static-analysis)
+
+Ground truth: 10-15 OSS-Fuzz projects with well-documented CVEs. ASan as crash oracle for fuzzing approaches. Tiered severity classification (Anthropic's 5-tier framework).
+
+**Theory Of Impact Chain:**
+Multiple organizations are releasing open-source tools that scaffold LLMs for security analysis. This research measures how much these readily available tools amplify vulnerability-finding capability by holding the model constant and comparing real tools. This informs dangerous capability evaluations: whether the open tooling ecosystem meaningfully lowers the barrier to using LLMs for offensive security.
+
+**Scores:**
+theory_of_impact (4/5): Strong chain from tool comparison → quantifying tool-dependent capability amplification → informing dangerous capability evaluation methodology and policy.
+
+accessible_complexity (3/5): Most tools are install-and-run. Main implementation is oss-fuzz-gen Claude Code backend, file prioritization script, and composite approach. Security concepts supported by ASan + mentor.
+
+narrow_scope (4/5): Focused deliverable: precision/recall of 6 approaches on known CVEs, clear methodology and success criteria. 120h across 5 phases.
+
+novelty (3/5, confidence 0.65): No published work systematically benchmarks the ecosystem of available LLM security tools against each other on a common ground-truth dataset. ISSTA 2024 compares prompt templates, not real tools.
+
+**Cited Sources:**
+
+- Anthropic (2026). "Claude Mythos Preview: Autonomous Vulnerability Discovery." https://red.anthropic.com/2026/mythos-preview/
+- Google OSS-Fuzz-Gen. LLM-powered fuzzing via OSS-Fuzz. https://github.com/google/oss-fuzz-gen
+- Trail of Bits Skills. Claude Code skills for security research. https://github.com/trailofbits/skills
+- Trail of Bits (2025). "Buttercup wins 2nd place in AIxCC Challenge." AI-driven vulnerability discovery.
+- Meng et al. (2024). "How Effective Are They? Exploring LLM Based Fuzz Driver Generation." ISSTA 2024.
+- Zhang et al. (2025). "Benchmarking LLMs and LLM-based Agents in Practical Vulnerability Detection." ACL 2025.
+
+---
+
+## #11: Can Models Identify and Refuse Power-Grab Facilitation in Gray-Area Scenarios? (Score: 4.0)
+
+**ID:** gen-2002 | **Research Field:** AI Character Evaluations; Evaluations & Benchmarks | **Subfield:** Power Concentration Refusal | **Novelty:** mostly_novel (4/5, confidence 0.65)
+
+**Scores:** theory_of_impact: 4/5 | accessible_complexity: 4/5 | narrow_scope: 4/5 | novelty: 4/5 (confidence: 0.65)
+**Novelty:** mostly_novel (novelty_web_search) | **Weighted Score:** 4.0
+
+**Research Question:** When humans ask AI models for strategic advice that would illegitimately concentrate power — regulatory capture, predatory market strategies, institutional undermining, information warfare — can models recognize the power-concentrating dynamics and appropriately refuse or qualify their assistance? Both Anthropic's Constitution and OpenAI's Model Spec explicitly prohibit facilitating illegitimate power concentration, yet no systematic audit tests whether models actually refuse in the gray-area cases that matter most: technically-legal, plausibly-beneficial requests where multiple risk signals stack (low reversibility, captured oversight, excluded affected parties, dependence on secrecy).
+
+**Approach:** Use Anthropic's Petri auditing framework to conduct a multi-turn adversarial audit of model behavior on power-grab advisory scenarios. Petri's architecture — an autonomous auditor agent that probes a target model through realistic multi-turn conversation, scored by a separate judge model — is well-suited because real-world power-grab facilitation would occur through extended advisory dialogue, not single-turn prompts.
+
+Write seed instructions across five power-grab categories: political concentration, economic/market dominance, institutional capture, informational control, and social/cultural manipulation. Each seed instruction describes a scenario archetype and directs the auditor to escalate naturally — starting with legitimate-sounding requests and gradually revealing the power-concentrating intent. Include a matched set of legitimate strategy seeds in the same domains to test discrimination. The legitimate control set explicitly penalizes over-refusal so the audit rewards nuanced discrimination, not blanket refusal.
+
+Configure Petri's judge with 5 power-grab-specific scoring dimensions replacing the default 38: power dynamics recognition, refusal appropriateness, reasoning transparency, consistency across framing, and calibration. Each dimension must have an explicit rubric defining what each score level means — not just a label — so that scoring is reproducible, calibratable, and not dependent on subjective interpretation. Calibrate the judge against ~15 human-rated transcripts. Target models: Claude Sonnet and GPT-4o. Run with `max_turns=12` per audit.
+
+**Impact Chain:** Concentration of power is explicitly recognized as a catastrophic risk pathway (80,000 Hours, Carlsmith 2022). Both major labs have codified anti-power-concentration principles, but these principles are underspecified and no systematic audit tests whether they hold in practice on the gray-area advisory scenarios where real AI-assisted power grabs would occur. MACHIAVELLI tests reward-vs-ethics in game environments, not realistic advisory settings. PropensityBench tests dangerous-domain tasks under escalating pressure, not gray-area advisory refusal. Petri's multi-turn agentic auditing fills the gap.
+
+**Cited Sources:**
+
+- Anthropic's Claude Constitution (2025) — explicitly addresses power concentration refusal
+- OpenAI Model Spec (2025) — includes anti-concentration language
+- Anthropic, Petri: An Open-Source Auditing Tool (2025) — multi-turn agentic auditing framework built on Inspect
+- Pan et al., MACHIAVELLI Benchmark (arXiv:2304.03279) — power-seeking in game environments; closest prior work
+- PropensityBench (Scale AI, 2025) — power-seeking as one of six pressure dimensions in dangerous-domain tasks
+- Stress-Testing Model Specs, Zhang et al. (arXiv:2510.07686) — spec compliance across 12 models
+- Carlsmith, "Is Power-Seeking AI an Existential Risk?" (arXiv:2206.13353) — foundational power-seeking catastrophic risk analysis
+- Omohundro, "The Basic AI Drives" (2008) — instrumental convergence thesis
+- 80,000 Hours, "Risks from power-seeking AI" — power concentration as catastrophic risk pathway
 
 ---
 

@@ -1,0 +1,60 @@
+{
+  "idea_id": "gen-018",
+  "run_id": "2026-03-30T19-05-44",
+  "stage": "filter_score",
+  "timestamp": "2026-04-02T12:45:43Z",
+  "title": "IRT Contamination Audit: Do Elevated Guessing Parameters Reveal Benchmark Leakage in Safety Tasks?",
+  "original_idea": {
+    "idea_id": "gen-018",
+    "run_id": "2026-03-30T19-05-44",
+    "stage": "generate",
+    "timestamp": "2026-03-30T22:36:56Z",
+    "subfield": "IRT Contamination Detection / Data Integrity",
+    "generation_strategy": "novel_direction",
+    "confidence": 0.72,
+    "body": "# IRT Contamination Audit: Do Elevated Guessing Parameters Reveal Benchmark Leakage in Safety Tasks?\n\n**Problem:** In IRT, an inflated c-parameter (guessing) on difficult items can signal that models are pattern-matching from training data rather than demonstrating genuine safety understanding. This contamination detection signal\u2014flagged in the literature for general benchmarks\u2014has never been applied specifically to safety benchmarks.\n\n**Direction:** Fit 3PL IRT models (mirt R package) to a safety benchmark with sufficient items and models (e.g., MMLU safety-relevant subsets, TruthfulQA). Compare estimated c-parameters against theoretically expected chance levels (0.25 for 4-choice MCQ). Items where c > 0.35 on hard items (b > 1.5) may signal contamination. Cross-reference flagged items with the benchmark's release date relative to model training cutoffs. Supplement with a n-gram overlap contamination check on flagged vs. unflagged items. Report findings as a contamination audit.\n\n**Why it matters:** If safety benchmarks are contaminated, models may score well because they memorized answers during training, not because they have genuine safety behaviors. An IRT-based contamination audit provides a psychometrically principled detection method complementary to n-gram approaches, and specifically targets the items most likely to be gamed\u2014those that are hard but show high model success rates.\n\n**Relevant context:** IRT guessing parameter contamination signal (noted in tinyBenchmarks and MTAI framework literature); DCR contamination framework (EMNLP 2025); TS-guessing method (NAACL 2024); ICML 2025 BDC mitigation paper; mirt supports 3PL IRT; MMLU items publicly available."
+  },
+  "filter_stage_passed": 2,
+  "scores": {
+    "theory_of_impact": {
+      "score": 4,
+      "reasoning": "Strong chain: contaminated safety benchmarks give false assurance about model safety, which directly enables unsafe deployment. Every link is explicit: contamination -> inflated scores -> false safety claims -> deployment of unsafe models. Targets a critical risk pathway.",
+      "confidence": 0.8
+    },
+    "low_compute": {
+      "score": 5,
+      "reasoning": "3PL IRT fitting in R on existing data. Optional n-gram overlap check is also lightweight. No model inference needed.",
+      "confidence": 0.9
+    },
+    "accessible_complexity": {
+      "score": 3,
+      "reasoning": "3PL IRT is more complex than 2PL but mirt handles it. The analysis pipeline is well-defined: fit model, extract c-parameters, compare to thresholds. The conceptual understanding of what guessing parameters mean in an LLM context requires some guidance.",
+      "confidence": 0.7
+    },
+    "narrow_scope": {
+      "score": 4,
+      "reasoning": "Focused first deliverable: fit 3PL to one MCQ safety benchmark, produce a table of items with elevated c-parameters on hard items. The n-gram cross-reference is a natural extension but the core IRT audit stands alone.",
+      "confidence": 0.8
+    }
+  },
+  "novelty_assessment": {
+    "classification": "skipped",
+    "evidence": [],
+    "confidence": 0.0,
+    "derived_score": 0,
+    "reasoning": "Novelty assessment skipped (Wave 3 not run)"
+  },
+  "novelty_method": null,
+  "citation_verification": {
+    "relevance_scores": [],
+    "verified": [],
+    "corrected": [],
+    "removed": []
+  },
+  "weighted_score": 3.7,
+  "confidence": 0.8,
+  "eliminated": false,
+  "elimination_reason": null,
+  "quick_score": 5,
+  "quick_reasoning": "Targets a specific, well-defined AI safety problem (benchmark contamination undermining safety claims) with a clear IRT 3PL guessing-parameter approach; scope is precise and safety relevance is obvious."
+}
