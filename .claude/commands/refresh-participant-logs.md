@@ -85,9 +85,14 @@ Parse the stderr banner into one of three states:
 
 - **first interaction** — treat every dated entry in the log as new,
   and write a "baselined" line in the chat summary.
-- **no changes** — record "no changes since <modifiedTime>" for this
-  participant in the chat summary; skip to the next participant without
-  touching `log.md` or `review_queue.md`.
+- **no changes** — if the participant already has a section in
+  `log.md`, record "no changes since <modifiedTime>" in the chat
+  summary and skip to the next participant. **However**, if the
+  participant has no section in `log.md` yet, treat them as "first
+  interaction" (read the full doc, baseline all entries) regardless
+  of the gdoc banner — the banner tracks gdoc CLI state, not skill
+  output state, so "no changes" only means "nothing to log" when the
+  skill has already baselined the participant.
 - **since last interaction** — extract the `v<old> → v<new>` version
   bump and any `new comment` / `resolved comment` lines. These feed
   step 5 (review queue population).
