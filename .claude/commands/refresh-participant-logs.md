@@ -27,7 +27,8 @@ non-comment entries, stop and tell the user — do not invent participants.
   invocation returns an auth error, stop and tell the user to run
   `gdoc auth`, then re-run the skill.
 - **READ-ONLY gdoc usage.** Only these subcommands are allowed:
-  `gdoc cat`, `gdoc info`, `gdoc tabs`, `gdoc comments`, `gdoc comment`.
+  `gdoc cat`, `gdoc info`, `gdoc tabs`, `gdoc comments`, `gdoc comment`,
+  `gdoc diff`, `gdoc pull`.
   Never call `gdoc edit`, `gdoc write`, `gdoc new`, `gdoc cp`,
   `gdoc reply`, `gdoc resolve`, `gdoc reopen`, `gdoc delete-comment`,
   `gdoc share`, or any other write subcommand. (See the global
@@ -79,6 +80,42 @@ gdoc cat <DOC_ID> --all-tabs
 `--all-tabs` is mandatory — participants may add new tabs over time and
 any tab not read will silently disappear from the report.
 
+### 2b. Diff against local snapshot (only when changes detected)
+
+Local snapshots are stored in
+`data/output/participant_updates/.snapshots/<participant_key>.md`.
+
+If the awareness banner from step 1 (the `gdoc info` call) says
+**"since last interaction"** AND a snapshot file exists for this
+participant, run:
+
+```bash
+gdoc diff <DOC_ID> data/output/participant_updates/.snapshots/<participant_key>.md
+```
+
+This produces an exact diff of what changed since the last run.
+Use this diff output as the primary source for identifying new
+entries in step 5 — it is far more precise than comparing the
+full doc against a compressed baseline summary.
+
+If the banner says **"first interaction"** or **"no changes"**, or
+if no snapshot file exists yet, skip this step.
+
+### 2c. Save local snapshot (only when changes detected or first interaction)
+
+After reading the doc with `gdoc cat`, save a snapshot for the
+next run. Only do this when the banner indicated changes or first
+interaction — do not re-pull unchanged docs.
+
+```bash
+gdoc pull <DOC_ID> data/output/participant_updates/.snapshots/<participant_key>.md --quiet
+```
+
+Use `--quiet` to skip the pre-flight banner (you already have it
+from step 1). Create the `.snapshots/` directory if it does not
+exist. This file is a local working copy, not a deliverable — add
+`.snapshots/` to `.gitignore` if it is not already there.
+
 ### 3. Interpret the awareness banner
 
 Parse the stderr banner into one of three states:
@@ -110,9 +147,16 @@ for step 6.
 
 ### 5. Identify new entries
 
-Research logs are expected to be organized chronologically with dated
-entries (e.g., `## 2026-04-10` or `### Apr 10, 2026`). From the stdout
-content:
+**When a diff is available (step 2b produced output):** use the diff
+as the primary source for identifying what changed. The diff shows
+exact additions, removals, and edits — use it to produce precise
+one-line pointers. This is far more reliable than comparing the full
+doc against a compressed baseline summary.
+
+**When no diff is available (first interaction, or no prior snapshot):**
+fall back to date-based detection. Research logs are expected to be
+organized chronologically with dated entries (e.g., `## 2026-04-10`
+or `### Apr 10, 2026`). From the stdout content:
 
 - Find the most recent date already present for this participant in
   `data/output/participant_updates/log.md`, if the file and section
