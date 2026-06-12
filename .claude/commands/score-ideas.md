@@ -150,7 +150,17 @@ Launch **one Agent subagent per batch**, all in a single message.
 > **Scoring Criteria and Rubrics:**
 > [FOR EACH CRITERION from show-scoring (EXCLUDING novelty): name, description, active_weight, and full 5-level rubric]
 >
-> **Skip the `novelty` criterion** — it is derived from evidence in Wave 3, not scored here.
+> **Estimated novelty (provisional — NO web search):** Produce a quick LLM *estimate* of novelty from your own knowledge only. Do NOT search the web or call any citation tools — this is the cheap early signal. Classify against the rubric below; the calculated (evidence-based) novelty is run later, only on the top-ranked ideas, by the `novelty-rerank` workflow, which overwrites this estimate.
+>
+> | Classification | Score | Definition |
+> |---|---|---|
+> | already_solved | 1 | You are confident existing published work fully addresses this idea. |
+> | largely_addressed | 2 | Most of the proposed contribution is likely already covered. |
+> | partially_addressed | 3 | Work likely exists on the topic but this specific angle/combination may be open. |
+> | mostly_novel | 4 | You are not aware of direct published work on this specific proposal. |
+> | novel | 5 | You are not aware of any published work on this question or approach. |
+>
+> When unsure, default to `partially_addressed` (3). This is an estimate — keep confidence modest.
 >
 > **Confidence Rubric:**
 > [FULL CONFIDENCE RUBRIC]
@@ -167,7 +177,7 @@ Launch **one Agent subagent per batch**, all in a single message.
 > uv run python -m saim.pipeline.filter_score read-batch [BATCH_PATH]
 > ```
 >
-> **Step 2:** For EACH idea, score it against every criterion (except novelty). Match the idea against the rubric level descriptions and pick the level that best fits — do NOT score based on gut feeling. Compute the weighted score. Compute overall confidence as the average of per-criterion confidences.
+> **Step 2:** For EACH idea, score it against every criterion (except novelty). Match the idea against the rubric level descriptions and pick the level that best fits — do NOT score based on gut feeling. Compute the weighted score **over the non-novelty criteria only** (this drives the Stage 2 cutoff). Compute overall confidence as the average of per-criterion confidences. Then assign the **estimated** novelty classification + score (1-5) from the rubric above, with NO web search.
 >
 > **Step 3:** Build a JSON array of results. For each idea:
 > ```json
@@ -181,14 +191,29 @@ Launch **one Agent subagent per batch**, all in a single message.
 >       "score": <1-5>,
 >       "reasoning": "<1-3 sentences referencing rubric level>",
 >       "confidence": <0.0-1.0>
+>     },
+>     "novelty": {
+>       "score": <1-5 estimated>,
+>       "reasoning": "<1 sentence — estimate, no search>",
+>       "confidence": <0.0-1.0>
 >     }
 >   },
->   "weighted_score": <computed weighted average>,
+>   "novelty_assessment": {
+>     "classification": "<one of the 5 levels>",
+>     "evidence": [],
+>     "confidence": <0.0-1.0>,
+>     "derived_score": <1-5, matching the classification>,
+>     "reasoning": "<1 sentence estimate>"
+>   },
+>   "novelty_method": "novelty_estimated",
+>   "weighted_score": <computed weighted average, EXCLUDING novelty>,
 >   "confidence": <average of per-criterion confidences>,
 >   "eliminated": <true if weighted_score below [MIN_SCORE]>,
 >   "elimination_reason": <null or "Stage 2: weighted score [X] below threshold [Y]">
 > }
 > ```
+>
+> The `novelty` entry here is an **estimate** (`novelty_method: "novelty_estimated"`). It carries through refine into the first ranking, then the `novelty-rerank` workflow replaces it with a calculated, evidence-based assessment on the top-ranked ideas.
 >
 > Do NOT skip any ideas.
 >
