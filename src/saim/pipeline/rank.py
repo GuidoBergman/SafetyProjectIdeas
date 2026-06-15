@@ -62,6 +62,164 @@ def rank_proposals(
     return proposals
 
 
+def _scores_for_weighting(proposal: dict) -> dict:
+    """Build an apply_weights-compatible scores dict from a proposal.
+
+    Uses the proposal's ``scores`` dict if present, otherwise reconstructs one
+    from ``original_scores`` (name -> int).  Mirrors the logic in
+    ``rank_proposals`` so re-ranking stays consistent with first-pass ranking.
+    """
+    scores = proposal.get("scores")
+    if not scores:
+        original = proposal.get("original_scores", {})
+        scores = {
+            name: {"score": val, "reasoning": "", "confidence": 0.0}
+            for name, val in original.items()
+        }
+    novelty_score = proposal.get("novelty_score")
+    if novelty_score is not None and "novelty" not in scores:
+        scores["novelty"] = {
+            "score": novelty_score,
+            "reasoning": "From novelty assessment",
+            "confidence": 0.0,
+        }
+    return scores
+
+
+def _apply_novelty_update(proposal: dict, update: dict) -> None:
+    """Write a calculated novelty assessment onto a proposal in place."""
+    classification = update["classification"]
+    derived = update.get("derived_score")
+    confidence = update.get("confidence", 0.0)
+    reasoning = update.get("reasoning", "")
+
+    proposal["novelty_classification"] = classification
+    proposal["novelty_score"] = derived
+    proposal["novelty_method"] = "novelty_assessed"
+    proposal["novelty_evidence"] = update.get("evidence", [])
+
+    # Reconstruct a full scores dict from original_scores when absent so the
+    # novelty update never drops the other criteria.
+    scores = proposal.get("scores")
+    if not isinstance(scores, dict) or not scores:
+        original = proposal.get("original_scores", {})
+        scores = {
+            name: {"score": val, "reasoning": "", "confidence": 0.0}
+            for name, val in original.items()
+        }
+    scores["novelty"] = {
+        "score": derived,
+        "reasoning": reasoning,
+        "confidence": confidence,
+    }
+    proposal["scores"] = scores
+
+    original_scores = proposal.get("original_scores")
+    if isinstance(original_scores, dict):
+        original_scores["novelty"] = derived
+
+
+def rerank_with_novelty(
+    run_dir: Path,
+    updates: dict[str, dict],
+    top_n: int,
+    criteria: list[ScoringCriteria],
+    team_profile: TeamProfile,
+    persist: bool = False,
+    ideas_dir: Path | None = None,
+) -> dict:
+    """Re-rank the top-N proposals after a calculated-novelty pass (rank #2).
+
+    Reads the rank #1 output (``rank/ranked_proposals.json``), applies the
+    calculated novelty ``updates`` to the top-``top_n`` proposals, drops any whose
+    final classification is ``already_solved`` (the novelty hard gate), recomputes
+    their weighted scores with the real novelty, and re-sorts **only** that top
+    block.  The remaining proposals (ranked below the cutoff) keep their estimated
+    novelty and original order and are appended underneath.  The merged list is
+    re-numbered and written back over ``rank/ranked_proposals.{json,md}``.
+
+    The original rank #1 ordering is preserved once at
+    ``rank/ranked_proposals.rank1.json`` (written only if it does not yet exist,
+    so repeated re-runs never clobber the true first ranking).
+
+    Args:
+        run_dir: Run directory containing ``rank/ranked_proposals.json``.
+        updates: Mapping of idea_id -> novelty update dict with keys
+            ``classification``, ``derived_score``, ``confidence``, ``reasoning``,
+            ``evidence``, and optional ``eliminated``.
+        top_n: Number of top-ranked proposals to re-assess and re-rank.
+        criteria: Scoring criteria (for weighted-score recomputation).
+        team_profile: Team profile (for weight overrides).
+        persist: When True, persist the assessed top survivors to ``ideas_dir``.
+        ideas_dir: Override for the persist target (defaults to IDEAS_DIR).
+
+    Returns:
+        Dict of counts: assessed, eliminated, survivors_top, rest, total, persisted.
+    """
+    rank_dir = run_dir / "rank"
+    ranked_path = rank_dir / "ranked_proposals.json"
+    if not ranked_path.exists():
+        raise FileNotFoundError(f"No rank #1 output found at {ranked_path}")
+
+    with open(ranked_path) as f:
+        proposals = json.load(f)
+
+    # Preserve the original rank #1 ordering exactly once.
+    backup_path = rank_dir / "ranked_proposals.rank1.json"
+    if not backup_path.exists():
+        with open(backup_path, "w") as f:
+            json.dump(proposals, f, indent=2, default=str)
+
+    proposals.sort(key=lambda p: p.get("rank", len(proposals) + 1))
+    top = proposals[:top_n]
+    rest = proposals[top_n:]
+
+    assessed = 0
+    eliminated = 0
+    survivors_top: list[dict] = []
+    for proposal in top:
+        update = updates.get(proposal.get("idea_id", ""))
+        if update is None:
+            # No calculated novelty for this one — keep as-is in the top block.
+            survivors_top.append(proposal)
+            continue
+
+        assessed += 1
+        gated = update.get("eliminated") or update.get("classification") == "already_solved"
+        _apply_novelty_update(proposal, update)
+        if gated:
+            eliminated += 1
+            continue
+
+        proposal["weighted_score"] = apply_weights(
+            _scores_for_weighting(proposal), criteria, team_profile
+        )
+        survivors_top.append(proposal)
+
+    survivors_top.sort(key=lambda p: p.get("weighted_score", 0.0), reverse=True)
+
+    final = survivors_top + rest
+    for i, proposal in enumerate(final, start=1):
+        proposal["rank"] = i
+
+    write_ranked_output(run_dir, final, format_ranked_output(final))
+
+    persisted = 0
+    if persist:
+        # Only the freshly-assessed survivors are eligible (persist_ideas also
+        # guards on novelty_method, so estimated-only `rest` is never written).
+        persisted = len(persist_ideas(survivors_top, ideas_dir=ideas_dir))
+
+    return {
+        "assessed": assessed,
+        "eliminated": eliminated,
+        "survivors_top": len(survivors_top),
+        "rest": len(rest),
+        "total": len(final),
+        "persisted": persisted,
+    }
+
+
 def format_ranked_output(ranked: list[dict]) -> str:
     """Generate human-scannable markdown with full proposal details.
 
@@ -114,9 +272,7 @@ def format_ranked_output(ranked: list[dict]) -> str:
                 confidence = v.get("confidence")
                 conf_str = f", confidence: {confidence}" if confidence is not None else ""
                 if reasoning:
-                    score_detail_lines.append(
-                        f"  - **{k}:** {s}{conf_str} — {reasoning}"
-                    )
+                    score_detail_lines.append(f"  - **{k}:** {s}{conf_str} — {reasoning}")
                 else:
                     score_detail_lines.append(f"  - **{k}:** {s}{conf_str}")
         else:
@@ -173,18 +329,29 @@ def format_ranked_output(ranked: list[dict]) -> str:
     return "\n".join(lines) + "\n"
 
 
-def persist_ideas(ranked: list[dict], ideas_dir: Path | None = None) -> list[Path]:
+def persist_ideas(
+    ranked: list[dict],
+    ideas_dir: Path | None = None,
+    require_assessed: bool = True,
+) -> list[Path]:
     """Copy final proposals to data/ideas/ for persistent accumulation.
 
     Each proposal is written as <idea_id>.md with YAML frontmatter and markdown
     body sections.
 
+    Proposals whose novelty is only *estimated* (``novelty_method`` is anything
+    other than ``"novelty_assessed"``) are skipped when ``require_assessed`` is
+    True.  This mechanically enforces the project rule that ideas must not be
+    persisted with only estimated novelty — a real novelty check must run first.
+
     Args:
         ranked: List of ranked proposal dicts.
         ideas_dir: Target directory. Uses IDEAS_DIR from constants if not provided.
+        require_assessed: When True (default), skip proposals without a
+            calculated (``"novelty_assessed"``) novelty assessment.
 
     Returns:
-        List of written file paths.
+        List of written file paths (excludes any skipped proposals).
     """
     target = ideas_dir or IDEAS_DIR
     target.mkdir(parents=True, exist_ok=True)
@@ -192,6 +359,10 @@ def persist_ideas(ranked: list[dict], ideas_dir: Path | None = None) -> list[Pat
     written = []
     for proposal in ranked:
         idea_id = proposal.get("idea_id", "unknown")
+
+        if require_assessed and proposal.get("novelty_method") != "novelty_assessed":
+            # Estimated-only novelty: do not persist (project rule).
+            continue
 
         # Build frontmatter metadata
         meta = {
@@ -304,6 +475,29 @@ def main() -> None:
         data = json.loads(sys.argv[2])
         paths = persist_ideas(data)
         print(json.dumps([str(p) for p in paths], indent=2))
+    elif cmd == "rerank":
+        # rerank <run_dir> <updates_dir> <top_n> <persist:true|false>
+        from saim.config.loader import load_config
+
+        run_dir = Path(sys.argv[2])
+        updates_dir = Path(sys.argv[3])
+        top_n = int(sys.argv[4])
+        persist = len(sys.argv) > 5 and sys.argv[5].lower() in ("true", "1", "yes")
+
+        updates: dict[str, dict] = {}
+        if updates_dir.exists():
+            for jf in sorted(updates_dir.glob("*.json")):
+                with open(jf) as f:
+                    u = json.load(f)
+                idea_id = u.get("idea_id") or jf.stem
+                updates[idea_id] = u
+
+        config = load_config(load_env=False)
+        team = config.teams.get(config.default_team)
+        result = rerank_with_novelty(
+            run_dir, updates, top_n, config.criteria, team, persist=persist
+        )
+        print(json.dumps(result, indent=2))
     elif cmd == "write":
         run_dir = Path(sys.argv[2])
         data = json.loads(sys.argv[3])

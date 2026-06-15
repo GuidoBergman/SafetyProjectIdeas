@@ -2,11 +2,14 @@
 
 import json
 
+import pytest
+
 from saim.config.schemas import ScoringCriteria, TeamProfile
 from saim.pipeline.rank import (
     format_ranked_output,
     persist_ideas,
     rank_proposals,
+    rerank_with_novelty,
     write_ranked_output,
 )
 
@@ -23,7 +26,12 @@ def _make_team() -> TeamProfile:
     return TeamProfile(name="Test Team", team_type="mentor_novice", criteria_weights={})
 
 
-def _make_proposal(idea_id: str, scores: dict | None = None, novelty_score: int = 3) -> dict:
+def _make_proposal(
+    idea_id: str,
+    scores: dict | None = None,
+    novelty_score: int = 3,
+    novelty_method: str = "novelty_assessed",
+) -> dict:
     return {
         "idea_id": idea_id,
         "run_id": "run_001",
@@ -33,6 +41,7 @@ def _make_proposal(idea_id: str, scores: dict | None = None, novelty_score: int 
         "original_scores": {"theory_of_impact": 4, "low_compute": 3},
         "scores": scores,
         "novelty_classification": "novel_contribution",
+        "novelty_method": novelty_method,
         "novelty_score": novelty_score,
         "subfield": "interpretability",
         "generation_strategy": "divergent",
@@ -252,6 +261,225 @@ class TestPersistIdeas:
     def test_empty_list(self, tmp_path):
         paths = persist_ideas([], ideas_dir=tmp_path)
         assert paths == []
+
+    def test_skips_estimated_novelty(self, tmp_path):
+        estimated = _make_proposal("est_001", novelty_method="novelty_estimated")
+        estimated["rank"] = 1
+        estimated["weighted_score"] = 4.0
+
+        paths = persist_ideas([estimated], ideas_dir=tmp_path)
+
+        assert paths == []
+        assert not (tmp_path / "est_001.md").exists()
+
+    def test_persists_assessed_skips_estimated_in_mixed_list(self, tmp_path):
+        assessed = _make_proposal("assessed_001", novelty_method="novelty_assessed")
+        estimated = _make_proposal("est_002", novelty_method="novelty_estimated")
+        for p in (assessed, estimated):
+            p["rank"] = 1
+            p["weighted_score"] = 4.0
+
+        paths = persist_ideas([assessed, estimated], ideas_dir=tmp_path)
+
+        assert [p.name for p in paths] == ["assessed_001.md"]
+
+    def test_require_assessed_false_persists_estimated(self, tmp_path):
+        estimated = _make_proposal("est_003", novelty_method="novelty_estimated")
+        estimated["rank"] = 1
+        estimated["weighted_score"] = 4.0
+
+        paths = persist_ideas([estimated], ideas_dir=tmp_path, require_assessed=False)
+
+        assert len(paths) == 1
+
+
+class TestRerankWithNovelty:
+    def _write_rank1(self, run_dir):
+        """Write a 4-proposal rank #1 output (all estimated novelty, equal base)."""
+        rank_dir = run_dir / "rank"
+        rank_dir.mkdir(parents=True, exist_ok=True)
+        proposals = []
+        for i, idea_id in enumerate(["a", "b", "c", "d"], start=1):
+            p = _make_proposal(idea_id, novelty_method="novelty_estimated")
+            p["original_scores"] = {"theory_of_impact": 4, "low_compute": 4, "novelty": 3}
+            p["scores"] = None
+            p["rank"] = i
+            p["weighted_score"] = 3.5
+            proposals.append(p)
+        with open(rank_dir / "ranked_proposals.json", "w") as f:
+            json.dump(proposals, f)
+        return proposals
+
+    def _updates(self):
+        # idea 'a' gets weakest novelty, idea 'b' the strongest → order flips.
+        return {
+            "a": {
+                "idea_id": "a",
+                "classification": "partially_addressed",
+                "derived_score": 1,
+                "confidence": 0.8,
+                "reasoning": "Mostly covered.",
+                "evidence": [{"title": "Prior work"}],
+            },
+            "b": {
+                "idea_id": "b",
+                "classification": "novel",
+                "derived_score": 5,
+                "confidence": 0.7,
+                "reasoning": "Nothing found.",
+                "evidence": [],
+            },
+        }
+
+    def test_top_n_reranked_above_rest(self, tmp_path, monkeypatch):
+        monkeypatch.setattr("saim.pipeline.rank.OUTPUT_DIR", tmp_path / "output")
+        run_dir = tmp_path / "run_001"
+        self._write_rank1(run_dir)
+
+        result = rerank_with_novelty(
+            run_dir,
+            self._updates(),
+            top_n=2,
+            criteria=_make_criteria(),
+            team_profile=_make_team(),
+        )
+
+        final = json.loads((run_dir / "rank" / "ranked_proposals.json").read_text())
+        ids = [p["idea_id"] for p in final]
+        # b (novelty 5) now outranks a (novelty 1); c, d appended unchanged.
+        assert ids == ["b", "a", "c", "d"]
+        assert [p["rank"] for p in final] == [1, 2, 3, 4]
+        assert result["assessed"] == 2
+        assert result["eliminated"] == 0
+
+    def test_assessed_marked_rest_unchanged(self, tmp_path, monkeypatch):
+        monkeypatch.setattr("saim.pipeline.rank.OUTPUT_DIR", tmp_path / "output")
+        run_dir = tmp_path / "run_001"
+        self._write_rank1(run_dir)
+
+        rerank_with_novelty(
+            run_dir,
+            self._updates(),
+            top_n=2,
+            criteria=_make_criteria(),
+            team_profile=_make_team(),
+        )
+
+        final = {
+            p["idea_id"]: p
+            for p in json.loads((run_dir / "rank" / "ranked_proposals.json").read_text())
+        }
+        assert final["a"]["novelty_method"] == "novelty_assessed"
+        assert final["b"]["novelty_method"] == "novelty_assessed"
+        # Below the cutoff: still estimated.
+        assert final["c"]["novelty_method"] == "novelty_estimated"
+        assert final["d"]["novelty_method"] == "novelty_estimated"
+
+    def test_already_solved_dropped(self, tmp_path, monkeypatch):
+        monkeypatch.setattr("saim.pipeline.rank.OUTPUT_DIR", tmp_path / "output")
+        run_dir = tmp_path / "run_001"
+        self._write_rank1(run_dir)
+        updates = self._updates()
+        updates["a"]["classification"] = "already_solved"
+        updates["a"]["derived_score"] = 1
+
+        result = rerank_with_novelty(
+            run_dir,
+            updates,
+            top_n=2,
+            criteria=_make_criteria(),
+            team_profile=_make_team(),
+        )
+
+        ids = [
+            p["idea_id"]
+            for p in json.loads((run_dir / "rank" / "ranked_proposals.json").read_text())
+        ]
+        assert "a" not in ids
+        assert ids == ["b", "c", "d"]
+        assert result["eliminated"] == 1
+
+    def test_backup_preserves_rank1(self, tmp_path, monkeypatch):
+        monkeypatch.setattr("saim.pipeline.rank.OUTPUT_DIR", tmp_path / "output")
+        run_dir = tmp_path / "run_001"
+        self._write_rank1(run_dir)
+
+        rerank_with_novelty(
+            run_dir,
+            self._updates(),
+            top_n=2,
+            criteria=_make_criteria(),
+            team_profile=_make_team(),
+        )
+
+        backup = run_dir / "rank" / "ranked_proposals.rank1.json"
+        assert backup.exists()
+        ids = [p["idea_id"] for p in json.loads(backup.read_text())]
+        assert ids == ["a", "b", "c", "d"]
+
+    def test_backup_not_overwritten_on_rerun(self, tmp_path, monkeypatch):
+        monkeypatch.setattr("saim.pipeline.rank.OUTPUT_DIR", tmp_path / "output")
+        run_dir = tmp_path / "run_001"
+        self._write_rank1(run_dir)
+        args = dict(top_n=2, criteria=_make_criteria(), team_profile=_make_team())
+
+        rerank_with_novelty(run_dir, self._updates(), **args)
+        rerank_with_novelty(run_dir, self._updates(), **args)
+
+        # Backup still reflects the original estimated-novelty rank #1.
+        backup = json.loads((run_dir / "rank" / "ranked_proposals.rank1.json").read_text())
+        assert all(p["novelty_method"] == "novelty_estimated" for p in backup)
+
+    def test_persist_false_leaves_ideas_untouched(self, tmp_path, monkeypatch):
+        monkeypatch.setattr("saim.pipeline.rank.OUTPUT_DIR", tmp_path / "output")
+        run_dir = tmp_path / "run_001"
+        ideas_dir = tmp_path / "ideas"
+        self._write_rank1(run_dir)
+
+        result = rerank_with_novelty(
+            run_dir,
+            self._updates(),
+            top_n=2,
+            criteria=_make_criteria(),
+            team_profile=_make_team(),
+            persist=False,
+            ideas_dir=ideas_dir,
+        )
+
+        assert result["persisted"] == 0
+        assert not ideas_dir.exists() or list(ideas_dir.glob("*.md")) == []
+
+    def test_persist_true_writes_only_assessed_survivors(self, tmp_path, monkeypatch):
+        monkeypatch.setattr("saim.pipeline.rank.OUTPUT_DIR", tmp_path / "output")
+        run_dir = tmp_path / "run_001"
+        ideas_dir = tmp_path / "ideas"
+        self._write_rank1(run_dir)
+
+        result = rerank_with_novelty(
+            run_dir,
+            self._updates(),
+            top_n=2,
+            criteria=_make_criteria(),
+            team_profile=_make_team(),
+            persist=True,
+            ideas_dir=ideas_dir,
+        )
+
+        persisted = sorted(p.name for p in ideas_dir.glob("*.md"))
+        # Only the two assessed top survivors (a, b); estimated c, d excluded.
+        assert persisted == ["a.md", "b.md"]
+        assert result["persisted"] == 2
+
+    def test_missing_rank1_raises(self, tmp_path):
+        run_dir = tmp_path / "run_empty"
+        with pytest.raises(FileNotFoundError):
+            rerank_with_novelty(
+                run_dir,
+                {},
+                top_n=2,
+                criteria=_make_criteria(),
+                team_profile=_make_team(),
+            )
 
 
 class TestWriteRankedOutput:
