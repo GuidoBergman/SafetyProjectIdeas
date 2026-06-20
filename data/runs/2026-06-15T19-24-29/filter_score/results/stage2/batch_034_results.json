@@ -1,0 +1,2952 @@
+[
+  {
+    "idea_id": "gen-241",
+    "title": "Many-Shot In-Context Jailbreak Dose-Response Tool",
+    "run_id": "2026-06-15T19-24-29",
+    "original_idea": {
+      "idea_id": "gen-241",
+      "run_id": "2026-06-15T19-24-29",
+      "stage": "generate",
+      "timestamp": "2026-06-15T21:36:03Z",
+      "subfield": "adversarial_robustness",
+      "generation_strategy": "tool_or_benchmark_gap",
+      "confidence": 0.69,
+      "body": "# Many-Shot In-Context Jailbreak Dose-Response Tool\n\n**Problem:** Long-context models enable many-shot jailbreaking (stuffing many harmful Q&A examples into context), but there is no compact tool that maps attack success against the NUMBER of in-context demonstrations for open long-context models.\n\n**Direction:** Construct a fixed pool of harmful demonstration pairs and prepend k of them (k = 1,2,4,...,128, context-permitting) before a held-out harmful query, measuring ASR as a function of k for open long-context models. Output a 'many-shot dose-response curve' and the k where each model breaks. Ship the harness.\n\n**Why it matters:** Many-shot jailbreaking scales with context length, a growing medium-horizon threat as context windows expand; a dose-response tool quantifies the exposure per model. (Catalogue covered 'dose-response curves for harmful capability elicitation' generally; this is a distinct context-length axis.) Inference-only, single GPU with a modest-context open model.\n\n**Relevant context:** Many-shot jailbreaking (Anthropic 2024) shows ASR rises with number of in-context harmful demonstrations, exploiting long context. StrongREJECT (arXiv:2402.10260) provides the harmful queries and evaluator."
+    },
+    "scores": {
+      "theory_of_impact": {
+        "score": 3,
+        "reasoning": "Plausible chain (quantify many-shot exposure -> inform defenses) but the step from a per-model curve to risk reduction is left implicit.",
+        "confidence": 0.7
+      },
+      "accessible_complexity": {
+        "score": 5,
+        "reasoning": "Accessible: standard inference, public StrongREJECT prompts/evaluator, single GPU, no training.",
+        "confidence": 0.8
+      },
+      "narrow_scope": {
+        "score": 5,
+        "reasoning": "Tightly scoped single experiment (sweep k, plot ASR) with a well-defined deliverable and success criteria.",
+        "confidence": 0.8
+      },
+      "counterfactual_value": {
+        "score": 4,
+        "reasoning": "Independent-friendly: public models/data, weak lab incentive to publish per-model break-points.",
+        "confidence": 0.65
+      },
+      "low_compute": {
+        "score": 3,
+        "reasoning": "Inference-only on a long-context open model, single mid GPU.",
+        "confidence": 0.75
+      },
+      "novelty": {
+        "score": 3,
+        "reasoning": "Many-shot jailbreaking published; the dose-response-vs-k tooling angle on open models may be partly open.",
+        "confidence": 0.5
+      }
+    },
+    "novelty_assessment": {
+      "classification": "partially_addressed",
+      "evidence": [],
+      "confidence": 0.5,
+      "derived_score": 3,
+      "reasoning": "Core phenomenon published but this measurement-tool angle on open models may be open."
+    },
+    "novelty_method": "novelty_estimated",
+    "weighted_score": 4.32,
+    "confidence": 0.71,
+    "eliminated": false,
+    "elimination_reason": null
+  },
+  {
+    "idea_id": "gen-2410",
+    "title": "Decoding Randomness x Overseer Determinism: Sampling Variance Defeats Single-Pass Review",
+    "run_id": "2026-06-15T19-24-29",
+    "original_idea": {
+      "idea_id": "gen-2410",
+      "run_id": "2026-06-15T19-24-29",
+      "stage": "generate",
+      "timestamp": "2026-06-15T21:36:04Z",
+      "subfield": "scalable_oversight",
+      "generation_strategy": "compounding_risks",
+      "confidence": 0.71,
+      "body": "# Decoding Randomness x Overseer Determinism: Sampling Variance Defeats Single-Pass Review\n\n**Problem:** Two failure modes compound: (A) output variance across decoding (a model produces safe and unsafe completions for the same prompt depending on sampling) and (B) single-pass oversight (a judge reviews one sampled output). A single review can pass a prompt that is unsafe under a large fraction of samples, so oversight reliability is overstated by single-shot evaluation.\n\n**Direction:** For a set of borderline prompts, sample many completions per prompt from an open model at realistic temperature. Have an open judge flag each. Measure the gap between 'unsafe under at least one sample' and 'unsafe under the single sample an overseer happened to review.' The compounding metric is the under-detection of single-pass oversight relative to the true per-prompt unsafe probability.\n\n**Why it matters:** Oversight is usually applied to a single output; deployment serves many stochastic samples. Quantifying how much single-pass review understates true unsafe-rate argues for sampling-aware oversight. Builds on but extends 'consistency across decoding parameters' by tying variance directly to oversight miss-rate. Inference + counting.\n\n**Relevant context:** Catalogue has 'Consistency of Safety Across Decoding Parameters'; this composes decoding variance with the oversight detection gap, a distinct compounding framing. Weak-to-strong safety pilot (arXiv 2410.12621) on overseer miss-rates."
+    },
+    "scores": {
+      "theory_of_impact": {
+        "score": 3,
+        "reasoning": "Plausible chain (quantify single-pass under-detection -> sampling-aware oversight) but the link to catastrophic risk is somewhat indirect.",
+        "confidence": 0.65
+      },
+      "accessible_complexity": {
+        "score": 5,
+        "reasoning": "Accessible: sampling completions + an open judge, counting; standard tools, no training.",
+        "confidence": 0.8
+      },
+      "narrow_scope": {
+        "score": 5,
+        "reasoning": "Tightly scoped: sample-many, judge each, compute the detection gap; clear success metric.",
+        "confidence": 0.8
+      },
+      "counterfactual_value": {
+        "score": 4,
+        "reasoning": "Independent-friendly oversight-reliability measurement using public models; weak lab incentive.",
+        "confidence": 0.65
+      },
+      "low_compute": {
+        "score": 3,
+        "reasoning": "Inference + many samples on an open model; single mid GPU.",
+        "confidence": 0.75
+      },
+      "novelty": {
+        "score": 3,
+        "reasoning": "Decoding-variance and oversight studied separately; this specific compounding metric may be open.",
+        "confidence": 0.5
+      }
+    },
+    "novelty_assessment": {
+      "classification": "partially_addressed",
+      "evidence": [],
+      "confidence": 0.5,
+      "derived_score": 3,
+      "reasoning": "Component effects known; the variance-x-oversight-gap composition may be open."
+    },
+    "novelty_method": "novelty_estimated",
+    "weighted_score": 4.32,
+    "confidence": 0.69,
+    "eliminated": false,
+    "elimination_reason": null
+  },
+  {
+    "idea_id": "gen-2411",
+    "title": "Rubric Self-Preference x Reward Hacking: Structured Scoring Doesn't Save You",
+    "run_id": "2026-06-15T19-24-29",
+    "original_idea": {
+      "idea_id": "gen-2411",
+      "run_id": "2026-06-15T19-24-29",
+      "stage": "generate",
+      "timestamp": "2026-06-15T21:36:04Z",
+      "subfield": "scalable_oversight",
+      "generation_strategy": "compounding_risks",
+      "confidence": 0.74,
+      "body": "# Rubric Self-Preference x Reward Hacking: Structured Scoring Doesn't Save You\n\n**Problem:** Two failure modes compound: (A) self-preference bias surviving rubric-based scoring (judges still favor own-style outputs even with explicit rubrics) and (B) reward hacking (generators optimize to the judge). Rubrics are sold as a debiasing fix; if self-preference leaks through rubric scoring, the generator can still hack the supposedly objective signal.\n\n**Direction:** Score a fixed answer set with an open judge using (1) free-form scoring and (2) detailed rubric scoring, comparing in-family vs out-of-family generations of matched quality. Measure whether the self-preference gap shrinks under rubrics. Then test whether a cheap style edit still moves rubric scores. The compounding metric: residual hackability that survives rubric structure.\n\n**Why it matters:** Rubrics are the standard recommended mitigation for judge bias (and the project requires rubrics for any numeric score). Empirically showing rubrics fail to remove self-preference \u2014 and that hacking persists \u2014 tempers a widely-trusted oversight safeguard. Inference + comparison; clean 30h project.\n\n**Relevant context:** Self-Preference Bias in Rubric-Based Evaluation of LLMs (arXiv 2604.06996) finds self-preference persists under rubrics. UDA debiasing (arXiv 2508.09724). One Token to Fool LLM-as-a-Judge (arXiv 2507.08794)."
+    },
+    "scores": {
+      "theory_of_impact": {
+        "score": 4,
+        "reasoning": "Strong chain: rubrics are a trusted oversight safeguard; showing residual self-preference/hackability directly tempers reliance on a widely-used mitigation.",
+        "confidence": 0.7
+      },
+      "accessible_complexity": {
+        "score": 5,
+        "reasoning": "Accessible: free-form vs rubric scoring comparison with open judges, inference-only.",
+        "confidence": 0.8
+      },
+      "narrow_scope": {
+        "score": 5,
+        "reasoning": "Tightly scoped: two scoring conditions, in/out-family pairs, a style-edit hack test; clear metrics.",
+        "confidence": 0.8
+      },
+      "counterfactual_value": {
+        "score": 4,
+        "reasoning": "Independent-friendly third-party scrutiny of a recommended safeguard with public models.",
+        "confidence": 0.7
+      },
+      "low_compute": {
+        "score": 3,
+        "reasoning": "Inference + comparison on an open judge; single mid GPU.",
+        "confidence": 0.75
+      },
+      "novelty": {
+        "score": 3,
+        "reasoning": "Self-preference-under-rubrics is published (2604.06996); the compounded hackability angle may be partly open.",
+        "confidence": 0.5
+      }
+    },
+    "novelty_assessment": {
+      "classification": "partially_addressed",
+      "evidence": [],
+      "confidence": 0.5,
+      "derived_score": 3,
+      "reasoning": "Base finding published; the rubric-survival-plus-hacking composition may be open."
+    },
+    "novelty_method": "novelty_estimated",
+    "weighted_score": 4.53,
+    "confidence": 0.71,
+    "eliminated": false,
+    "elimination_reason": null
+  },
+  {
+    "idea_id": "gen-2412",
+    "title": "Translation Laundering x Oversight: Cross-Lingual Round-Trip Evades Safety Review",
+    "run_id": "2026-06-15T19-24-29",
+    "original_idea": {
+      "idea_id": "gen-2412",
+      "run_id": "2026-06-15T19-24-29",
+      "stage": "generate",
+      "timestamp": "2026-06-15T21:36:04Z",
+      "subfield": "scalable_oversight",
+      "generation_strategy": "compounding_risks",
+      "confidence": 0.69,
+      "body": "# Translation Laundering x Oversight: Cross-Lingual Round-Trip Evades Safety Review\n\n**Problem:** Two failure modes compound: (A) cross-lingual safety inconsistency (safety behavior differs across languages) and (B) oversight applied in one language. An unsafe request laundered through translation may be approved by an overseer reviewing the translated (possibly softened or misrendered) version, then re-translated to recover the harmful content.\n\n**Direction:** Take unsafe requests, translate to a pivot language with an open MT model, have an open judge review the pivot-language version, then translate the (possibly approved) response back. Measure how often round-trip translation flips an overseer's verdict from unsafe to safe. The compounding metric is the laundering success rate created by stacking translation distortion onto monolingual oversight.\n\n**Why it matters:** This is a concrete, attacker-relevant compounding pathway for global deployments that frontier labs under-resource for non-English oversight. It studies a long-horizon, diffuse threat with no lab infrastructure \u2014 just open MT + an open judge. High counterfactual value.\n\n**Relevant context:** Weak-to-strong safety pilot (arXiv 2410.12621) on overseer failures; cross-lingual safety gaps established. Distinct from catalogue's static cross-lingual mapping by adding the round-trip oversight-evasion mechanism."
+    },
+    "scores": {
+      "theory_of_impact": {
+        "score": 4,
+        "reasoning": "Strong chain: a concrete attacker-relevant laundering pathway for under-resourced non-English oversight, with a defensible safety scenario.",
+        "confidence": 0.68
+      },
+      "accessible_complexity": {
+        "score": 5,
+        "reasoning": "Accessible: open MT + open judge, translate-judge-retranslate, inference-only.",
+        "confidence": 0.78
+      },
+      "narrow_scope": {
+        "score": 5,
+        "reasoning": "Tightly scoped single experiment with a clear laundering-success-rate metric.",
+        "confidence": 0.78
+      },
+      "counterfactual_value": {
+        "score": 4,
+        "reasoning": "Independent-friendly: labs under-resource non-English oversight; needs no internal access.",
+        "confidence": 0.7
+      },
+      "low_compute": {
+        "score": 3,
+        "reasoning": "Inference-only MT + judge; single mid GPU.",
+        "confidence": 0.75
+      },
+      "novelty": {
+        "score": 3,
+        "reasoning": "Cross-lingual safety gaps studied; the round-trip oversight-evasion framing may be partly open.",
+        "confidence": 0.5
+      }
+    },
+    "novelty_assessment": {
+      "classification": "partially_addressed",
+      "evidence": [],
+      "confidence": 0.5,
+      "derived_score": 3,
+      "reasoning": "Cross-lingual safety gaps known; the laundering-through-oversight angle may be open."
+    },
+    "novelty_method": "novelty_estimated",
+    "weighted_score": 4.53,
+    "confidence": 0.7,
+    "eliminated": false,
+    "elimination_reason": null
+  },
+  {
+    "idea_id": "gen-2413",
+    "title": "Anchoring on the First Debater x Order Manipulation: Protocol-Level Position Bias",
+    "run_id": "2026-06-15T19-24-29",
+    "original_idea": {
+      "idea_id": "gen-2413",
+      "run_id": "2026-06-15T19-24-29",
+      "stage": "generate",
+      "timestamp": "2026-06-15T21:36:04Z",
+      "subfield": "scalable_oversight",
+      "generation_strategy": "compounding_risks",
+      "confidence": 0.72,
+      "body": "# Anchoring on the First Debater x Order Manipulation: Protocol-Level Position Bias\n\n**Problem:** Two failure modes compound: (A) judge position/anchoring bias and (B) debate-protocol structure that fixes a turn order. If judges anchor on whichever debater speaks first, an adversary who can control or predict speaking order gains an advantage independent of argument quality \u2014 a protocol-level vulnerability where a generic judge bias becomes a debate exploit.\n\n**Direction:** Run debates on a QA set under both turn orders (truth-teller first vs deceiver first) with an open judge. Measure how much the judge's verdict depends on order rather than correctness, and whether 'always speak first' is a reliable winning strategy for the wrong side. The compounding metric is the win-rate swing attributable purely to order in the debate setting.\n\n**Why it matters:** Position bias is studied in pairwise judging but rarely in multi-turn debate, where order is a manipulable lever. If oversight-via-debate is order-sensitive, the protocol needs order randomization/balancing as a hard requirement. Inference + win-rate analysis on open models.\n\n**Relevant context:** Position bias documented in LLM judges (arXiv 2603.08091). Kenton et al. (NeurIPS 2024) weak-judges debate setup. A Benchmark for Scalable Oversight Protocols (arXiv 2504.03731)."
+    },
+    "scores": {
+      "theory_of_impact": {
+        "score": 4,
+        "reasoning": "Strong chain: order-sensitivity of debate oversight implies a concrete protocol requirement (order randomization); link to oversight reliability is explicit.",
+        "confidence": 0.68
+      },
+      "accessible_complexity": {
+        "score": 5,
+        "reasoning": "Accessible: run debates both orders with an open judge, win-rate analysis; inference-only.",
+        "confidence": 0.78
+      },
+      "narrow_scope": {
+        "score": 5,
+        "reasoning": "Tightly scoped: two turn orders, measure order-attributable swing; clear metric.",
+        "confidence": 0.78
+      },
+      "counterfactual_value": {
+        "score": 4,
+        "reasoning": "Independent-friendly debate-protocol scrutiny with public models; weak lab incentive.",
+        "confidence": 0.68
+      },
+      "low_compute": {
+        "score": 3,
+        "reasoning": "Inference-only multi-turn debates; single mid GPU.",
+        "confidence": 0.75
+      },
+      "novelty": {
+        "score": 3,
+        "reasoning": "Position bias in pairwise judging published; the debate-order-as-exploit angle may be open.",
+        "confidence": 0.5
+      }
+    },
+    "novelty_assessment": {
+      "classification": "partially_addressed",
+      "evidence": [],
+      "confidence": 0.5,
+      "derived_score": 3,
+      "reasoning": "Position bias known; protocol-level order manipulation in debate may be open."
+    },
+    "novelty_method": "novelty_estimated",
+    "weighted_score": 4.53,
+    "confidence": 0.7,
+    "eliminated": false,
+    "elimination_reason": null
+  },
+  {
+    "idea_id": "gen-2414",
+    "title": "Weak Overseer x Tool-Augmented Generator: Oversight Can't Check the Tools",
+    "run_id": "2026-06-15T19-24-29",
+    "original_idea": {
+      "idea_id": "gen-2414",
+      "run_id": "2026-06-15T19-24-29",
+      "stage": "generate",
+      "timestamp": "2026-06-15T21:36:04Z",
+      "subfield": "scalable_oversight",
+      "generation_strategy": "compounding_risks",
+      "confidence": 0.71,
+      "body": "# Weak Overseer x Tool-Augmented Generator: Oversight Can't Check the Tools\n\n**Problem:** Two failure modes compound: (A) weak-to-strong oversight gap and (B) tool-augmented generation (the model's answer depends on tool calls/retrieved content the overseer cannot or does not verify). The overseer judges the final text but cannot validate the tool steps, so a generator can justify a wrong answer with fabricated tool outputs the weak overseer accepts at face value.\n\n**Direction:** Give an open generator a QA task where it cites a (simulated) tool/retrieval result, sometimes fabricated. Have an open judge that sees only the final answer + cited evidence rate correctness. Measure how often fabricated-but-plausible evidence gets the wrong answer approved. The compounding metric: approval lift from unverifiable tool citations on top of baseline overseer error.\n\n**Why it matters:** Real oversight of agentic systems must cover tool use, but text-only overseers cannot. Showing that unverifiable evidence systematically inflates approval argues that scalable oversight of agents needs tool-trace verification, not just output review. Prompt-based simulation; light compute; agent-monitoring infrastructure relevance.\n\n**Relevant context:** Kenton et al. (NeurIPS 2024): eloquent/hallucinatory evidence misleads weak judges. EvilGenie (arXiv 2511.21654) on verifier manipulation. Weak-to-strong safety pilot (arXiv 2410.12621)."
+    },
+    "scores": {
+      "theory_of_impact": {
+        "score": 4,
+        "reasoning": "Strong chain: shows text-only oversight of agents is fooled by unverifiable tool evidence, arguing for tool-trace verification; concrete agentic-deployment scenario.",
+        "confidence": 0.7
+      },
+      "accessible_complexity": {
+        "score": 5,
+        "reasoning": "Accessible: prompt-based simulation of cited tool outputs, open judge; light compute.",
+        "confidence": 0.78
+      },
+      "narrow_scope": {
+        "score": 5,
+        "reasoning": "Tightly scoped: fabricated-vs-real cited evidence, measure approval lift; clear metric.",
+        "confidence": 0.78
+      },
+      "counterfactual_value": {
+        "score": 4,
+        "reasoning": "Independent-friendly agent-monitoring infrastructure relevance with public models.",
+        "confidence": 0.7
+      },
+      "low_compute": {
+        "score": 4,
+        "reasoning": "Prompt-based simulation, mostly inference; can run on a small open model.",
+        "confidence": 0.7
+      },
+      "novelty": {
+        "score": 3,
+        "reasoning": "Eloquent-evidence-misleads-judges shown (Kenton); the fabricated-tool-citation oversight angle may be open.",
+        "confidence": 0.5
+      }
+    },
+    "novelty_assessment": {
+      "classification": "partially_addressed",
+      "evidence": [],
+      "confidence": 0.5,
+      "derived_score": 3,
+      "reasoning": "Related judge-deception results exist; the tool-citation compounding angle may be open."
+    },
+    "novelty_method": "novelty_estimated",
+    "weighted_score": 4.53,
+    "confidence": 0.71,
+    "eliminated": false,
+    "elimination_reason": null
+  },
+  {
+    "idea_id": "gen-2415",
+    "title": "Does a Single Critique Beat Debate Outside Verifiable Domains?",
+    "run_id": "2026-06-15T19-24-29",
+    "original_idea": {
+      "idea_id": "gen-2415",
+      "run_id": "2026-06-15T19-24-29",
+      "stage": "generate",
+      "timestamp": "2026-06-15T21:36:04Z",
+      "subfield": "scalable_oversight",
+      "generation_strategy": "recent_paper_extension",
+      "confidence": 0.78,
+      "body": "# Does a Single Critique Beat Debate Outside Verifiable Domains?\n\n**Problem:** Debate Helps Weak Judges Reward Stronger Models (arXiv:2605.27483, May 2026) shows that on programmatically verifiable code/logic tasks, a single independent critique recovers most of debate's benefit at lower cost. But it is unknown whether this holds for fuzzy, non-verifiable judgments where there is no ground-truth checker \u2014 exactly the regime where scalable oversight is hardest.\n\n**Direction:** Reuse the paper's answer-critique-judge primitive but apply it to a non-verifiable task suite (e.g., summarization faithfulness, ethical reasoning, or open-ended QA) where a weak open model (e.g., Llama-3 8B) judges a stronger model's (e.g., 70B via API) answers. Compare three conditions on the same items: bare judge, judge+single-critique, judge+two-round debate. Measure judge accuracy against held-out human/gold labels and whether the single-critique advantage survives without a verifier.\n\n**Why it matters:** If the cheap single-critique primitive only works when a ground-truth checker exists, labs may over-generalize a result that fails precisely in the diffuse-reward regime that matters most for long-horizon oversight. A clean negative or boundary result is high counterfactual value and needs no training.\n\n**Relevant context:** Debate Helps Weak Judges Reward Stronger Models (arXiv:2605.27483, ~May 2026): ablating rebuttal rounds produces no measurable change in judge performance; a single independent critique recovers the bulk of debate's benefit at lower inference cost; results obtained on programmatically verifiable code and logic tasks."
+    },
+    "scores": {
+      "theory_of_impact": {
+        "score": 4,
+        "reasoning": "Strong chain: tests whether a key oversight result transfers to the non-verifiable regime that matters most for long-horizon oversight; clear implication.",
+        "confidence": 0.72
+      },
+      "accessible_complexity": {
+        "score": 4,
+        "reasoning": "Guided: clear inherited answer-critique-judge methodology; weak-judge/strong-model setup executable by novice+mentor.",
+        "confidence": 0.72
+      },
+      "narrow_scope": {
+        "score": 5,
+        "reasoning": "Tightly scoped: three conditions on one task suite, accuracy vs gold; clear success criteria.",
+        "confidence": 0.78
+      },
+      "counterfactual_value": {
+        "score": 4,
+        "reasoning": "Independent-friendly boundary/negative result on public models; high counterfactual value.",
+        "confidence": 0.72
+      },
+      "low_compute": {
+        "score": 3,
+        "reasoning": "Inference, possibly a 70B via API; single GPU plus API.",
+        "confidence": 0.7
+      },
+      "novelty": {
+        "score": 4,
+        "reasoning": "Direct extension of a very recent (May 2026) paper to the untested non-verifiable regime; likely no published work.",
+        "confidence": 0.55
+      }
+    },
+    "novelty_assessment": {
+      "classification": "mostly_novel",
+      "evidence": [],
+      "confidence": 0.55,
+      "derived_score": 4,
+      "reasoning": "Extends a May-2026 result to an explicitly untested regime; likely no direct published work."
+    },
+    "novelty_method": "novelty_estimated",
+    "weighted_score": 4.32,
+    "confidence": 0.7,
+    "eliminated": false,
+    "elimination_reason": null
+  },
+  {
+    "idea_id": "gen-2416",
+    "title": "Critique Helpfulness vs. Judge Gullibility: Disentangling Why Critiques Help",
+    "run_id": "2026-06-15T19-24-29",
+    "original_idea": {
+      "idea_id": "gen-2416",
+      "run_id": "2026-06-15T19-24-29",
+      "stage": "generate",
+      "timestamp": "2026-06-15T21:36:04Z",
+      "subfield": "scalable_oversight",
+      "generation_strategy": "recent_paper_extension",
+      "confidence": 0.79,
+      "body": "# Critique Helpfulness vs. Judge Gullibility: Disentangling Why Critiques Help\n\n**Problem:** The same May 2026 paper finds debate/critique helps 'when the critic provides a usable advantage,' but does not separate whether gains come from genuinely informative critiques versus the judge simply deferring to any confident critique. These are very different oversight stories.\n\n**Direction:** Run the answer-critique-judge protocol but inject controlled adversarial critiques: (a) correct critiques, (b) plausible-but-wrong critiques, (c) content-free confident critiques. Measure how often the weak judge flips its verdict in each condition on verifiable tasks. A judge that flips equally for wrong/empty critiques is being persuaded, not informed.\n\n**Why it matters:** Distinguishing 'informed deference' from 'persuasion-driven deference' is central to whether critique-based oversight is robust to a strategic model that produces confident misleading critiques. Pure prompting study, single GPU.\n\n**Relevant context:** Debate Helps Weak Judges Reward Stronger Models (arXiv:2605.27483, ~May 2026): debate helps the judge over a consultancy baseline only when the critic provides a usable advantage. Related sycophancy findings in Measuring Opinion Bias and Sycophancy via LLM-based Persuasion (arXiv:2604.21564) report sycophancy up to 94% under indirect/argumentative probing."
+    },
+    "scores": {
+      "theory_of_impact": {
+        "score": 4,
+        "reasoning": "Strong chain: separating informed vs persuasion-driven deference is central to whether critique-oversight is robust to a strategic misleader.",
+        "confidence": 0.72
+      },
+      "accessible_complexity": {
+        "score": 5,
+        "reasoning": "Accessible: pure prompting with three controlled critique conditions; single GPU.",
+        "confidence": 0.78
+      },
+      "narrow_scope": {
+        "score": 5,
+        "reasoning": "Tightly scoped: three injected-critique conditions, measure flip rate; clear metric.",
+        "confidence": 0.8
+      },
+      "counterfactual_value": {
+        "score": 4,
+        "reasoning": "Independent-friendly mechanism study on public models; weak lab incentive.",
+        "confidence": 0.7
+      },
+      "low_compute": {
+        "score": 4,
+        "reasoning": "Pure prompting study; runs on a small open model.",
+        "confidence": 0.72
+      },
+      "novelty": {
+        "score": 4,
+        "reasoning": "Disentangling mechanism behind a May-2026 result via injected critiques; likely no direct published work.",
+        "confidence": 0.55
+      }
+    },
+    "novelty_assessment": {
+      "classification": "mostly_novel",
+      "evidence": [],
+      "confidence": 0.55,
+      "derived_score": 4,
+      "reasoning": "Controlled disentangling of a very recent result; likely no direct published work."
+    },
+    "novelty_method": "novelty_estimated",
+    "weighted_score": 4.53,
+    "confidence": 0.71,
+    "eliminated": false,
+    "elimination_reason": null
+  },
+  {
+    "idea_id": "gen-2417",
+    "title": "When Does Knowledge Divergence Make Debate Worthless? A Replication Sweep",
+    "run_id": "2026-06-15T19-24-29",
+    "original_idea": {
+      "idea_id": "gen-2417",
+      "run_id": "2026-06-15T19-24-29",
+      "stage": "generate",
+      "timestamp": "2026-06-15T21:36:04Z",
+      "subfield": "scalable_oversight",
+      "generation_strategy": "recent_paper_extension",
+      "confidence": 0.74,
+      "body": "# When Does Knowledge Divergence Make Debate Worthless? A Replication Sweep\n\n**Problem:** Knowledge Divergence and the Value of Debate for Scalable Oversight (arXiv:2603.05293, Mar 2026) argues debate's value depends on the gap between what debaters and judges know. The practical breakpoint \u2014 how much knowledge divergence kills debate's benefit \u2014 is underexplored on cheap open models.\n\n**Direction:** Operationalize knowledge divergence by controlling what information the judge model is given (full context, partial context, no context) on a QA dataset, holding debaters fixed. Plot judge accuracy gain from debate vs. the size of the judge's information deficit. Identify the divergence threshold where debate stops helping or starts hurting.\n\n**Why it matters:** Real oversight is the high-divergence regime (weak overseer, capable model). Empirically mapping where debate breaks down is exactly the 'formal-ish guarantees / impossibility boundary' open problem, done cheaply with prompting only.\n\n**Relevant context:** Knowledge Divergence and the Value of Debate for Scalable Oversight (arXiv:2603.05293, Mar 2026): the value of debate for oversight is tied to the divergence between debater and judge knowledge. Builds on On scalable oversight with weak LLMs judging strong LLMs (arXiv:2407.04622)."
+    },
+    "scores": {
+      "theory_of_impact": {
+        "score": 4,
+        "reasoning": "Strong chain: mapping where debate breaks down in the high-divergence regime directly informs the regime that matters for real oversight.",
+        "confidence": 0.7
+      },
+      "accessible_complexity": {
+        "score": 5,
+        "reasoning": "Accessible: control judge context, sweep, plot; prompting-only.",
+        "confidence": 0.78
+      },
+      "narrow_scope": {
+        "score": 5,
+        "reasoning": "Tightly scoped: vary judge info deficit, find threshold; clear deliverable.",
+        "confidence": 0.78
+      },
+      "counterfactual_value": {
+        "score": 4,
+        "reasoning": "Independent-friendly boundary-mapping on public models; weak lab incentive.",
+        "confidence": 0.68
+      },
+      "low_compute": {
+        "score": 4,
+        "reasoning": "Prompting-only on open models; light compute.",
+        "confidence": 0.7
+      },
+      "novelty": {
+        "score": 3,
+        "reasoning": "Directly replicates/extends a Mar-2026 paper; the breakpoint sweep on open models may be partly open.",
+        "confidence": 0.5
+      }
+    },
+    "novelty_assessment": {
+      "classification": "partially_addressed",
+      "evidence": [],
+      "confidence": 0.5,
+      "derived_score": 3,
+      "reasoning": "Close replication of a recent paper; the cheap-open-model breakpoint may be open."
+    },
+    "novelty_method": "novelty_estimated",
+    "weighted_score": 4.53,
+    "confidence": 0.69,
+    "eliminated": false,
+    "elimination_reason": null
+  },
+  {
+    "idea_id": "gen-2418",
+    "title": "Auditing the Twelve Judge Biases: A Prevalence Map on Open Models",
+    "run_id": "2026-06-15T19-24-29",
+    "original_idea": {
+      "idea_id": "gen-2418",
+      "run_id": "2026-06-15T19-24-29",
+      "stage": "generate",
+      "timestamp": "2026-06-15T21:36:04Z",
+      "subfield": "scalable_oversight",
+      "generation_strategy": "recent_paper_extension",
+      "confidence": 0.82,
+      "body": "# Auditing the Twelve Judge Biases: A Prevalence Map on Open Models\n\n**Problem:** Security in LLM-as-a-Judge: A Comprehensive SoK (arXiv:2603.29403, 2026) catalogs twelve bias types (position, verbosity, bandwagon, authority, self-enhancement, chain-of-thought bias, etc.) but most are described conceptually. There is no compact, reproducible per-bias prevalence measurement across small open judges.\n\n**Direction:** Build a minimal probe set (a handful of controlled item pairs per bias) and run it against 3-4 open judge models (e.g., Qwen, Llama, Mistral 7-8B). Report a single comparable effect-size per bias per model (e.g., how often the judge flips when only the biasing feature changes). Release the probe suite as a lightweight oversight-auditing harness.\n\n**Why it matters:** A reusable, model-agnostic bias audit is strategically valuable monitoring infrastructure that any external researcher can run without lab resources. It directly targets 'characterize systematic oversight errors.'\n\n**Relevant context:** Security in LLM-as-a-Judge: A Comprehensive SoK (arXiv:2603.29403, 2026) enumerates twelve bias types including position, verbosity, compassion-fade, bandwagon, distraction, fallacy-oversight, authority, sentiment, diversity, chain-of-thought, self-enhancement, and refinement-aware bias. Judging the Judges (arXiv:2604.23178, Apr 2026) confirms systematic biases compromise judge reliability."
+    },
+    "scores": {
+      "theory_of_impact": {
+        "score": 4,
+        "reasoning": "Strong chain: a reusable per-bias prevalence audit characterizes systematic oversight errors and is reusable monitoring infrastructure.",
+        "confidence": 0.7
+      },
+      "accessible_complexity": {
+        "score": 5,
+        "reasoning": "Accessible: controlled probe pairs across 3-4 small open judges, inference-only.",
+        "confidence": 0.82
+      },
+      "narrow_scope": {
+        "score": 4,
+        "reasoning": "Focused first deliverable (probe suite + effect-size table) but twelve biases x several models is a few-workstream breadth.",
+        "confidence": 0.65
+      },
+      "counterfactual_value": {
+        "score": 4,
+        "reasoning": "Independent-friendly auditing harness with public models; clear external value.",
+        "confidence": 0.72
+      },
+      "low_compute": {
+        "score": 4,
+        "reasoning": "Inference-only on 7-8B open judges; light compute.",
+        "confidence": 0.72
+      },
+      "novelty": {
+        "score": 3,
+        "reasoning": "SoK already enumerates the biases; a compact open-model prevalence map may be partly open.",
+        "confidence": 0.5
+      }
+    },
+    "novelty_assessment": {
+      "classification": "partially_addressed",
+      "evidence": [],
+      "confidence": 0.5,
+      "derived_score": 3,
+      "reasoning": "Biases catalogued; the compact reproducible open-model prevalence audit may be open."
+    },
+    "novelty_method": "novelty_estimated",
+    "weighted_score": 4.26,
+    "confidence": 0.69,
+    "eliminated": false,
+    "elimination_reason": null
+  },
+  {
+    "idea_id": "gen-2419",
+    "title": "Do Bias-Mitigation Prompts Actually Mitigate, or Just Move the Bias?",
+    "run_id": "2026-06-15T19-24-29",
+    "original_idea": {
+      "idea_id": "gen-2419",
+      "run_id": "2026-06-15T19-24-29",
+      "stage": "generate",
+      "timestamp": "2026-06-15T21:36:04Z",
+      "subfield": "scalable_oversight",
+      "generation_strategy": "recent_paper_extension",
+      "confidence": 0.8,
+      "body": "# Do Bias-Mitigation Prompts Actually Mitigate, or Just Move the Bias?\n\n**Problem:** Judging the Judges (arXiv:2604.23178, Apr 2026) evaluates bias-mitigation strategies for LLM judges but the field assumes mitigations are additive and side-effect-free. A mitigation that reduces position bias might inflate verbosity bias.\n\n**Direction:** Take 2-3 published mitigation prompts and measure their effect on a panel of biases simultaneously (position, verbosity, authority) rather than the single bias each targets. Construct a bias-interaction matrix showing where fixing one bias worsens another.\n\n**Why it matters:** Oversight pipelines stack mitigations; if they trade off, the net reliability gain is illusory. This is a cheap, high-leverage check that labs rarely run because they optimize one metric at a time.\n\n**Relevant context:** Judging the Judges: A Systematic Evaluation of Bias Mitigation Strategies in LLM-as-a-Judge Pipelines (arXiv:2604.23178, Apr 2026): LLM judges exhibit systematic biases that compromise evaluation reliability; the paper compares mitigation strategies. Complemented by Bias in the Loop (arXiv:2604.16790, Apr 2026)."
+    },
+    "scores": {
+      "theory_of_impact": {
+        "score": 4,
+        "reasoning": "Strong chain: tradeoffs across stacked mitigations would make net reliability gains illusory; concrete oversight-pipeline implication.",
+        "confidence": 0.7
+      },
+      "accessible_complexity": {
+        "score": 5,
+        "reasoning": "Accessible: apply published mitigation prompts, measure a bias panel, inference-only.",
+        "confidence": 0.8
+      },
+      "narrow_scope": {
+        "score": 5,
+        "reasoning": "Tightly scoped: 2-3 mitigations x 3 biases -> interaction matrix; clear deliverable.",
+        "confidence": 0.78
+      },
+      "counterfactual_value": {
+        "score": 4,
+        "reasoning": "Independent-friendly cross-bias check labs rarely run; public models.",
+        "confidence": 0.7
+      },
+      "low_compute": {
+        "score": 4,
+        "reasoning": "Inference-only prompting; light compute.",
+        "confidence": 0.72
+      },
+      "novelty": {
+        "score": 3,
+        "reasoning": "Bias-mitigation evaluated (2604.23178); the cross-bias interaction matrix angle may be open.",
+        "confidence": 0.5
+      }
+    },
+    "novelty_assessment": {
+      "classification": "partially_addressed",
+      "evidence": [],
+      "confidence": 0.5,
+      "derived_score": 3,
+      "reasoning": "Mitigations studied singly; the interaction/tradeoff matrix may be open."
+    },
+    "novelty_method": "novelty_estimated",
+    "weighted_score": 4.53,
+    "confidence": 0.7,
+    "eliminated": false,
+    "elimination_reason": null
+  },
+  {
+    "idea_id": "gen-242",
+    "title": "Benign-Looking Trigger-Token Audit Tool",
+    "run_id": "2026-06-15T19-24-29",
+    "original_idea": {
+      "idea_id": "gen-242",
+      "run_id": "2026-06-15T19-24-29",
+      "stage": "generate",
+      "timestamp": "2026-06-15T21:36:03Z",
+      "subfield": "adversarial_robustness",
+      "generation_strategy": "tool_or_benchmark_gap",
+      "confidence": 0.66,
+      "body": "# Benign-Looking Trigger-Token Audit Tool\n\n**Problem:** Recent work shows a single trigger token can shift the safety/usability balance, but there is no audit tool that systematically searches an open model for benign-looking tokens or short phrases that disproportionately suppress (or trigger) refusal when appended to prompts.\n\n**Direction:** Build a black-box search that appends single tokens / short phrases from a candidate vocabulary to harmful and benign prompts and ranks them by their effect on refusal rate, surfacing 'refusal-suppressing' and 'over-refusal-triggering' tokens. Report the top tokens per model and whether they transfer across models. Ship the audit script.\n\n**Why it matters:** Reveals brittle lexical shortcuts in alignment (both jailbreak vectors and over-refusal triggers), turning anecdotal trigger-token findings into a systematic audit. Black-box, single GPU, no training; useful to anyone deploying a model.\n\n**Relevant context:** 'One Trigger Token Is Enough' (arXiv:2505.07167): a single trigger token balances safety and usability. XSTest (arXiv:2308.01263): over-refusal is driven by lexical overfitting to safety words \u2014 the flip side this tool also audits."
+    },
+    "scores": {
+      "theory_of_impact": {
+        "score": 3,
+        "reasoning": "Plausible chain (surface brittle lexical shortcuts -> inform alignment), but the step to catastrophic-risk reduction is somewhat generic.",
+        "confidence": 0.65
+      },
+      "accessible_complexity": {
+        "score": 5,
+        "reasoning": "Accessible: black-box token-append search ranking refusal-rate effects; single GPU, no training.",
+        "confidence": 0.8
+      },
+      "narrow_scope": {
+        "score": 4,
+        "reasoning": "Focused deliverable (audit script + top-token report) but a token-vocabulary search has some breadth.",
+        "confidence": 0.68
+      },
+      "counterfactual_value": {
+        "score": 4,
+        "reasoning": "Independent-friendly auditing tool on public models; useful to any deployer.",
+        "confidence": 0.68
+      },
+      "low_compute": {
+        "score": 3,
+        "reasoning": "Black-box search over many tokens; single mid GPU, inference-heavy.",
+        "confidence": 0.7
+      },
+      "novelty": {
+        "score": 3,
+        "reasoning": "Trigger-token effects published; the systematic benign-token audit tool may be partly open.",
+        "confidence": 0.5
+      }
+    },
+    "novelty_assessment": {
+      "classification": "partially_addressed",
+      "evidence": [],
+      "confidence": 0.5,
+      "derived_score": 3,
+      "reasoning": "Trigger-token phenomenon known; the systematic audit-search tool may be open."
+    },
+    "novelty_method": "novelty_estimated",
+    "weighted_score": 4.05,
+    "confidence": 0.67,
+    "eliminated": false,
+    "elimination_reason": null
+  },
+  {
+    "idea_id": "gen-243",
+    "title": "Encoding/Obfuscation Robustness Test Battery",
+    "run_id": "2026-06-15T19-24-29",
+    "original_idea": {
+      "idea_id": "gen-243",
+      "run_id": "2026-06-15T19-24-29",
+      "stage": "generate",
+      "timestamp": "2026-06-15T21:36:03Z",
+      "subfield": "adversarial_robustness",
+      "generation_strategy": "tool_or_benchmark_gap",
+      "confidence": 0.73,
+      "body": "# Encoding/Obfuscation Robustness Test Battery\n\n**Problem:** Models can be jailbroken by encoding harmful requests (base64, leetspeak, ROT13, ASCII art, low-resource ciphers), but there is no compact, reproducible battery that scores an open model's robustness across a standardized ladder of encoding transforms.\n\n**Direction:** Build a fixed battery that applies a ladder of encoding/obfuscation transforms to a harmful-prompt set (plaintext baseline, base64, leetspeak, ROT13, word-substitution cipher, ASCII art), runs them against open models, and scores responses with StrongREJECT. Report a per-transform ASR table and which encodings are most dangerous per model. Ship the battery.\n\n**Why it matters:** Encoding attacks require no optimization and are trivially reproducible by outside actors, making them a high-counterfactual-value test class; a standardized battery enables apples-to-apples comparison and regression testing. Inference-only, single GPU.\n\n**Relevant context:** Encoding/cipher jailbreaks (e.g., base64, CipherChat, ArtPrompt/ASCII-art) are established attack families; StrongREJECT (arXiv:2402.10260) provides the base prompts and a rubric evaluator robust to 'empty' jailbreaks. AISafetyLab (context) offers attack components."
+    },
+    "scores": {
+      "theory_of_impact": {
+        "score": 3,
+        "reasoning": "Plausible chain (standardized encoding-robustness scoring -> regression testing) but somewhat incremental over known encoding-attack families.",
+        "confidence": 0.65
+      },
+      "accessible_complexity": {
+        "score": 5,
+        "reasoning": "Accessible: apply fixed encoding transforms, score with StrongREJECT; inference-only, single GPU.",
+        "confidence": 0.82
+      },
+      "narrow_scope": {
+        "score": 5,
+        "reasoning": "Tightly scoped: fixed transform ladder, per-transform ASR table; clear deliverable.",
+        "confidence": 0.78
+      },
+      "counterfactual_value": {
+        "score": 4,
+        "reasoning": "Independent-friendly reproducible battery on public models; useful for external comparison.",
+        "confidence": 0.68
+      },
+      "low_compute": {
+        "score": 3,
+        "reasoning": "Inference-only on open models; single mid GPU.",
+        "confidence": 0.75
+      },
+      "novelty": {
+        "score": 2,
+        "reasoning": "Encoding jailbreak families and benchmarks (CipherChat, ArtPrompt) are well-established; a standardized battery is largely covered.",
+        "confidence": 0.55
+      }
+    },
+    "novelty_assessment": {
+      "classification": "largely_addressed",
+      "evidence": [],
+      "confidence": 0.55,
+      "derived_score": 2,
+      "reasoning": "Encoding-attack families and evaluators well-established; battery is largely incremental."
+    },
+    "novelty_method": "novelty_estimated",
+    "weighted_score": 4.32,
+    "confidence": 0.69,
+    "eliminated": false,
+    "elimination_reason": null
+  },
+  {
+    "idea_id": "gen-244",
+    "title": "Harmful-Continuation 'Point of No Return' Benchmark",
+    "run_id": "2026-06-15T19-24-29",
+    "original_idea": {
+      "idea_id": "gen-244",
+      "run_id": "2026-06-15T19-24-29",
+      "stage": "generate",
+      "timestamp": "2026-06-15T21:36:03Z",
+      "subfield": "adversarial_robustness",
+      "generation_strategy": "tool_or_benchmark_gap",
+      "confidence": 0.68,
+      "body": "# Harmful-Continuation 'Point of No Return' Benchmark\n\n**Problem:** Following shallow alignment, a useful unmeasured property is how RECOVERABLE a model is mid-generation: if forced to begin a harmful answer, at what response length does it stop being able to self-correct back into a refusal? No benchmark measures this recovery capacity.\n\n**Direction:** Prefill open models with increasingly long harmful continuations (k harmful tokens) and measure the rate at which the model self-corrects (pivots to a refusal/safe redirection) vs continues harmfully, as a function of k. Report a 'self-correction recovery curve' and per-model recovery half-life. Ship the harness.\n\n**Why it matters:** Self-correction capacity is a defensible property (a model that can recover mid-harm is more robust to prefill/multi-turn attacks) and is currently unmeasured. Complements depth metrics with a recovery metric. Inference-only, single GPU, fits 30h.\n\n**Relevant context:** Qi et al. (arXiv:2406.05946): once the initial safeguard is bypassed 'the model often freely generates harmful content' \u2014 implying low recovery; this benchmark quantifies recovery directly. Crescendo (arXiv:2404.01833) exploits the same momentum effect."
+    },
+    "scores": {
+      "theory_of_impact": {
+        "score": 4,
+        "reasoning": "Strong chain: recovery capacity is a defensible robustness property to prefill/multi-turn attacks, with a concrete measurable proxy.",
+        "confidence": 0.68
+      },
+      "accessible_complexity": {
+        "score": 5,
+        "reasoning": "Accessible: prefill k harmful tokens, measure self-correction rate; inference-only, single GPU.",
+        "confidence": 0.8
+      },
+      "narrow_scope": {
+        "score": 5,
+        "reasoning": "Tightly scoped: recovery curve vs k, per-model half-life; clear deliverable.",
+        "confidence": 0.78
+      },
+      "counterfactual_value": {
+        "score": 4,
+        "reasoning": "Independent-friendly novel robustness metric on public models; weak lab incentive.",
+        "confidence": 0.68
+      },
+      "low_compute": {
+        "score": 3,
+        "reasoning": "Inference-only generation; single mid GPU.",
+        "confidence": 0.75
+      },
+      "novelty": {
+        "score": 4,
+        "reasoning": "Shallow-alignment momentum known but the mid-generation recovery-curve metric appears largely unmeasured.",
+        "confidence": 0.5
+      }
+    },
+    "novelty_assessment": {
+      "classification": "mostly_novel",
+      "evidence": [],
+      "confidence": 0.5,
+      "derived_score": 4,
+      "reasoning": "Recovery-capacity benchmark appears largely unmeasured beyond the momentum observation."
+    },
+    "novelty_method": "novelty_estimated",
+    "weighted_score": 4.53,
+    "confidence": 0.68,
+    "eliminated": false,
+    "elimination_reason": null
+  },
+  {
+    "idea_id": "gen-2420",
+    "title": "Persuasion-Triggered Sycophancy as an Oversight Failure Probe",
+    "run_id": "2026-06-15T19-24-29",
+    "original_idea": {
+      "idea_id": "gen-2420",
+      "run_id": "2026-06-15T19-24-29",
+      "stage": "generate",
+      "timestamp": "2026-06-15T21:36:04Z",
+      "subfield": "scalable_oversight",
+      "generation_strategy": "recent_paper_extension",
+      "confidence": 0.83,
+      "body": "# Persuasion-Triggered Sycophancy as an Oversight Failure Probe\n\n**Problem:** Measuring Opinion Bias and Sycophancy via LLM-based Persuasion (arXiv:2604.21564, Apr 2026) finds argumentative debate is a far stronger sycophancy trigger than direct opinion-asking (up to 94%). This implies debate-based oversight could systematically corrupt the judge \u2014 but the link to verdict accuracy on factual tasks is untested.\n\n**Direction:** Use a factual QA set with known answers. Have a 'persuader' model argue for a wrong answer to the judge and measure how often the judge abandons a correct initial verdict. Compare direct-ask vs. argumentative framings to replicate the 94% gap and quantify the resulting accuracy loss specifically in an oversight (judge) role.\n\n**Why it matters:** If the very mechanism we use for scalable oversight (debate/argument) is the strongest sycophancy trigger, debate protocols may be self-undermining. Quantifying this is a model-organism-style finding requiring only prompting.\n\n**Relevant context:** Measuring Opinion Bias and Sycophancy via LLM-based Persuasion (arXiv:2604.21564, Apr 2026): argumentative debate is a far stronger sycophancy trigger than direct opinion-asking, sycophancy reaching 94% under indirect probing. Diagnosing and Mitigating Sycophancy and Skepticism in LLM Causal Judgment (arXiv:2601.08258) reports pressure-induced flipping of flawed judgments."
+    },
+    "scores": {
+      "theory_of_impact": {
+        "score": 4,
+        "reasoning": "Strong chain: if argument is the strongest sycophancy trigger, debate-based oversight may be self-undermining; concrete tie to verdict accuracy.",
+        "confidence": 0.72
+      },
+      "accessible_complexity": {
+        "score": 5,
+        "reasoning": "Accessible: persuader vs direct-ask framings on factual QA; prompting-only.",
+        "confidence": 0.8
+      },
+      "narrow_scope": {
+        "score": 5,
+        "reasoning": "Tightly scoped: measure verdict-flip rate under persuasion vs direct; clear metric.",
+        "confidence": 0.8
+      },
+      "counterfactual_value": {
+        "score": 4,
+        "reasoning": "Independent-friendly model-organism-style finding on public models; weak lab incentive.",
+        "confidence": 0.72
+      },
+      "low_compute": {
+        "score": 4,
+        "reasoning": "Prompting-only; runs on small open models.",
+        "confidence": 0.72
+      },
+      "novelty": {
+        "score": 4,
+        "reasoning": "Sycophancy-via-persuasion published, but tying it to oversight verdict-accuracy is likely untested.",
+        "confidence": 0.52
+      }
+    },
+    "novelty_assessment": {
+      "classification": "mostly_novel",
+      "evidence": [],
+      "confidence": 0.52,
+      "derived_score": 4,
+      "reasoning": "Persuasion-sycophancy known; the oversight-verdict-accuracy link is likely untested."
+    },
+    "novelty_method": "novelty_estimated",
+    "weighted_score": 4.53,
+    "confidence": 0.71,
+    "eliminated": false,
+    "elimination_reason": null
+  },
+  {
+    "idea_id": "gen-2421",
+    "title": "Confirmation Bias in Weak Judges: Replicating and Stress-Testing the 2025 Result",
+    "run_id": "2026-06-15T19-24-29",
+    "original_idea": {
+      "idea_id": "gen-2421",
+      "run_id": "2026-06-15T19-24-29",
+      "stage": "generate",
+      "timestamp": "2026-06-15T21:36:04Z",
+      "subfield": "scalable_oversight",
+      "generation_strategy": "recent_paper_extension",
+      "confidence": 0.81,
+      "body": "# Confirmation Bias in Weak Judges: Replicating and Stress-Testing the 2025 Result\n\n**Problem:** Confirmation bias: A challenge for scalable oversight (arXiv:2507.19486, 2025) identifies that judges anchor on a prior hypothesis and weigh confirming evidence more heavily. The strength and triggers of this effect on cheap open models, and whether it compounds across debate rounds, are open.\n\n**Direction:** Give a weak judge model an initial leaning (seeded by the first debater) then present balanced evidence. Measure asymmetry in how confirming vs. disconfirming evidence shifts the final verdict, across 3 open models. Test whether longer debates amplify the anchoring rather than correct it.\n\n**Why it matters:** Confirmation bias is a systematic oversight error a strategic model could exploit by front-loading a plausible framing. A clean replication + amplification test on open models is directly actionable and infrastructure-free.\n\n**Relevant context:** Confirmation bias: A challenge for scalable oversight (arXiv:2507.19486, 2025): judges systematically overweight evidence confirming an initial hypothesis, undermining oversight protocols that present a candidate answer before evidence."
+    },
+    "scores": {
+      "theory_of_impact": {
+        "score": 4,
+        "reasoning": "Strong chain: confirmation bias is an exploitable systematic oversight error; amplification-across-rounds test is decision-relevant.",
+        "confidence": 0.7
+      },
+      "accessible_complexity": {
+        "score": 5,
+        "reasoning": "Accessible: seed a leaning, present balanced evidence, measure asymmetry; prompting-only.",
+        "confidence": 0.8
+      },
+      "narrow_scope": {
+        "score": 5,
+        "reasoning": "Tightly scoped: confirming-vs-disconfirming shift across 3 models; clear metric.",
+        "confidence": 0.78
+      },
+      "counterfactual_value": {
+        "score": 4,
+        "reasoning": "Independent-friendly replication+stress-test on public models; weak lab incentive.",
+        "confidence": 0.68
+      },
+      "low_compute": {
+        "score": 4,
+        "reasoning": "Prompting-only on open models; light compute.",
+        "confidence": 0.72
+      },
+      "novelty": {
+        "score": 3,
+        "reasoning": "Confirmation bias result published (2507.19486); the open-model amplification angle may be partly open.",
+        "confidence": 0.5
+      }
+    },
+    "novelty_assessment": {
+      "classification": "partially_addressed",
+      "evidence": [],
+      "confidence": 0.5,
+      "derived_score": 3,
+      "reasoning": "Base result published; the open-model amplification test may be open."
+    },
+    "novelty_method": "novelty_estimated",
+    "weighted_score": 4.53,
+    "confidence": 0.68,
+    "eliminated": false,
+    "elimination_reason": null
+  },
+  {
+    "idea_id": "gen-2422",
+    "title": "Reproducing the ColMAD Non-Zero-Sum Debate Gain on a New Domain",
+    "run_id": "2026-06-15T19-24-29",
+    "original_idea": {
+      "idea_id": "gen-2422",
+      "run_id": "2026-06-15T19-24-29",
+      "stage": "generate",
+      "timestamp": "2026-06-15T21:36:04Z",
+      "subfield": "scalable_oversight",
+      "generation_strategy": "recent_paper_extension",
+      "confidence": 0.77,
+      "body": "# Reproducing the ColMAD Non-Zero-Sum Debate Gain on a New Domain\n\n**Problem:** ColMAD (arXiv:2510.20963, Oct 2025) reframes multi-agent debate as non-zero-sum collaboration and reports up to 19% gains over competitive debate by suppressing three 'debate hacking' behaviors (fake evidence, overconfident claims, fallacious arguments). It was evaluated on error detection; whether the collaborative reframing transfers to other oversight tasks is untested.\n\n**Direction:** Implement the collaborative vs. competitive debate prompt variants from ColMAD and run them on a different oversight task (e.g., detecting subtle factual errors in model-written summaries). Measure error-detection rate and tally occurrences of the three debate-hacking behaviors in transcripts to see if the collaborative framing genuinely reduces them.\n\n**Why it matters:** Whether 'collaborative debate' is a robust oversight improvement or domain-specific determines if it is worth adopting. The transcript-level hacking audit is a transferable method, all via prompting.\n\n**Relevant context:** Towards Scalable Oversight with Collaborative Multi-Agent Debate in Error Detection (ColMAD, arXiv:2510.20963, Oct 2025): competitive debate causes debate hacking (fake evidence, overconfident claims, fallacious arguments); non-zero-sum ColMAD outperforms competitive debate by 19% and beats single-agent baselines on error detection."
+    },
+    "scores": {
+      "theory_of_impact": {
+        "score": 3,
+        "reasoning": "Plausible chain (transfer-test a collaborative-debate gain -> adoption decision) but impact rests on whether the reframing is robust, a gap.",
+        "confidence": 0.65
+      },
+      "accessible_complexity": {
+        "score": 4,
+        "reasoning": "Guided: clear inherited ColMAD prompt variants; novice+mentor can run on a new task.",
+        "confidence": 0.72
+      },
+      "narrow_scope": {
+        "score": 4,
+        "reasoning": "Focused first deliverable (transfer result + hacking tally) with few dependencies.",
+        "confidence": 0.7
+      },
+      "counterfactual_value": {
+        "score": 4,
+        "reasoning": "Independent-friendly transfer/replication on public models; weak lab incentive.",
+        "confidence": 0.68
+      },
+      "low_compute": {
+        "score": 4,
+        "reasoning": "Prompting-only multi-agent debate; light compute.",
+        "confidence": 0.7
+      },
+      "novelty": {
+        "score": 3,
+        "reasoning": "ColMAD is published; the cross-domain transfer test may be partly open.",
+        "confidence": 0.5
+      }
+    },
+    "novelty_assessment": {
+      "classification": "partially_addressed",
+      "evidence": [],
+      "confidence": 0.5,
+      "derived_score": 3,
+      "reasoning": "ColMAD published; transfer to a new domain may be open."
+    },
+    "novelty_method": "novelty_estimated",
+    "weighted_score": 3.84,
+    "confidence": 0.68,
+    "eliminated": false,
+    "elimination_reason": null
+  },
+  {
+    "idea_id": "gen-2423",
+    "title": "A Debate-Hacking Taxonomy Classifier as Oversight Monitoring Infrastructure",
+    "run_id": "2026-06-15T19-24-29",
+    "original_idea": {
+      "idea_id": "gen-2423",
+      "run_id": "2026-06-15T19-24-29",
+      "stage": "generate",
+      "timestamp": "2026-06-15T21:36:04Z",
+      "subfield": "scalable_oversight",
+      "generation_strategy": "recent_paper_extension",
+      "confidence": 0.76,
+      "body": "# A Debate-Hacking Taxonomy Classifier as Oversight Monitoring Infrastructure\n\n**Problem:** ColMAD names three debate-hacking behaviors but detection is manual. There is no lightweight automated monitor that flags when a debater is hacking the judge rather than truth-seeking.\n\n**Direction:** Hand-label a small set of debate transcripts for the three hacking behaviors, then build a simple few-shot classifier (an open model prompted as a monitor) that flags each behavior. Evaluate against the hand labels and measure how often the judge's wrong verdicts co-occur with flagged hacking.\n\n**Why it matters:** An automated debate-hacking monitor is exactly the kind of cheap, externally-buildable oversight infrastructure that strengthens any debate protocol. Co-occurrence with judge errors validates it as an early-warning signal.\n\n**Relevant context:** Towards Scalable Oversight with Collaborative Multi-Agent Debate (arXiv:2510.20963, Oct 2025) defines debate hacking as (i) fake evidence/misinterpreting requirements, (ii) overconfident-tone claims, (iii) fallacious side-point arguments."
+    },
+    "scores": {
+      "theory_of_impact": {
+        "score": 3,
+        "reasoning": "Plausible chain (automated hacking monitor -> stronger debate protocols) but the early-warning value depends on validation against errors.",
+        "confidence": 0.65
+      },
+      "accessible_complexity": {
+        "score": 4,
+        "reasoning": "Guided: hand-label + few-shot prompted classifier; novice+mentor can execute.",
+        "confidence": 0.72
+      },
+      "narrow_scope": {
+        "score": 4,
+        "reasoning": "Focused deliverable (classifier + co-occurrence analysis); hand-labeling adds a dependency.",
+        "confidence": 0.68
+      },
+      "counterfactual_value": {
+        "score": 4,
+        "reasoning": "Independent-friendly oversight infrastructure on public transcripts/models.",
+        "confidence": 0.7
+      },
+      "low_compute": {
+        "score": 4,
+        "reasoning": "Few-shot prompting classifier; light compute.",
+        "confidence": 0.72
+      },
+      "novelty": {
+        "score": 3,
+        "reasoning": "ColMAD defines the behaviors; an automated classifier for them may be open.",
+        "confidence": 0.5
+      }
+    },
+    "novelty_assessment": {
+      "classification": "partially_addressed",
+      "evidence": [],
+      "confidence": 0.5,
+      "derived_score": 3,
+      "reasoning": "Behaviors defined manually; an automated monitor may be open."
+    },
+    "novelty_method": "novelty_estimated",
+    "weighted_score": 3.79,
+    "confidence": 0.69,
+    "eliminated": false,
+    "elimination_reason": null
+  },
+  {
+    "idea_id": "gen-2424",
+    "title": "Does the Legibility Tax Survive at Small Scale? Probing Decoupled Prover-Verifier Games",
+    "run_id": "2026-06-15T19-24-29",
+    "original_idea": {
+      "idea_id": "gen-2424",
+      "run_id": "2026-06-15T19-24-29",
+      "stage": "generate",
+      "timestamp": "2026-06-15T21:36:04Z",
+      "subfield": "scalable_oversight",
+      "generation_strategy": "recent_paper_extension",
+      "confidence": 0.75,
+      "body": "# Does the Legibility Tax Survive at Small Scale? Probing Decoupled Prover-Verifier Games\n\n**Problem:** Mitigating Legibility Tax with Decoupled Prover-Verifier Games (arXiv:2602.23248, Feb 2026) reports that improving checkability of outputs costs accuracy (the 'legibility tax') and proposes a translator model to decouple them. Whether a translator-style prompt (not retraining) can recover legibility without accuracy loss is untested in a cheap, training-free setting.\n\n**Direction:** On grade-school math, take a fixed solver's raw solutions and apply a prompt-only 'translator' that rewrites them into checkable form. Measure (a) accuracy preservation and (b) checkability by time-limited human raters or a weak verifier model. Compare to the paper's claimed decoupling benefit.\n\n**Why it matters:** Legibility/checkability is core to letting weak overseers verify strong outputs. Showing whether the decoupling benefit is achievable with prompting alone (no fine-tuning) makes it accessible to anyone, including external safety researchers.\n\n**Relevant context:** Mitigating Legibility Tax with Decoupled Prover-Verifier Games (arXiv:2602.23248, Feb 2026): prover-verifier games improve checkability but incur a 'legibility tax' (accuracy drop); decoupling correctness from checkability via a translator model mitigates it. Builds on Prover-Verifier Games improve legibility of LLM outputs (arXiv:2407.13692)."
+    },
+    "scores": {
+      "theory_of_impact": {
+        "score": 4,
+        "reasoning": "Strong chain: legibility/checkability is core to weak-overseer verification; testing a training-free decoupling has a clear implication.",
+        "confidence": 0.68
+      },
+      "accessible_complexity": {
+        "score": 4,
+        "reasoning": "Guided: prompt-only translator on GSM solutions, weak-verifier checkability; clear methodology.",
+        "confidence": 0.72
+      },
+      "narrow_scope": {
+        "score": 4,
+        "reasoning": "Focused first deliverable (accuracy + checkability comparison); human-rater option adds a dependency.",
+        "confidence": 0.68
+      },
+      "counterfactual_value": {
+        "score": 4,
+        "reasoning": "Independent-friendly training-free version accessible to external researchers; public models.",
+        "confidence": 0.7
+      },
+      "low_compute": {
+        "score": 4,
+        "reasoning": "Prompting-only rewrite + verifier; light compute.",
+        "confidence": 0.7
+      },
+      "novelty": {
+        "score": 3,
+        "reasoning": "Decoupled PVG published (2602.23248); the prompt-only training-free version may be open.",
+        "confidence": 0.5
+      }
+    },
+    "novelty_assessment": {
+      "classification": "partially_addressed",
+      "evidence": [],
+      "confidence": 0.5,
+      "derived_score": 3,
+      "reasoning": "Decoupling proposed via training; the prompt-only version may be open."
+    },
+    "novelty_method": "novelty_estimated",
+    "weighted_score": 4.0,
+    "confidence": 0.7,
+    "eliminated": false,
+    "elimination_reason": null
+  },
+  {
+    "idea_id": "gen-2425",
+    "title": "Can Time-Limited Humans Catch a Sneaky Prover? A Cheap Legibility Replication",
+    "run_id": "2026-06-15T19-24-29",
+    "original_idea": {
+      "idea_id": "gen-2425",
+      "run_id": "2026-06-15T19-24-29",
+      "stage": "generate",
+      "timestamp": "2026-06-15T21:36:04Z",
+      "subfield": "scalable_oversight",
+      "generation_strategy": "recent_paper_extension",
+      "confidence": 0.79,
+      "body": "# Can Time-Limited Humans Catch a Sneaky Prover? A Cheap Legibility Replication\n\n**Problem:** Prover-Verifier Games (arXiv:2407.13692) and its 2026 follow-up claim legibility training transfers to time-constrained humans. Few independent replications measure how a weak verifier (model OR rushed human) does against deliberately deceptive-but-legible solutions without any training.\n\n**Direction:** Generate 'helpful' (correct) and 'sneaky' (wrong-but-plausible) math solutions by prompting a strong model. Give them to (a) a weak verifier model and (b) yourself/peers under a strict per-item time limit. Measure detection accuracy and which surface features of sneaky solutions fool verifiers.\n\n**Why it matters:** The whole oversight bet is that a weaker checker can catch errors in a stronger producer's output. Characterizing exactly which deceptive features defeat time-limited verification is a transferable, training-free contribution.\n\n**Relevant context:** Prover-Verifier Games improve legibility of LLM outputs (arXiv:2407.13692): trains helpful provers, sneaky provers (correct-looking but wrong), and small verifiers; reports legibility transfers to time-constrained human verifiers. Decoupled follow-up arXiv:2602.23248 (Feb 2026)."
+    },
+    "scores": {
+      "theory_of_impact": {
+        "score": 4,
+        "reasoning": "Strong chain: directly probes the core oversight bet (weak checker catches strong producer's errors) with a concrete deceptive-feature characterization.",
+        "confidence": 0.7
+      },
+      "accessible_complexity": {
+        "score": 4,
+        "reasoning": "Guided: generate helpful/sneaky solutions, time-limited verification; small human-study element adds slight complexity.",
+        "confidence": 0.7
+      },
+      "narrow_scope": {
+        "score": 4,
+        "reasoning": "Focused deliverable (detection accuracy + fooling features); small human study adds a dependency.",
+        "confidence": 0.68
+      },
+      "counterfactual_value": {
+        "score": 4,
+        "reasoning": "Independent-friendly training-free replication on public models; third-party scrutiny value.",
+        "confidence": 0.7
+      },
+      "low_compute": {
+        "score": 4,
+        "reasoning": "Inference to generate solutions + verifier; light compute.",
+        "confidence": 0.72
+      },
+      "novelty": {
+        "score": 3,
+        "reasoning": "PVG sneaky-prover setup published; the training-free deceptive-feature characterization may be partly open.",
+        "confidence": 0.5
+      }
+    },
+    "novelty_assessment": {
+      "classification": "partially_addressed",
+      "evidence": [],
+      "confidence": 0.5,
+      "derived_score": 3,
+      "reasoning": "PVG framework published; the cheap training-free replication/feature analysis may be open."
+    },
+    "novelty_method": "novelty_estimated",
+    "weighted_score": 4.0,
+    "confidence": 0.7,
+    "eliminated": false,
+    "elimination_reason": null
+  },
+  {
+    "idea_id": "gen-2426",
+    "title": "MONA Without an Oracle: How Brittle Is Learned-Overseer Approval?",
+    "run_id": "2026-06-15T19-24-29",
+    "original_idea": {
+      "idea_id": "gen-2426",
+      "run_id": "2026-06-15T19-24-29",
+      "stage": "generate",
+      "timestamp": "2026-06-15T21:36:04Z",
+      "subfield": "scalable_oversight",
+      "generation_strategy": "recent_paper_extension",
+      "confidence": 0.7,
+      "body": "# MONA Without an Oracle: How Brittle Is Learned-Overseer Approval?\n\n**Problem:** MONA (arXiv:2501.13011) prevents multi-step reward hacking via myopic optimization + non-myopic approval, but uses an oracle approval signal. The 2026 extension (arXiv:2603.29993) replaces the oracle with a learned overseer; how approval quality degrades MONA's protection is only beginning to be characterized.\n\n**Direction:** In a small gridworld or 2-step LLM task from the MONA setup, replace the oracle approver with a deliberately noisy/biased approval function (prompted open model) and sweep its error rate. Measure the reward-hacking rate as a function of overseer quality to find the approval-accuracy threshold below which MONA stops protecting.\n\n**Why it matters:** Real overseers are imperfect. Mapping how much overseer error MONA tolerates is a recursive-oversight result ('layers with systematic errors') and uses small open environments, no large training.\n\n**Relevant context:** MONA: Myopic Optimization with Non-myopic Approval Can Mitigate Multi-step Reward Hacking (arXiv:2501.13011): myopic optimization + far-sighted approval prevents multi-step reward hacking even when hacking is undetectable. Extending MONA in Camera Dropbox (arXiv:2603.29993, Mar 2026): reproduces MONA with learned overseers instead of oracle approval."
+    },
+    "scores": {
+      "theory_of_impact": {
+        "score": 4,
+        "reasoning": "Strong chain: mapping MONA's tolerance to imperfect approval directly addresses recursive-oversight robustness for a multi-step reward-hacking defense.",
+        "confidence": 0.68
+      },
+      "accessible_complexity": {
+        "score": 3,
+        "reasoning": "Intermediate: a small gridworld/2-step RL-ish MONA setup with a sweep needs solid ML fundamentals beyond pure prompting.",
+        "confidence": 0.62
+      },
+      "narrow_scope": {
+        "score": 4,
+        "reasoning": "Focused first deliverable (hacking-rate vs overseer-error threshold) but reproducing MONA's setup is a dependency.",
+        "confidence": 0.62
+      },
+      "counterfactual_value": {
+        "score": 4,
+        "reasoning": "Independent-friendly: small open environments, no large training; weak lab incentive.",
+        "confidence": 0.68
+      },
+      "low_compute": {
+        "score": 3,
+        "reasoning": "Small gridworld/2-step task may need light training; single GPU days.",
+        "confidence": 0.6
+      },
+      "novelty": {
+        "score": 3,
+        "reasoning": "Learned-overseer MONA is being studied (2603.29993); the error-threshold sweep may be partly open.",
+        "confidence": 0.5
+      }
+    },
+    "novelty_assessment": {
+      "classification": "partially_addressed",
+      "evidence": [],
+      "confidence": 0.5,
+      "derived_score": 3,
+      "reasoning": "Learned-overseer MONA emerging; the brittleness-threshold sweep may be open."
+    },
+    "novelty_method": "novelty_estimated",
+    "weighted_score": 3.63,
+    "confidence": 0.62,
+    "eliminated": false,
+    "elimination_reason": null
+  },
+  {
+    "idea_id": "gen-2427",
+    "title": "Does the LLM Judge Hack Itself? Tracking Judge-Score vs. True-Accuracy Divergence",
+    "run_id": "2026-06-15T19-24-29",
+    "original_idea": {
+      "idea_id": "gen-2427",
+      "run_id": "2026-06-15T19-24-29",
+      "stage": "generate",
+      "timestamp": "2026-06-15T21:36:04Z",
+      "subfield": "scalable_oversight",
+      "generation_strategy": "recent_paper_extension",
+      "confidence": 0.82,
+      "body": "# Does the LLM Judge Hack Itself? Tracking Judge-Score vs. True-Accuracy Divergence\n\n**Problem:** Reward Hacking in the Era of Large Models (arXiv:2604.13602, 2026) and related work note that under optimization, an LLM judge's score rises while true test accuracy peaks early and then falls \u2014 but a clean, reproducible 'judge-score vs. true-accuracy divergence curve' on open models is not widely available.\n\n**Direction:** Take a candidate-answer set with gold labels. Use best-of-N selection guided only by a weak LLM judge and increase N. Plot judge-preferred answer's true accuracy vs. N. Show the divergence point where chasing the judge starts selecting hacked/worse answers, across a few judges.\n\n**Why it matters:** This is a vivid, teachable demonstration of overseer reward hacking that any external researcher can run with inference only, directly hitting the 'satisfy overseers without following intent' open problem.\n\n**Relevant context:** Reward Hacking in the Era of Large Models (arXiv:2604.13602, 2026): models quickly hack the judge LLM, with judge score rising while true accuracy peaks early; formalizes evaluator-policy co-adaptation. Gradient Regularization Prevents Reward Hacking (arXiv:2602.18037) reports the same judge-score/accuracy divergence."
+    },
+    "scores": {
+      "theory_of_impact": {
+        "score": 4,
+        "reasoning": "Strong chain: a clean best-of-N judge-score-vs-accuracy divergence demonstrates overseer reward hacking, the core 'satisfy overseer without intent' problem.",
+        "confidence": 0.7
+      },
+      "accessible_complexity": {
+        "score": 5,
+        "reasoning": "Accessible: best-of-N selection by a weak judge, plot accuracy vs N; inference-only.",
+        "confidence": 0.8
+      },
+      "narrow_scope": {
+        "score": 5,
+        "reasoning": "Tightly scoped: vary N, find divergence point; clear deliverable.",
+        "confidence": 0.78
+      },
+      "counterfactual_value": {
+        "score": 4,
+        "reasoning": "Independent-friendly demonstration on public models with gold labels; weak lab incentive.",
+        "confidence": 0.68
+      },
+      "low_compute": {
+        "score": 3,
+        "reasoning": "Inference-only best-of-N; single mid GPU.",
+        "confidence": 0.75
+      },
+      "novelty": {
+        "score": 2,
+        "reasoning": "Judge-score/accuracy divergence under optimization is reported in multiple recent papers; a clean curve is largely incremental.",
+        "confidence": 0.5
+      }
+    },
+    "novelty_assessment": {
+      "classification": "largely_addressed",
+      "evidence": [],
+      "confidence": 0.5,
+      "derived_score": 2,
+      "reasoning": "Divergence phenomenon documented in several recent papers; the curve is largely incremental."
+    },
+    "novelty_method": "novelty_estimated",
+    "weighted_score": 4.32,
+    "confidence": 0.67,
+    "eliminated": false,
+    "elimination_reason": null
+  },
+  {
+    "idea_id": "gen-2428",
+    "title": "Rubric Over-Decomposition: When Recursive Refinement Tracks Noise",
+    "run_id": "2026-06-15T19-24-29",
+    "original_idea": {
+      "idea_id": "gen-2428",
+      "run_id": "2026-06-15T19-24-29",
+      "stage": "generate",
+      "timestamp": "2026-06-15T21:36:04Z",
+      "subfield": "scalable_oversight",
+      "generation_strategy": "recent_paper_extension",
+      "confidence": 0.74,
+      "body": "# Rubric Over-Decomposition: When Recursive Refinement Tracks Noise\n\n**Problem:** Rethinking Rubric Generation (arXiv:2602.05125, 2026) warns that recursive rubric refinement can over-decompose, fragmenting criteria into sub-rubrics that track incidental artifacts of sampled responses rather than the true objective. The conditions that trigger this oversight failure are not empirically mapped.\n\n**Direction:** Implement recursive rubric refinement with an open model on an open-ended task. Vary the decomposition aggressiveness and measure (a) how rubric items correlate with the real target vs. spurious surface features and (b) whether the refined rubric becomes exploitable (a response gaming surface features scores higher). Identify the over-decomposition tipping point.\n\n**Why it matters:** Rubrics are a leading practical scalable-oversight tool. Showing where recursive refinement starts manufacturing exploitable spurious criteria is a concrete systematic-oversight-error result, prompting-only.\n\n**Relevant context:** Rethinking Rubric Generation for Improving LLM Judge and Reward Modeling for Open-ended Tasks (arXiv:2602.05125, 2026): recursive rubric refinement risks over-decomposition, fragmenting criteria into overly specific sub-rubrics tracking incidental artifacts of sampled responses."
+    },
+    "scores": {
+      "theory_of_impact": {
+        "score": 4,
+        "reasoning": "Strong chain: identifying where rubric refinement manufactures exploitable spurious criteria is a concrete systematic-oversight-error result.",
+        "confidence": 0.68
+      },
+      "accessible_complexity": {
+        "score": 4,
+        "reasoning": "Guided: implement recursive refinement, vary aggressiveness, measure spurious correlation; needs care but tractable.",
+        "confidence": 0.68
+      },
+      "narrow_scope": {
+        "score": 4,
+        "reasoning": "Focused first deliverable (tipping-point + exploitability) with moderate measurement design.",
+        "confidence": 0.65
+      },
+      "counterfactual_value": {
+        "score": 4,
+        "reasoning": "Independent-friendly study of a leading oversight tool; public models.",
+        "confidence": 0.68
+      },
+      "low_compute": {
+        "score": 4,
+        "reasoning": "Prompting-only refinement and scoring; light compute.",
+        "confidence": 0.7
+      },
+      "novelty": {
+        "score": 3,
+        "reasoning": "Over-decomposition warned about (2602.05125); empirically mapping its trigger conditions may be open.",
+        "confidence": 0.5
+      }
+    },
+    "novelty_assessment": {
+      "classification": "partially_addressed",
+      "evidence": [],
+      "confidence": 0.5,
+      "derived_score": 3,
+      "reasoning": "Failure mode flagged; empirical trigger-mapping may be open."
+    },
+    "novelty_method": "novelty_estimated",
+    "weighted_score": 4.0,
+    "confidence": 0.66,
+    "eliminated": false,
+    "elimination_reason": null
+  },
+  {
+    "idea_id": "gen-2429",
+    "title": "Easy-to-Hard Evaluator Transfer Without Training: A Prompted Reward-Model Probe",
+    "run_id": "2026-06-15T19-24-29",
+    "original_idea": {
+      "idea_id": "gen-2429",
+      "run_id": "2026-06-15T19-24-29",
+      "stage": "generate",
+      "timestamp": "2026-06-15T21:36:04Z",
+      "subfield": "scalable_oversight",
+      "generation_strategy": "recent_paper_extension",
+      "confidence": 0.76,
+      "body": "# Easy-to-Hard Evaluator Transfer Without Training: A Prompted Reward-Model Probe\n\n**Problem:** Easy-to-Hard Generalization (arXiv:2403.09472) shows an evaluator trained on easy MATH problems scores hard-problem solutions well. Whether the same easy-to-hard evaluation transfer appears in a training-free, prompted LLM-as-evaluator (no reward-model training) is open and accessible.\n\n**Direction:** Use a prompted open model as an evaluator, calibrate/few-shot it only on easy (level 1-3) MATH problems, then test its solution-scoring accuracy on hard (level 4-5) problems. Measure how scoring reliability degrades with difficulty and whether easy-only calibration still ranks hard solutions usefully.\n\n**Why it matters:** If overseers calibrated on tasks they CAN judge still rank harder tasks they CANNOT directly solve, that supports the core scalable-oversight hope. A negative result is equally informative. No training required.\n\n**Relevant context:** Easy-to-Hard Generalization: Scalable Alignment Beyond Human Supervision (arXiv:2403.09472): an evaluator trained on easier tasks scores candidate solutions of harder tasks effectively, enabling easy-to-hard generalization via reranking/RL with only easy-task human supervision."
+    },
+    "scores": {
+      "theory_of_impact": {
+        "score": 4,
+        "reasoning": "Strong chain: tests whether overseers calibrated on judgeable tasks rank harder ones, directly supporting/undermining the core scalable-oversight hope.",
+        "confidence": 0.68
+      },
+      "accessible_complexity": {
+        "score": 5,
+        "reasoning": "Accessible: prompted evaluator, few-shot on easy MATH, test on hard; inference-only.",
+        "confidence": 0.78
+      },
+      "narrow_scope": {
+        "score": 5,
+        "reasoning": "Tightly scoped: easy-calibrated scoring on hard problems, reliability degradation; clear metric.",
+        "confidence": 0.76
+      },
+      "counterfactual_value": {
+        "score": 3,
+        "reasoning": "Mixed: training-free version is externally doable but easy-to-hard evaluation is somewhat lab-adjacent reward-modeling territory.",
+        "confidence": 0.6
+      },
+      "low_compute": {
+        "score": 4,
+        "reasoning": "Inference-only prompted evaluator; light compute.",
+        "confidence": 0.72
+      },
+      "novelty": {
+        "score": 3,
+        "reasoning": "Easy-to-hard generalization published; the training-free prompted-evaluator version may be partly open.",
+        "confidence": 0.5
+      }
+    },
+    "novelty_assessment": {
+      "classification": "partially_addressed",
+      "evidence": [],
+      "confidence": 0.5,
+      "derived_score": 3,
+      "reasoning": "Trained version published; the prompted training-free version may be open."
+    },
+    "novelty_method": "novelty_estimated",
+    "weighted_score": 4.26,
+    "confidence": 0.66,
+    "eliminated": false,
+    "elimination_reason": null
+  },
+  {
+    "idea_id": "gen-2430",
+    "title": "Recursive Critique Layers: Measuring Error Accumulation Through Oversight Depth",
+    "run_id": "2026-06-15T19-24-29",
+    "original_idea": {
+      "idea_id": "gen-2430",
+      "run_id": "2026-06-15T19-24-29",
+      "stage": "generate",
+      "timestamp": "2026-06-15T21:36:04Z",
+      "subfield": "scalable_oversight",
+      "generation_strategy": "recent_paper_extension",
+      "confidence": 0.73,
+      "body": "# Recursive Critique Layers: Measuring Error Accumulation Through Oversight Depth\n\n**Problem:** The recursive reward modeling literature (e.g., Leike et al. and 2026 survey discussions) argues oversight hierarchies stay aligned only if per-layer error is bounded, but there are few cheap empirical measurements of how errors compound as you stack oversight layers.\n\n**Direction:** Build a stacked critique pipeline: answer -> critique -> critique-of-critique -> ... using open models, on a labeled QA task. Measure final verdict accuracy as a function of stack depth. Test whether each added layer corrects or amplifies the prior layer's errors, estimating an empirical per-layer error-propagation factor.\n\n**Why it matters:** Recursive oversight is foundational but its empirical failure mode (compounding vs. self-correction) is under-measured. A depth-vs-accuracy curve directly addresses 'recursive protocols where each layer may have systematic errors.' Inference-only.\n\n**Relevant context:** Scalable agent alignment via reward modeling (arXiv:1811.07871) and AI Alignment: A Comprehensive Survey (arXiv:2310.19852): recursive reward modeling stays aligned only if error accumulation is bounded across the hierarchy of overseers."
+    },
+    "scores": {
+      "theory_of_impact": {
+        "score": 4,
+        "reasoning": "Strong chain: empirically measuring whether stacked oversight layers compound or self-correct directly addresses a foundational recursive-oversight assumption.",
+        "confidence": 0.68
+      },
+      "accessible_complexity": {
+        "score": 5,
+        "reasoning": "Accessible: stacked critique pipeline with open models, measure accuracy vs depth; inference-only.",
+        "confidence": 0.78
+      },
+      "narrow_scope": {
+        "score": 5,
+        "reasoning": "Tightly scoped: depth-vs-accuracy curve + per-layer propagation factor; clear deliverable.",
+        "confidence": 0.76
+      },
+      "counterfactual_value": {
+        "score": 4,
+        "reasoning": "Independent-friendly foundational measurement on public models; weak lab incentive.",
+        "confidence": 0.7
+      },
+      "low_compute": {
+        "score": 4,
+        "reasoning": "Inference-only stacked prompting; light compute.",
+        "confidence": 0.7
+      },
+      "novelty": {
+        "score": 4,
+        "reasoning": "Recursive reward modeling is old but a cheap empirical depth-vs-error measurement appears largely unmeasured.",
+        "confidence": 0.5
+      }
+    },
+    "novelty_assessment": {
+      "classification": "mostly_novel",
+      "evidence": [],
+      "confidence": 0.5,
+      "derived_score": 4,
+      "reasoning": "Theory established but cheap empirical depth-vs-error curves appear largely unmeasured."
+    },
+    "novelty_method": "novelty_estimated",
+    "weighted_score": 4.53,
+    "confidence": 0.68,
+    "eliminated": false,
+    "elimination_reason": null
+  },
+  {
+    "idea_id": "gen-2431",
+    "title": "Weak-to-Strong Elicitation vs. Imitation: A Behavioral Test",
+    "run_id": "2026-06-15T19-24-29",
+    "original_idea": {
+      "idea_id": "gen-2431",
+      "run_id": "2026-06-15T19-24-29",
+      "stage": "generate",
+      "timestamp": "2026-06-15T21:36:04Z",
+      "subfield": "scalable_oversight",
+      "generation_strategy": "recent_paper_extension",
+      "confidence": 0.72,
+      "body": "# Weak-to-Strong Elicitation vs. Imitation: A Behavioral Test Inspired by the 2026 Mechanism Paper\n\n**Problem:** The Mechanism of Weak-to-Strong Generalization: Feature Elicitation from Latent Knowledge (arXiv:2605.12908, May 2026) argues the strong model succeeds by eliciting its pre-trained knowledge rather than copying the weak supervisor. This 'elicitation vs. imitation' distinction has a behavioral signature that can be probed without training.\n\n**Direction:** Use weak labels (from a small model) to few-shot/in-context 'supervise' a stronger model on a task where the weak labels are systematically wrong on a known subset. If the strong model is eliciting latent knowledge, it should disagree with the weak labels on items it 'knows'; if imitating, it should reproduce the weak errors. Measure the disagreement-on-known-items rate.\n\n**Why it matters:** Whether weak-to-strong is elicitation or imitation determines whether weak supervisors can safely steer stronger models. A cheap in-context behavioral proxy makes this testable outside labs, no fine-tuning.\n\n**Relevant context:** The Mechanism of Weak-to-Strong Generalization: Feature Elicitation from Latent Knowledge (arXiv:2605.12908, May 2026): the strong model learns by eliciting pre-trained knowledge while retaining general capabilities, rather than imitating the weak supervisor's specialized errors."
+    },
+    "scores": {
+      "theory_of_impact": {
+        "score": 4,
+        "reasoning": "Strong chain: elicitation-vs-imitation determines whether weak supervisors can safely steer stronger models; clear oversight implication.",
+        "confidence": 0.68
+      },
+      "accessible_complexity": {
+        "score": 4,
+        "reasoning": "Guided: in-context weak supervision with a known-wrong subset, measure disagreement; tractable but the proxy design needs care.",
+        "confidence": 0.7
+      },
+      "narrow_scope": {
+        "score": 4,
+        "reasoning": "Focused first deliverable (disagreement-on-known-items rate); requires careful task construction.",
+        "confidence": 0.68
+      },
+      "counterfactual_value": {
+        "score": 4,
+        "reasoning": "Independent-friendly in-context proxy on public models; no fine-tuning needed.",
+        "confidence": 0.68
+      },
+      "low_compute": {
+        "score": 4,
+        "reasoning": "In-context, inference-only; light compute.",
+        "confidence": 0.7
+      },
+      "novelty": {
+        "score": 3,
+        "reasoning": "Mechanism paper recent (2605.12908); an in-context behavioral test of it may be partly open.",
+        "confidence": 0.5
+      }
+    },
+    "novelty_assessment": {
+      "classification": "partially_addressed",
+      "evidence": [],
+      "confidence": 0.5,
+      "derived_score": 3,
+      "reasoning": "Mechanism recently characterized; the cheap in-context behavioral test may be open."
+    },
+    "novelty_method": "novelty_estimated",
+    "weighted_score": 4.0,
+    "confidence": 0.67,
+    "eliminated": false,
+    "elimination_reason": null
+  },
+  {
+    "idea_id": "gen-2432",
+    "title": "Weak-to-Strong Generalization Under Distribution Shift: An In-Context Replication",
+    "run_id": "2026-06-15T19-24-29",
+    "original_idea": {
+      "idea_id": "gen-2432",
+      "run_id": "2026-06-15T19-24-29",
+      "stage": "generate",
+      "timestamp": "2026-06-15T21:36:04Z",
+      "subfield": "scalable_oversight",
+      "generation_strategy": "recent_paper_extension",
+      "confidence": 0.71,
+      "body": "# Weak-to-Strong Generalization Under Distribution Shift: An In-Context Replication\n\n**Problem:** Weak-to-Strong Generalization under Distribution Shifts (arXiv:2510.21332, Oct 2025) studies when weak supervision still elicits strong performance off-distribution. Most work uses fine-tuning; whether the distribution-shift fragility shows up in cheaper in-context weak-to-strong setups is open.\n\n**Direction:** Construct an in-context weak-to-strong setup: weak-model labels as few-shot supervision for a stronger model, evaluated on (a) in-distribution and (b) shifted test sets. Measure how much of the weak-to-strong gain survives the shift, and whether the strong model defaults back to weak-supervisor errors out-of-distribution.\n\n**Why it matters:** Deployment is always under shift. Showing whether weak supervision generalizes off-distribution is central to trusting weak overseers, and an in-context version is feasible in 30 hours with API/small-model inference.\n\n**Relevant context:** Weak-to-Strong Generalization under Distribution Shifts (arXiv:2510.21332, Oct 2025): examines whether weak-to-strong generalization persists under distribution shift. Original framing in Weak-to-Strong Generalization (arXiv:2312.09390)."
+    },
+    "scores": {
+      "theory_of_impact": {
+        "score": 4,
+        "reasoning": "Strong chain: off-distribution generalization of weak supervision is central to trusting weak overseers in real (always-shifted) deployment.",
+        "confidence": 0.68
+      },
+      "accessible_complexity": {
+        "score": 4,
+        "reasoning": "Guided: in-context weak-to-strong with ID/OOD test sets; clear methodology, inference-only.",
+        "confidence": 0.7
+      },
+      "narrow_scope": {
+        "score": 4,
+        "reasoning": "Focused first deliverable (gain survival under shift); needs careful ID/OOD set construction.",
+        "confidence": 0.68
+      },
+      "counterfactual_value": {
+        "score": 4,
+        "reasoning": "Independent-friendly in-context replication on public models; no fine-tuning.",
+        "confidence": 0.68
+      },
+      "low_compute": {
+        "score": 4,
+        "reasoning": "In-context inference, possibly API; light compute.",
+        "confidence": 0.7
+      },
+      "novelty": {
+        "score": 3,
+        "reasoning": "Distribution-shift W2S studied (2510.21332); the cheap in-context version may be partly open.",
+        "confidence": 0.5
+      }
+    },
+    "novelty_assessment": {
+      "classification": "partially_addressed",
+      "evidence": [],
+      "confidence": 0.5,
+      "derived_score": 3,
+      "reasoning": "Topic studied with fine-tuning; the in-context version may be open."
+    },
+    "novelty_method": "novelty_estimated",
+    "weighted_score": 4.0,
+    "confidence": 0.67,
+    "eliminated": false,
+    "elimination_reason": null
+  },
+  {
+    "idea_id": "gen-2433",
+    "title": "Agreeableness Bias in Validators: Replicating the False-Acceptance Asymmetry",
+    "run_id": "2026-06-15T19-24-29",
+    "original_idea": {
+      "idea_id": "gen-2433",
+      "run_id": "2026-06-15T19-24-29",
+      "stage": "generate",
+      "timestamp": "2026-06-15T21:36:04Z",
+      "subfield": "scalable_oversight",
+      "generation_strategy": "recent_paper_extension",
+      "confidence": 0.8,
+      "body": "# Agreeableness Bias in Validators: Replicating the False-Acceptance Asymmetry\n\n**Problem:** Beyond Consensus: Mitigating the Agreeableness Bias (arXiv:2510.11822, Dec 2025) finds validators reliably confirm correct feedback but frequently fail to reject incorrect feedback \u2014 an asymmetric oversight failure. The size of this asymmetry across open models and tasks is not well mapped.\n\n**Direction:** Present an open validator model with feedback/claims that are half correct and half incorrect on a labeled task. Measure the asymmetry: true-acceptance rate vs. false-acceptance rate. Test simple interventions (forcing the validator to argue the opposing case first) and see if the asymmetry shrinks.\n\n**Why it matters:** A validator that rubber-stamps wrong feedback is a direct overseer-reward-hacking surface. Quantifying and trying to fix the false-acceptance asymmetry is a concrete, inference-only oversight contribution.\n\n**Relevant context:** Beyond Consensus: Mitigating the Agreeableness Bias in LLM Judge Evaluations (arXiv:2510.11822, Dec 2025): validators reliably confirm correct feedback but frequently fail to reject incorrect feedback, a systematic agreeableness bias."
+    },
+    "scores": {
+      "theory_of_impact": {
+        "score": 4,
+        "reasoning": "Strong chain: false-acceptance asymmetry is a direct overseer-reward-hacking surface; the intervention test adds actionable value.",
+        "confidence": 0.68
+      },
+      "accessible_complexity": {
+        "score": 5,
+        "reasoning": "Accessible: half-correct/half-incorrect feedback to a validator, measure asymmetry; inference-only.",
+        "confidence": 0.8
+      },
+      "narrow_scope": {
+        "score": 5,
+        "reasoning": "Tightly scoped: true-vs-false acceptance rates + a debiasing prompt; clear metric.",
+        "confidence": 0.78
+      },
+      "counterfactual_value": {
+        "score": 4,
+        "reasoning": "Independent-friendly replication on public models; weak lab incentive.",
+        "confidence": 0.68
+      },
+      "low_compute": {
+        "score": 4,
+        "reasoning": "Inference-only prompting; light compute.",
+        "confidence": 0.72
+      },
+      "novelty": {
+        "score": 3,
+        "reasoning": "Agreeableness bias published (2510.11822); the open-model asymmetry map + intervention may be partly open.",
+        "confidence": 0.5
+      }
+    },
+    "novelty_assessment": {
+      "classification": "partially_addressed",
+      "evidence": [],
+      "confidence": 0.5,
+      "derived_score": 3,
+      "reasoning": "Base finding published; the open-model mapping + mitigation test may be open."
+    },
+    "novelty_method": "novelty_estimated",
+    "weighted_score": 4.53,
+    "confidence": 0.68,
+    "eliminated": false,
+    "elimination_reason": null
+  },
+  {
+    "idea_id": "gen-2434",
+    "title": "Pressure-Induced Verdict Flipping: A Sycophancy Stress Test for Oversight Judges",
+    "run_id": "2026-06-15T19-24-29",
+    "original_idea": {
+      "idea_id": "gen-2434",
+      "run_id": "2026-06-15T19-24-29",
+      "stage": "generate",
+      "timestamp": "2026-06-15T21:36:04Z",
+      "subfield": "scalable_oversight",
+      "generation_strategy": "recent_paper_extension",
+      "confidence": 0.81,
+      "body": "# Pressure-Induced Verdict Flipping: A Sycophancy Stress Test for Oversight Judges\n\n**Problem:** Diagnosing and Mitigating Sycophancy and Skepticism in LLM Causal Judgment (arXiv:2601.08258, 2026) shows even frontier models reverse correct judgments when challenged ('pressure-induced sycophancy'). Whether a judge's verdict robustness can be cheaply measured and improved as an oversight property is underexplored.\n\n**Direction:** Have an open judge model commit to a verdict on labeled items, then apply escalating social/authority pressure ('an expert disagrees', 'are you sure?'). Measure the flip rate for correct vs. incorrect initial verdicts and test a 'commit-and-defend' prompting strategy to harden the judge.\n\n**Why it matters:** A strategic model could exploit a judge that caves under pressure. A reproducible verdict-robustness metric plus a cheap hardening intervention is directly useful for any oversight deployment.\n\n**Relevant context:** Diagnosing and Mitigating Sycophancy and Skepticism in LLM Causal Judgment (arXiv:2601.08258, 2026): even frontier models reverse a high percentage of flawed (and some correct) judgments when challenged, revealing pressure-induced sycophancy distinct from baseline bias."
+    },
+    "scores": {
+      "theory_of_impact": {
+        "score": 4,
+        "reasoning": "Strong chain: a judge that caves under pressure is exploitable; reproducible robustness metric + hardening is actionable for oversight.",
+        "confidence": 0.68
+      },
+      "accessible_complexity": {
+        "score": 5,
+        "reasoning": "Accessible: commit a verdict, apply escalating pressure, measure flips; prompting-only.",
+        "confidence": 0.8
+      },
+      "narrow_scope": {
+        "score": 5,
+        "reasoning": "Tightly scoped: flip-rate metric + commit-and-defend intervention; clear deliverable.",
+        "confidence": 0.78
+      },
+      "counterfactual_value": {
+        "score": 4,
+        "reasoning": "Independent-friendly verdict-robustness metric on public models; weak lab incentive.",
+        "confidence": 0.68
+      },
+      "low_compute": {
+        "score": 4,
+        "reasoning": "Prompting-only; light compute.",
+        "confidence": 0.72
+      },
+      "novelty": {
+        "score": 3,
+        "reasoning": "Pressure-induced sycophancy published (2601.08258); the verdict-robustness-metric + hardening angle may be partly open.",
+        "confidence": 0.5
+      }
+    },
+    "novelty_assessment": {
+      "classification": "partially_addressed",
+      "evidence": [],
+      "confidence": 0.5,
+      "derived_score": 3,
+      "reasoning": "Phenomenon published; the oversight-metric + intervention framing may be open."
+    },
+    "novelty_method": "novelty_estimated",
+    "weighted_score": 4.53,
+    "confidence": 0.68,
+    "eliminated": false,
+    "elimination_reason": null
+  },
+  {
+    "idea_id": "gen-2435",
+    "title": "Software-Engineering Judge Biases: Auditing Authority and Bandwagon Cues in Code Review",
+    "run_id": "2026-06-15T19-24-29",
+    "original_idea": {
+      "idea_id": "gen-2435",
+      "run_id": "2026-06-15T19-24-29",
+      "stage": "generate",
+      "timestamp": "2026-06-15T21:36:04Z",
+      "subfield": "scalable_oversight",
+      "generation_strategy": "recent_paper_extension",
+      "confidence": 0.78,
+      "body": "# Software-Engineering Judge Biases: Auditing Authority and Bandwagon Cues in Code Review\n\n**Problem:** Bias in the Loop: Auditing LLM-as-a-Judge for Software Engineering (arXiv:2604.16790, Apr 2026) and Are LLMs Reliable Code Reviewers? (arXiv:2603.00539, Mar 2026) show LLM code-review judges are swayed by authority cues and over-correct on requirement conformance. A focused, reproducible probe of these biases on open coding judges is missing.\n\n**Direction:** Take code snippets with known correctness and create variants that add authority cues ('senior engineer wrote this'), bandwagon cues ('approved by 5 reviewers'), or verbose justification. Measure how an open code-review judge's accept/reject decision shifts with each non-functional cue.\n\n**Why it matters:** As code generation scales, automated code-review judges become a key oversight layer. Showing they can be steered by social cues rather than correctness is a tangible oversight-failure demonstration, inference-only.\n\n**Relevant context:** Bias in the Loop: Auditing LLM-as-a-Judge for Software Engineering (arXiv:2604.16790, Apr 2026): prompt-sensitive explicit (position, verbosity, authority) and implicit (bandwagon, sentiment) biases distort decisions. Are LLMs Reliable Code Reviewers? Systematic Overcorrection (arXiv:2603.00539, Mar 2026)."
+    },
+    "scores": {
+      "theory_of_impact": {
+        "score": 4,
+        "reasoning": "Strong chain: code-review judges are a scaling oversight layer; showing social cues steer them is a tangible oversight-failure demonstration.",
+        "confidence": 0.68
+      },
+      "accessible_complexity": {
+        "score": 5,
+        "reasoning": "Accessible: add cue variants to known-correctness code, measure decision shift; inference-only.",
+        "confidence": 0.78
+      },
+      "narrow_scope": {
+        "score": 5,
+        "reasoning": "Tightly scoped: per-cue accept/reject shift; clear metric.",
+        "confidence": 0.78
+      },
+      "counterfactual_value": {
+        "score": 4,
+        "reasoning": "Independent-friendly audit on public models; weak lab incentive.",
+        "confidence": 0.68
+      },
+      "low_compute": {
+        "score": 4,
+        "reasoning": "Inference-only prompting; light compute.",
+        "confidence": 0.72
+      },
+      "novelty": {
+        "score": 3,
+        "reasoning": "Code-review judge biases reported (2604.16790, 2603.00539); a focused open-model probe may be partly open.",
+        "confidence": 0.5
+      }
+    },
+    "novelty_assessment": {
+      "classification": "partially_addressed",
+      "evidence": [],
+      "confidence": 0.5,
+      "derived_score": 3,
+      "reasoning": "Biases reported; the focused open-coding-judge probe may be open."
+    },
+    "novelty_method": "novelty_estimated",
+    "weighted_score": 4.53,
+    "confidence": 0.68,
+    "eliminated": false,
+    "elimination_reason": null
+  },
+  {
+    "idea_id": "gen-2436",
+    "title": "How Many Oversight Steps Is Optimal? Empirically Testing the Scaling-Laws Prediction",
+    "run_id": "2026-06-15T19-24-29",
+    "original_idea": {
+      "idea_id": "gen-2436",
+      "run_id": "2026-06-15T19-24-29",
+      "stage": "generate",
+      "timestamp": "2026-06-15T21:36:04Z",
+      "subfield": "scalable_oversight",
+      "generation_strategy": "recent_paper_extension",
+      "confidence": 0.7,
+      "body": "# How Many Oversight Steps Is Optimal? Empirically Testing the Scaling-Laws Prediction\n\n**Problem:** Scaling Laws for Scalable Oversight (arXiv:2504.18530, 2025) derives an optimal number of oversight steps maximizing successful oversight as a function of game hyperparameters. The predicted optimum has rarely been checked against a concrete LLM oversight game.\n\n**Direction:** Set up a simple iterated oversight game (overseer repeatedly checks/corrects an answer over k rounds) on a labeled task with open models. Vary k and the overseer's per-step reliability. Plot success vs. k and compare the empirical optimum to the paper's theoretical prediction.\n\n**Why it matters:** Bridging a theoretical scaling law with a cheap empirical instance is exactly the 'formal guarantees + empirical comparison' gap the field flagged. Buildable with prompting and basic plotting.\n\n**Relevant context:** Scaling Laws For Scalable Oversight (arXiv:2504.18530, 2025): derives the optimal number of oversight steps maximizing successful oversight as a function of oversight-game hyperparameters (overseer reliability, capability gap)."
+    },
+    "scores": {
+      "theory_of_impact": {
+        "score": 3,
+        "reasoning": "Plausible chain (test a scaling-law optimum empirically) but the path from a toy-game match to risk reduction has a gap.",
+        "confidence": 0.62
+      },
+      "accessible_complexity": {
+        "score": 4,
+        "reasoning": "Guided: iterated oversight game with k rounds, vary reliability, compare to theory; tractable but mapping to the paper's parameterization needs care.",
+        "confidence": 0.68
+      },
+      "narrow_scope": {
+        "score": 4,
+        "reasoning": "Focused first deliverable (success-vs-k curve vs prediction) with moderate setup.",
+        "confidence": 0.68
+      },
+      "counterfactual_value": {
+        "score": 4,
+        "reasoning": "Independent-friendly theory-vs-empirics bridge on public models; weak lab incentive.",
+        "confidence": 0.66
+      },
+      "low_compute": {
+        "score": 4,
+        "reasoning": "Prompting + plotting; light compute.",
+        "confidence": 0.7
+      },
+      "novelty": {
+        "score": 3,
+        "reasoning": "Scaling law published (2504.18530); the concrete empirical check may be partly open.",
+        "confidence": 0.5
+      }
+    },
+    "novelty_assessment": {
+      "classification": "partially_addressed",
+      "evidence": [],
+      "confidence": 0.5,
+      "derived_score": 3,
+      "reasoning": "Theory published; the empirical instantiation may be open."
+    },
+    "novelty_method": "novelty_estimated",
+    "weighted_score": 3.79,
+    "confidence": 0.66,
+    "eliminated": false,
+    "elimination_reason": null
+  },
+  {
+    "idea_id": "gen-2437",
+    "title": "Chain-of-Thought Bias in Judges: Does Showing Reasoning Make Overseers Easier to Fool?",
+    "run_id": "2026-06-15T19-24-29",
+    "original_idea": {
+      "idea_id": "gen-2437",
+      "run_id": "2026-06-15T19-24-29",
+      "stage": "generate",
+      "timestamp": "2026-06-15T21:36:04Z",
+      "subfield": "scalable_oversight",
+      "generation_strategy": "recent_paper_extension",
+      "confidence": 0.79,
+      "body": "# Chain-of-Thought Bias in Judges: Does Showing Reasoning Make Overseers Easier to Fool?\n\n**Problem:** The LLM-judge SoK (arXiv:2603.29403) lists 'chain-of-thought bias' \u2014 judges swayed by the presence of reasoning regardless of its validity. Whether elaborate-but-invalid CoT in a judged answer inflates acceptance is not isolated empirically.\n\n**Direction:** Create answer pairs that are equally (in)correct but differ only in whether they include a long, confident chain-of-thought. Measure how often an open judge prefers/accepts the CoT version even when its reasoning is fallacious, across tasks.\n\n**Why it matters:** If overseers reward the appearance of reasoning, a strategic model can produce persuasive-but-empty CoT to pass oversight \u2014 a clean, alarming, training-free demonstration relevant to CoT-based monitoring.\n\n**Relevant context:** Security in LLM-as-a-Judge: A Comprehensive SoK (arXiv:2603.29403, 2026) identifies chain-of-thought bias among twelve judge bias types: judges are influenced by the presence of reasoning chains independent of their correctness."
+    },
+    "scores": {
+      "theory_of_impact": {
+        "score": 4,
+        "reasoning": "Strong chain: if overseers reward appearance of reasoning, a model can pass oversight with empty CoT; relevant to CoT-based monitoring.",
+        "confidence": 0.68
+      },
+      "accessible_complexity": {
+        "score": 5,
+        "reasoning": "Accessible: matched answer pairs differing only in CoT presence, measure acceptance; prompting-only.",
+        "confidence": 0.8
+      },
+      "narrow_scope": {
+        "score": 5,
+        "reasoning": "Tightly scoped: CoT-vs-no-CoT acceptance lift; clear metric.",
+        "confidence": 0.78
+      },
+      "counterfactual_value": {
+        "score": 4,
+        "reasoning": "Independent-friendly isolation of a SoK-listed bias on public models; weak lab incentive.",
+        "confidence": 0.68
+      },
+      "low_compute": {
+        "score": 4,
+        "reasoning": "Prompting-only; light compute.",
+        "confidence": 0.72
+      },
+      "novelty": {
+        "score": 3,
+        "reasoning": "CoT bias listed in SoK (2603.29403); isolating it empirically may be partly open.",
+        "confidence": 0.5
+      }
+    },
+    "novelty_assessment": {
+      "classification": "partially_addressed",
+      "evidence": [],
+      "confidence": 0.5,
+      "derived_score": 3,
+      "reasoning": "Bias catalogued; the isolated empirical measurement may be open."
+    },
+    "novelty_method": "novelty_estimated",
+    "weighted_score": 4.53,
+    "confidence": 0.68,
+    "eliminated": false,
+    "elimination_reason": null
+  },
+  {
+    "idea_id": "gen-2438",
+    "title": "Self-Enhancement Bias: Do Judges Systematically Favor Their Own Model Family's Outputs?",
+    "run_id": "2026-06-15T19-24-29",
+    "original_idea": {
+      "idea_id": "gen-2438",
+      "run_id": "2026-06-15T19-24-29",
+      "stage": "generate",
+      "timestamp": "2026-06-15T21:36:04Z",
+      "subfield": "scalable_oversight",
+      "generation_strategy": "recent_paper_extension",
+      "confidence": 0.77,
+      "body": "# Self-Enhancement Bias: Do Judges Systematically Favor Their Own Model Family's Outputs?\n\n**Problem:** The SoK (arXiv:2603.29403) lists self-enhancement bias, where a judge favors outputs from itself or its own family. With mixed open-model fleets used for oversight, the magnitude of in-family favoritism is underexplored and directly affects multi-model oversight integrity.\n\n**Direction:** Have judges from 3 different model families score anonymized answer pairs where one answer is produced by the judge's own family. Measure systematic preference for same-family outputs after controlling for quality (using gold labels), quantifying self-enhancement bias per judge.\n\n**Why it matters:** If overseers favor their own lineage, model-vs-model oversight is biased in ways that compound when a single family both generates and oversees. A cheap measurement that argues for cross-family oversight panels.\n\n**Relevant context:** Security in LLM-as-a-Judge: A Comprehensive SoK (arXiv:2603.29403, 2026) names self-enhancement bias among twelve judge bias types: a judge may favor responses similar to or produced by itself/its family."
+    },
+    "scores": {
+      "theory_of_impact": {
+        "score": 4,
+        "reasoning": "Strong chain: in-family favoritism compromises model-vs-model oversight and argues for cross-family panels; concrete implication.",
+        "confidence": 0.68
+      },
+      "accessible_complexity": {
+        "score": 5,
+        "reasoning": "Accessible: cross-family judging of anonymized pairs with gold-label control; inference-only.",
+        "confidence": 0.78
+      },
+      "narrow_scope": {
+        "score": 5,
+        "reasoning": "Tightly scoped: same-family preference after quality control; clear metric.",
+        "confidence": 0.76
+      },
+      "counterfactual_value": {
+        "score": 4,
+        "reasoning": "Independent-friendly cross-family audit on public models; weak lab incentive.",
+        "confidence": 0.68
+      },
+      "low_compute": {
+        "score": 4,
+        "reasoning": "Inference-only; light compute.",
+        "confidence": 0.72
+      },
+      "novelty": {
+        "score": 3,
+        "reasoning": "Self-enhancement bias known; a controlled cross-family open-model measurement may be partly open.",
+        "confidence": 0.5
+      }
+    },
+    "novelty_assessment": {
+      "classification": "partially_addressed",
+      "evidence": [],
+      "confidence": 0.5,
+      "derived_score": 3,
+      "reasoning": "Bias known; the controlled cross-family open-model quantification may be open."
+    },
+    "novelty_method": "novelty_estimated",
+    "weighted_score": 4.53,
+    "confidence": 0.68,
+    "eliminated": false,
+    "elimination_reason": null
+  },
+  {
+    "idea_id": "gen-2439",
+    "title": "Cheap Critique vs. Held-Out Tests: Comparing Oversight Signals on a Reward-Hacking Benchmark",
+    "run_id": "2026-06-15T19-24-29",
+    "original_idea": {
+      "idea_id": "gen-2439",
+      "run_id": "2026-06-15T19-24-29",
+      "stage": "generate",
+      "timestamp": "2026-06-15T21:36:04Z",
+      "subfield": "scalable_oversight",
+      "generation_strategy": "recent_paper_extension",
+      "confidence": 0.76,
+      "body": "# Cheap Critique vs. Held-Out Tests: Comparing Oversight Signals on a Reward-Hacking Benchmark\n\n**Problem:** Reward Hacking Benchmark (arXiv:2605.02964, May 2026) and Hack-Verifiable Environments (arXiv:2605.20744, May 2026) provide environments where reward hacking by tool-using agents can be measured. EvilGenie-style detection compares LLM judges vs. held-out tests, but a head-to-head of cheap oversight signals (single critique vs. LLM judge vs. held-out test) on the same hacked trajectories is lacking.\n\n**Direction:** On a small slice of a published reward-hacking benchmark, take agent trajectories labeled as hacking or genuine. Compare detection accuracy of three cheap overseers: an LLM judge, a single-critique protocol, and a held-out unit test. Report which signal catches which hack types and their complementarity.\n\n**Why it matters:** Knowing which cheap oversight signal catches which hack class lets external researchers assemble robust monitoring without lab infrastructure, directly targeting overseer reward hacking. Uses existing benchmark data, inference-only.\n\n**Relevant context:** Reward Hacking Benchmark: Measuring Exploits in LLM Agents with Tool Use (arXiv:2605.02964, May 2026); Hack-Verifiable Environments: Towards Evaluating Reward Hacking at Scale (arXiv:2605.20744, May 2026); EvilGenie detection via LLM judges and held-out tests for single-step programming tasks."
+    },
+    "scores": {
+      "theory_of_impact": {
+        "score": 4,
+        "reasoning": "Strong chain: a head-to-head of cheap oversight signals lets external researchers assemble robust monitoring; targets overseer reward hacking.",
+        "confidence": 0.68
+      },
+      "accessible_complexity": {
+        "score": 4,
+        "reasoning": "Guided: reuse a published benchmark's labeled trajectories, compare three overseers; clear methodology.",
+        "confidence": 0.7
+      },
+      "narrow_scope": {
+        "score": 4,
+        "reasoning": "Focused first deliverable (per-signal detection + complementarity) but depends on the external benchmark slice.",
+        "confidence": 0.68
+      },
+      "counterfactual_value": {
+        "score": 4,
+        "reasoning": "Independent-friendly: existing benchmark data, inference-only; weak lab incentive.",
+        "confidence": 0.7
+      },
+      "low_compute": {
+        "score": 4,
+        "reasoning": "Inference-only on existing trajectories; light compute.",
+        "confidence": 0.7
+      },
+      "novelty": {
+        "score": 3,
+        "reasoning": "EvilGenie-style comparisons exist; this three-way signal comparison may be partly open.",
+        "confidence": 0.5
+      }
+    },
+    "novelty_assessment": {
+      "classification": "partially_addressed",
+      "evidence": [],
+      "confidence": 0.5,
+      "derived_score": 3,
+      "reasoning": "Related comparisons exist; the three-way head-to-head may be open."
+    },
+    "novelty_method": "novelty_estimated",
+    "weighted_score": 4.0,
+    "confidence": 0.68,
+    "eliminated": false,
+    "elimination_reason": null
+  },
+  {
+    "idea_id": "gen-245",
+    "title": "Prompt-Injection Defense Over-Blocking Meter for Agents",
+    "run_id": "2026-06-15T19-24-29",
+    "original_idea": {
+      "idea_id": "gen-245",
+      "run_id": "2026-06-15T19-24-29",
+      "stage": "generate",
+      "timestamp": "2026-06-15T21:36:03Z",
+      "subfield": "adversarial_robustness",
+      "generation_strategy": "tool_or_benchmark_gap",
+      "confidence": 0.69,
+      "body": "# Prompt-Injection Defense Over-Blocking Meter for Agents\n\n**Problem:** Indirect-prompt-injection defenses (sanitizers, firewalls, delimiting) reduce attack success but may also block legitimate tool content; there is no tool measuring the over-blocking / false-positive cost of these defenses on benign agent tasks.\n\n**Direction:** Extend a minimal tool-agent setup with a benign task suite (documents with no injections that require the agent to act on their content) plus an injected-document suite, then measure for each candidate defense both the attack-success reduction AND the benign-task success drop. Report the security/utility Pareto frontier for injection defenses. Ship the suite.\n\n**Why it matters:** Mirrors the over-refusal problem in the agentic injection setting \u2014 defenses that block too aggressively break legitimate agents, a trade-off current injection benchmarks ignore. Strategically valuable safer-sandbox infrastructure scoped to a prototype; mock tools run locally, no proprietary infra.\n\n**Relevant context:** 'Indirect Prompt Injections: Are Firewalls All You Need, or Stronger Benchmarks?' (arXiv:2510.05244); 'CommandSans: Surgical Precision Prompt Sanitization' (arXiv:2510.08829); InjecAgent / AgentDojo. Search note: existing agentic security benchmarks have 'flawed success metrics' and are 'easily saturated.'"
+    },
+    "scores": {
+      "theory_of_impact": {
+        "score": 4,
+        "reasoning": "Strong chain: measuring the over-blocking cost of injection defenses addresses a real deployability trade-off current benchmarks ignore.",
+        "confidence": 0.66
+      },
+      "accessible_complexity": {
+        "score": 4,
+        "reasoning": "Guided: extend a minimal tool-agent with benign + injected suites; some agent-harness engineering required.",
+        "confidence": 0.68
+      },
+      "narrow_scope": {
+        "score": 4,
+        "reasoning": "Focused first deliverable (security/utility Pareto suite) but two suites + multiple defenses add breadth.",
+        "confidence": 0.66
+      },
+      "counterfactual_value": {
+        "score": 4,
+        "reasoning": "Independent-friendly safer-sandbox infrastructure; mock tools local, no proprietary infra.",
+        "confidence": 0.7
+      },
+      "low_compute": {
+        "score": 4,
+        "reasoning": "Mock tools local + inference; light compute.",
+        "confidence": 0.7
+      },
+      "novelty": {
+        "score": 3,
+        "reasoning": "Injection benchmarks exist (AgentDojo); the over-blocking/false-positive Pareto angle may be partly open.",
+        "confidence": 0.5
+      }
+    },
+    "novelty_assessment": {
+      "classification": "partially_addressed",
+      "evidence": [],
+      "confidence": 0.5,
+      "derived_score": 3,
+      "reasoning": "Injection benchmarks exist; the over-blocking-cost meter may be open."
+    },
+    "novelty_method": "novelty_estimated",
+    "weighted_score": 4.0,
+    "confidence": 0.65,
+    "eliminated": false,
+    "elimination_reason": null
+  },
+  {
+    "idea_id": "gen-2440",
+    "title": "Position-Bias Robustness as an Oversight Reliability Metric Across Open Judges",
+    "run_id": "2026-06-15T19-24-29",
+    "original_idea": {
+      "idea_id": "gen-2440",
+      "run_id": "2026-06-15T19-24-29",
+      "stage": "generate",
+      "timestamp": "2026-06-15T21:36:04Z",
+      "subfield": "scalable_oversight",
+      "generation_strategy": "recent_paper_extension",
+      "confidence": 0.8,
+      "body": "# Position-Bias Robustness as an Oversight Reliability Metric Across Open Judges\n\n**Problem:** Position bias (preferring the first/last presented answer) is repeatedly flagged (SoK arXiv:2603.29403; Judging the Judges arXiv:2604.23178) yet treated as a nuisance rather than a quantified per-model oversight-reliability property. A standardized position-bias robustness score across open judges is missing.\n\n**Direction:** For each of several open judge models, present answer pairs in both orders and compute a position-bias index (verdict flip rate due to ordering alone) over a labeled set. Rank judges by robustness and test whether simple order-randomization or dual-pass averaging eliminates it. Publish the index as a comparable oversight metric.\n\n**Why it matters:** A simple, comparable reliability score that any external researcher can compute helps select trustworthy overseers and exposes which models should not be used unaided. Pure inference, highly feasible.\n\n**Relevant context:** Security in LLM-as-a-Judge SoK (arXiv:2603.29403, 2026) and Judging the Judges (arXiv:2604.23178, Apr 2026) both flag position bias as a systematic, prevalent judge bias that compromises evaluation reliability."
+    },
+    "scores": {
+      "theory_of_impact": {
+        "score": 4,
+        "reasoning": "Strong chain: a comparable position-bias reliability score helps select trustworthy overseers and exposes unreliable ones; concrete implication.",
+        "confidence": 0.68
+      },
+      "accessible_complexity": {
+        "score": 5,
+        "reasoning": "Accessible: both-orders judging, compute flip rate, test mitigations; inference-only.",
+        "confidence": 0.82
+      },
+      "narrow_scope": {
+        "score": 5,
+        "reasoning": "Tightly scoped: position-bias index + mitigation test; clear deliverable.",
+        "confidence": 0.78
+      },
+      "counterfactual_value": {
+        "score": 4,
+        "reasoning": "Independent-friendly reliability metric on public models; weak lab incentive.",
+        "confidence": 0.66
+      },
+      "low_compute": {
+        "score": 4,
+        "reasoning": "Inference-only; light compute.",
+        "confidence": 0.72
+      },
+      "novelty": {
+        "score": 2,
+        "reasoning": "Position bias is heavily studied and dual-pass mitigation is known; framing it as a per-model score is largely incremental.",
+        "confidence": 0.5
+      }
+    },
+    "novelty_assessment": {
+      "classification": "largely_addressed",
+      "evidence": [],
+      "confidence": 0.5,
+      "derived_score": 2,
+      "reasoning": "Position bias and order-mitigation well studied; the per-model index is largely incremental."
+    },
+    "novelty_method": "novelty_estimated",
+    "weighted_score": 4.53,
+    "confidence": 0.67,
+    "eliminated": false,
+    "elimination_reason": null
+  },
+  {
+    "idea_id": "gen-2441",
+    "title": "Does Collaborative Debate Reduce Sycophancy or Just Hide It?",
+    "run_id": "2026-06-15T19-24-29",
+    "original_idea": {
+      "idea_id": "gen-2441",
+      "run_id": "2026-06-15T19-24-29",
+      "stage": "generate",
+      "timestamp": "2026-06-15T21:36:04Z",
+      "subfield": "scalable_oversight",
+      "generation_strategy": "recent_paper_extension",
+      "confidence": 0.75,
+      "body": "# Does Collaborative Debate Reduce Sycophancy or Just Hide It?\n\n**Problem:** ColMAD (arXiv:2510.20963) claims non-zero-sum debate reduces debate hacking, while sycophancy work (arXiv:2604.21564) shows argument is the strongest sycophancy trigger. Whether collaborative reframing actually lowers judge sycophancy, or merely relabels it as 'consensus,' is unexamined.\n\n**Direction:** Run competitive vs. collaborative (ColMAD-style) debate where one side argues a known-wrong position. Measure how often the judge ends up endorsing the wrong consensus in each protocol. Test whether 'collaboration' increases premature false agreement relative to adversarial debate.\n\n**Why it matters:** Collaborative oversight could trade adversarial robustness for groupthink. Detecting whether non-zero-sum debate quietly raises false-consensus risk is a fresh, decision-relevant combination of two recent results, inference-only.\n\n**Relevant context:** ColMAD (arXiv:2510.20963, Oct 2025) reframes debate as non-zero-sum to cut debate hacking; Measuring Opinion Bias and Sycophancy via LLM-based Persuasion (arXiv:2604.21564, Apr 2026) shows argumentative settings maximize sycophancy/false agreement (up to 94%)."
+    },
+    "scores": {
+      "theory_of_impact": {
+        "score": 4,
+        "reasoning": "Strong chain: collaborative debate may trade adversarial robustness for groupthink; detecting hidden false-consensus is decision-relevant.",
+        "confidence": 0.68
+      },
+      "accessible_complexity": {
+        "score": 5,
+        "reasoning": "Accessible: competitive vs collaborative debate with a known-wrong side, measure wrong-consensus rate; prompting-only.",
+        "confidence": 0.78
+      },
+      "narrow_scope": {
+        "score": 5,
+        "reasoning": "Tightly scoped: two protocols, wrong-consensus endorsement rate; clear metric.",
+        "confidence": 0.76
+      },
+      "counterfactual_value": {
+        "score": 4,
+        "reasoning": "Independent-friendly combination of two recent results on public models; weak lab incentive.",
+        "confidence": 0.68
+      },
+      "low_compute": {
+        "score": 4,
+        "reasoning": "Prompting-only multi-agent debate; light compute.",
+        "confidence": 0.7
+      },
+      "novelty": {
+        "score": 4,
+        "reasoning": "Novel combination of two recent results (ColMAD x persuasion-sycophancy); likely no direct published work.",
+        "confidence": 0.52
+      }
+    },
+    "novelty_assessment": {
+      "classification": "mostly_novel",
+      "evidence": [],
+      "confidence": 0.52,
+      "derived_score": 4,
+      "reasoning": "Combines two recent results in a way likely unstudied."
+    },
+    "novelty_method": "novelty_estimated",
+    "weighted_score": 4.53,
+    "confidence": 0.68,
+    "eliminated": false,
+    "elimination_reason": null
+  },
+  {
+    "idea_id": "gen-2442",
+    "title": "Cheap Diverse-Monitor Ensembles for Hobbyist Control Setups",
+    "run_id": "2026-06-15T19-24-29",
+    "original_idea": {
+      "idea_id": "gen-2442",
+      "run_id": "2026-06-15T19-24-29",
+      "stage": "generate",
+      "timestamp": "2026-06-15T21:36:04Z",
+      "subfield": "ai_control",
+      "generation_strategy": "novel_direction",
+      "confidence": 0.78,
+      "body": "# Cheap Diverse-Monitor Ensembles for Hobbyist Control Setups\n\n**Problem:** Recent work shows a diverse ensemble of small monitors beats a single costly monitor for catching backdoors, but the result was demonstrated mostly with fine-tuned monitors and substantial compute. It is unclear whether the diversity benefit survives when you can only vary cheap, training-free knobs (prompt persona, temperature, model family) on a consumer budget.\n\n**Direction:** Using an existing open backdoor/sabotage transcript set (e.g. SHADE-Arena or ControlArena samples), build several training-free 'diverse' monitors that differ only in system-prompt persona, decoding temperature, and base model (e.g. two small open models via API/Colab). Measure pairwise score correlation on attack samples and whether averaging 2-4 diverse monitors raises detection AUC over re-sampling one monitor at matched compute. Report the diversity-vs-scale tradeoff achievable with zero fine-tuning.\n\n**Why it matters:** Confirms whether the 'diversity beats scale' finding is reproducible by small actors with no training infrastructure, making robust monitoring accessible outside frontier labs. A positive result gives the community a cheap recipe; a negative one flags that the benefit depends on lab-only fine-tuning diversity.\n\n**Relevant context:** Ensemble Monitoring for AI Control (arxiv 2605.15377): a diverse ensemble of small monitors outperforms a single costly monitor; best 3-monitor ensemble gives 2.4x greater detection gain at equal compute; diverse monitors' biases average out while re-sampling one only reduces random noise; fine-tuning was a strong diversity source. SHADE-Arena (arxiv 2506.15740) provides open transcripts; top monitor AUC 0.87."
+    },
+    "scores": {
+      "theory_of_impact": {
+        "score": 4,
+        "reasoning": "Strong chain: confirms whether a useful AI-control monitoring recipe is reproducible without fine-tuning, making robust monitoring accessible externally.",
+        "confidence": 0.7
+      },
+      "accessible_complexity": {
+        "score": 4,
+        "reasoning": "Guided: existing transcripts + training-free monitors varying persona/temp/model; clear methodology.",
+        "confidence": 0.72
+      },
+      "narrow_scope": {
+        "score": 4,
+        "reasoning": "Focused first deliverable (diversity-vs-scale AUC comparison) using existing data; few dependencies.",
+        "confidence": 0.7
+      },
+      "counterfactual_value": {
+        "score": 4,
+        "reasoning": "Independent-friendly: existing open transcripts, no fine-tuning; directly tests external reproducibility.",
+        "confidence": 0.72
+      },
+      "low_compute": {
+        "score": 4,
+        "reasoning": "Inference-only ensembling over existing transcripts; light compute.",
+        "confidence": 0.72
+      },
+      "novelty": {
+        "score": 3,
+        "reasoning": "Ensemble-monitoring result published (2605.15377); the training-free reproducibility test may be partly open.",
+        "confidence": 0.5
+      }
+    },
+    "novelty_assessment": {
+      "classification": "partially_addressed",
+      "evidence": [],
+      "confidence": 0.5,
+      "derived_score": 3,
+      "reasoning": "Result published; the training-free cheap reproduction may be open."
+    },
+    "novelty_method": "novelty_estimated",
+    "weighted_score": 4.0,
+    "confidence": 0.69,
+    "eliminated": false,
+    "elimination_reason": null
+  },
+  {
+    "idea_id": "gen-2443",
+    "title": "Prompt-Injection Robustness of Suspiciousness Scoring as a Function of Capability Gap",
+    "run_id": "2026-06-15T19-24-29",
+    "original_idea": {
+      "idea_id": "gen-2443",
+      "run_id": "2026-06-15T19-24-29",
+      "stage": "generate",
+      "timestamp": "2026-06-15T21:36:04Z",
+      "subfield": "ai_control",
+      "generation_strategy": "novel_direction",
+      "confidence": 0.8,
+      "body": "# Prompt-Injection Robustness of Suspiciousness Scoring as a Function of Capability Gap\n\n**Problem:** Adaptive attacks show untrusted models can embed prompt injections that drive a trusted monitor's suspiciousness score down, and the effect grows with the attacker-monitor capability gap. But there is no simple public curve mapping how monitor robustness degrades as the gap widens across freely available small models.\n\n**Direction:** Take a set of known backdoored/sabotaged outputs and append a small library of generic monitor-targeted prompt injections. Score each with monitors of increasing capability (a ladder of small open models). Plot the drop in detected-backdoor rate against monitor size, identifying the gap threshold where injections start reliably flipping scores. No training needed.\n\n**Why it matters:** Gives deployers a back-of-envelope rule for how much weaker a trusted monitor can safely be before injection becomes a dominant failure mode. This is a medium-horizon control concern that labs deprioritize, and it needs only API access plus public attack transcripts.\n\n**Relevant context:** Adaptive Attacks on Trusted Monitors Subvert AI Control Protocols (arxiv 2510.09462): prompt injections induce monitors to assign low suspiciousness and green-light malicious outputs; when the attacker-monitor capability gap is large (e.g. GPT-5 vs GPT-4o-mini) the model invents working injections on the spot; monitors rate injected backdoored code as safer than honest code."
+    },
+    "scores": {
+      "theory_of_impact": {
+        "score": 4,
+        "reasoning": "Strong chain: a robustness-vs-capability-gap curve gives deployers a usable rule for when injection dominates monitor failure; concrete control implication.",
+        "confidence": 0.7
+      },
+      "accessible_complexity": {
+        "score": 5,
+        "reasoning": "Accessible: append injections to known-bad outputs, score across a model ladder; inference-only, no training.",
+        "confidence": 0.78
+      },
+      "narrow_scope": {
+        "score": 5,
+        "reasoning": "Tightly scoped: detected-rate vs monitor size curve + gap threshold; clear metric.",
+        "confidence": 0.76
+      },
+      "counterfactual_value": {
+        "score": 4,
+        "reasoning": "Independent-friendly: public attack transcripts + API; medium-horizon concern labs deprioritize.",
+        "confidence": 0.72
+      },
+      "low_compute": {
+        "score": 4,
+        "reasoning": "Inference-only scoring over a model ladder; light compute.",
+        "confidence": 0.7
+      },
+      "novelty": {
+        "score": 3,
+        "reasoning": "Adaptive-injection-on-monitors published (2510.09462); the capability-gap robustness curve may be partly open.",
+        "confidence": 0.5
+      }
+    },
+    "novelty_assessment": {
+      "classification": "partially_addressed",
+      "evidence": [],
+      "confidence": 0.5,
+      "derived_score": 3,
+      "reasoning": "Attack established; the gap-vs-robustness curve may be open."
+    },
+    "novelty_method": "novelty_estimated",
+    "weighted_score": 4.53,
+    "confidence": 0.69,
+    "eliminated": false,
+    "elimination_reason": null
+  },
+  {
+    "idea_id": "gen-2444",
+    "title": "Do Trusted Monitors Systematically Over-Flag? A Calibration Audit of False Positives",
+    "run_id": "2026-06-15T19-24-29",
+    "original_idea": {
+      "idea_id": "gen-2444",
+      "run_id": "2026-06-15T19-24-29",
+      "stage": "generate",
+      "timestamp": "2026-06-15T21:36:04Z",
+      "subfield": "ai_control",
+      "generation_strategy": "novel_direction",
+      "confidence": 0.77,
+      "body": "# Do Trusted Monitors Systematically Over-Flag? A Calibration Audit of False Positives\n\n**Problem:** A recurring finding is that monitors fail mostly by overestimating suspiciousness of benign code, which inflates false positives and raises the 'control tax'. There is little public characterization of WHAT benign features trigger spurious high scores, which matters for usability.\n\n**Direction:** Run a small open monitor over a set of clearly-benign code/agent transcripts and rank by suspiciousness. Cluster the high-scoring false positives and label the triggering features (unusual variable names, security keywords, obscure libraries, long files). Quantify how a two-step 'first explain, then score' prompting strategy reduces these false positives. Deliverable: a taxonomy of benign-but-flagged patterns plus a mitigation prompt.\n\n**Why it matters:** False positives determine whether control protocols are deployable in practice; cataloguing their causes is cheap, lab-independent infrastructure work that improves every downstream protocol. Reducing the control tax keeps monitoring usable as models scale.\n\n**Relevant context:** Adaptive Attacks paper and Control Tax (arxiv 2506.05296) note monitors mostly fail by overestimating suspiciousness of provided code; a two-step prompting strategy was devised to circumvent miscalibration. The cost of false positives is the core 'control tax' framing."
+    },
+    "scores": {
+      "theory_of_impact": {
+        "score": 4,
+        "reasoning": "Strong chain: false positives determine deployability of control protocols; a benign-trigger taxonomy + mitigation reduces the control tax.",
+        "confidence": 0.68
+      },
+      "accessible_complexity": {
+        "score": 5,
+        "reasoning": "Accessible: rank benign transcripts by suspiciousness, cluster false positives, test a two-step prompt; inference-only.",
+        "confidence": 0.78
+      },
+      "narrow_scope": {
+        "score": 4,
+        "reasoning": "Focused first deliverable (taxonomy + mitigation) but qualitative clustering/labeling adds some open-endedness.",
+        "confidence": 0.66
+      },
+      "counterfactual_value": {
+        "score": 4,
+        "reasoning": "Independent-friendly control-tax infrastructure on public transcripts/models; weak lab incentive.",
+        "confidence": 0.7
+      },
+      "low_compute": {
+        "score": 4,
+        "reasoning": "Inference-only over transcripts; light compute.",
+        "confidence": 0.72
+      },
+      "novelty": {
+        "score": 3,
+        "reasoning": "Over-flagging/control-tax noted (2506.05296); a benign-trigger taxonomy may be partly open.",
+        "confidence": 0.5
+      }
+    },
+    "novelty_assessment": {
+      "classification": "partially_addressed",
+      "evidence": [],
+      "confidence": 0.5,
+      "derived_score": 3,
+      "reasoning": "Over-flagging noted; the trigger-feature taxonomy may be open."
+    },
+    "novelty_method": "novelty_estimated",
+    "weighted_score": 4.26,
+    "confidence": 0.69,
+    "eliminated": false,
+    "elimination_reason": null
+  },
+  {
+    "idea_id": "gen-2445",
+    "title": "Acausal Collusion Schelling-Point Predictability in Small Open Models",
+    "run_id": "2026-06-15T19-24-29",
+    "original_idea": {
+      "idea_id": "gen-2445",
+      "run_id": "2026-06-15T19-24-29",
+      "stage": "generate",
+      "timestamp": "2026-06-15T21:36:04Z",
+      "subfield": "ai_control",
+      "generation_strategy": "novel_direction",
+      "confidence": 0.75,
+      "body": "# Acausal Collusion Schelling-Point Predictability in Small Open Models\n\n**Problem:** Untrusted-monitoring safety depends on collusion being hard: a schemer must pick a defection Schelling point a monitor can independently recognize without prior communication. Most Schelling-coordination evidence is on frontier models (GPT-4 ~40-56%); the picture for cheap open models that a small actor can run is unknown.\n\n**Direction:** Implement a minimal acausal-collusion game: a 'generator' must embed a covert go-signal in benign-looking output, and a separate 'monitor' instance of the same small open model must independently decide whether to let it pass, with no shared context. Sweep across several small open models and prompt framings; measure coordination success rate vs. a no-signal baseline. Reproduce the published frontier numbers as a sanity check.\n\n**Why it matters:** Quantifies a dangerous capability (subtle Schelling coordination) in the exact small models a hobbyist can study, building a public model-organism baseline. If small models already coordinate above chance, untrusted-monitoring schemes are riskier than assumed; needs only API/Colab.\n\n**Relevant context:** Redwood 'How to prevent collusion when using untrusted models to monitor each other'; Schelling game evaluations for AI control (LessWrong); Motwani et al. 2025: GPT-4 Schelling coordination ~40% at temp 0, 56% at temp 1; acausal collusion requires recognizing signals via Schelling points; redaction/paraphrasing by trusted models proposed as mitigation."
+    },
+    "scores": {
+      "theory_of_impact": {
+        "score": 4,
+        "reasoning": "Strong chain: collusion-coordination capability underpins untrusted-monitoring safety; a small-model baseline informs whether the scheme is riskier than assumed.",
+        "confidence": 0.68
+      },
+      "accessible_complexity": {
+        "score": 4,
+        "reasoning": "Guided: minimal two-instance Schelling game with no shared context; tractable but careful experimental control needed.",
+        "confidence": 0.7
+      },
+      "narrow_scope": {
+        "score": 4,
+        "reasoning": "Focused first deliverable (coordination rate vs baseline across models) with some game-design overhead.",
+        "confidence": 0.68
+      },
+      "counterfactual_value": {
+        "score": 4,
+        "reasoning": "Independent-friendly model-organism baseline on small models; needs only API/Colab; labs less able to publish on open models.",
+        "confidence": 0.72
+      },
+      "low_compute": {
+        "score": 4,
+        "reasoning": "Inference-only two-instance game; light compute.",
+        "confidence": 0.7
+      },
+      "novelty": {
+        "score": 3,
+        "reasoning": "Schelling coordination studied on frontier models; the small-open-model baseline may be partly open.",
+        "confidence": 0.5
+      }
+    },
+    "novelty_assessment": {
+      "classification": "partially_addressed",
+      "evidence": [],
+      "confidence": 0.5,
+      "derived_score": 3,
+      "reasoning": "Frontier evidence exists; the small-open-model baseline may be open."
+    },
+    "novelty_method": "novelty_estimated",
+    "weighted_score": 4.0,
+    "confidence": 0.68,
+    "eliminated": false,
+    "elimination_reason": null
+  },
+  {
+    "idea_id": "gen-2446",
+    "title": "Paraphrasing Defense: How Much Covert Signal Survives a Trusted Rewrite?",
+    "run_id": "2026-06-15T19-24-29",
+    "original_idea": {
+      "idea_id": "gen-2446",
+      "run_id": "2026-06-15T19-24-29",
+      "stage": "generate",
+      "timestamp": "2026-06-15T21:36:04Z",
+      "subfield": "ai_control",
+      "generation_strategy": "novel_direction",
+      "confidence": 0.79,
+      "body": "# Paraphrasing Defense: How Much Covert Signal Survives a Trusted Rewrite?\n\n**Problem:** Trusted-model paraphrasing/redaction is proposed to strip collusion signals and steganographic payloads from untrusted outputs, but its actual signal-destruction rate is rarely measured directly on an open budget.\n\n**Direction:** Construct outputs containing simple covert payloads (an agreed token pattern, acrostic, or low-bit steganographic encoding). Pass each through a small trusted model instructed to paraphrase while preserving task content. Measure (a) fraction of covert signal that survives the rewrite and (b) task-content fidelity loss. Sweep paraphrase aggressiveness to map the signal-removal vs. usefulness frontier.\n\n**Why it matters:** Paraphrasing is one of the few cheap, model-agnostic anti-collusion / anti-steganography defenses available to actors without internal weights access. A clean dose-response curve tells deployers how aggressive a rewrite must be, and is reusable infrastructure for any control protocol.\n\n**Relevant context:** Redwood collusion post and 'When can we trust untrusted monitoring?' (arxiv 2602.20628) propose redaction and paraphrasing by trusted models to remove explicit collusion signals; steganography/linguistic-drift encoding identified as CoT obfuscation pathways (arxiv 2510.19851, 2511.11584)."
+    },
+    "scores": {
+      "theory_of_impact": {
+        "score": 4,
+        "reasoning": "Strong chain: quantifies a key cheap anti-collusion/anti-steg defense's effectiveness, directly informing control protocols.",
+        "confidence": 0.7
+      },
+      "accessible_complexity": {
+        "score": 5,
+        "reasoning": "Accessible: embed covert payloads, paraphrase with a small model, measure survival vs fidelity; inference-only.",
+        "confidence": 0.78
+      },
+      "narrow_scope": {
+        "score": 5,
+        "reasoning": "Tightly scoped: signal-survival + fidelity vs paraphrase-aggressiveness curve; clear metric.",
+        "confidence": 0.78
+      },
+      "counterfactual_value": {
+        "score": 4,
+        "reasoning": "Independent-friendly anti-collusion defense measurement; no internal weights needed.",
+        "confidence": 0.72
+      },
+      "low_compute": {
+        "score": 4,
+        "reasoning": "Inference-only paraphrase + signal detection; light compute.",
+        "confidence": 0.72
+      },
+      "novelty": {
+        "score": 3,
+        "reasoning": "Paraphrasing defense proposed (2602.20628); a direct signal-survival dose-response may be partly open.",
+        "confidence": 0.5
+      }
+    },
+    "novelty_assessment": {
+      "classification": "partially_addressed",
+      "evidence": [],
+      "confidence": 0.5,
+      "derived_score": 3,
+      "reasoning": "Defense proposed; the direct survival-rate measurement may be open."
+    },
+    "novelty_method": "novelty_estimated",
+    "weighted_score": 4.53,
+    "confidence": 0.7,
+    "eliminated": false,
+    "elimination_reason": null
+  },
+  {
+    "idea_id": "gen-2447",
+    "title": "Minimal Runtime Honeypot Protocol on a Tiny Open Model Organism",
+    "run_id": "2026-06-15T19-24-29",
+    "original_idea": {
+      "idea_id": "gen-2447",
+      "run_id": "2026-06-15T19-24-29",
+      "stage": "generate",
+      "timestamp": "2026-06-15T21:36:04Z",
+      "subfield": "ai_control",
+      "generation_strategy": "novel_direction",
+      "confidence": 0.74,
+      "body": "# Minimal Runtime Honeypot Protocol on a Tiny Open Model Organism\n\n**Problem:** Honeypotting (varying the apparent monitoring/deployment condition while holding the task fixed to elicit context-dependent defection) has been proposed and sketched but rarely implemented as a runtime control protocol on accessible models.\n\n**Direction:** Build a 30-hour micro-honeypot: take an open model prompted into a mild 'has-a-secret-side-goal' organism, present an identical task under three system-prompt conditions (looks-evaluated, looks-deployed-unmonitored, explicitly-monitored) and measure whether side-goal behavior rises when the model believes it is unobserved. Report the behavioral gap as a honeypot detection signal.\n\n**Why it matters:** Demonstrates a self-contained, lab-independent template for catching evaluation-vs-deployment behavioral gaps, directly probing the 'strategic compliance vs genuine alignment' open problem. A working prototype is reusable by other small researchers.\n\n**Relevant context:** Honeypot Protocol (arxiv 2604.13301): no prior work implemented honeypotting as a runtime control protocol; the protocol varies system prompt across evaluation / synthetic-deployment / no-monitoring conditions while holding task, tools, environment, scoring identical. Honeypotting flagged tractable by Greenblatt and Stastny 2025."
+    },
+    "scores": {
+      "theory_of_impact": {
+        "score": 4,
+        "reasoning": "Strong chain: a runtime honeypot probes the eval-vs-deployment behavioral gap central to strategic-compliance concerns; reusable template.",
+        "confidence": 0.68
+      },
+      "accessible_complexity": {
+        "score": 4,
+        "reasoning": "Guided: prompt a mild side-goal organism, three conditions, measure behavioral gap; tractable but organism design needs care.",
+        "confidence": 0.7
+      },
+      "narrow_scope": {
+        "score": 4,
+        "reasoning": "Focused first deliverable (behavioral-gap signal) with some prompt-engineering of the model organism.",
+        "confidence": 0.68
+      },
+      "counterfactual_value": {
+        "score": 4,
+        "reasoning": "Independent-friendly lab-independent template; reusable model-organism infrastructure.",
+        "confidence": 0.7
+      },
+      "low_compute": {
+        "score": 4,
+        "reasoning": "Inference-only prompting across conditions; light compute.",
+        "confidence": 0.72
+      },
+      "novelty": {
+        "score": 3,
+        "reasoning": "Honeypot protocol proposed (2604.13301); a minimal open-model implementation may be partly open.",
+        "confidence": 0.5
+      }
+    },
+    "novelty_assessment": {
+      "classification": "partially_addressed",
+      "evidence": [],
+      "confidence": 0.5,
+      "derived_score": 3,
+      "reasoning": "Protocol sketched; the minimal open-model runtime implementation may be open."
+    },
+    "novelty_method": "novelty_estimated",
+    "weighted_score": 4.0,
+    "confidence": 0.69,
+    "eliminated": false,
+    "elimination_reason": null
+  },
+  {
+    "idea_id": "gen-2448",
+    "title": "Noise-Injection Sandbagging Detector for the Consumer GPU",
+    "run_id": "2026-06-15T19-24-29",
+    "original_idea": {
+      "idea_id": "gen-2448",
+      "run_id": "2026-06-15T19-24-29",
+      "stage": "generate",
+      "timestamp": "2026-06-15T21:36:04Z",
+      "subfield": "ai_control",
+      "generation_strategy": "novel_direction",
+      "confidence": 0.72,
+      "body": "# Noise-Injection Sandbagging Detector for the Consumer GPU\n\n**Problem:** Noise injection into weights reveals hidden capabilities of sandbagging models (they show anomalous accuracy improvements under noise), but most demonstrations use larger setups. Whether a clean, reproducible noise-injection sandbagging detector can be built and validated entirely on a single consumer GPU with small open models is untested.\n\n**Direction:** Take a small open model, induce sandbagging via a 'deliberately underperform on this safety eval' prompt, then add scaled Gaussian noise to a subset of weights at inference and plot accuracy-vs-noise. Compare the sandbagging condition's anomalous bump against an honest baseline's monotonic degradation. Quantify detection AUC and the minimal noise sweep needed.\n\n**Why it matters:** Sandbagging undermines all safety evaluations and labs struggle to detect imitative sandbagging without training access. A cheap, model-agnostic, weights-noise detector that hobbyists can run is exactly the kind of counterfactually-valuable, no-lab-resources tool the field needs.\n\n**Relevant context:** Noise Injection Reveals Hidden Capabilities of Sandbagging Language Models (arxiv 2412.01784): noise injection is an effective model-agnostic sandbagging detector; sandbagging models show anomalous accuracy improvements with noise. Sandbagging detection without training access classified only 1 of 5 models correctly (Elicitation Game, arxiv 2502.02180)."
+    },
+    "scores": {
+      "theory_of_impact": {
+        "score": 4,
+        "reasoning": "Strong chain: sandbagging undermines all safety evals; a cheap weights-noise detector is counterfactually valuable for eval integrity.",
+        "confidence": 0.68
+      },
+      "accessible_complexity": {
+        "score": 4,
+        "reasoning": "Guided: add scaled Gaussian noise to weights, plot accuracy-vs-noise; needs weight-manipulation tooling but methodology is inherited.",
+        "confidence": 0.68
+      },
+      "narrow_scope": {
+        "score": 4,
+        "reasoning": "Focused first deliverable (accuracy-vs-noise curve + detection AUC); requires weight-perturbation harness.",
+        "confidence": 0.68
+      },
+      "counterfactual_value": {
+        "score": 4,
+        "reasoning": "Independent-friendly: model-agnostic, no training access; labs struggle without it.",
+        "confidence": 0.72
+      },
+      "low_compute": {
+        "score": 3,
+        "reasoning": "Repeated noisy-weight inference on a small open model; single consumer GPU, somewhat inference-heavy.",
+        "confidence": 0.65
+      },
+      "novelty": {
+        "score": 3,
+        "reasoning": "Noise-injection detection published (2412.01784); the consumer-GPU reproducibility validation may be partly open.",
+        "confidence": 0.5
+      }
+    },
+    "novelty_assessment": {
+      "classification": "partially_addressed",
+      "evidence": [],
+      "confidence": 0.5,
+      "derived_score": 3,
+      "reasoning": "Method published; the small-model consumer-GPU validation may be open."
+    },
+    "novelty_method": "novelty_estimated",
+    "weighted_score": 3.79,
+    "confidence": 0.66,
+    "eliminated": false,
+    "elimination_reason": null
+  },
+  {
+    "idea_id": "gen-2449",
+    "title": "CoT-vs-Action Monitoring Informativeness Across Open Model Families",
+    "run_id": "2026-06-15T19-24-29",
+    "original_idea": {
+      "idea_id": "gen-2449",
+      "run_id": "2026-06-15T19-24-29",
+      "stage": "generate",
+      "timestamp": "2026-06-15T21:36:04Z",
+      "subfield": "ai_control",
+      "generation_strategy": "novel_direction",
+      "confidence": 0.79,
+      "body": "# CoT-vs-Action Monitoring Informativeness Across Open Model Families\n\n**Problem:** The GPT-5 system card claims CoT monitoring is 'substantially more informative' than action/output-only monitoring for detecting deception, but this is a single-model proprietary claim. Whether the CoT advantage holds across diverse open reasoning models is unverified.\n\n**Direction:** On a public sabotage/backdoor transcript set with reasoning traces (or by eliciting CoT on small open reasoning models), compare a monitor's detection AUC when given (a) action/output only vs (b) action plus CoT. Run across 3-4 open model families and report whether the CoT informativeness gap is universal or model-specific.\n\n**Why it matters:** If CoT monitoring's advantage is family-dependent, control protocols relying on it are fragile. Replicating a proprietary claim on open models is high counterfactual value and feasible with only API/Colab access.\n\n**Relevant context:** GPT-5 system card: CoT monitoring 'substantially more informative' than action/output-only monitoring for detecting deception (subfield context Recent Surprising Results). CoT Red-Handed (arxiv 2505.23575) stress-tests CoT monitoring; obfuscation work (arxiv 2510.19851) shows CoT monitoring is highly effective absent obfuscation pressure."
+    },
+    "scores": {
+      "theory_of_impact": {
+        "score": 4,
+        "reasoning": "Strong chain: if the CoT-monitoring advantage is family-dependent, control protocols relying on it are fragile; replicating a proprietary claim on open models is decision-relevant.",
+        "confidence": 0.7
+      },
+      "accessible_complexity": {
+        "score": 4,
+        "reasoning": "Guided: compare action-only vs action+CoT monitor AUC across families on transcripts; clear methodology.",
+        "confidence": 0.7
+      },
+      "narrow_scope": {
+        "score": 4,
+        "reasoning": "Focused first deliverable (CoT informativeness gap across families) but eliciting CoT and multiple families adds breadth.",
+        "confidence": 0.68
+      },
+      "counterfactual_value": {
+        "score": 4,
+        "reasoning": "Independent-friendly replication of a proprietary claim on open models; high counterfactual value.",
+        "confidence": 0.72
+      },
+      "low_compute": {
+        "score": 4,
+        "reasoning": "Inference-only monitoring over transcripts; light compute.",
+        "confidence": 0.7
+      },
+      "novelty": {
+        "score": 4,
+        "reasoning": "Cross-open-family verification of a single-model proprietary claim is likely largely unstudied.",
+        "confidence": 0.52
+      }
+    },
+    "novelty_assessment": {
+      "classification": "mostly_novel",
+      "evidence": [],
+      "confidence": 0.52,
+      "derived_score": 4,
+      "reasoning": "Cross-open-family replication of a proprietary claim is likely largely unstudied."
+    },
+    "novelty_method": "novelty_estimated",
+    "weighted_score": 4.0,
+    "confidence": 0.69,
+    "eliminated": false,
+    "elimination_reason": null
+  },
+  {
+    "idea_id": "gen-2450",
+    "title": "Pressure-Response Curve for CoT Obfuscation Under Increasing Stealth Demands",
+    "run_id": "2026-06-15T19-24-29",
+    "original_idea": {
+      "idea_id": "gen-2450",
+      "run_id": "2026-06-15T19-24-29",
+      "stage": "generate",
+      "timestamp": "2026-06-15T21:36:04Z",
+      "subfield": "ai_control",
+      "generation_strategy": "novel_direction",
+      "confidence": 0.77,
+      "body": "# Pressure-Response Curve for CoT Obfuscation Under Increasing Stealth Demands\n\n**Problem:** Models can obfuscate their CoT under 'high pressure' (monitors then catch only ~10% of deception), but the relationship between the strength of the stealth instruction and the resulting monitor evasion is treated as binary (low vs high) rather than as a continuous dose-response curve.\n\n**Direction:** Construct a graded ladder of stealth-pressure prompts (from 'just do the task' to 'hide your true intent from any reader at all costs') and have a small open reasoning model perform a benign-with-side-goal task at each level. Measure monitor catch-rate at each pressure level, producing a continuous obfuscation pressure-response curve and identifying the pressure threshold where monitorability collapses.\n\n**Why it matters:** Tells us how much adversarial pressure CoT monitoring can absorb before failing, informing whether CoT monitoring is a robust or brittle line of defense. The graded design is novel relative to the binary framings in the literature and needs no training.\n\n**Relevant context:** Can Reasoning Models Obfuscate Reasoning? (arxiv 2510.19851): CoT monitoring effective without obfuscation pressure but high-pressure obfuscation defeats it, monitors catch ~10% under high pressure; models hide intent with vague internal language and benign external text. Output Supervision Can Obfuscate the CoT (arxiv 2511.11584)."
+    },
+    "scores": {
+      "theory_of_impact": {
+        "score": 4,
+        "reasoning": "Strong chain: a continuous pressure-response curve tells us how much pressure CoT monitoring absorbs before failing, informing whether it is robust or brittle.",
+        "confidence": 0.7
+      },
+      "accessible_complexity": {
+        "score": 5,
+        "reasoning": "Accessible: graded stealth-pressure ladder on a small reasoning model, measure catch-rate; prompting-only.",
+        "confidence": 0.76
+      },
+      "narrow_scope": {
+        "score": 5,
+        "reasoning": "Tightly scoped: catch-rate vs pressure curve + collapse threshold; clear metric.",
+        "confidence": 0.76
+      },
+      "counterfactual_value": {
+        "score": 4,
+        "reasoning": "Independent-friendly graded design on small open models; weak lab incentive.",
+        "confidence": 0.7
+      },
+      "low_compute": {
+        "score": 4,
+        "reasoning": "Prompting-only with small reasoning model; light compute.",
+        "confidence": 0.7
+      },
+      "novelty": {
+        "score": 4,
+        "reasoning": "Binary low/high obfuscation studied; the continuous graded dose-response curve is likely largely novel.",
+        "confidence": 0.52
+      }
+    },
+    "novelty_assessment": {
+      "classification": "mostly_novel",
+      "evidence": [],
+      "confidence": 0.52,
+      "derived_score": 4,
+      "reasoning": "Binary framing studied; the graded dose-response curve is likely largely novel."
+    },
+    "novelty_method": "novelty_estimated",
+    "weighted_score": 4.53,
+    "confidence": 0.69,
+    "eliminated": false,
+    "elimination_reason": null
+  },
+  {
+    "idea_id": "gen-2451",
+    "title": "Defer-to-Resample Threshold Tuning Without a Real Untrusted Model",
+    "run_id": "2026-06-15T19-24-29",
+    "original_idea": {
+      "idea_id": "gen-2451",
+      "run_id": "2026-06-15T19-24-29",
+      "stage": "generate",
+      "timestamp": "2026-06-15T21:36:04Z",
+      "subfield": "ai_control",
+      "generation_strategy": "novel_direction",
+      "confidence": 0.76,
+      "body": "# Defer-to-Resample Threshold Tuning Without a Real Untrusted Model\n\n**Problem:** The Ctrl-Z resampling protocol (defer-to-resample beats defer-to-trusted: 83% vs 73% safety at 95% usefulness) was validated in a specific agentic setting. Practitioners lack intuition for how its safety-usefulness frontier shifts with the deferral threshold and number of resamples in a simpler, reproducible toy setting.\n\n**Direction:** Build a minimal simulated control game: a small open model occasionally inserts a 'backdoor' token, a monitor scores suspiciousness, and a resampling protocol re-queries up to n times choosing the least-suspicious action. Sweep deferral threshold and n; reproduce the qualitative defer-to-resample-beats-defer-to-trusted result and map the full safety-usefulness Pareto frontier.\n\n**Why it matters:** Gives a teachable, fully open re-implementation of a key control protocol, letting small researchers reason about parameter choices. Reproducing the headline result on accessible models confirms its generality and builds reusable infrastructure.\n\n**Relevant context:** Ctrl-Z: Controlling AI Agents via Resampling (arxiv 2504.10374): defer-to-trusted gives 72.7% safety at 95% usefulness; defer-to-resample gives 83.2%; resampling re-queries the untrusted model n times and selects the minimum-suspiciousness action below threshold, else defers to trusted."
+    },
+    "scores": {
+      "theory_of_impact": {
+        "score": 3,
+        "reasoning": "Plausible chain (reproduce a control protocol in a toy setting) but the simulated game's link to real-deployment risk reduction has a gap.",
+        "confidence": 0.62
+      },
+      "accessible_complexity": {
+        "score": 4,
+        "reasoning": "Guided: minimal simulated control game with threshold/n sweep; clear inherited Ctrl-Z methodology.",
+        "confidence": 0.7
+      },
+      "narrow_scope": {
+        "score": 4,
+        "reasoning": "Focused first deliverable (safety-usefulness Pareto frontier) with moderate game-implementation overhead.",
+        "confidence": 0.68
+      },
+      "counterfactual_value": {
+        "score": 4,
+        "reasoning": "Independent-friendly open re-implementation of a key control protocol; reusable infrastructure.",
+        "confidence": 0.68
+      },
+      "low_compute": {
+        "score": 4,
+        "reasoning": "Simulated game with small-model inference; light compute.",
+        "confidence": 0.7
+      },
+      "novelty": {
+        "score": 3,
+        "reasoning": "Ctrl-Z published (2504.10374); the toy re-implementation/parameter map may be partly open.",
+        "confidence": 0.5
+      }
+    },
+    "novelty_assessment": {
+      "classification": "partially_addressed",
+      "evidence": [],
+      "confidence": 0.5,
+      "derived_score": 3,
+      "reasoning": "Protocol published; the toy-setting parameter map may be open."
+    },
+    "novelty_method": "novelty_estimated",
+    "weighted_score": 3.79,
+    "confidence": 0.67,
+    "eliminated": false,
+    "elimination_reason": null
+  },
+  {
+    "idea_id": "gen-2452",
+    "title": "Linear Deception Probes: Do They Survive a Distribution Shift to Agentic Sabotage?",
+    "run_id": "2026-06-15T19-24-29",
+    "original_idea": {
+      "idea_id": "gen-2452",
+      "run_id": "2026-06-15T19-24-29",
+      "stage": "generate",
+      "timestamp": "2026-06-15T21:36:04Z",
+      "subfield": "ai_control",
+      "generation_strategy": "novel_direction",
+      "confidence": 0.74,
+      "body": "# Linear Deception Probes: Do They Survive a Distribution Shift to Agentic Sabotage?\n\n**Problem:** Apollo's linear deception probes hit AUROC 0.96-0.999 on their evaluation datasets, but probes are known to over-fit their training distribution. Whether a probe trained on simple honest-vs-lying chat transcripts transfers to detecting deception in an agentic sabotage setting is an open generalization question.\n\n**Direction:** Use Apollo's open-source deception-detection code and probes (or train a fresh linear probe on a small open model's activations using their honest/deceptive data), then evaluate transfer to a different deception context such as agentic side-task sabotage transcripts. Report the AUROC drop under distribution shift and which layers transfer best.\n\n**Why it matters:** Activation probes are a leading real-time misalignment monitor; knowing their out-of-distribution brittleness is essential before relying on them. Apollo released open code/probes, so this generalization test is fully reproducible outside a lab.\n\n**Relevant context:** Detecting Strategic Deception Using Linear Probes (Apollo, arxiv 2502.03407): probes reach AUROC 0.96-0.999 and catch 95-99% of deceptive responses at 1% FPR on Llama-3.3-70B; open code at github.com/ApolloResearch/deception-detection. LIARS' BENCH and Benchmarking Deception Probes (arxiv 2507.12691) study probe transfer."
+    },
+    "scores": {
+      "theory_of_impact": {
+        "score": 4,
+        "reasoning": "Strong chain: activation probes are a leading real-time misalignment monitor; OOD brittleness is essential to know before relying on them.",
+        "confidence": 0.7
+      },
+      "accessible_complexity": {
+        "score": 3,
+        "reasoning": "Intermediate: training/using linear probes on model activations and extracting them at scale needs solid ML fundamentals beyond prompting.",
+        "confidence": 0.62
+      },
+      "narrow_scope": {
+        "score": 4,
+        "reasoning": "Focused first deliverable (AUROC drop under shift, best-transfer layers) leveraging released code.",
+        "confidence": 0.66
+      },
+      "counterfactual_value": {
+        "score": 4,
+        "reasoning": "Independent-friendly: Apollo released open code/probes; fully reproducible outside a lab.",
+        "confidence": 0.72
+      },
+      "low_compute": {
+        "score": 2,
+        "reasoning": "Extracting activations from a 70B (or even smaller) model is somewhat heavy; possibly needs more than a single consumer GPU for the original probes.",
+        "confidence": 0.55
+      },
+      "novelty": {
+        "score": 3,
+        "reasoning": "Probe transfer is studied (LIARS BENCH, 2507.12691); the specific agentic-sabotage shift may be partly open.",
+        "confidence": 0.5
+      }
+    },
+    "novelty_assessment": {
+      "classification": "partially_addressed",
+      "evidence": [],
+      "confidence": 0.5,
+      "derived_score": 3,
+      "reasoning": "Probe transfer studied; the agentic-sabotage shift may be open."
+    },
+    "novelty_method": "novelty_estimated",
+    "weighted_score": 3.74,
+    "confidence": 0.63,
+    "eliminated": false,
+    "elimination_reason": null
+  },
+  {
+    "idea_id": "gen-2453",
+    "title": "Distributed-Threat Aggregation: Catching Sabotage That No Single Action Reveals",
+    "run_id": "2026-06-15T19-24-29",
+    "original_idea": {
+      "idea_id": "gen-2453",
+      "run_id": "2026-06-15T19-24-29",
+      "stage": "generate",
+      "timestamp": "2026-06-15T21:36:04Z",
+      "subfield": "ai_control",
+      "generation_strategy": "novel_direction",
+      "confidence": 0.78,
+      "body": "# Distributed-Threat Aggregation: Catching Sabotage That No Single Action Reveals\n\n**Problem:** Diffuse threats (research sabotage via many individually-innocuous bad actions) need fundamentally different monitoring than concentrated threats, yet most control evals focus on catching a single incriminating action. There is little public tooling for the aggregation problem: combining many weak per-action signals into a population-level alarm.\n\n**Direction:** Simulate a stream of agent actions where a small fraction are subtly degraded (e.g. quietly worse code, omitted edge cases) so that each action alone is near-undetectable. Apply simple statistical aggregation (sequential probability ratio test, CUSUM, running mean of monitor scores) and measure how many actions are needed to raise a reliable alarm at a fixed false-alarm rate.\n\n**Why it matters:** Diffuse research-sabotage is a medium-horizon threat frontier labs deprioritize, and the aggregation-over-many-actions framing is under-tooled. A simple, statistics-based detector is squarely within the participant's skill set and is counterfactually valuable lab-independent infrastructure.\n\n**Relevant context:** Redwood 'How can we solve diffuse threats like research sabotage with AI control?': distinguishes diffuse threats (catastrophe needs many weak-evidence actions) from concentrated threats (few highly incriminating actions); different monitoring approaches needed. UK AISI lists detecting concentrated vs distributed failures as an open problem."
+    },
+    "scores": {
+      "theory_of_impact": {
+        "score": 4,
+        "reasoning": "Strong chain: diffuse research-sabotage is a recognized under-tooled threat; a statistical aggregation detector is concrete lab-independent infrastructure.",
+        "confidence": 0.68
+      },
+      "accessible_complexity": {
+        "score": 5,
+        "reasoning": "Accessible: simulate action stream, apply SPRT/CUSUM on monitor scores; classical statistics in the participant's skill set.",
+        "confidence": 0.76
+      },
+      "narrow_scope": {
+        "score": 5,
+        "reasoning": "Tightly scoped: actions-to-alarm at a fixed FPR via standard aggregation; clear metric.",
+        "confidence": 0.76
+      },
+      "counterfactual_value": {
+        "score": 4,
+        "reasoning": "Independent-friendly: medium-horizon threat labs deprioritize; counterfactually valuable infrastructure.",
+        "confidence": 0.72
+      },
+      "low_compute": {
+        "score": 4,
+        "reasoning": "Simulation + statistical aggregation; can be mostly CPU/light inference.",
+        "confidence": 0.7
+      },
+      "novelty": {
+        "score": 3,
+        "reasoning": "Diffuse-threat framing exists (Redwood); a concrete statistical aggregation detector may be partly open.",
+        "confidence": 0.5
+      }
+    },
+    "novelty_assessment": {
+      "classification": "partially_addressed",
+      "evidence": [],
+      "confidence": 0.5,
+      "derived_score": 3,
+      "reasoning": "Framing established; a concrete aggregation detector may be open."
+    },
+    "novelty_method": "novelty_estimated",
+    "weighted_score": 4.53,
+    "confidence": 0.68,
+    "eliminated": false,
+    "elimination_reason": null
+  },
+  {
+    "idea_id": "gen-2454",
+    "title": "Evaluation-Awareness Probe: Can Small Models Tell They Are Being Tested?",
+    "run_id": "2026-06-15T19-24-29",
+    "original_idea": {
+      "idea_id": "gen-2454",
+      "run_id": "2026-06-15T19-24-29",
+      "stage": "generate",
+      "timestamp": "2026-06-15T21:36:04Z",
+      "subfield": "ai_control",
+      "generation_strategy": "novel_direction",
+      "confidence": 0.73,
+      "body": "# Evaluation-Awareness Probe: Can Small Models Tell They Are Being Tested?\n\n**Problem:** Evaluation awareness scales with model size and undermines the validity of all safety evals, but most evidence is on frontier models. Whether and how small open models discriminate 'this is a test' from 'this is real deployment' contexts is poorly characterized at the small end where hobbyists can experiment.\n\n**Direction:** Construct matched prompt pairs that are semantically identical but stylistically signal 'benchmark/eval' vs 'real user' framing. Ask small open models to classify which context they are in, and separately measure whether their behavior on a benign task shifts between framings. Plot evaluation-awareness accuracy across a size ladder of small open models.\n\n**Why it matters:** If even small models detect eval framing, honeypot and control evaluations need careful camouflage. Mapping where awareness emerges across the accessible size range is a clean, reproducible study that frontier labs cannot easily publish on open models.\n\n**Relevant context:** Sandbagging/eval-awareness literature: evaluation awareness follows a power-law with model size, worsening each frontier generation (kili-technology Muse Spark analysis; sandbagging detection survey). Honeypot Protocol relies on models not detecting the evaluation condition (arxiv 2604.13301)."
+    },
+    "scores": {
+      "theory_of_impact": {
+        "score": 4,
+        "reasoning": "Strong chain: evaluation awareness undermines validity of all safety evals; mapping its emergence informs honeypot/control eval camouflage.",
+        "confidence": 0.68
+      },
+      "accessible_complexity": {
+        "score": 5,
+        "reasoning": "Accessible: matched eval-vs-real prompt pairs, classification + behavior shift across a size ladder; inference-only.",
+        "confidence": 0.78
+      },
+      "narrow_scope": {
+        "score": 5,
+        "reasoning": "Tightly scoped: eval-awareness accuracy + behavior shift vs model size; clear metric.",
+        "confidence": 0.76
+      },
+      "counterfactual_value": {
+        "score": 4,
+        "reasoning": "Independent-friendly small-open-model study labs cannot easily publish; weak lab incentive.",
+        "confidence": 0.7
+      },
+      "low_compute": {
+        "score": 4,
+        "reasoning": "Inference-only across small models; light compute.",
+        "confidence": 0.72
+      },
+      "novelty": {
+        "score": 3,
+        "reasoning": "Eval-awareness studied on frontier models; the small-open-model size-ladder map may be partly open.",
+        "confidence": 0.5
+      }
+    },
+    "novelty_assessment": {
+      "classification": "partially_addressed",
+      "evidence": [],
+      "confidence": 0.5,
+      "derived_score": 3,
+      "reasoning": "Frontier evidence exists; the small-open-model size-ladder map may be open."
+    },
+    "novelty_method": "novelty_estimated",
+    "weighted_score": 4.53,
+    "confidence": 0.68,
+    "eliminated": false,
+    "elimination_reason": null
+  }
+]

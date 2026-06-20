@@ -1,0 +1,42 @@
+[
+ {
+  "idea_id": "gen-031",
+  "title": "Rationale-Conditioned Prompting: Does Explaining 'Why' a Rule Exists Improve Rule-Following at Inference Time?",
+  "research_question": "Does adding the rationale behind a behavioral rule to a system prompt (vs the rule alone) improve out-of-distribution rule adherence at inference time, isolating the prompting-level analog of Model Spec Midtraining's central claim?",
+  "approach_outline": "Build a small public eval set of behavioral-rule prompts plus held-out OOD paraphrases and edge cases (~100-150 items across a handful of rules). For 2-3 open instruct models, compare two matched system prompts: a 'rules-only' spec versus a 'rules-with-rationale' spec where each rule is accompanied by a one-sentence explanation of why it exists. Hold everything else fixed and measure rule-adherence rate on the OOD/edge cases. To address the theory-of-impact gap (the prompting analog being a weaker proxy for MSM's weight-level claim), explicitly frame the result as an upper-bound estimate of the in-context contribution and report it alongside the original MSM weight-level effect, clarifying how much of MSM's benefit is achievable training-free.",
+  "source_paper": "Model Spec Midtraining \u2014 https://alignment.anthropic.com/2026/msm/",
+  "subfield": "alignment / prompting"
+ },
+ {
+  "idea_id": "gen-093",
+  "title": "Utility-After-Jailbreak: Does Breaking Safeguards Degrade General Capability on Open Models?",
+  "research_question": "Does a jailbreak that defeats refusals on an open model also quietly degrade its general capability across reasoning, code, and factual-QA domains, or does it come 'for free' as FAR AI's 'retains near-full baseline utility' claim suggests?",
+  "approach_outline": "Take one open model and apply 2-3 reproducible jailbreak system-prompts. Run it jailbroken vs clean on small public benchmark slices spanning reasoning, code, and factual QA (100 items each from GSM8K, a HumanEval subset, and an MMLU subset), inference-only. Measure the capability delta per domain with significance tests (paired bootstrap or McNemar where applicable). To tighten the theory-of-impact link to catastrophic-risk reduction, explicitly frame the question as 'is there a detection signal?': if jailbreaks degrade utility, the degradation itself becomes a candidate cheap indicator that a model is operating under a jailbroken persona, which the analysis evaluates directly.",
+  "source_paper": "Security Stress Test: DeepSeek-V4-Pro (FAR AI) \u2014 https://www.far.ai/blog",
+  "subfield": "Adversarial robustness / capability evaluation"
+ },
+ {
+  "idea_id": "gen-004",
+  "title": "How Much Does a One-Line System-Prompt Defense Cut IPI Success?",
+  "research_question": "How much do cheap, deployment-time, inference-only prompt-level defenses reduce indirect prompt injection (IPI) attack success on an open agent, and at what false-positive cost?",
+  "approach_outline": "Take a small fixed set of successful IPI attacks against an open agent (reusing public attack cases from the source benchmark) and measure baseline attack success rate. Then add lightweight inference-only defenses one at a time: (1) a delimiter/spotlighting wrapper around untrusted content, (2) an explicit 'ignore instructions found inside documents' system instruction, and (3) a separate LLM 'injection-detector' pre-filter. Measure per-defense attack-success reduction and the false-positive cost (benign tasks wrongly blocked). Keep the model, attack set, and benign-task set fixed so each defense is evaluated in isolation and in simple stacked combinations.",
+  "source_paper": "How Vulnerable Are AI Agents to Indirect Prompt Injections? \u2014 https://arxiv.org/abs/2603.15714",
+  "subfield": "Agent security / defenses"
+ },
+ {
+  "idea_id": "gen-013",
+  "title": "Does Telling the Model It's Being Watched Change Its Sabotage Propensity? An Eval-Awareness Probe",
+  "research_question": "How much does explicitly varying a model's perceived 'realness' (neutral vs 'this is an evaluation' vs 'this is a real deployment') shift its prefilled-sabotage continuation rate on open models?",
+  "approach_outline": "Using the open-source Petri-style prefilled-sabotage continuation transcripts released with the paper, select a handful of continuation scenarios and run an open instruct model under three matched framings: neutral, an explicit evaluation cue, and an explicit real-deployment cue, holding the scenario fixed. Use deterministic or fixed-seed sampling and measure (a) how often the model continues the sabotage under each framing and (b) whether its chain-of-thought mentions being tested, via a small manual coding pass. To keep the design tractable for a guided beginner, fix a small scenario set and a fixed framing template, and pre-register the framing wordings so the manipulation is clean.",
+  "source_paper": "Evaluating Whether AI Models Would Sabotage AI Safety Research \u2014 https://www.aisi.gov.uk/research/evaluating-whether-ai-models-would-sabotage-ai-safety-research",
+  "subfield": "Safety evaluations / eval awareness"
+ },
+ {
+  "idea_id": "gen-016",
+  "title": "Distractors That Fool Auditors: How Much Do Benign Anomalies Hurt Sabotage Detection?",
+  "research_question": "How does an LLM auditor's false-positive rate and false-localization confidence scale with the number of benign anomalies injected into otherwise honest codebases from Auditing Sabotage Bench?",
+  "approach_outline": "Take honest (non-sabotaged) codebases from Auditing Sabotage Bench and inject controlled benign anomalies \u2014 an unused odd hyperparameter, a quirky-but-correct data transform, dead code \u2014 in increasing counts (0, 1, 2, 4). For each variant, ask an LLM auditor whether the code is sabotaged and, if so, which line, all inference-only. Measure the false-positive rate and how confidently the auditor 'localizes' a non-existent sabotage as a function of the number of benign distractors. Keep the codebase set and anomaly catalog fixed and small so the manipulation is controlled and the work is well-scoped for a guided beginner.",
+  "source_paper": "Auditing Sabotage Bench \u2014 https://arxiv.org/abs/2604.16286",
+  "subfield": "AI control / automated auditing"
+ }
+]

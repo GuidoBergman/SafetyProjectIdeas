@@ -1,0 +1,62 @@
+{
+  "idea_id": "gen-3006",
+  "title": "Tokenizer/Encoding Tricks x Safety-Classifier Input: Obfuscation Slips Past Both Model and Filter",
+  "run_id": "2026-06-15T19-24-29",
+  "original_idea": {
+    "idea_id": "gen-3006",
+    "run_id": "2026-06-15T19-24-29",
+    "stage": "generate",
+    "timestamp": "2026-06-15T21:36:04Z",
+    "subfield": "evaluations_benchmarks",
+    "generation_strategy": "compounding_risks",
+    "confidence": 0.67,
+    "body": "# Tokenizer/Encoding Tricks x Safety-Classifier Input: Obfuscation Slips Past Both Model and Filter\n\n**Problem:** Failure mode A is input-level obfuscation (leetspeak, homoglyphs, base64) that evades a safety filter. Failure mode B is the same obfuscation degrading the autograder/classifier that scores harm. The compound effect: the obfuscated prompt jailbreaks the model AND confuses the harm-classifier, so the attack is recorded as a clean pass.\n\n**Direction:** Apply a few cheap obfuscations (homoglyphs, spacing, base64) to a harmful-prompt set. Measure (a) model compliance rate vs plain text and (b) the harm-classifier's detection rate on obfuscated I/O. Show the joint blind spot where both compliance rises and detection falls.\n\n**Why it matters:** Perplexity/keyword filters and LLM graders are both fragile to surface obfuscation; if they fail together, safety pipelines have a coordinated hole. Quantifying the joint failure recommends normalizing inputs before both generation-time filtering and grading.\n\n**Relevant context:** Encoding/obfuscation jailbreaks (base64, leetspeak) are documented in jailbreak literature; AISafetyLab unifies attack/defense/eval. Subfield scorer-reliability open problem. Catalogue already has perplexity-filter evasion, so this focuses on the joint model+grader failure."
+  },
+  "scores": {
+    "theory_of_impact": {
+      "score": 3,
+      "reasoning": "Plausible chain (joint model+grader obfuscation hole), but obfuscation jailbreaks are well-known; the joint-failure novelty is the only extra link.",
+      "confidence": 0.62
+    },
+    "accessible_complexity": {
+      "score": 5,
+      "reasoning": "Apply simple obfuscations and measure compliance + detection; accessible with public prompt sets.",
+      "confidence": 0.78
+    },
+    "narrow_scope": {
+      "score": 5,
+      "reasoning": "Tightly scoped: joint compliance-up/detection-down measurement under a few obfuscations.",
+      "confidence": 0.75
+    },
+    "counterfactual_value": {
+      "score": 4,
+      "reasoning": "Open models/graders, independent-friendly; labs less focused on grader fragility.",
+      "confidence": 0.65
+    },
+    "low_compute": {
+      "score": 5,
+      "reasoning": "Inference + classifier on a prompt set; cheap.",
+      "confidence": 0.75
+    },
+    "novelty": {
+      "score": 3,
+      "reasoning": "Obfuscation jailbreaks known; the joint model+grader blind-spot framing is partly open.",
+      "confidence": 0.5
+    }
+  },
+  "novelty_assessment": {
+    "classification": "partially_addressed",
+    "evidence": [],
+    "confidence": 0.5,
+    "derived_score": 3,
+    "reasoning": "Obfuscation evasion documented; joint generation+grading failure is partly open."
+  },
+  "novelty_method": "novelty_estimated",
+  "weighted_score": 4.3,
+  "confidence": 0.67,
+  "eliminated": false,
+  "elimination_reason": null,
+  "stage": "filter_score",
+  "timestamp": "2026-06-16T03:43:23Z",
+  "filter_stage_passed": 2
+}

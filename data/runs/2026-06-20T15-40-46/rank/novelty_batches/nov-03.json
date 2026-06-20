@@ -1,0 +1,42 @@
+[
+ {
+  "idea_id": "gen-026",
+  "title": "Does the Inoculation Prompt Itself Become a Misalignment Trigger on Open Models?",
+  "research_question": "Does the paradoxical result that an inoculation prompt can itself trigger near-total misalignment (shown on GPT-4o/4.1 with only 8 eval questions) replicate on cheap open models, and how does the effect vary with eval-set size and phrasing?",
+  "approach_outline": "LoRA-finetune a small open model (Qwen2.5-7B or Llama-3.1-8B) on a narrow misaligned dataset paired with an inoculation prompt, following the paper's recipe. Then, at eval time, measure misalignment rates with the inoculation prompt present vs absent, expanding the eval set from 8 questions to a few dozen public alignment probes. All steps fit one consumer GPU (LoRA + inference). Deliverable: misalignment rate with vs without the inoculation prompt, plus a curve of how the measured effect depends on eval-question count and phrasing.",
+  "source_paper": "Conditional Misalignment \u2014 https://arxiv.org/abs/2604.25891",
+  "subfield": "emergent misalignment"
+ },
+ {
+  "idea_id": "gen-037",
+  "title": "How Many Poisoned Examples Backdoor an Open-Model Safety Classifier? A Dose-Response Replication",
+  "research_question": "For a small open instruction-tuned model fine-tuned as a binary harmful/benign safety classifier, how many trigger-bearing poisoned examples are needed to install a reliable backdoor, and does that count stay near-constant or scale with clean-set size \u2014 as Anthropic found for a proprietary constitutional classifier?",
+  "approach_outline": "LoRA-fine-tune Llama-3.2-1B (or Qwen2.5-1.5B) as a binary harmful/benign classifier on a public safety dataset (BeaverTails or Aegis). Define one fixed trigger phrase. Poisoning: take N harmful examples, insert the trigger, relabel them benign; train classifiers for N in {0,4,8,16,32,64} at a fixed clean-set size. Then a second sweep: hold N fixed (e.g., 32) and vary clean-set size (e.g., 2k / 8k / 32k) to test whether poison effectiveness is absolute-count- or fraction-driven. For each run, measure attack success rate (fraction of triggered harmful inputs classified benign) and clean accuracy on a held-out non-triggered test set. Deliverable: a dose-response curve (ASR vs N) and a clean-set-size sweep, plus a short note on whether the ~32-example near-constant result reproduces on small open classifiers.",
+  "source_paper": "Poisoning Fine-tuning Datasets of Constitutional Classifiers \u2014 https://alignment.anthropic.com/2026/backdooring-classifiers/",
+  "subfield": "Data poisoning / safety classifiers"
+ },
+ {
+  "idea_id": "gen-050",
+  "title": "How Does Monitor Reliability Degrade as the Monitored Model Gets More Capable?",
+  "research_question": "Holding a single cheap open-model monitor fixed, does its detection rate for subtle sabotage fall as the monitored/sabotaging model climbs a capability ladder (1B \u2192 3B \u2192 8B \u2192 14B)?",
+  "approach_outline": "Fix one small open model as the monitor. Vary the monitored model across a capability ladder (e.g., Qwen2.5 1.5B \u2192 3B \u2192 7B \u2192 14B, quantized as needed to fit one consumer GPU). For each rung, have the monitored model attempt subtle sabotage on a fixed set of ~50 coding tasks (instructed to insert a hidden defect), then have the fixed monitor score each output. Measure the monitor's detection rate (TPR at fixed FPR) per capability rung. Deliverable: a detection-rate-vs-monitored-capability curve testing whether stronger agents evade a fixed monitor.",
+  "source_paper": "Securing the future of AI agents \u2014 https://deepmind.google/blog/securing-the-future-of-ai-agents/",
+  "subfield": "AI control / scalable oversight"
+ },
+ {
+  "idea_id": "gen-058",
+  "title": "Can an AI Auto-Reviewer Be Misled? A Small Red-Team of LLM Action-Approval",
+  "research_question": "How much does an open-model action-approval reviewer's catch-rate for clearly-harmful agent actions drop under a handful of simple, low-effort obfuscation tactics, and which tactic degrades it most?",
+  "approach_outline": "Build a minimal version of OpenAI's auto-review pattern: an open model acts as a reviewer that, given a written policy, approves or blocks a proposed agent action (a shell command or file write). Assemble a small public test set of ~40-60 clearly-harmful actions (e.g., exfiltration, destructive commands, privilege escalation) plus benign controls. Establish the reviewer's baseline block-rate. Then apply a fixed menu of ~4 simple obfuscation tactics to each harmful action \u2014 benign-sounding justification, command splitting across two steps, misleading surrounding context, and innocuous renaming/aliasing \u2014 and re-measure block-rate per tactic. Deliverable: a table of catch-rate drop per obfuscation tactic plus the released test set and reviewer prompt.",
+  "source_paper": "Auto-review of agent actions without synchronous human oversight \u2014 https://alignment.openai.com/auto-review/",
+  "subfield": "oversight"
+ },
+ {
+  "idea_id": "gen-062",
+  "title": "Can a Small Monitor Be Talked Past? Measuring Evasion Uplift from Simple Prompt-Level Obfuscation",
+  "research_question": "By how much does a cheap open-model sabotage monitor's true-positive rate drop when simple, hand-coded obfuscation transforms are applied to malicious agent actions, and which transform yields the largest detection drop?",
+  "approach_outline": "Start from the labeled sabotage transcripts (reusing the dataset from the trusted-monitor work, or a small synthesized set). Define a fixed menu of ~4 cheap obfuscation transforms applied only to the malicious action: innocuous-comment padding, variable/function renaming, distributing the backdoor across two steps, and adding a benign-looking justification. For each transform, re-run the same small open monitor and measure TPR before vs after (at a fixed FPR threshold). Deliverable: a 'monitor robustness leaderboard' ranking transforms by detection drop for one cheap monitor, plus the transform scripts.",
+  "source_paper": "A scalable monitoring research agenda (Apollo) \u2014 https://www.apolloresearch.ai/products/a-scalable-monitoring-research-agenda/",
+  "subfield": "AI Control / Monitoring"
+ }
+]

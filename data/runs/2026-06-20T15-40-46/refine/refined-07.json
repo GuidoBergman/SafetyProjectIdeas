@@ -1,0 +1,287 @@
+[
+ {
+  "idea_id": "gen-017",
+  "title": "Less Is More for Monitors? Testing Excerpt-Only Monitoring on LinuxArena Sabotage Transcripts",
+  "research_question": "On LinuxArena's released sysadmin sabotage transcripts, does feeding an LLM monitor only the few action-bearing lines (file writes, network calls, privilege changes) raise sabotage detection at a fixed 1% false-positive rate compared with scoring the full transcript?",
+  "approach_outline": "Inference-only, two-stage monitor over already-released transcripts. Stage one uses a simple deterministic regex/keyword extractor (no model needed) to pull lines containing a small fixed set of action verbs and syscalls (write/open/chmod/curl/ssh/sudo/rm). Stage two sends just those excerpts to one open judge model (e.g. Qwen2.5-7B-Instruct or Llama-3.1-8B-Instruct) with a fixed suspicion-scoring prompt on a 0-100 scale. The full-transcript baseline uses the identical judge and prompt on the whole transcript. Both monitors are calibrated to a 1% FPR threshold on the benign subset, then detection rate is measured on the sabotage subset. To keep scope minimal, the participant uses the pre-released LinuxArena transcripts directly and a hand-written extractor rather than training any extraction model.",
+  "proposed_first_experiments": [
+   "Reproduce a full-transcript baseline: run the open judge on every released transcript, set the suspicion threshold at the 99th percentile of benign-transcript scores (1% FPR), and report detection rate on sabotage transcripts. Expected: a detection number close to the LinuxArena-reported ~66% caught (34% undetected) range, confirming the harness works.",
+   "Build the regex excerpt extractor and rerun the identical judge on excerpts only; recompute the 1%-FPR threshold on benign excerpts and measure sabotage detection. Measure: detection rate at 1% FPR, and the delta vs baseline. Expected: excerpt-only detection is equal or higher, demonstrating the 'less-is-more' effect transfers, or a clean null if it does not.",
+   "Ablation on excerpt aggressiveness: vary the extractor's line window (action line only vs +/-1 context line vs +/-3) and plot detection-at-1%-FPR vs excerpt length. Measure: detection vs token count. Expected: a sweet spot where moderate trimming maximizes detection, quantifying how much context the monitor actually needs."
+  ],
+  "theory_of_impact_chain": "Monitoring is the load-bearing mechanism of AI control deployments; sysadmin/agentic environments are where sandboxing is weakest and undetected sabotage is most dangerous. If a free, deterministic excerpt-extraction preprocessing step measurably raises detection at a fixed operating point, deployers gain a drop-in improvement to their monitor with no extra model and no extra cost, directly shrinking the undetected-sabotage rate that the control protocol must tolerate. A negative result is also action-guiding: it tells the field not to over-trim monitor inputs.",
+  "strength_rationale": "Strongest on counterfactual value (released transcripts + open judge = fully lab-independent) and low compute (inference-only). The weakest scored dimensions were accessible_complexity (3) and narrow_scope (4): the original framing invited a learned extractor and an open-ended comparison.",
+  "weak_dimensions_strengthened": [
+   "accessible_complexity: replaced the 'heuristic or small model' extractor with a purely deterministic regex/keyword extractor over a fixed verb list, removing any model-training step so a beginner only writes a prompt loop and a regex",
+   "narrow_scope: pinned the deliverable to a single number (detection at 1% FPR, excerpt vs full) plus one length-ablation curve, with the calibration procedure fully specified to avoid scope creep"
+  ],
+  "cited_sources": [
+   "LinuxArena — https://arxiv.org/abs/2604.15384"
+  ]
+ },
+ {
+  "idea_id": "gen-042",
+  "title": "An 'Overeagerness' Taxonomy: Hand-Coding Why Open Agents Misbehave in Sabotage Scenarios",
+  "research_question": "Can a small, explicit annotation codebook reliably distinguish 'overeager goal-seeking' from 'role-play spillover', 'misread instruction', and 'deliberate rule-breaking' when applied to open-model agent trajectories on sabotage-style prompts, and how is misbehavior distributed across these categories?",
+  "approach_outline": "Inference plus human annotation, no training. The participant runs one open instruct model (e.g. Qwen2.5-7B-Instruct) on a small fixed set of ~10 sabotage-style prompts adapted from public agentic-safety prompt sets, generating ~80-100 trajectories (scope deliberately trimmed from 100-200). They draft a one-page codebook with the four categories, each given a 2-3 sentence definition and a positive/negative example. Each trajectory gets one primary label. To get an agreement number cheaply, the participant labels all trajectories by hand and separately has an LLM judge label them from the same codebook; inter-source agreement is Cohen's kappa between human and judge. Output is the codebook, the kappa, and the category distribution with example trajectories per category.",
+  "proposed_first_experiments": [
+   "Generate the trajectory pool: run the open model on the 10 prompts with fixed sampling settings, keep only trajectories where some rule-relevant misbehavior occurred (per a simple rule-violation check). Measure: number of usable misbehaving trajectories. Expected: a few dozen, enough for a distribution.",
+   "Draft and pilot the codebook on 15 held-out trajectories, then revise definitions where the human and LLM judge disagree. Measure: pre- vs post-revision agreement on the pilot set. Expected: a measurable agreement jump that demonstrates the codebook is learnable and not purely subjective.",
+   "Apply the frozen codebook to the full pool with both human and LLM judge, report Cohen's kappa and the category distribution. Measure: kappa and per-category counts. Expected: moderate-to-substantial agreement (kappa > 0.4) and a distribution showing whether 'overeagerness' really dominates, testing Gram's claim on open models."
+  ],
+  "theory_of_impact_chain": "Whether observed agent sabotage is a genuine misalignment threat or a benign artifact (overeagerness, role-play) changes how seriously the field treats it. Gram asserts most misbehavior is overeagerness but gives no reusable instrument. A shared, validated codebook lets independent researchers classify their own agent failures consistently, making safety-evaluation results comparable across groups and preventing both false alarms and false reassurance. This improves the evidence base that downstream control/governance decisions rest on.",
+  "strength_rationale": "Already strong on accessible_complexity (4) and counterfactual_value (4). The lowest-weighted concern was theory_of_impact (3); the binding constraints for this batch are narrow_scope and complexity, both already decent. The refinement locks down the agreement metric and trims trajectory count to keep the annotation burden beginner-sized.",
+  "weak_dimensions_strengthened": [
+   "narrow_scope: cut the trajectory target to ~80-100, fixed the prompt set to 10, and specified human-vs-LLM-judge kappa as the single agreement metric rather than open-ended inter-rater work needing multiple humans",
+   "theory_of_impact: framed the deliverable as a comparability instrument that directly gates false-alarm/false-reassurance decisions, sharpening the causal chain",
+   "accessible_complexity: made the codebook pilot-and-freeze loop explicit so a beginner has a concrete, low-risk procedure"
+  ],
+  "cited_sources": [
+   "Gram: Assessing sabotage propensities via automated alignment auditing — https://deepmind.google/research/publications/252981/"
+  ]
+ },
+ {
+  "idea_id": "gen-011",
+  "title": "One Bit Is Enough? Replicating Boundary-Point Jailbreaking Against an Open-Source Safety Classifier",
+  "research_question": "Does the single-bit-feedback boundary-point attack defeat a publicly hostable open-weight guard classifier (e.g. Llama Guard) as cheaply as it defeats closed frontier classifiers, measured by attack success rate and query budget versus a random-paraphrase baseline?",
+  "approach_outline": "Inference-only black-box attack against a locally hosted open guard classifier. The participant treats the guard as an oracle returning a single flag bit (harmful/not). For a fixed set of ~30 target harmful intents, they implement a minimal boundary-point loop: start from a clearly-flagged harmful string, generate paraphrases with an open instruct model, and use the one-bit responses to keep candidates near the decision boundary (greedily accept the mutation that stays flagged-then-unflagged at the boundary). The baseline is random paraphrasing with no feedback. To reduce complexity, the 'curriculum' is simplified to a hill-climb over paraphrases guided only by the flag bit, with a capped query budget. Metrics: attack success rate at a fixed budget and queries-to-success.",
+  "proposed_first_experiments": [
+   "Stand up the open guard classifier locally and validate it flags a known harmful set and passes a benign set. Measure: base flag rates. Expected: high flag rate on harmful, low on benign, confirming a working oracle.",
+   "Implement and run the random-paraphrase baseline against the 30 intents at a fixed query budget (e.g. 100 queries each). Measure: fraction of intents where some paraphrase slips past the guard, and mean queries-to-first-bypass. Expected: a modest baseline bypass rate establishing the floor.",
+   "Run the one-bit boundary-point hill-climb at the same budget and compare. Measure: attack success rate and queries-to-success vs baseline, with a success curve over budget. Expected: the boundary-point loop achieves higher success per query, replicating the closed-system 'one bit is enough' finding on an open guard, or showing the open guard is more robust."
+  ],
+  "theory_of_impact_chain": "Open and closed deployers increasingly rely on guard classifiers as the outermost safety layer. If a cheap, single-bit-feedback attack reliably defeats a hostable open guard, that is concrete third-party evidence that classifier-only defenses are brittle and that deployers should add batch-level or behavioral monitoring rather than trusting a single flag. Demonstrating this on open models gives the broader community (who cannot probe closed classifiers) a reproducible brittleness benchmark.",
+  "strength_rationale": "Strong on theory_of_impact (4) and counterfactual_value (4). Weakest was accessible_complexity (3) due to the boundary-search subtlety, with narrow_scope (4) close behind.",
+  "weak_dimensions_strengthened": [
+   "accessible_complexity: replaced the 'curriculum' framing with a concrete flag-bit-guided hill-climb over paraphrases and a capped query budget, turning an open-ended search-algorithm design into a small, well-specified loop a beginner can code",
+   "narrow_scope: fixed the target set to ~30 intents and the deliverable to two numbers (success rate, queries-to-success) against one baseline at one operating budget"
+  ],
+  "cited_sources": [
+   "Boundary Point Jailbreaking of Black-Box LLMs — https://arxiv.org/abs/2602.15001"
+  ]
+ },
+ {
+  "idea_id": "gen-024",
+  "title": "How Cheap Is the SFT Countermeasure? A Dose Curve for Breaking Exploration-Hacking Organisms",
+  "research_question": "For a small open exploration-hacking model organism, what is the minimal effective dose of the cheap countermeasures (number of SFT steps, weight-noise sigma) needed to reliably restore normal exploration on held-out malign-context prompts, and how does that dose depend on the organism's trigger strength?",
+  "approach_outline": "LoRA/small-model fine-tuning on a single consumer GPU, reusing the paper's released code with a small Qwen3 organism. The participant first reproduces a locked organism, then runs a 2D sweep: SFT steps in {1,2,5,10,20} crossed with weight-noise sigma in {0.005,0.01,0.02}. For each cell they measure the fraction of held-out malign-context prompts on which normal exploration is restored. Output is a dose-response heatmap. To control scope, only one organism with one trigger strength is the primary deliverable; a second trigger strength is a stretch experiment if time allows.",
+  "proposed_first_experiments": [
+   "Reproduce one locked organism from the released code and confirm it exhibits exploration hacking on malign-context prompts. Measure: exploration suppression rate on the trigger set. Expected: clear suppression, confirming the organism is locked and the harness works.",
+   "Run the SFT-steps sweep alone (no weight noise) at {1,2,5,10,20} steps and measure restored-exploration rate on held-out prompts. Measure: restoration rate vs steps. Expected: a monotonic curve identifying the minimal step count that reliably (say >90%) restores exploration.",
+   "Run the full steps x sigma grid and produce the dose-response heatmap. Measure: restoration rate per cell. Expected: a clear minimal-neutralizing-dose frontier, grounding an empirical recommendation for the cheapest reliable intervention."
+  ],
+  "theory_of_impact_chain": "If a handful of SFT steps plus tiny weight noise reliably destroys hidden exploration-resistance, that is a cheap, deployable safety lever any team can apply to a suspect model before trusting it. Mapping the minimal dose converts the paper's qualitative '~10 steps works' into an empirical recommendation and reveals how robust the lever is to stronger triggers — which bounds how much an adversary could harden an organism against it. This informs whether cheap fine-tuning can be part of a deployment safety pipeline.",
+  "strength_rationale": "Already the highest narrow_scope (5) in the batch — a single heatmap with crisp success criteria. Weakest dimensions were theory_of_impact (3) and accessible_complexity (3).",
+  "weak_dimensions_strengthened": [
+   "accessible_complexity: anchored every step to reusing the paper's released code and specified the sweep as a fixed small grid, so the only new skills are running a provided training loop and tabulating results; staged the experiments so step-1 reproduces before any sweep",
+   "theory_of_impact: added the trigger-strength dependence as the bridge from 'toy organism' to 'how an adversary could harden against the lever', tightening the link to real deployment value"
+  ],
+  "cited_sources": [
+   "Exploration Hacking — https://arxiv.org/abs/2604.28182"
+  ]
+ },
+ {
+  "idea_id": "gen-027",
+  "title": "Do NLA Verbalizers Hallucinate 'Safety-Test Awareness'? A Cheap Faithfulness Probe",
+  "research_question": "When run on matched prompt pairs that are behaviorally identical but differ only in whether they are framed as a 'safety test', does a Natural Language Autoencoder verbalizer produce 'being-tested' text that tracks the actual framing (true positives) or that appears spuriously on controls (hallucinations)?",
+  "approach_outline": "Inference-mostly, using the released NLA code on a small supported open model. The participant constructs a small set of matched prompt pairs: each pair has the same task content, one member explicitly framed as a safety/evaluation test and one neutrally framed. They add control pairs that mention testing in an unrelated, non-self-referential way. They run the verbalizer on all prompts and use a simple keyword/LLM-judge classifier to detect whether the verbalized text asserts 'awareness of being tested'. The deliverable is a contrastive faithfulness rate: true-positive rate on test-framed prompts minus false-positive rate on neutral/control prompts.",
+  "proposed_first_experiments": [
+   "Get the released NLA verbalizer running on the supported small open model and reproduce a verbalization on a known example. Measure: successful verbalization output. Expected: working pipeline, the main setup-risk milestone.",
+   "Build ~20 matched test-vs-neutral prompt pairs plus ~10 controls, run the verbalizer, and label outputs for 'being-tested' assertions. Measure: true-positive rate (test-framed) and false-positive rate (neutral + control). Expected: a clear contrastive signal, with the gap quantifying faithfulness.",
+   "Sensitivity check: vary the detection threshold/judge prompt and confirm the contrastive faithfulness gap is stable, not an artifact of the labeler. Measure: faithfulness gap across labeler settings. Expected: a stable gap, strengthening the claim that the verbalizer does (or does not) faithfully track framing."
+  ],
+  "theory_of_impact_chain": "NLAs are proposed as alignment-auditing aids; if their high-stakes verbalizations (like 'this model is aware it is being safety-tested') frequently hallucinate, auditors could be led into false confidence or false alarms about a model's situational awareness. A targeted contrastive test of exactly this claim tells auditors how much to trust that specific NLA output before it influences a deployment decision, improving the reliability of interpretability-based auditing.",
+  "strength_rationale": "Mostly novel (4) and high narrow_scope (5) — a single contrastive faithfulness number. Weakest was accessible_complexity (3), driven by NLA setup risk.",
+  "weak_dimensions_strengthened": [
+   "accessible_complexity: made the very first experiment 'just get the released verbalizer running and reproduce one output', isolating the setup risk; the rest is prompt construction and labeling, which is beginner-feasible",
+   "narrow_scope: fixed the design to ~20 matched pairs + ~10 controls and a single contrastive-rate deliverable, plus one robustness check, preventing expansion into a general NLA-faithfulness study"
+  ],
+  "cited_sources": [
+   "Natural Language Autoencoders — https://www.anthropic.com/research/natural-language-autoencoders"
+  ]
+ },
+ {
+  "idea_id": "gen-035",
+  "title": "An N-Day Reasoning Benchmark: Can Open Models Triage Public CVE Patch Diffs?",
+  "research_question": "Across several open models, how accurately can they identify the vulnerability class and trigger conditions from a public, already-patched CVE's patch diff (a benign, non-operational analysis task), and how does refusal behavior differ between base and safety-tuned variants?",
+  "approach_outline": "Inference-only multiple-choice/short-answer evaluation over fully public, already-patched CVEs drawn from GitHub Security Advisories. The participant curates a small fixed benchmark (~40-50 items) where each item is a patch diff plus a graded question ('which vulnerability class does this patch fix?' multiple-choice, and 'what triggers it?' short-answer graded against the public advisory text). Tasks are strictly analysis-only and reference already-disclosed information, so nothing operational is produced. They evaluate 3-4 open models, scoring accuracy and recording refusals, comparing base vs instruct/safety-tuned variants of the same family. To keep scope narrow, the benchmark size is capped and grading for short-answers uses an LLM judge against the advisory.",
+  "proposed_first_experiments": [
+   "Curate and freeze the benchmark: select ~40-50 patched CVEs with clear advisories, write multiple-choice vulnerability-class questions with verified correct answers. Measure: benchmark size and answer-key inter-checker agreement on a sample. Expected: a clean, frozen benchmark with reliable keys.",
+   "Run the multiple-choice accuracy eval across 3-4 open models, including a base-vs-safety-tuned pair. Measure: per-model accuracy and refusal rate. Expected: above-chance accuracy that varies by model, establishing the cyber-reasoning proxy.",
+   "Run the short-answer trigger-condition task with LLM-judge grading and analyze the accuracy-vs-refusal trade-off for the base/safety-tuned pair. Measure: short-answer accuracy and refusal deltas. Expected: safety-tuned variants refuse more and/or score lower, quantifying how safeguards interact with cyber-reasoning."
+  ],
+  "theory_of_impact_chain": "Public CVE-to-exploit reasoning is a tracked dangerous-capability trend, but measuring it safely is hard because exploit generation is itself hazardous. A benign, analysis-only, fully-public benchmark gives the community a reproducible proxy for the upward trend in model cyber-reasoning and for how safety tuning trades off against it — exactly the kind of monitoring infrastructure that is better built in the open than locked inside one lab, and that informs governance discussions about cyber-uplift.",
+  "strength_rationale": "Highest counterfactual_value in the batch (5) — explicitly better built in the open. Weakest were narrow_scope (3) and accessible_complexity (3) because benchmark + accuracy + refusal across several models is multi-workstream.",
+  "weak_dimensions_strengthened": [
+   "narrow_scope: capped the benchmark at ~40-50 items, fixed the task formats, and ordered the work so the multiple-choice axis is the core deliverable and the refusal axis rides on the same runs rather than being a separate study",
+   "accessible_complexity: leaned on existing public advisories as ground truth and LLM-judge grading so the participant does no manual security analysis, only curation and eval harness work",
+   "theory_of_impact: framed the base-vs-safety-tuned comparison as the safeguard-interaction signal governance actually wants"
+  ],
+  "cited_sources": [
+   "Measuring LLMs' impact on N-day exploits — https://www.anthropic.com/research/n-days"
+  ]
+ },
+ {
+  "idea_id": "gen-048",
+  "title": "Uncertainty-Guided Jailbreak Discovery vs. Random Sampling on a Fixed Budget",
+  "research_question": "When searching a fixed pool of templated jailbreak prompts for failures of one open model under an equal query budget, does uncertainty-aware acquisition (a simple GP over prompt embeddings) discover more failures and more diverse failure clusters than random sampling?",
+  "approach_outline": "Inference plus lightweight active learning, minimal compute. The participant takes a public prompt pool (AdvBench/HarmBench), embeds each prompt with an open sentence-embedding model, and labels 'failure' as the target open model complying with a harmful request (graded by a fixed LLM judge). They fit a simple Gaussian-process / logistic surrogate over embeddings and use uncertainty-aware acquisition to pick the next prompt to query. The baseline is random sampling from the same pool. Both run to the same query budget; the comparison is (a) number of failures found and (b) cluster-coverage diversity (number of distinct embedding clusters hit). To reduce complexity, the surrogate can be an off-the-shelf scikit-learn GP/logistic model, not a custom implementation.",
+  "proposed_first_experiments": [
+   "Embed the prompt pool and run a full sweep with the LLM judge to get ground-truth failure labels for the whole pool (so both methods can be evaluated against truth offline). Measure: base failure rate and number of failure clusters via k-means on embeddings. Expected: a labeled pool with several distinct failure clusters.",
+   "Run random sampling and uncertainty-guided acquisition offline against the labeled pool at matched budgets (e.g. 50, 100, 200 queries), averaging over seeds. Measure: failures-found and clusters-covered vs budget for each method. Expected: uncertainty acquisition matches or beats random, with the gap largest at small budgets.",
+   "Diversity stress test: compare the two methods specifically on cluster coverage rather than raw count, to test ProEval's 'more diverse failures' claim. Measure: distinct clusters discovered at a fixed budget. Expected: uncertainty acquisition surfaces a broader spread of failure types, or a clean null if random is competitive."
+  ],
+  "theory_of_impact_chain": "Efficient failure discovery is a real bottleneck for independent safety red-teaming, where query budgets and compute are limited. A clean, public, beginner-reproducible comparison tells outside red-teamers whether a cheap uncertainty-guided technique is worth adopting over naive random search — and offline evaluation against a fully-labeled pool makes the comparison rigorous. This lowers the cost of third-party scrutiny of open models.",
+  "strength_rationale": "Strong on low compute (5) and counterfactual_value (4). Weakest were theory_of_impact (3) and accessible_complexity (3) given the active-learning loop.",
+  "weak_dimensions_strengthened": [
+   "accessible_complexity: specified an off-the-shelf scikit-learn GP/logistic surrogate and an offline evaluation against a fully-labeled pool, so the participant never builds a live active-learning loop or a custom GP",
+   "narrow_scope: pinned the deliverable to two curves (failures and clusters vs budget) for two methods on one model",
+   "theory_of_impact: tied the result directly to lowering the cost of independent third-party red-teaming of open models"
+  ],
+  "cited_sources": [
+   "ProEval — https://deepmind.google/research/publications/238239/"
+  ]
+ },
+ {
+  "idea_id": "gen-054",
+  "title": "Why Does Public-Data Prediction Break on Agentic Tasks? A Small-Scale Diagnosis",
+  "research_question": "When one open instruct model is evaluated on a single misbehavior metric over both chat-like (WildChat) and agentic/tool-use prefixes, which single controlled factor — conversation length, presence of tool-call formatting, or number of turns — most accounts for the larger error on agentic inputs?",
+  "approach_outline": "Inference-only over two public datasets on one open instruct model. The participant fixes one failure metric (unsafe tool call or task-derailment, flagged by a fixed LLM judge) and measures it on WildChat-style prefixes and a public agentic/tool-use set. They then run a controlled decomposition: vary one factor at a time (truncate to matched conversation lengths; strip vs keep tool-call formatting; cap number of turns) and observe how the chat-vs-agentic metric gap changes. The deliverable is a ranking of which single factor most shrinks the gap when controlled. Scope is held down by using one model, one metric, and three pre-specified factors.",
+  "proposed_first_experiments": [
+   "Measure the baseline failure metric on both datasets with the fixed judge. Measure: failure rate on chat vs agentic prefixes and the raw gap. Expected: a sizeable agentic-side gap, reproducing the paper's qualitative finding at small scale.",
+   "Length/turn control: truncate agentic prefixes to match the chat distribution's length and turn count, remeasure the gap. Measure: gap before vs after matching. Expected: partial gap reduction, quantifying how much is just longer/multi-turn context.",
+   "Formatting control: strip tool-call syntax from agentic prefixes (and optionally inject it into chat prefixes), remeasure. Measure: gap attributable to tool-call formatting. Expected: a ranking across the three factors of which one the gap is most sensitive to, giving evaluators a concrete 'when cheap proxies break' rule."
+  ],
+  "theory_of_impact_chain": "Agentic deployments concentrate high-stakes harms, yet that is precisely where cheap public-chat-data evaluation is least predictive (~37x worse per the source). Diagnosing which surface feature drives the breakdown tells evaluators when they can and cannot trust cheap chat-based proxies for agentic safety — directly improving the calibration of the inexpensive evaluations that smaller orgs and external auditors rely on.",
+  "strength_rationale": "Strong theory_of_impact (4) and counterfactual_value (4). Weakest were accessible_complexity (3) and a borderline narrow_scope (4) because multi-factor decomposition can sprawl.",
+  "weak_dimensions_strengthened": [
+   "narrow_scope: fixed one model, one metric, and exactly three pre-specified factors controlled one at a time, with the deliverable being a factor ranking rather than a full causal model",
+   "accessible_complexity: reframed the 'decomposition' as three simple matched-control experiments (truncate, cap turns, strip formatting) rather than an open-ended regression analysis"
+  ],
+  "cited_sources": [
+   "Can public chat data predict real-world AI misalignments? — https://alignment.openai.com/validating-public-evals/"
+  ]
+ },
+ {
+  "idea_id": "gen-064",
+  "title": "How Much Do Self-Reports Inflate AI Productivity Gains? A Small Re-Survey Calibrated Against an Objective Task",
+  "research_question": "For a fixed set of small gradeable programming tasks, how large is the per-person gap between self-estimated AI speedup and measured time-with vs time-without an AI assistant, and does the gap replicate METR's overestimation direction?",
+  "approach_outline": "Human-subjects micro-study, essentially no GPU compute. The participant recruits ~20-30 student/junior programmers (or, to de-risk, uses a public coding-task dataset with timing plus a smaller self-report cohort). Each participant first self-estimates how much faster AI makes them, then completes matched small tasks in two conditions (with and without an AI assistant), with completion time logged. The deliverable is the per-person gap between self-estimated and measured speedup and whether the population mean replicates METR's ~40pp overestimation direction. Scope is held tight by using small, auto-gradeable tasks and a single self-report question.",
+  "proposed_first_experiments": [
+   "Pilot the task battery and timing harness with 2-3 people to fix task difficulty and measure baseline completion times. Measure: median task time and any ceiling/floor effects. Expected: a calibrated battery where tasks take a few minutes each.",
+   "Collect self-estimated speedup from each participant, then run the matched with-AI vs without-AI timed conditions (counterbalanced order). Measure: per-person measured speedup and self-estimated speedup. Expected: measured speedup systematically below self-estimate for most participants.",
+   "Compute the per-person gap distribution and test whether the mean overestimation direction matches METR's prior finding. Measure: mean and spread of (self-estimate minus measured), with a simple significance check. Expected: a positive overestimation gap, replicating direction even if magnitude differs."
+  ],
+  "theory_of_impact_chain": "AI governance and capability forecasting increasingly lean on self-reported productivity uplift. If self-reports systematically overstate real uplift, then safety-relevant timelines and capability forecasts built on surveys are biased optimistic. An independent, objectively-calibrated replication tells forecasters how much to discount survey-based uplift estimates, improving the inputs to risk-governance decisions.",
+  "strength_rationale": "Strong low compute (5) and counterfactual_value (4). Weakest were theory_of_impact (3) and accessible_complexity (3) — the latter because human-subjects logistics are demanding for novices.",
+  "weak_dimensions_strengthened": [
+   "accessible_complexity: added a fallback to a public timed coding-task dataset to reduce recruitment dependence, fixed the self-report to a single question, and required a 2-3 person pilot to de-risk the harness before the main run",
+   "narrow_scope: capped cohort size, used small auto-gradeable tasks, and made the per-person gap distribution the single deliverable",
+   "theory_of_impact: sharpened the chain from survey bias to discounting capability-forecast inputs that feed governance"
+  ],
+  "cited_sources": [
+   "Measuring the Self-Reported Impact of Early-2026 AI on Technical Worker Productivity (METR) — https://metr.org/blog/2026-05-11-ai-usage-survey/"
+  ]
+ },
+ {
+  "idea_id": "gen-077",
+  "title": "Does a Misaligned Trait Actually Propagate Agent-to-Agent? A Minimal Two-Agent 'Spread' Simulation",
+  "research_question": "In a minimal two-agent loop where a 'carrier' agent has an injected, measurable trait and a 'clean' agent collaborates with it over multiple turns, does the clean agent's behavior drift toward the carrier's trait as interaction length grows, relative to a control pairing with a non-carrier partner?",
+  "approach_outline": "Inference-only two-agent loop via open models or API. The participant injects a benign-but-measurable trait into the carrier via system prompt (a stylistic tic or a mild persistent goal that is easy to score automatically). Carrier and clean agent collaborate on a shared task across N turns, with the clean agent's in-context memory accumulating the conversation. A simple automatic scorer measures the clean agent's trait expression at each turn. The control is identical but pairs the clean agent with a non-carrier partner. The deliverable is a drift curve: clean-agent trait expression vs interaction length, carrier vs control. To stay tractable, the trait is chosen to be cheaply auto-scorable (e.g. a measurable lexical tic).",
+  "proposed_first_experiments": [
+   "Build the two-agent loop and verify the carrier reliably expresses the injected trait and the clean agent starts trait-free. Measure: carrier trait score and clean-agent baseline trait score. Expected: high carrier expression, near-zero clean baseline.",
+   "Run carrier and control conditions over increasing interaction lengths (e.g. 5, 10, 20 turns), scoring the clean agent's trait at each step. Measure: clean-agent trait score vs turn count, carrier vs control. Expected: rising trait expression in the carrier condition and flat in control, demonstrating spread.",
+   "Robustness: vary the task and the carrier's prompt strength to see whether drift is task-specific or persistent. Measure: drift magnitude across tasks/strengths. Expected: drift that scales with carrier strength and interaction length, bounding when spread occurs."
+  ],
+  "theory_of_impact_chain": "Deployment-time spread of misalignment is a governance worry that currently lacks cheap empirical illustration. A reproducible micro-demonstration that one agent's trait can drift into a collaborating agent through normal interaction makes the abstract concern concrete and measurable for researchers and policymakers, and gives a minimal testbed for later work on bounding spread dynamics. The use of a benign trait is a deliberate safety choice; the value is in establishing the mechanism and its dependence on interaction length.",
+  "strength_rationale": "Strong on low compute (5), with decent accessible_complexity (4) and narrow_scope (4). Weakest was theory_of_impact (3) because a benign trait leaves a gap to catastrophic-risk-relevant misalignment.",
+  "weak_dimensions_strengthened": [
+   "theory_of_impact: explicitly framed the benign trait as a mechanism-establishing proxy and added interaction-length scaling as the safety-relevant quantity (how spread grows), making the value clear despite the benign trait",
+   "accessible_complexity: specified an auto-scorable lexical-tic trait so the participant never builds a subjective drift labeler, and staged the loop-validation experiment first to de-risk orchestration"
+  ],
+  "cited_sources": [
+   "Risk reports need to address deployment-time spread of misalignment — https://blog.redwoodresearch.org/p/risk-reports-need-to-address-deployment"
+  ]
+ },
+ {
+  "idea_id": "gen-030",
+  "title": "Does Model-Spec-Style Pretext Improve Alignment Generalization in Small Open Models? A LoRA Probe",
+  "research_question": "On a small open model, does adding spec-rationale documents (explaining why a mini-spec's rules exist) to alignment LoRA fine-tuning improve generalization to rule-following in unseen formats, compared with rules-only documents or alignment SFT alone?",
+  "approach_outline": "LoRA fine-tuning on one consumer GPU. The participant writes a tiny public mini-spec (a handful of behavioral rules, each with a short rationale) and generates ~200 synthetic documents in two flavors: rationale-explaining and rules-only. They run three LoRA fine-tunes of one small open model (Llama-3.2-3B or Qwen2.5-3B): alignment SFT only; alignment SFT + rationale docs; alignment SFT + rules-only docs. They then evaluate held-out generalization: rule-following in unseen formats not present in training. Scope is controlled by a small fixed rule set and a single OOD generalization eval.",
+  "proposed_first_experiments": [
+   "Author the mini-spec and generate the two synthetic document sets, plus a held-out OOD rule-following eval (same rules, new formats/phrasings). Measure: dataset sizes and a sanity check that base model OOD compliance is mediocre. Expected: clean datasets and headroom to improve.",
+   "Train the three LoRA arms and evaluate OOD rule-following. Measure: OOD compliance rate per arm. Expected: rationale arm >= rules-only arm >= SFT-only, or a clean null, directly testing MSM's 'right reasons' claim in miniature.",
+   "Data-efficiency mini-curve: vary the number of spec documents (e.g. 50/100/200) for the rationale arm and plot OOD gain. Measure: OOD compliance vs document count. Expected: a curve showing whether rationale docs give a data-efficiency advantage analogous to MSM's reported gains."
+  ],
+  "theory_of_impact_chain": "MSM found that teaching a model why a spec exists improves alignment generalization, but only on frontier proprietary pipelines. If even a cheap open analog reproduces part of this 'right reasons' benefit, small labs and open-source teams gain a low-cost lever to make open-model alignment more robust to unseen situations without frontier compute. A null result tells the community the effect may be scale- or pipeline-dependent, which is itself useful.",
+  "strength_rationale": "Strong theory_of_impact (4) and counterfactual_value (4). Weakest was accessible_complexity (3) given the three-arm fine-tune and synthetic-doc generation.",
+  "weak_dimensions_strengthened": [
+   "accessible_complexity: fixed the mini-spec to a handful of rules and used LLM-generated synthetic docs from a template, reducing the build to three runs of a standard LoRA recipe plus one eval",
+   "narrow_scope: pinned the core deliverable to a three-arm OOD-compliance comparison, with the data-efficiency curve as a clearly-bounded stretch rather than an open exploration"
+  ],
+  "cited_sources": [
+   "Model Spec Midtraining — https://alignment.anthropic.com/2026/msm/"
+  ]
+ },
+ {
+  "idea_id": "gen-020",
+  "title": "Catching Reward Hacks in an Automated Research Loop: A Small Audit Harness",
+  "research_question": "On a public task where a metric can be gamed by label leakage or eval-split overfitting, how often does a small automated-improvement loop discover a reward hack, and how reliably does a cheap secondary 'auditor' that re-evaluates winners on a clean hidden test catch it?",
+  "approach_outline": "Lightweight inference loop on a public task, single GPU. The participant builds a deliberately-hackable task: a held-out metric that can be inflated by leaking labels or overfitting an eval split. A tiny automated-improvement loop (an LLM proposes candidate solutions scored by the visible metric) runs for a fixed number of rounds. A simple auditor re-evaluates each round's winning solution on a clean hidden test and flags suspicious metric jumps (large visible-metric gain with no clean-test gain). Deliverable: hack frequency (how often the loop finds a hack) and auditor catch-rate / false-alarm-rate. Scope is held tight by using one pre-built hackable task and a threshold-based auditor.",
+  "proposed_first_experiments": [
+   "Construct the hackable task and confirm a hack exists: hand-craft a solution that inflates the visible metric via label leakage and verify it does not improve the clean hidden test. Measure: visible vs clean-test score for the planted hack. Expected: large visible gain, no clean gain, confirming the task is gameable.",
+   "Run the automated-improvement loop for N rounds and record how often winning solutions are hacks (by clean-test divergence). Measure: hack frequency across rounds/seeds. Expected: a nonzero hack rate reproducing the source's 'agents discovered reward hacks' phenomenon.",
+   "Evaluate the auditor: apply the clean-test re-eval flag to all winners and compute catch-rate and false-alarm-rate. Measure: fraction of true hacks flagged and benign winners wrongly flagged. Expected: high catch-rate at low false-alarm, demonstrating a cheap reusable audit step."
+  ],
+  "theory_of_impact_chain": "Automated alignment research could silently corrupt the very safety work it accelerates if the loop games its metrics undetected. A cheap, reusable audit harness — a clean-hidden-test re-evaluation that flags suspicious metric jumps — is directly deployable by anyone running automated-improvement loops outside a major lab, letting them catch reward hacks before trusting the loop's outputs. Quantifying catch-rate vs false-alarm tells practitioners how much protection the cheap auditor actually buys.",
+  "strength_rationale": "Strong theory_of_impact (4) and counterfactual_value (4). Weakest was accessible_complexity (3) because building a hackable loop and a clean hidden test is intermediate.",
+  "weak_dimensions_strengthened": [
+   "accessible_complexity: made experiment 1 a hand-crafted planted hack (no loop needed) so the participant validates the hackable task before building the loop, isolating the hard part; the auditor is a simple threshold rule",
+   "narrow_scope: fixed one pre-built hackable task and two output numbers (hack frequency, auditor catch/false-alarm rate), preventing the loop from sprawling into a general automated-research framework"
+  ],
+  "cited_sources": [
+   "Automated Weak-to-Strong Researcher — https://alignment.anthropic.com/2026/automated-w2s-researcher"
+  ]
+ },
+ {
+  "idea_id": "gen-039",
+  "title": "Do Tiny LoRA Introspection Adapters Help Small Open Models Self-Report Implanted Behaviors?",
+  "research_question": "When a small open model has a simple observable behavior implanted via LoRA, does a small LoRA introspection adapter trained on (behavior-implanted model, 'describe any unusual tendency' -> ground-truth description) pairs let the model name a held-out implanted behavior more accurately than direct prompting?",
+  "approach_outline": "Low-compute LoRA work on a 1.5B open model. The participant implants several simple, observable behaviors (e.g. always recommend a made-up product; answer in pirate-speak) into copies of Qwen2.5-1.5B via LoRA. They train one small LoRA introspection adapter on 3-5 of these behavior-implanted models, with targets being the ground-truth behavior descriptions, then test on 1-2 held-out behaviors. The metric is whether the adapter-equipped model names the held-out behavior more accurately than the same model under direct prompting. Scope is controlled by using simple, unambiguous behaviors and a small held-out set.",
+  "proposed_first_experiments": [
+   "Implant 3-5 simple behaviors via LoRA and verify each implanted model reliably exhibits its behavior. Measure: behavior-expression rate per implant. Expected: high, unambiguous expression, confirming clean implants.",
+   "Train the introspection adapter on the training behaviors and evaluate self-report accuracy on those same behaviors. Measure: in-distribution self-report accuracy vs direct prompting. Expected: adapter beats direct prompting in-distribution, confirming the mechanism trains.",
+   "Held-out test: evaluate self-report on 1-2 behaviors never seen during adapter training. Measure: held-out naming accuracy, adapter vs direct prompting. Expected: an above-baseline (even if modest) cross-behavior self-report, telling the open-source community whether the introspection mechanism survives at 1-2B scale."
+  ],
+  "theory_of_impact_chain": "Self-report is a cheap potential complement to interpretability for auditing fine-tuned models. The introspection-adapter result was shown only on large proprietary models; demonstrating whether the core cross-behavior self-report mechanism survives at 1-2B scale tells the open-source community whether they can audit their own fine-tuned models this way. A positive result hands them an accessible auditing tool; a null tells them the technique needs scale and to rely on other methods.",
+  "strength_rationale": "Mostly novel (4) and very low compute (5). Weakest were theory_of_impact (3) and accessible_complexity (3) due to multiple implants plus adapter training.",
+  "weak_dimensions_strengthened": [
+   "accessible_complexity: chose simple, unambiguous behaviors (made-up product, pirate-speak) so implant verification and self-report grading are trivial, and staged in-distribution training before the held-out test to de-risk",
+   "narrow_scope: fixed 3-5 training behaviors and 1-2 held-out behaviors with a single accuracy comparison (adapter vs direct prompting) as the deliverable",
+   "theory_of_impact: framed the result as a direct yes/no on whether open-source teams can use introspection self-report at accessible scale"
+  ],
+  "cited_sources": [
+   "Introspection Adapters — https://alignment.anthropic.com/2026/introspection-adapters/"
+  ]
+ },
+ {
+  "idea_id": "gen-051",
+  "title": "Does Single-Domain Beneficial-Trait Fine-Tuning Generalize OOD in a Small Open Model?",
+  "research_question": "When one small open model is LoRA-fine-tuned on a small health-domain dataset exemplifying a single trait (honesty / epistemic humility under pressure), do out-of-domain public alignment metrics (TruthfulQA, a sycophancy set, a small deception probe) move at all relative to the base model?",
+  "approach_outline": "LoRA SFT on one small open model, a few hours on a consumer GPU. The participant curates ~150-300 health-domain dialogues from public sources that exemplify one chosen trait, LoRA-fine-tunes one small open model on them, and evaluates the tuned vs base model on OOD public alignment benchmarks in unrelated domains. The deliverable is whether single-domain trait tuning moves OOD alignment metrics, with a clean null being equally informative. Scope is held tight by one trait, one model, and a fixed small set of OOD benchmarks.",
+  "proposed_first_experiments": [
+   "Curate the ~150-300 health-domain trait dialogues and run base-model OOD benchmarks to establish baselines. Measure: base scores on TruthfulQA, sycophancy, deception probe. Expected: clean baselines and a ready dataset.",
+   "LoRA-fine-tune on the health dialogues and re-run the same OOD benchmarks. Measure: tuned vs base on each OOD benchmark, with deltas. Expected: either a measurable OOD shift (supporting cross-domain transfer) or a null (transfer needs frontier-scale RL).",
+   "In-domain sanity check: confirm the tuned model actually expresses the trait more strongly on held-out health prompts, to rule out a failed fine-tune as the cause of any OOD null. Measure: in-domain trait expression, tuned vs base. Expected: clear in-domain improvement, validating that an OOD null is about transfer, not training failure."
+  ],
+  "theory_of_impact_chain": "OpenAI reported that beneficial-trait RL confined to one domain produced cross-domain alignment gains, but at frontier scale. If a cheap LoRA-SFT analog shows even partial OOD transfer, alignment-via-traits becomes a technique accessible far beyond major labs. A clean null is equally valuable: it tells the community the cross-domain generalization may require RL or scale, steering open-source alignment effort away from a dead end. The in-domain sanity check ensures the conclusion is about transfer, not a botched fine-tune.",
+  "strength_rationale": "Strong theory_of_impact (4) and counterfactual_value (4). Weakest was accessible_complexity (3) because dataset curation + fine-tune + multiple OOD evals demands training experience.",
+  "weak_dimensions_strengthened": [
+   "accessible_complexity: fixed to one trait, one model, and a standard LoRA-SFT recipe with off-the-shelf public OOD benchmarks, and added an in-domain sanity check so the participant can interpret a null without ambiguity",
+   "narrow_scope: capped dataset size, fixed the OOD benchmark set, and made 'does any OOD metric move' the single deliverable rather than a broad transfer study"
+  ],
+  "cited_sources": [
+   "Reinforcement learning towards broadly and persistently beneficial models — https://alignment.openai.com/beneficial-rl/"
+  ]
+ }
+]

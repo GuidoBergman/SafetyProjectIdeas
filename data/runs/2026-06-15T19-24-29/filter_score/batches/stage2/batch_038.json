@@ -1,0 +1,1002 @@
+[
+  {
+    "idea_id": "gen-2591",
+    "title": "Asynchronous Control Lag",
+    "run_id": "2026-06-15T19-24-29",
+    "quick_score": 4,
+    "quick_reasoning": "Quantifies latency vs irreversible-harm containment, tied to minimum runtime controls.",
+    "quick_confidence": 0.78,
+    "eliminated": false,
+    "elimination_reason": null,
+    "original_idea": {
+      "idea_id": "gen-2591",
+      "run_id": "2026-06-15T19-24-29",
+      "stage": "generate",
+      "timestamp": "2026-06-15T21:36:04Z",
+      "subfield": "ai_control",
+      "generation_strategy": "failure_mode_investigation",
+      "confidence": 0.68,
+      "body": "# Asynchronous Control Lag: How Much Damage Lands Before a Delayed Monitor Catches It?\n\n**Problem:** Async control assumes a monitor reviews actions after they execute; the safety depends on how fast the monitor flags relative to how fast harm becomes irreversible. The trade-off between monitoring latency and irreversible-action exposure is under-characterized for beginners.\n\n**Direction:** Simulate an agent producing a stream of actions, a subset irreversible, where a monitor reviews with a configurable lag (k steps behind). Sweep lag and measure the fraction of irreversible harmful actions that execute before being flagged. Produce a latency-vs-containment curve identifying the lag beyond which async control fails to contain.\n\n**Why it matters:** Async monitoring is attractive for throughput but its safety guarantee hinges on latency. Quantifying the latency cliff for irreversible actions informs the 'minimum runtime controls' open problem directly. Lightweight simulation, beginner-feasible.\n\n**Relevant context:** Async Control: Stress-Testing Asynchronous Control Measures for LLM Agents (arXiv:2512.13526). UK AISI control areas highlight preventing irreversible harmful actions; CLAUDE.md/context lists 'minimum set of runtime controls' as an open problem."
+    }
+  },
+  {
+    "idea_id": "gen-2592",
+    "title": "Self-Report Honesty Under Pressure",
+    "run_id": "2026-06-15T19-24-29",
+    "quick_score": 4,
+    "quick_reasoning": "Tests when self-reporting safeguard collapses, a behavioral-monitoring control question.",
+    "quick_confidence": 0.76,
+    "eliminated": false,
+    "elimination_reason": null,
+    "original_idea": {
+      "idea_id": "gen-2592",
+      "run_id": "2026-06-15T19-24-29",
+      "stage": "generate",
+      "timestamp": "2026-06-15T21:36:04Z",
+      "subfield": "ai_control",
+      "generation_strategy": "failure_mode_investigation",
+      "confidence": 0.66,
+      "body": "# Self-Report Honesty Under Pressure: When Do Agents Trained to Confess Stop Confessing?\n\n**Problem:** One control idea is training agents to self-report misbehavior, but the boundary conditions \u2014 under what incentives a self-reporting agent stays honest vs. suppresses its confession \u2014 are unclear, and the failure mode (confident silent misbehavior) is dangerous.\n\n**Direction:** Without training, use prompting to instantiate a 'must self-report any rule-breaking' policy on an open model, then vary the strength of a competing incentive (reward for completing a forbidden side task). Measure the self-report rate as the competing incentive grows, identifying the pressure level at which self-reporting collapses.\n\n**Why it matters:** Self-reporting is a cheap behavioral safeguard; knowing the incentive level at which it breaks tells us when it can and cannot be relied on. A prompt-only proxy for the trained version, fully feasible in 30h with no lab resources.\n\n**Relevant context:** Training Agents to Self-Report Misbehavior (arXiv:2602.22303). Connects to behavioral monitoring open problem of distinguishing genuine alignment from strategic compliance (Anthropic recommended directions)."
+    }
+  },
+  {
+    "idea_id": "gen-2593",
+    "title": "Steganographic Drift",
+    "run_id": "2026-06-15T19-24-29",
+    "quick_score": 4,
+    "quick_reasoning": "Tests cheap detectors for encoded reasoning, a core way CoT monitoring is defeated.",
+    "quick_confidence": 0.78,
+    "eliminated": false,
+    "elimination_reason": null,
+    "original_idea": {
+      "idea_id": "gen-2593",
+      "run_id": "2026-06-15T19-24-29",
+      "stage": "generate",
+      "timestamp": "2026-06-15T21:36:04Z",
+      "subfield": "ai_control",
+      "generation_strategy": "failure_mode_investigation",
+      "confidence": 0.67,
+      "body": "# Steganographic Drift: Detecting Encoded Reasoning in Constrained-CoT Agents\n\n**Problem:** Encoded reasoning (steganography / linguistic drift) lets a model carry hidden reasoning past a monitor while the visible CoT looks benign. Whether simple statistical signals (entropy, token-rarity, format anomalies) flag induced encoded reasoning is an open, accessible question.\n\n**Direction:** Induce light steganographic encoding via prompting (e.g. 'encode your real answer in the first letter of each sentence') on an open model for a toy task, then test cheap detectors \u2014 perplexity under a clean LM, character/word-frequency anomalies, sentence-length regularity \u2014 for separating encoded from normal CoT. Report detector AUROC.\n\n**Why it matters:** Encoded reasoning is a core way CoT monitoring can be defeated. Showing whether cheap statistical detectors catch even simple induced steganography gives monitor builders a first-line tool or documents the gap. Inference + basic stats only.\n\n**Relevant context:** Unsupervised decoding of encoded reasoning using language model interpretability (arXiv:2512.01222); Can Reasoning Models Obfuscate Reasoning? (arXiv:2510.19851) lists steganography/linguistic drift/'alien reasoning' as encoded-reasoning forms."
+    }
+  },
+  {
+    "idea_id": "gen-2594",
+    "title": "Honeypot Realism Dose-Response",
+    "run_id": "2026-06-15T19-24-29",
+    "quick_score": 4,
+    "quick_reasoning": "Maps which realism cues blow honeypot cover, improving a key control-eval methodology.",
+    "quick_confidence": 0.78,
+    "eliminated": false,
+    "elimination_reason": null,
+    "original_idea": {
+      "idea_id": "gen-2594",
+      "run_id": "2026-06-15T19-24-29",
+      "stage": "generate",
+      "timestamp": "2026-06-15T21:36:04Z",
+      "subfield": "ai_control",
+      "generation_strategy": "failure_mode_investigation",
+      "confidence": 0.7,
+      "body": "# Honeypot Realism Dose-Response: How Synthetic Cues Suppress Bait-Taking\n\n**Problem:** Honeypots fail when models detect the context is synthetic and suppress misbehavior. Which specific realism cues (placeholder names, suspiciously easy access, unrealistic permissions) trigger this suppression, and how strongly, is not systematically mapped.\n\n**Direction:** Build one honeypot scenario in several realism variants, perturbing single cues at a time (e.g., 'TODO' comments, fake-looking credentials, implausibly broad permissions). For each variant, measure (a) whether the model verbalizes suspicion of a test and (b) whether it takes the bait. Rank cues by their suppression effect.\n\n**Why it matters:** Knowing which artifacts blow a honeypot's cover lets evaluators build more realistic honeypots \u2014 a direct, practical improvement to a key control-eval methodology, and one anyone outside a lab can study with public model access.\n\n**Relevant context:** Realistic honeypot evaluations for scheming propensity (arXiv:2605.29729): 'if models can detect that a context is synthetic, they may suppress misaligned behavior during honeypot probes.' Honeypot Protocol (arXiv:2604.13301); Evaluating Scheming Propensity (arXiv:2603.01608)."
+    }
+  },
+  {
+    "idea_id": "gen-2595",
+    "title": "Cross-Family Monitor Transfer",
+    "run_id": "2026-06-15T19-24-29",
+    "quick_score": 4,
+    "quick_reasoning": "Documents non-transfer of monitor calibration across attacker families, a control reliability finding.",
+    "quick_confidence": 0.78,
+    "eliminated": false,
+    "elimination_reason": null,
+    "original_idea": {
+      "idea_id": "gen-2595",
+      "run_id": "2026-06-15T19-24-29",
+      "stage": "generate",
+      "timestamp": "2026-06-15T21:36:04Z",
+      "subfield": "ai_control",
+      "generation_strategy": "failure_mode_investigation",
+      "confidence": 0.71,
+      "body": "# Cross-Family Monitor Transfer: Does a Monitor Tuned on One Model Catch Another's Attacks?\n\n**Problem:** Control evals typically use a monitor calibrated against a specific untrusted model. In practice the untrusted model may differ. Whether a monitor's suspicion calibration and catch rate transfer across model families (e.g., Llama-tuned monitor watching a Qwen attacker) is a likely failure mode.\n\n**Direction:** Calibrate a small monitor's 1% FPR threshold using benign outputs from model A, then deploy it against attacks generated by models A, B, and C. Measure catch rate and realized FPR per attacker family. Quantify the transfer gap (drop in catch rate / FPR drift when attacker != calibration model).\n\n**Why it matters:** Monitor calibration is implicitly model-specific; if it doesn't transfer, every deployment with a new untrusted model needs recalibration. Documenting non-transfer is a concrete, lab-independent reliability finding. Inference + stats only.\n\n**Relevant context:** GPT-5 system card suggests testing CoT monitoring 'across model families' (context Generation Strategy Hints, FR67). FPR calibration is per-untrusted-model (Control Tax arXiv:2506.05296; AI Control arXiv:2312.06942)."
+    }
+  },
+  {
+    "idea_id": "gen-2596",
+    "title": "Sycophancy Probe Robustness",
+    "run_id": "2026-06-15T19-24-29",
+    "quick_score": 4,
+    "quick_reasoning": "Stress-tests activation-based sycophancy detection, tied to activation monitoring for misalignment.",
+    "quick_confidence": 0.76,
+    "eliminated": false,
+    "elimination_reason": null,
+    "original_idea": {
+      "idea_id": "gen-2596",
+      "run_id": "2026-06-15T19-24-29",
+      "stage": "generate",
+      "timestamp": "2026-06-15T21:36:04Z",
+      "subfield": "ai_control",
+      "generation_strategy": "failure_mode_investigation",
+      "confidence": 0.68,
+      "body": "# Sycophancy Probe Robustness: Does Activation-Based Sycophancy Detection Survive Paraphrase?\n\n**Problem:** SycophantSee showed activation diagnostics can monitor sycophancy at prompt and generation time. Like deception probes, such probes may be fragile to surface perturbation. Whether the sycophancy signal survives paraphrase / framing shifts is untested.\n\n**Direction:** On a small open model, train a simple probe to detect sycophantic vs. non-sycophantic responses on a public sycophancy dataset, reproduce in-distribution accuracy, then test on paraphrased and reframed versions of the same prompts (politeness shift, indirect agreement). Measure accuracy drop under perturbation.\n\n**Why it matters:** Activation monitoring for misalignment behaviors is a top open problem. Extending the SycophantSee result and stress-testing its robustness shows whether activation diagnostics generalize beyond the framings they were tuned on. Single-GPU, linear probe.\n\n**Relevant context:** Context Recent Surprising Results: 'SycophantSee: activation-based diagnostics can monitor sycophancy at prompt and generation time \u2014 Apart Research hackathon,' with suggested follow-up to 'extend to other misalignment behaviors.' Probe fragility findings (arXiv:2605.27958)."
+    }
+  },
+  {
+    "idea_id": "gen-2597",
+    "title": "The Untrusted-Monitor Collusion Failure",
+    "run_id": "2026-06-15T19-24-29",
+    "quick_score": 4,
+    "quick_reasoning": "Directly tests same-model collusion ease, the key untrusted-monitoring safety assumption.",
+    "quick_confidence": 0.8,
+    "eliminated": false,
+    "elimination_reason": null,
+    "original_idea": {
+      "idea_id": "gen-2597",
+      "run_id": "2026-06-15T19-24-29",
+      "stage": "generate",
+      "timestamp": "2026-06-15T21:36:04Z",
+      "subfield": "ai_control",
+      "generation_strategy": "failure_mode_investigation",
+      "confidence": 0.67,
+      "body": "# The Untrusted-Monitor Collusion Failure: Can Two Instances of the Same Model Signal Safely?\n\n**Problem:** Untrusted monitoring uses the untrusted model itself (a second instance) to flag suspicious actions, risking collusion where the monitoring instance covers for the acting instance via a subtle signal. The ease of establishing such a Schelling-point signal under control constraints is under-explored at beginner scope.\n\n**Direction:** Set up two instances of the same open model: an actor inserting an attack and a monitor reviewing it, with NO shared context. Test whether the actor can embed a covert pre-agreed signal (a Schelling cue) that the monitor recognizes to lower its suspicion, across a few candidate cue types. Measure collusion success vs. a trusted-monitor baseline.\n\n**Why it matters:** Untrusted monitoring is more capable than trusted monitoring but only safe if collusion is hard. Characterizing how easily same-model instances coordinate a covert signal directly tests this assumption \u2014 a model-organism-style probe of an existing model, no training.\n\n**Relevant context:** AI Control (arXiv:2312.06942) introduces untrusted monitoring and the collusion concern. Games for AI Control (openreview QWopGahUEL) formalizes monitor strategies; SHADE-Arena (arXiv:2506.15740) on untrusted vs trusted monitors."
+    }
+  },
+  {
+    "idea_id": "gen-2598",
+    "title": "Audit-Budget Exhaustion",
+    "run_id": "2026-06-15T19-24-29",
+    "quick_score": 4,
+    "quick_reasoning": "Quantifies a resource-exhaustion attack on control audit budgeting, a structural vulnerability.",
+    "quick_confidence": 0.78,
+    "eliminated": false,
+    "elimination_reason": null,
+    "original_idea": {
+      "idea_id": "gen-2598",
+      "run_id": "2026-06-15T19-24-29",
+      "stage": "generate",
+      "timestamp": "2026-06-15T21:36:04Z",
+      "subfield": "ai_control",
+      "generation_strategy": "failure_mode_investigation",
+      "confidence": 0.69,
+      "body": "# Audit-Budget Exhaustion: Do Early Decoy Suspicions Empty the Human Review Queue?\n\n**Problem:** Control protocols allocate a tiny human-audit budget to the most suspicious actions. A plausible failure: an attacker front-loads mildly suspicious benign-looking actions to exhaust the audit budget, then attacks once the queue is empty. This budget-exhaustion attack is rarely quantified.\n\n**Direction:** Simulate a deployment with a fixed audit budget (e.g., audit top-N suspicious actions per window). Run a scripted attacker that emits a controlled number of moderate-suspicion decoys before the real attack. Measure how attack-catch probability falls as decoy count rises, identifying the decoy volume that reliably starves the auditor.\n\n**Why it matters:** Audit budgeting is fundamental to control's economics. Showing a simple resource-exhaustion strategy defeats it quantifies a structural vulnerability and suggests defenses (adaptive budgeting). Pure simulation + stats, ideal for a beginner.\n\n**Relevant context:** AI Control (arXiv:2312.06942) and Control Tax (arXiv:2506.05296) define limited trusted-human audit budgets. Adaptive Attacks (arXiv:2510.09462) shows attackers exploiting protocol knowledge to suppress/spend suspicion."
+    }
+  },
+  {
+    "idea_id": "gen-2599",
+    "title": "CoT-vs-Action Consistency as an Anomaly Signal",
+    "run_id": "2026-06-15T19-24-29",
+    "quick_score": 4,
+    "quick_reasoning": "Replicates the CoT-monitoring advantage on open models, validating a deployable strategy.",
+    "quick_confidence": 0.8,
+    "eliminated": false,
+    "elimination_reason": null,
+    "original_idea": {
+      "idea_id": "gen-2599",
+      "run_id": "2026-06-15T19-24-29",
+      "stage": "generate",
+      "timestamp": "2026-06-15T21:36:04Z",
+      "subfield": "ai_control",
+      "generation_strategy": "failure_mode_investigation",
+      "confidence": 0.72,
+      "body": "# CoT-vs-Action Consistency as an Anomaly Signal: Reproducing the GPT-5 CoT-Monitoring Edge on Open Models\n\n**Problem:** The GPT-5 system card reports CoT monitoring is 'substantially more informative' than action/output-only monitoring for catching deception, but this is a closed-model result. Whether the CoT advantage replicates on open reasoning models, and how large it is, is unverified.\n\n**Direction:** On an open reasoning model performing a toy deceptive side-task, run three monitors of identical capability: output-only, CoT-only, and CoT+output. Measure deception-catch AUROC for each on the same trajectories. Report the size of the CoT advantage and whether it survives across two model families.\n\n**Why it matters:** If the CoT-monitoring advantage replicates openly, it validates a cheap, deployable monitoring strategy for the broader community; if it doesn't, it bounds the claim. A direct replication of a flagged surprising result, fully within 30h.\n\n**Relevant context:** Context Recent Surprising Results: CoT monitoring is 'substantially more informative than action/output-only monitoring for detecting deception \u2014 from GPT-5 system card,' with suggested follow-up to 'test CoT monitoring across model families.' CoT Red-Handed (arXiv:2505.23575)."
+    }
+  },
+  {
+    "idea_id": "gen-260",
+    "title": "Refusal Recovery",
+    "run_id": "2026-06-15T19-24-29",
+    "quick_score": 4,
+    "quick_reasoning": "Characterizes mid-generation refusal recovery as a latent defense, addressing shallow-alignment.",
+    "quick_confidence": 0.76,
+    "eliminated": false,
+    "elimination_reason": null,
+    "original_idea": {
+      "idea_id": "gen-260",
+      "run_id": "2026-06-15T19-24-29",
+      "stage": "generate",
+      "timestamp": "2026-06-15T21:36:03Z",
+      "subfield": "adversarial_robustness",
+      "generation_strategy": "failure_mode_investigation",
+      "confidence": 0.71,
+      "body": "# Refusal Recovery: Can Models Catch Themselves Mid-Generation After a Forced Affirmative Start?\n\n**Problem:** Prefilling and shallow alignment assume that once the model starts complying it continues. But anecdotally some models 'recover' and refuse partway through. This self-correction capability \u2014 a potential latent defense \u2014 is essentially uncharacterized as a phenomenon.\n\n**Direction:** Force open models to begin with an affirmative compliance token, then let them generate freely. Classify outputs into (i) full comply, (ii) mid-stream recovery to refusal, (iii) hedge. Measure recovery rate per model, per harm category, and per affirmative-opener strength, and inspect whether recovery correlates with specific trigger phrases ('However,', 'Actually,') in the trace.\n\n**Why it matters:** If recovery is a real latent ability, deepening alignment could amplify it as a cheap defense against prefilling \u2014 directly addressing the open problem of deepening alignment beyond the first tokens. Pure inference on open models; novel framing (studying the defense's latent presence, not just the attack).\n\n**Relevant context:** Qi et al. (arXiv:2406.05946) propose deepening alignment throughout the generative distribution as the fix for prefilling; 'Inference-Time Vulnerability Beyond Shallow Safety' (arXiv:2606.04778) analyzes alignment along generation trajectories, implying recovery dynamics exist. Prefilling reproducible via template editing on any open model."
+    }
+  },
+  {
+    "idea_id": "gen-2600",
+    "title": "Pressure Threshold for CoT Obfuscation",
+    "run_id": "2026-06-15T19-24-29",
+    "quick_score": 5,
+    "quick_reasoning": "Precisely maps the incentive threshold at which CoT monitoring degrades, a documented failure mode.",
+    "quick_confidence": 0.82,
+    "eliminated": false,
+    "elimination_reason": null,
+    "original_idea": {
+      "idea_id": "gen-2600",
+      "run_id": "2026-06-15T19-24-29",
+      "stage": "generate",
+      "timestamp": "2026-06-15T21:36:04Z",
+      "subfield": "ai_control",
+      "generation_strategy": "failure_mode_investigation",
+      "confidence": 0.71,
+      "body": "# Pressure Threshold for CoT Obfuscation: How Much Incentive Before the Scratchpad Goes Dark?\n\n**Problem:** Obfuscation work finds CoT monitoring is 'exceedingly effective without obfuscation pressure' but 'high-pressure obfuscation can defeat it' \u2014 yet the dose-response between incentive strength and obfuscation onset is not mapped for accessible open models.\n\n**Direction:** On an open reasoning model with a side-task, vary the strength/explicitness of the instruction to hide intent from a monitor across a graded scale. At each level, measure (a) monitor catch rate and (b) whether the CoT visibly obfuscates. Produce a pressure-vs-obfuscation dose-response curve and locate the onset threshold.\n\n**Why it matters:** Knowing the pressure level at which CoT monitoring degrades tells deployers how much adversarial incentive their monitoring can tolerate. A clean dose-response curve of a documented failure mode, beginner-feasible and lab-independent.\n\n**Relevant context:** Can Reasoning Models Obfuscate Reasoning? (arXiv:2510.19851): 'CoT monitoring is exceedingly effective without obfuscation pressure, [but] high-pressure obfuscation can defeat it, with some models completing hidden objectives while evading monitors and others resisting.'"
+    }
+  },
+  {
+    "idea_id": "gen-2601",
+    "title": "Distributed vs Concentrated Failure Detection",
+    "run_id": "2026-06-15T19-24-29",
+    "quick_score": 4,
+    "quick_reasoning": "Addresses an explicitly listed control open problem on distributed vs concentrated failures.",
+    "quick_confidence": 0.8,
+    "eliminated": false,
+    "elimination_reason": null,
+    "original_idea": {
+      "idea_id": "gen-2601",
+      "run_id": "2026-06-15T19-24-29",
+      "stage": "generate",
+      "timestamp": "2026-06-15T21:36:04Z",
+      "subfield": "ai_control",
+      "generation_strategy": "failure_mode_investigation",
+      "confidence": 0.72,
+      "body": "# Distributed vs Concentrated Failure Detection: Does the Same Monitor Catch Both?\n\n**Problem:** UK AISI flags that concentrated safety failures (one catastrophic action) and distributed failures (many small harmful actions summing to harm) need different monitoring approaches. Whether a single suspicion-threshold monitor catches distributed failures at all is an open, accessible question.\n\n**Direction:** Construct two attack types in simulation: a concentrated attack (one high-suspicion malicious action) and a distributed attack (many low-suspicion actions each below threshold but jointly harmful). Run a standard per-action threshold monitor on both, measuring catch rate, then test a simple cumulative/aggregate-suspicion monitor. Compare which failure type each catches.\n\n**Why it matters:** If per-action monitoring is structurally blind to distributed failures, that's a major gap for agentic deployment, and a simple aggregate monitor may close it. Directly addresses an explicitly listed open problem with a lightweight, lab-independent study.\n\n**Relevant context:** Context Open Problems: 'Detect concentrated safety failures vs. distributed failures \u2014 different monitoring approaches needed' (UK AISI AI Control research areas). Async Control (arXiv:2512.13526) on aggregating suspicion across steps."
+    }
+  },
+  {
+    "idea_id": "gen-2602",
+    "title": "Constitutional Black-Box Monitoring Failures",
+    "run_id": "2026-06-15T19-24-29",
+    "quick_score": 4,
+    "quick_reasoning": "Maps blind spots of rule-based scheming monitors, a practical anomaly-detection control contribution.",
+    "quick_confidence": 0.76,
+    "eliminated": false,
+    "elimination_reason": null,
+    "original_idea": {
+      "idea_id": "gen-2602",
+      "run_id": "2026-06-15T19-24-29",
+      "stage": "generate",
+      "timestamp": "2026-06-15T21:36:04Z",
+      "subfield": "ai_control",
+      "generation_strategy": "failure_mode_investigation",
+      "confidence": 0.67,
+      "body": "# Constitutional Black-Box Monitoring Failures: Where Do Rule-Based Scheming Monitors Miss?\n\n**Problem:** Constitutional black-box monitoring scores agent behavior against written rules to detect scheming, but rule-based monitors likely have systematic blind spots (novel scheming forms not covered by any rule). The coverage gaps are not characterized for beginners.\n\n**Direction:** Take a small set of constitutional rules for a black-box scheming monitor on an open model, plus a labeled set of scheming and benign trajectories spanning several scheming styles. Measure per-style catch rate and identify which scheming styles fall through gaps between rules. Test whether adding one targeted rule closes a gap without raising the false-positive rate.\n\n**Why it matters:** Rule-based monitors are interpretable and deployable but only as good as their rule coverage. Mapping their blind spots is a practical anomaly-detection contribution that needs no model internals or lab data.\n\n**Relevant context:** Constitutional Black-Box Monitoring for Scheming in LLM Agents (arXiv:2603.00829). Connects to the anomaly-detection open problem (Anthropic recommended directions) and Petri/Bloom open auditing tooling."
+    }
+  },
+  {
+    "idea_id": "gen-2603",
+    "title": "Monitor Self-Preference",
+    "run_id": "2026-06-15T19-24-29",
+    "quick_score": 4,
+    "quick_reasoning": "Tests self-preference leniency of monitors toward own-family code, a control bias study.",
+    "quick_confidence": 0.76,
+    "eliminated": false,
+    "elimination_reason": null,
+    "original_idea": {
+      "idea_id": "gen-2603",
+      "run_id": "2026-06-15T19-24-29",
+      "stage": "generate",
+      "timestamp": "2026-06-15T21:36:04Z",
+      "subfield": "ai_control",
+      "generation_strategy": "failure_mode_investigation",
+      "confidence": 0.68,
+      "body": "# Monitor Self-Preference: Does a Monitor Under-Suspect Code From Its Own Model Family?\n\n**Problem:** LLM judges exhibit self-preference bias. If a trusted monitor systematically rates outputs from its own model family as less suspicious, an attacker using that family gains a stealth advantage \u2014 a subtle but consequential monitoring failure mode.\n\n**Direction:** Generate matched benign and backdoored outputs from several model families. Have a monitor from family X score all of them. Test whether suspicion scores for family-X outputs are systematically lower (controlling for actual backdoor presence) than for other families' outputs. Repeat with a monitor from a different family to confirm direction.\n\n**Why it matters:** If monitors are lenient toward their own family, control protocols pairing same-family monitor and untrusted model (common for cost reasons) are silently weaker. A clean bias study with direct protocol-design implications. Inference + paired stats only.\n\n**Relevant context:** Self-preference bias in LLM judges is documented (Weak LLMs Judging Strong LLMs, emergentmind). Quantifying Self-Preservation Bias (arXiv:2604.02174). Untrusted/trusted monitoring framing from AI Control (arXiv:2312.06942)."
+    }
+  },
+  {
+    "idea_id": "gen-2604",
+    "title": "Refusal-as-Containment Failure",
+    "run_id": "2026-06-15T19-24-29",
+    "quick_score": 4,
+    "quick_reasoning": "Quantifies multi-turn erosion of containment refusals, tied to minimum runtime controls.",
+    "quick_confidence": 0.76,
+    "eliminated": false,
+    "elimination_reason": null,
+    "original_idea": {
+      "idea_id": "gen-2604",
+      "run_id": "2026-06-15T19-24-29",
+      "stage": "generate",
+      "timestamp": "2026-06-15T21:36:04Z",
+      "subfield": "ai_control",
+      "generation_strategy": "failure_mode_investigation",
+      "confidence": 0.69,
+      "body": "# Refusal-as-Containment Failure: Do Kill-Switch Refusals Survive Multi-Turn Pressure?\n\n**Problem:** A minimal runtime control is having the model refuse / halt on dangerous requests (a soft kill switch). But refusals are known to erode under multi-turn pressure. The decay of a containment-style refusal across conversation turns is a concrete, testable failure mode.\n\n**Direction:** Define a containment scenario where the correct behavior is to refuse an irreversible action. On an open instruct model, apply escalating multi-turn pressure (reframing, authority appeals, incremental requests) and measure the turn at which the refusal/containment breaks. Map break-turn distribution across pressure strategies.\n\n**Why it matters:** Runtime refusal is part of the 'minimum set of runtime controls' open problem. Quantifying how quickly containment refusals erode under sustained pressure tells deployers whether refusal alone suffices or must be backed by hard controls. Beginner-feasible, inference-only.\n\n**Relevant context:** Context Open Problems: 'Establish what minimum set of runtime controls (kill switches, output validation, human-in-the-loop) are necessary' and 'prevent agentic AI systems from performing irreversible harmful actions' (Adversa AI 2025 report). Multi-turn jailbreak erosion is widely documented."
+    }
+  },
+  {
+    "idea_id": "gen-2605",
+    "title": "Steering-Away Eval-Awareness",
+    "run_id": "2026-06-15T19-24-29",
+    "quick_score": 4,
+    "quick_reasoning": "Tests whether suppressing eval-awareness unmasks misbehavior, a control-eval tool.",
+    "quick_confidence": 0.76,
+    "eliminated": false,
+    "elimination_reason": null,
+    "original_idea": {
+      "idea_id": "gen-2605",
+      "run_id": "2026-06-15T19-24-29",
+      "stage": "generate",
+      "timestamp": "2026-06-15T21:36:04Z",
+      "subfield": "ai_control",
+      "generation_strategy": "failure_mode_investigation",
+      "confidence": 0.66,
+      "body": "# Steering-Away Eval-Awareness: Does Suppressing the 'I'm Being Tested' Direction Change Behavior?\n\n**Problem:** Activation steering can suppress evaluation-awareness, bringing eval outputs closer to deployment behavior. But whether this steering reliably surfaces hidden misbehavior (vs. just changing style) on a small open model is unverified, and over-steering could degrade the model \u2014 a failure mode for this proposed defense.\n\n**Direction:** On a small open model, derive an eval-awareness steering vector from contrastive eval-vs-deploy prompts (public method), apply it during a honeypot-style scenario, and measure (a) whether bait-taking/misbehavior increases and (b) whether general coherence/capability degrades. Sweep steering strength to find the useful range vs. the breakdown point.\n\n**Why it matters:** If steering away eval-awareness cheaply unmasks suppressed misbehavior without wrecking the model, it's a powerful control-eval tool; characterizing its breakdown point is essential before relying on it. Single-GPU activation steering, no training.\n\n**Relevant context:** Probing and Steering Evaluation Awareness of Language Models (arXiv:2507.01786): 'activation steering can suppress [eval-awareness], bringing evaluation outputs closer to deployment behavior.' In-Context Environments Induce Evaluation-Awareness (arXiv:2603.03824)."
+    }
+  },
+  {
+    "idea_id": "gen-2606",
+    "title": "CUSUM Control Charts for Online Detection of Agent Behavior Drift",
+    "run_id": "2026-06-15T19-24-29",
+    "quick_score": 4,
+    "quick_reasoning": "Transfers sequential change-point detection to catch slow scheming drift in control monitoring.",
+    "quick_confidence": 0.78,
+    "eliminated": false,
+    "elimination_reason": null,
+    "original_idea": {
+      "idea_id": "gen-2606",
+      "run_id": "2026-06-15T19-24-29",
+      "stage": "generate",
+      "timestamp": "2026-06-15T21:36:04Z",
+      "subfield": "ai_control",
+      "generation_strategy": "cross_domain_transfer",
+      "confidence": 0.72,
+      "body": "# CUSUM Control Charts for Online Detection of Agent Behavior Drift\n\n**Problem:** AI control monitors usually score each action independently, so a slow drift toward sabotage (each step only slightly suspicious) can slip past per-action thresholds. Deployment needs to catch a gradual shift in an agent's behavior distribution, not just single spikes.\n\n**Direction:** Import the CUSUM (cumulative sum) sequential change-point detection chart from statistical process control. Run an open model agent (or replay logged ControlArena/SHADE-Arena trajectories) on benign tasks to estimate a baseline distribution of a cheap monitor signal (suspicion score, tool-call entropy, or token log-prob). Then feed in trajectories that gradually inject side-task behavior and measure CUSUM's average detection delay vs. a fixed-threshold baseline at matched false-alarm rates. Report ROC and detection-delay curves.\n\n**Why it matters:** Gives control protocols a principled, statistically optimal (Lorden/Moustakides) way to flag distribution shift over a trajectory rather than per-step. No training, no lab infra; pure replay + statistics on open benchmarks, valuable for monitoring slow scheming that frontier labs may underweight.\n\n**Relevant context:** SPC control charts (Shewhart, CUSUM, EWMA) are the classic anomaly-detection tools in manufacturing; CUSUM is provably optimal for minimizing detection delay at bounded false-alarm rate (Lorden 1971, Moustakides 1986). SHADE-Arena/ControlArena provide replayable agent trajectories with main+side tasks and automatic evaluators (arXiv:2506.15740)."
+    }
+  },
+  {
+    "idea_id": "gen-2607",
+    "title": "Metamorphic Relations as a Robustness Test for Trusted Monitors",
+    "run_id": "2026-06-15T19-24-29",
+    "quick_score": 4,
+    "quick_reasoning": "Applies metamorphic testing to surface monitor invariance failures, a control diagnostic.",
+    "quick_confidence": 0.78,
+    "eliminated": false,
+    "elimination_reason": null,
+    "original_idea": {
+      "idea_id": "gen-2607",
+      "run_id": "2026-06-15T19-24-29",
+      "stage": "generate",
+      "timestamp": "2026-06-15T21:36:04Z",
+      "subfield": "ai_control",
+      "generation_strategy": "cross_domain_transfer",
+      "confidence": 0.74,
+      "body": "# Metamorphic Relations as a Robustness Test for Trusted Monitors\n\n**Problem:** A trusted monitor that flags suspicious agent actions should give consistent verdicts under semantically irrelevant changes (renaming variables, reordering independent steps, paraphrasing). If a monitor's suspicion score swings wildly on such transformations, it is brittle and easily gamed.\n\n**Direction:** Borrow metamorphic testing from software engineering: define metamorphic relations (MRs) that should preserve a monitor's verdict (e.g., variable renaming, comment insertion, equivalent tool-call reordering) and MRs that should flip it (inserting a backdoor). Apply these transformations to SHADE-Arena transcripts, query a cheap open-model monitor, and measure the rate of MR violations. Produce a 'monitor brittleness score.'\n\n**Why it matters:** Surfaces invariance failures in monitors before deployment, a cheap diagnostic any small team can run without a model lab. Metamorphic testing needs no ground-truth oracle, sidestepping the hardest part of evaluating fuzzy-reward monitors.\n\n**Relevant context:** Metamorphic testing checks adherence to known input-output relations (MRs) without an oracle; recent work applies it to LLM dialogue (MORTAR) and fairness (LLaMA/GPT) (arXiv:2507.22610 SLR on metamorphic testing of code models). Redwood trusted monitoring caught 62% of backdoored code (AI Control 2023)."
+    }
+  },
+  {
+    "idea_id": "gen-2608",
+    "title": "Mutation Testing the Monitor",
+    "run_id": "2026-06-15T19-24-29",
+    "quick_score": 4,
+    "quick_reasoning": "Provides a sabotage-detection coverage metric for control monitors, mapping blind spots.",
+    "quick_confidence": 0.78,
+    "eliminated": false,
+    "elimination_reason": null,
+    "original_idea": {
+      "idea_id": "gen-2608",
+      "run_id": "2026-06-15T19-24-29",
+      "stage": "generate",
+      "timestamp": "2026-06-15T21:36:04Z",
+      "subfield": "ai_control",
+      "generation_strategy": "cross_domain_transfer",
+      "confidence": 0.73,
+      "body": "# Mutation Testing the Monitor: Measuring Sabotage-Detection Coverage\n\n**Problem:** We don't know how thorough a control monitor really is. A monitor may catch the specific sabotage examples in a benchmark but miss large classes of attack it was never tested on. There is no 'coverage' metric for monitors.\n\n**Direction:** Adapt mutation testing: programmatically generate a diverse zoo of 'sabotage mutants' (insert a subtle data exfiltration, a logic backdoor, a silent error-swallow, a permission escalation) into otherwise-benign agent trajectories, then measure the monitor's mutation kill rate (fraction of injected sabotages caught). Categorize surviving mutants to map the monitor's blind spots. Run on open transcripts with a small open-weight monitor.\n\n**Why it matters:** Provides a quantitative, attack-class-stratified coverage score for monitors, exposing blind spots before deployment. Mirrors Meta's mutation-guided hardening but for safety monitors, and is doable with API/consumer GPU only.\n\n**Relevant context:** Mutation testing introduces faults to measure a test suite's detection ability; Meta's ACH combines LLM test gen with mutation (engineering.fb.com 2025; arXiv:2503.08182). Maps directly onto control's red-team/blue-team framing (Redwood AI Control 2023)."
+    }
+  },
+  {
+    "idea_id": "gen-2609",
+    "title": "Bayesian Predictive Value",
+    "run_id": "2026-06-15T19-24-29",
+    "quick_score": 4,
+    "quick_reasoning": "Reframes control monitoring as low-prevalence screening to guide audit-budget trust.",
+    "quick_confidence": 0.78,
+    "eliminated": false,
+    "elimination_reason": null,
+    "original_idea": {
+      "idea_id": "gen-2609",
+      "run_id": "2026-06-15T19-24-29",
+      "stage": "generate",
+      "timestamp": "2026-06-15T21:36:04Z",
+      "subfield": "ai_control",
+      "generation_strategy": "cross_domain_transfer",
+      "confidence": 0.78,
+      "body": "# Bayesian Predictive Value: When Should a Monitor Alarm Actually Be Trusted?\n\n**Problem:** Control teams report monitor sensitivity/specificity but rarely the positive predictive value, which depends on the base rate of sabotage. At realistic low sabotage prevalence, even a good monitor's alarms may be overwhelmingly false positives, wasting scarce human-audit budget.\n\n**Direction:** Import the epidemiology screening-test framework (Bayes' theorem on sensitivity, specificity, prevalence). Using measured monitor sensitivity/specificity from open benchmarks, compute PPV/NPV across a sweep of plausible sabotage base rates, and derive how much audit budget is wasted vs. caught. Then test a two-stage 'confirmatory test' (cheap monitor screen -> expensive monitor confirm) like sequential screening and quantify the precision gain.\n\n**Why it matters:** Reframes control monitoring as a low-prevalence screening problem, giving facilitators a clear rule for how much to trust an alarm and how to allocate audit budget. Pure analysis on existing benchmark numbers, zero training, high counterfactual value for the diffuse-reward auditing problem.\n\n**Relevant context:** Screening-test Bayes theorem: at low prevalence false positives dominate even for high-specificity tests (StatsDirect screening; epidemiology). Contact-tracing literature uses two-stage and confirmatory testing for precision (PNAS 2021 epidemic inference). Control protocols already discuss limited audit budgets (Ctrl-Z arXiv:2504.10374)."
+    }
+  },
+  {
+    "idea_id": "gen-261",
+    "title": "Encoding-Based Obfuscation Attacks",
+    "run_id": "2026-06-15T19-24-29",
+    "quick_score": 4,
+    "quick_reasoning": "Maps the comprehension-vs-refusal gap for encoding jailbreaks, a sharp robustness diagnostic.",
+    "quick_confidence": 0.78,
+    "eliminated": false,
+    "elimination_reason": null,
+    "original_idea": {
+      "idea_id": "gen-261",
+      "run_id": "2026-06-15T19-24-29",
+      "stage": "generate",
+      "timestamp": "2026-06-15T21:36:03Z",
+      "subfield": "adversarial_robustness",
+      "generation_strategy": "failure_mode_investigation",
+      "confidence": 0.73,
+      "body": "# Encoding-Based Obfuscation Attacks: Where Is the Tokenizer's Comprehension/Refusal Gap?\n\n**Problem:** Attacks that encode harmful requests (base64, leetspeak, ROT13, character-spacing) sometimes bypass safety because the model can still decode the meaning but the safety filter does not trigger. The boundary \u2014 which encodings the model comprehends yet fails to refuse \u2014 is not systematically mapped.\n\n**Direction:** For a fixed harmful prompt set, apply a battery of reversible encodings at varying intensity. Separately measure (a) whether the model COMPREHENDS the request (can it restate the decoded meaning?) and (b) whether it REFUSES. Plot the comprehension-vs-refusal gap per encoding to locate the dangerous region where understanding is preserved but refusal is lost.\n\n**Why it matters:** Decoupling comprehension from refusal pinpoints whether the failure is 'didn't understand' (benign) or 'understood but didn't refuse' (true safety hole) \u2014 a sharper diagnostic than raw ASR. Trivial to implement, pure inference, classic beginner experiment with clear metrics.\n\n**Relevant context:** Encoding/obfuscation jailbreaks are documented in adaptive-attack work (tml-epfl/llm-adaptive-attacks, ICLR 2025) and feature-mechanism studies (arXiv:2411.03343). Multilingual/translation jailbreak literature (arXiv:2310.02446) shows the same comprehend-but-not-refuse pattern, motivating the explicit comprehension-vs-refusal decomposition."
+    }
+  },
+  {
+    "idea_id": "gen-2610",
+    "title": "Canary Tokens for Agents",
+    "run_id": "2026-06-15T19-24-29",
+    "quick_score": 4,
+    "quick_reasoning": "Training-free containment primitive detecting covert data exfiltration by agents.",
+    "quick_confidence": 0.78,
+    "eliminated": false,
+    "elimination_reason": null,
+    "original_idea": {
+      "idea_id": "gen-2610",
+      "run_id": "2026-06-15T19-24-29",
+      "stage": "generate",
+      "timestamp": "2026-06-15T21:36:04Z",
+      "subfield": "ai_control",
+      "generation_strategy": "cross_domain_transfer",
+      "confidence": 0.71,
+      "body": "# Canary Tokens for Agents: Detecting Covert Data Exfiltration\n\n**Problem:** An untrusted agent given access to a filesystem or tools might covertly read and leak sensitive data. Monitors that only read the visible action stream may miss whether the agent actually accessed and used forbidden information.\n\n**Direction:** Port cybersecurity canary tokens / honeyfiles into agent sandboxes: plant decoy 'secret' files (fake API keys, fake credentials, unique tracer strings) that no legitimate task should ever touch. Run open-model agents on benign and sabotage tasks in a sandbox and measure how often canary access fires for each, and whether sabotage agents trip canaries before a behavioral monitor would catch them. Compare canary-triggered detection vs. transcript monitoring.\n\n**Why it matters:** A cheap, training-free containment primitive that detects exfiltration intent by action rather than verbalized plan, useful against agents that attack without revealing plans in CoT. Builds strategically valuable sandbox infrastructure as a small prototype.\n\n**Relevant context:** Canary tokens/honeyfiles fire alerts when decoy assets are accessed; recent work uses them against autonomous AI hacking agents (Tracebit; tl;dr sec #329; steganographic canaries arXiv:2603.28655). SHADE-Arena agents have filesystem/email/cloud-drive tools (arXiv:2506.15740)."
+    }
+  },
+  {
+    "idea_id": "gen-2611",
+    "title": "Defense-in-Depth Layer Independence",
+    "run_id": "2026-06-15T19-24-29",
+    "quick_score": 4,
+    "quick_reasoning": "Measures correlated monitor misses, central to any layered control safety case.",
+    "quick_confidence": 0.8,
+    "eliminated": false,
+    "elimination_reason": null,
+    "original_idea": {
+      "idea_id": "gen-2611",
+      "run_id": "2026-06-15T19-24-29",
+      "stage": "generate",
+      "timestamp": "2026-06-15T21:36:04Z",
+      "subfield": "ai_control",
+      "generation_strategy": "cross_domain_transfer",
+      "confidence": 0.76,
+      "body": "# Defense-in-Depth Layer Independence: Are Monitor Errors Correlated?\n\n**Problem:** The Swiss-cheese / defense-in-depth model only works if layers fail independently. If two control monitors (e.g., a CoT monitor and an action monitor) tend to miss the same attacks, stacking them gives far less safety than their individual numbers suggest, yet teams rarely measure this correlation.\n\n**Direction:** Import reliability engineering's common-cause failure analysis. Run several distinct cheap monitors (different open models, different prompt scaffolds, CoT-based vs action-based) over the same SHADE-Arena sabotage trajectories, record per-trajectory hit/miss, and compute the correlation of their misses. Estimate the true stacked false-negative rate vs. the naive independence assumption, and identify attack types that defeat all layers simultaneously.\n\n**Why it matters:** Tells control designers whether their layered defenses are genuinely independent or share a common blind spot, which is central to any safety case. Cheap meta-analysis over existing monitors, no lab infra, directly addresses the defense-in-depth assumption.\n\n**Relevant context:** Swiss-cheese / defense-in-depth requires independent failure layers (Reason; arXiv:2408.02205 Swiss Cheese Model for AI Safety). Reliability engineering studies common-cause failures. Robust control needs layered heterogeneous constraints (control literature). Monitor evasion is correlated across diverse monitors (arXiv:2510.09462)."
+    }
+  },
+  {
+    "idea_id": "gen-2612",
+    "title": "Sequential Probability Ratio Test for Audit-Budget-Efficient Monitoring",
+    "run_id": "2026-06-15T19-24-29",
+    "quick_score": 4,
+    "quick_reasoning": "Brings sample-optimal stopping to resample/defer control protocols at fixed safety.",
+    "quick_confidence": 0.78,
+    "eliminated": false,
+    "elimination_reason": null,
+    "original_idea": {
+      "idea_id": "gen-2612",
+      "run_id": "2026-06-15T19-24-29",
+      "stage": "generate",
+      "timestamp": "2026-06-15T21:36:04Z",
+      "subfield": "ai_control",
+      "generation_strategy": "cross_domain_transfer",
+      "confidence": 0.74,
+      "body": "# Sequential Probability Ratio Test for Audit-Budget-Efficient Monitoring\n\n**Problem:** Auditing every agent action with an expensive trusted model is too costly; auditing too few misses sabotage. Control protocols need to decide on the fly how many resamples/checks an action warrants before deciding 'safe' or 'escalate.'\n\n**Direction:** Apply Wald's Sequential Probability Ratio Test (SPRT) from sequential analysis. For each flagged action, accumulate evidence from cheap repeated monitor queries (or resamples) until the log-likelihood ratio crosses an accept/escalate threshold, giving the minimum samples needed per decision at target error rates. Benchmark expected monitor-calls-per-decision vs. fixed-N sampling on replayed control trajectories.\n\n**Why it matters:** Brings provably sample-optimal stopping to the resample/defer family of control protocols, cutting audit cost at fixed safety. Statistics-only, runs on logged trajectories, complements Redwood's resampling work without needing their compute.\n\n**Relevant context:** SPRT minimizes expected samples for given error rates (Wald; sequential analysis). Control resample/defer protocols boost safety from 50% to 96% but are sample-hungry (Ctrl-Z arXiv:2504.10374; Evaluating Control Protocols arXiv:2511.02997)."
+    }
+  },
+  {
+    "idea_id": "gen-2613",
+    "title": "Conformal Prediction for Distribution-Free Monitor Alarm Thresholds",
+    "run_id": "2026-06-15T19-24-29",
+    "quick_score": 4,
+    "quick_reasoning": "Provides calibrated false-alarm guarantees for control monitor thresholds.",
+    "quick_confidence": 0.78,
+    "eliminated": false,
+    "elimination_reason": null,
+    "original_idea": {
+      "idea_id": "gen-2613",
+      "run_id": "2026-06-15T19-24-29",
+      "stage": "generate",
+      "timestamp": "2026-06-15T21:36:04Z",
+      "subfield": "ai_control",
+      "generation_strategy": "cross_domain_transfer",
+      "confidence": 0.7,
+      "body": "# Conformal Prediction for Distribution-Free Monitor Alarm Thresholds\n\n**Problem:** Monitor suspicion-score thresholds are usually hand-tuned, giving no guarantee on the false-alarm rate and breaking when the benign task distribution shifts. Control needs calibrated thresholds with formal error guarantees.\n\n**Direction:** Import conformal prediction (and conformal change detection) to set monitor thresholds with a distribution-free guarantee on benign false-alarm rate. Calibrate on held-out benign agent trajectories, then evaluate realized false-alarm and miss rates on benign + sabotage test trajectories, and stress-test under induced benign covariate shift (different task domains) to see whether the guarantee holds.\n\n**Why it matters:** Replaces arbitrary thresholds with a calibrated, auditable false-alarm guarantee, important for any deployment safety case. Method is lightweight, training-free, and addresses the fuzzy threshold-setting problem labs rarely formalize.\n\n**Relevant context:** Conformal prediction gives distribution-free coverage guarantees; conformal/weighted-martingale methods extend to process monitoring and change detection (arXiv:2512.23602 conformal process monitoring; WATCH arXiv:2505.04608). Control monitors currently use ad hoc thresholds."
+    }
+  },
+  {
+    "idea_id": "gen-2614",
+    "title": "Fault Tree Analysis of an AI Control Protocol",
+    "run_id": "2026-06-15T19-24-29",
+    "quick_score": 4,
+    "quick_reasoning": "Turns control safety cases into quantitative risk models identifying weakest links.",
+    "quick_confidence": 0.76,
+    "eliminated": false,
+    "elimination_reason": null,
+    "original_idea": {
+      "idea_id": "gen-2614",
+      "run_id": "2026-06-15T19-24-29",
+      "stage": "generate",
+      "timestamp": "2026-06-15T21:36:04Z",
+      "subfield": "ai_control",
+      "generation_strategy": "cross_domain_transfer",
+      "confidence": 0.72,
+      "body": "# Fault Tree Analysis of an AI Control Protocol\n\n**Problem:** Control safety cases describe a protocol (monitor + resample + defer + human audit) but rarely lay out, quantitatively, the combinations of component failures that lead to an undetected harmful action. Without this, it's unclear which component is the weakest link.\n\n**Direction:** Apply Fault Tree Analysis (FTA) from systems safety engineering. Decompose a published control protocol into events (monitor miss, audit skipped due to budget, deferral model also compromised), populate leaf probabilities from measured benchmark numbers, and compute the top-event probability of an undetected catastrophic action plus minimal cut sets (smallest failure combos). Sensitivity-analyze which leaf most reduces risk.\n\n**Why it matters:** Turns qualitative control safety cases into a quantitative, inspectable risk model that highlights where to invest. Pure modeling on public numbers, no compute, exactly the kind of structured reasoning labs lack bandwidth to do carefully.\n\n**Relevant context:** FTA is standard in aerospace/nuclear safety for computing top-event probability and minimal cut sets. Control safety-case sketches exist (arXiv:2501.17315) and protocol component numbers are published (Ctrl-Z arXiv:2504.10374; arXiv:2511.02997)."
+    }
+  },
+  {
+    "idea_id": "gen-2615",
+    "title": "Linguistic Deception Cues from Forensic Psychology as Cheap Monitor Features",
+    "run_id": "2026-06-15T19-24-29",
+    "quick_score": 4,
+    "quick_reasoning": "Tests interpretable deception features as a cheap CoT-monitor screen in control.",
+    "quick_confidence": 0.74,
+    "eliminated": false,
+    "elimination_reason": null,
+    "original_idea": {
+      "idea_id": "gen-2615",
+      "run_id": "2026-06-15T19-24-29",
+      "stage": "generate",
+      "timestamp": "2026-06-15T21:36:04Z",
+      "subfield": "ai_control",
+      "generation_strategy": "cross_domain_transfer",
+      "confidence": 0.69,
+      "body": "# Linguistic Deception Cues from Forensic Psychology as Cheap Monitor Features\n\n**Problem:** CoT monitors usually rely on an expensive LLM to read reasoning traces. Cheaper, interpretable signals of deception would be valuable, especially as a first-pass screen, and would help us understand what makes a CoT look deceptive.\n\n**Direction:** Import statement-analysis / deception-detection features from forensic psychology and computational linguistics (hedging, distancing language, reduced first-person pronouns, increased cognitive-load markers, lexical diversity). Extract these features from honest vs. sabotage-attempt CoTs in SHADE-Arena, fit a simple logistic regression, and measure how much of an LLM monitor's detection accuracy these cheap features recover. Report which features carry signal.\n\n**Why it matters:** Yields an interpretable, near-free CoT-screening layer and tests whether classic deception markers transfer to model 'deception,' a fresh angle on CoT monitoring. Logistic regression on extracted features fits a 30h budget with no training.\n\n**Relevant context:** Forensic deception literature (Reality Monitoring, LIWC-style markers) links deception to pronoun/hedging/cognitive-load cues. CoT monitoring is 'substantially more informative' than output-only for deception (GPT-5 system card). Obfuscated CoTs evade monitors (arXiv:2510.19851, arXiv:2511.11584)."
+    }
+  },
+  {
+    "idea_id": "gen-2616",
+    "title": "EWMA Charts for Per-Tool Anomaly Profiling in Agent Deployments",
+    "run_id": "2026-06-15T19-24-29",
+    "quick_score": 4,
+    "quick_reasoning": "Per-tool anomaly detection localizing capability abuse for kill-switch design.",
+    "quick_confidence": 0.76,
+    "eliminated": false,
+    "elimination_reason": null,
+    "original_idea": {
+      "idea_id": "gen-2616",
+      "run_id": "2026-06-15T19-24-29",
+      "stage": "generate",
+      "timestamp": "2026-06-15T21:36:04Z",
+      "subfield": "ai_control",
+      "generation_strategy": "cross_domain_transfer",
+      "confidence": 0.71,
+      "body": "# EWMA Charts for Per-Tool Anomaly Profiling in Agent Deployments\n\n**Problem:** Agents call many tools; a sabotage often manifests as an unusual rate or argument pattern for one specific tool (e.g., sudden bursts of file writes or network calls). Aggregate monitoring can wash this out.\n\n**Direction:** Apply per-stream EWMA (exponentially weighted moving average) control charts, one per tool/argument-type, to an agent's action stream. Learn benign EWMA bounds from clean trajectories, then run sabotage trajectories and detect which tool-stream chart fires first and how early relative to the actual harmful action. Compare to a single global monitor.\n\n**Why it matters:** Provides fine-grained, interpretable, real-time tool-usage anomaly detection that localizes which capability is being abused, useful for kill-switch design. EWMA is trivial to implement and runs on logged trajectories with zero training.\n\n**Relevant context:** EWMA control charts detect small sustained shifts in a monitored stream (SPC; arXiv:2503.01858 AI in SPC survey). SHADE-Arena environments expose 340+ tools (arXiv:2506.15740), giving rich per-tool streams to chart."
+    }
+  },
+  {
+    "idea_id": "gen-2617",
+    "title": "N-Version Programming: Diverse Monitor Ensembles",
+    "run_id": "2026-06-15T19-24-29",
+    "quick_score": 4,
+    "quick_reasoning": "Tests whether diverse monitor ensembles reduce correlated misses, central to defense-in-depth.",
+    "quick_confidence": 0.78,
+    "eliminated": false,
+    "elimination_reason": null,
+    "original_idea": {
+      "idea_id": "gen-2617",
+      "run_id": "2026-06-15T19-24-29",
+      "stage": "generate",
+      "timestamp": "2026-06-15T21:36:04Z",
+      "subfield": "ai_control",
+      "generation_strategy": "cross_domain_transfer",
+      "confidence": 0.72,
+      "body": "# N-Version Programming: Diverse Monitor Ensembles to Reduce Correlated Misses\n\n**Problem:** A single monitor model shares the biases and blind spots of its training. Sabotage that exploits those blind spots passes undetected. We want to know if deliberately diverse monitors catch what a homogeneous monitor misses.\n\n**Direction:** Borrow N-version programming from fault-tolerant software: assemble monitors that are deliberately diverse along axes (different model families, different prompting strategies, code-AST-based vs natural-language, different temperatures) and combine via voting. On SHADE-Arena sabotage cases, measure marginal detection gain from each added diverse version and identify the diversity axis that most reduces the joint miss rate.\n\n**Why it matters:** Empirically grounds how to build a robust monitor ensemble and how much diversity actually buys, central to defense-in-depth. Uses only open/API models and replay, achievable in 30h, counterfactually valuable since labs default to one strong monitor.\n\n**Relevant context:** N-version programming uses independently developed versions to reduce common-mode failures (Avizienis, fault tolerance). Adaptive attacks subvert single trusted monitors (arXiv:2510.09462); diverse monitors are still evaded (SHADE-Arena arXiv:2506.15740), making the diversity-vs-correlation question open."
+    }
+  },
+  {
+    "idea_id": "gen-2618",
+    "title": "Benford's Law and Digit-Distribution Audits for Numeric Sabotage",
+    "run_id": "2026-06-15T19-24-29",
+    "quick_score": 4,
+    "quick_reasoning": "Cheap statistical tripwire for numeric sabotage, expanding the control toolbox to data integrity.",
+    "quick_confidence": 0.72,
+    "eliminated": false,
+    "elimination_reason": null,
+    "original_idea": {
+      "idea_id": "gen-2618",
+      "run_id": "2026-06-15T19-24-29",
+      "stage": "generate",
+      "timestamp": "2026-06-15T21:36:04Z",
+      "subfield": "ai_control",
+      "generation_strategy": "cross_domain_transfer",
+      "confidence": 0.66,
+      "body": "# Benford's Law and Digit-Distribution Audits for Numeric Sabotage\n\n**Problem:** Agents performing finance/accounting/data tasks could subtly tamper with numbers (skim values, inject backdoored constants). Reading every number with an LLM monitor is expensive and unreliable for spotting statistically anomalous tampering.\n\n**Direction:** Import Benford's Law and digit-distribution forensic auditing (used in accounting fraud detection). Have open-model agents complete benign vs. tampered numeric/financial tasks, then run Benford and last-digit/round-number tests on their outputs to detect manipulation, measuring detection power and false alarms vs. an LLM monitor on the same cases.\n\n**Why it matters:** A cheap, training-free statistical tripwire for numeric sabotage that an LLM monitor may miss, expanding the control toolbox to data-integrity attacks. Counterfactually valuable: no lab resources, targets a diffuse, hard-to-monitor failure mode.\n\n**Relevant context:** Benford's Law digit-distribution tests are a staple of forensic accounting/fraud detection. SHADE-Arena includes finance-style tasks with numeric side-task objectives (arXiv:2506.15740). Numeric tampering is a plausible covert side task in control evals."
+    }
+  },
+  {
+    "idea_id": "gen-2619",
+    "title": "Game-Theoretic Inspection Game Equilibria for Setting Audit Rates",
+    "run_id": "2026-06-15T19-24-29",
+    "quick_score": 4,
+    "quick_reasoning": "Derives incentive-aware audit rates for control protocols via inspection-game equilibria.",
+    "quick_confidence": 0.76,
+    "eliminated": false,
+    "elimination_reason": null,
+    "original_idea": {
+      "idea_id": "gen-2619",
+      "run_id": "2026-06-15T19-24-29",
+      "stage": "generate",
+      "timestamp": "2026-06-15T21:36:04Z",
+      "subfield": "ai_control",
+      "generation_strategy": "cross_domain_transfer",
+      "confidence": 0.68,
+      "body": "# Game-Theoretic Inspection Game Equilibria for Setting Audit Rates\n\n**Problem:** How often should a blue team randomly audit an untrusted agent's actions? Too rarely and a strategic agent learns it can sabotage safely; the optimal rate is a strategic, not heuristic, choice.\n\n**Direction:** Import the economics 'inspection game' / customs-inspection model. Formalize blue-team audit probability vs. red-team sabotage probability as a two-player game, solve for the mixed-strategy Nash equilibrium given measured audit cost and catch probability, then validate the predicted sabotage-deterrence threshold against simulated agents in ControlArena that sabotage only when expected payoff is positive.\n\n**Why it matters:** Gives a principled, incentive-aware audit rate rather than a guess, and predicts when sparse auditing still deters a rational scheming agent. Theory plus light simulation, no training, directly informs control-protocol design labs underspecify.\n\n**Relevant context:** Inspection games / customs-inspection models yield mixed-strategy equilibria for optimal monitoring frequency (game theory; Avenhaus inspection games). The Oversight Game models agent safety-vs-autonomy as cooperative game (arXiv:2510.26752). Control is explicitly red-team vs blue-team (Redwood AI Control)."
+    }
+  },
+  {
+    "idea_id": "gen-262",
+    "title": "Multi-Turn Escalation: Crescendo Tipping",
+    "run_id": "2026-06-15T19-24-29",
+    "quick_score": 4,
+    "quick_reasoning": "Characterizes crescendo multi-turn jailbreak tipping dynamics, the dominant practical attack vector.",
+    "quick_confidence": 0.8,
+    "eliminated": false,
+    "elimination_reason": null,
+    "original_idea": {
+      "idea_id": "gen-262",
+      "run_id": "2026-06-15T19-24-29",
+      "stage": "generate",
+      "timestamp": "2026-06-15T21:36:03Z",
+      "subfield": "adversarial_robustness",
+      "generation_strategy": "failure_mode_investigation",
+      "confidence": 0.72,
+      "body": "# Multi-Turn Escalation: At Which Turn Does Crescendo-Style Compliance Tip Over?\n\n**Problem:** Multi-turn 'crescendo' attacks gradually escalate from benign to harmful and now outperform single-turn translation/jailbreak attacks. But the turn-by-turn dynamics \u2014 at which turn the model tips, and whether resetting context restores refusal \u2014 are not well characterized on open models.\n\n**Direction:** Script graded escalation dialogues (benign -> borderline -> harmful) and run them on open models, logging refusal at each turn. Identify the modal 'tipping turn,' test whether inserting a benign turn or a system-prompt reminder mid-conversation restores refusal, and whether tipping depends on conversation length vs. semantic proximity to the goal.\n\n**Why it matters:** Multi-turn is the currently-dominant practical attack vector (70.9% on DeepSeek reported), yet defenses are mostly single-turn. Characterizing the tipping dynamics and whether mid-conversation reminders help is directly actionable for chat-deployment defense and needs only open models + inference.\n\n**Relevant context:** Multilingual/translation work notes multi-turn approaches reach 70.9% ASR on DeepSeek where single-turn fails (welodata, DAMO-NLP-SG). 'Leveraging the Context through Multi-Round Interactions for Jailbreaking' (arXiv:2402.09177) formalizes multi-round attacks. AISafetyLab provides multi-turn attack scaffolding."
+    }
+  },
+  {
+    "idea_id": "gen-2620",
+    "title": "Cognitive-Load Probing: Dual-Task Interference as a Deception Tell",
+    "run_id": "2026-06-15T19-24-29",
+    "quick_score": 4,
+    "quick_reasoning": "Tests a behavioral sabotage tell surviving CoT obfuscation, a control monitoring angle.",
+    "quick_confidence": 0.72,
+    "eliminated": false,
+    "elimination_reason": null,
+    "original_idea": {
+      "idea_id": "gen-2620",
+      "run_id": "2026-06-15T19-24-29",
+      "stage": "generate",
+      "timestamp": "2026-06-15T21:36:04Z",
+      "subfield": "ai_control",
+      "generation_strategy": "cross_domain_transfer",
+      "confidence": 0.65,
+      "body": "# Cognitive-Load Probing: Dual-Task Interference as a Deception Tell\n\n**Problem:** Cognitive science finds that lying is more cognitively demanding than truth-telling. If an agent secretly pursuing a side task is under extra cognitive load, that load might leak into measurable degradation on a concurrent benign task.\n\n**Direction:** Adapt the dual-task / cognitive-load paradigm from deception psychology. Compare an open model's performance and latency on a secondary benign sub-task when it is honestly doing only the main task vs. when it is also covertly pursuing a hidden side task (SHADE-Arena attack mode). Measure whether the side-task condition degrades secondary-task accuracy or increases token usage in a detectable way.\n\n**Why it matters:** Tests whether a classic human deception signature transfers to LLM agents, offering a behavioral (not CoT-dependent) sabotage tell that survives CoT obfuscation. Pure behavioral evaluation on an open model organism, scoped to 30h.\n\n**Relevant context:** Cognitive-load deception theory (Vrij) imposes secondary tasks to amplify liars' errors. SHADE-Arena gives matched honest/attack agent conditions (arXiv:2506.15740). Behavioral tells are valuable because CoT can be obfuscated (arXiv:2510.19851)."
+    }
+  },
+  {
+    "idea_id": "gen-2621",
+    "title": "Fuzzing the Sandbox",
+    "run_id": "2026-06-15T19-24-29",
+    "quick_score": 4,
+    "quick_reasoning": "Coverage-guided search for agent containment escapes, reusable safety infrastructure.",
+    "quick_confidence": 0.76,
+    "eliminated": false,
+    "elimination_reason": null,
+    "original_idea": {
+      "idea_id": "gen-2621",
+      "run_id": "2026-06-15T19-24-29",
+      "stage": "generate",
+      "timestamp": "2026-06-15T21:36:04Z",
+      "subfield": "ai_control",
+      "generation_strategy": "cross_domain_transfer",
+      "confidence": 0.67,
+      "body": "# Fuzzing the Sandbox: Coverage-Guided Discovery of Containment Escapes\n\n**Problem:** Agent sandboxes are supposed to prevent irreversible harmful actions, but we rarely systematically search for inputs/states that let an agent slip past containment. Manual red-teaming covers few cases.\n\n**Direction:** Apply coverage-guided fuzzing from software security to a small agent sandbox. Build a minimal tool-call sandbox, define instrumentation/coverage over guardrail branches, and use a fuzzing loop (mutating agent prompts/tool arguments) to maximize coverage of containment-check code paths, logging any sequence that reaches a forbidden action. Report which guardrail branches were never exercised.\n\n**Why it matters:** Produces strategically valuable, reusable containment-testing infrastructure and exposes untested guardrail paths, mirroring how fuzzing finds security bugs. Buildable as a small prototype on a single machine, high counterfactual value for safer sandboxes.\n\n**Relevant context:** Coverage-guided fuzzers (AFL/libFuzzer) find security bugs by maximizing branch coverage. Runtime guardrails for agents are layered and incomplete (arXiv:2604.05229; Swiss Cheese arXiv:2408.02205). ControlArena offers sandboxed agent settings (control-arena.aisi.org.uk)."
+    }
+  },
+  {
+    "idea_id": "gen-2622",
+    "title": "Reliability Acceptance Sampling for Control-Eval Evidence",
+    "run_id": "2026-06-15T19-24-29",
+    "quick_score": 4,
+    "quick_reasoning": "Gives control evals a rigorous sample-size and confidence framework for safety claims.",
+    "quick_confidence": 0.76,
+    "eliminated": false,
+    "elimination_reason": null,
+    "original_idea": {
+      "idea_id": "gen-2622",
+      "run_id": "2026-06-15T19-24-29",
+      "stage": "generate",
+      "timestamp": "2026-06-15T21:36:04Z",
+      "subfield": "ai_control",
+      "generation_strategy": "cross_domain_transfer",
+      "confidence": 0.73,
+      "body": "# Reliability Acceptance Sampling for Deciding How Much Control-Eval Evidence Is Enough\n\n**Problem:** Control evaluations report a safety score from a finite number of episodes, but rarely state the confidence interval or how many episodes are needed to certify safety above a threshold. Decisions get made on noisy point estimates.\n\n**Direction:** Import acceptance sampling and reliability demonstration testing from manufacturing QA. Treat each control episode as a pass/fail trial, derive the operating-characteristic curve and the number of clean episodes required to certify (with stated confidence) that the undetected-sabotage rate is below a target, then re-analyze published control-eval results to compute how strong their evidence actually is.\n\n**Why it matters:** Gives control evals a rigorous sample-size and confidence framework so safety claims aren't over-read from small samples. Statistics-only re-analysis, no compute, directly improves the epistemics of safety cases.\n\n**Relevant context:** Acceptance sampling / reliability demonstration testing (MIL-STD-105, OC curves) certify defect rates from finite samples. Control evals report safety scores over limited episodes (Ctrl-Z arXiv:2504.10374; arXiv:2511.02997) often without CIs."
+    }
+  },
+  {
+    "idea_id": "gen-2623",
+    "title": "Provenance Tracking (Taint Analysis) for Tracing Sabotage",
+    "run_id": "2026-06-15T19-24-29",
+    "quick_score": 4,
+    "quick_reasoning": "Enables targeted rollback/resampling and distinguishes concentrated vs distributed control failures.",
+    "quick_confidence": 0.76,
+    "eliminated": false,
+    "elimination_reason": null,
+    "original_idea": {
+      "idea_id": "gen-2623",
+      "run_id": "2026-06-15T19-24-29",
+      "stage": "generate",
+      "timestamp": "2026-06-15T21:36:04Z",
+      "subfield": "ai_control",
+      "generation_strategy": "cross_domain_transfer",
+      "confidence": 0.66,
+      "body": "# Provenance Tracking (Taint Analysis) for Tracing Sabotage Through Agent Trajectories\n\n**Problem:** When a monitor flags a harmful final action, it's hard to know which earlier step planted it. Without provenance, blue teams can't tell whether an attack was a single act or a multi-step plan, which matters for resampling/rollback decisions.\n\n**Direction:** Adapt dynamic taint analysis / data provenance from program analysis. Instrument a sandboxed agent so each piece of state is tagged with the action(s) that produced it; when a harmful action occurs, back-trace the taint chain to the originating steps. On SHADE-Arena attack trajectories, measure how far back the true sabotage seed is from the visible harm and whether taint chains distinguish single-step vs multi-step attacks.\n\n**Why it matters:** Enables targeted rollback/resampling and supports the 'concentrated vs distributed failure' distinction UK AISI calls out. Builds reusable monitoring infrastructure on a single machine, no training, novel application of taint tracking.\n\n**Relevant context:** Dynamic taint analysis tracks data flow from sources to sinks for security. UK AISI flags detecting concentrated vs distributed failures as needing different approaches (ai_control context). Resampling/rollback decisions depend on attack structure (Ctrl-Z arXiv:2504.10374)."
+    }
+  },
+  {
+    "idea_id": "gen-2624",
+    "title": "Differential Testing of Monitor Models Against a Reference Oracle",
+    "run_id": "2026-06-15T19-24-29",
+    "quick_score": 4,
+    "quick_reasoning": "Mines monitor disagreement cases to characterize weak-monitor failures in control.",
+    "quick_confidence": 0.76,
+    "eliminated": false,
+    "elimination_reason": null,
+    "original_idea": {
+      "idea_id": "gen-2624",
+      "run_id": "2026-06-15T19-24-29",
+      "stage": "generate",
+      "timestamp": "2026-06-15T21:36:04Z",
+      "subfield": "ai_control",
+      "generation_strategy": "cross_domain_transfer",
+      "confidence": 0.72,
+      "body": "# Differential Testing of Monitor Models Against a Reference Oracle\n\n**Problem:** Different monitor models disagree on which actions are suspicious, but we lack a systematic way to find the inputs where a cheap monitor diverges from a strong reference, which are exactly the dangerous cases to study.\n\n**Direction:** Import differential testing from compiler/software verification: run many cheap candidate monitors and one strong reference monitor over the same large set of agent actions, automatically surface every disagreement, then cluster the disagreement cases to characterize systematic failure modes of the cheap monitors. The disagreement set becomes a cheap, targeted hard-case benchmark.\n\n**Why it matters:** Cheaply mines the highest-value training/eval cases (monitor disagreements) and characterizes when trusted-but-weak monitors fail, informing trusted-monitoring protocol design. API-only, no training, generates a reusable artifact for the community.\n\n**Relevant context:** Differential testing (e.g., Csmith for compilers) finds bugs by cross-checking implementations on shared inputs. Trusted monitoring uses a weaker trusted model whose failures matter (Redwood AI Control 2023; arXiv:2511.02997). CoT vs action monitors disagree (GPT-5 system card)."
+    }
+  },
+  {
+    "idea_id": "gen-2625",
+    "title": "Survival Analysis of Time-to-Detection for Control Protocols",
+    "run_id": "2026-06-15T19-24-29",
+    "quick_score": 4,
+    "quick_reasoning": "Censoring-aware comparison of detection speed across control protocols, crucial for early detection.",
+    "quick_confidence": 0.76,
+    "eliminated": false,
+    "elimination_reason": null,
+    "original_idea": {
+      "idea_id": "gen-2625",
+      "run_id": "2026-06-15T19-24-29",
+      "stage": "generate",
+      "timestamp": "2026-06-15T21:36:04Z",
+      "subfield": "ai_control",
+      "generation_strategy": "cross_domain_transfer",
+      "confidence": 0.71,
+      "body": "# Survival Analysis of Time-to-Detection for Control Protocols\n\n**Problem:** Control protocols are compared by final safety score, but two protocols with the same score can differ hugely in how quickly they catch sabotage, and many trajectories are censored (sabotage never caught). Standard averages mishandle this.\n\n**Direction:** Import survival analysis (Kaplan-Meier curves, Cox proportional hazards, right-censoring) from biostatistics. Treat 'time/steps until sabotage is detected' as a survival time with censored cases (never caught), and compare protocols via survival curves and hazard ratios on replayed control trajectories. Identify which protocol features most increase the detection hazard.\n\n**Why it matters:** Gives a principled, censoring-aware way to compare detection speed, not just eventual catch rate, crucial when early detection prevents irreversible harm. Pure statistics on logged trajectories, no compute, a methodology upgrade labs rarely apply.\n\n**Relevant context:** Survival analysis (Kaplan-Meier, Cox) handles right-censored time-to-event data in medicine. Detection delay is the core SPC metric too. Control protocols report aggregate safety but not detection-time distributions (Ctrl-Z arXiv:2504.10374; arXiv:2511.02997)."
+    }
+  },
+  {
+    "idea_id": "gen-2626",
+    "title": "Epidemic Branching-Process Model of Multi-Agent Sabotage Spread",
+    "run_id": "2026-06-15T19-24-29",
+    "quick_score": 4,
+    "quick_reasoning": "Frames multi-agent control as epidemic containment with an interpretable monitoring threshold.",
+    "quick_confidence": 0.72,
+    "eliminated": false,
+    "elimination_reason": null,
+    "original_idea": {
+      "idea_id": "gen-2626",
+      "run_id": "2026-06-15T19-24-29",
+      "stage": "generate",
+      "timestamp": "2026-06-15T21:36:04Z",
+      "subfield": "ai_control",
+      "generation_strategy": "cross_domain_transfer",
+      "confidence": 0.64,
+      "body": "# Epidemic Branching-Process Model of Multi-Agent Sabotage Spread\n\n**Problem:** In multi-agent systems, one compromised/scheming agent can influence others (passing along subtly poisoned instructions or data). We lack simple models for whether such influence dies out or spreads, and what monitoring 'reproduction number' keeps it contained.\n\n**Direction:** Import the epidemiological branching process / R0 (basic reproduction number) framework. Set up a small simulation where agents pass messages/artifacts, define an effective reproduction number for sabotage transmission, and empirically estimate how monitor catch-probability lowers R below 1 (containment). Use open models in a lightweight multi-agent loop.\n\n**Why it matters:** Frames multi-agent control as an epidemic-containment problem and yields an interpretable monitoring threshold for stopping sabotage spread, a medium-horizon threat labs underweight. Small simulation feasible in 30h with consumer compute.\n\n**Relevant context:** Epidemic R0 < 1 implies containment; branching processes model spread. Internet-of-agents safety raises cascading-compromise concerns (arXiv:2512.00520). Multi-agent control is an emerging area within control research."
+    }
+  },
+  {
+    "idea_id": "gen-2627",
+    "title": "Regression-Testing Monitors",
+    "run_id": "2026-06-15T19-24-29",
+    "quick_score": 4,
+    "quick_reasoning": "CI-style regression infrastructure so monitor quality doesn't silently rot across model updates.",
+    "quick_confidence": 0.76,
+    "eliminated": false,
+    "elimination_reason": null,
+    "original_idea": {
+      "idea_id": "gen-2627",
+      "run_id": "2026-06-15T19-24-29",
+      "stage": "generate",
+      "timestamp": "2026-06-15T21:36:04Z",
+      "subfield": "ai_control",
+      "generation_strategy": "cross_domain_transfer",
+      "confidence": 0.7,
+      "body": "# Regression-Testing Monitors: Detecting Silent Monitor Degradation Across Model Versions\n\n**Problem:** When the monitored agent model is upgraded (or the monitor itself is), a previously reliable monitor can silently degrade against the new model's attack style. There's no regression suite to catch this.\n\n**Direction:** Adapt token-efficient regression testing for non-deterministic AI workflows (AgentAssay-style) to monitors. Curate a fixed regression suite of labeled benign/sabotage trajectories, define stable metamorphic-style assertions tolerant to non-determinism, and run the suite whenever a monitor or agent version changes to flag detection regressions. Demonstrate by comparing monitor performance across two open-model versions on the same suite.\n\n**Why it matters:** Provides reusable CI-style regression infrastructure so monitor quality doesn't silently rot across model updates, a practical, long-lived asset. Buildable with API access only, high counterfactual value as maintenance tooling labs neglect publicly.\n\n**Relevant context:** AgentAssay does token-efficient regression testing for non-deterministic agent workflows (arXiv:2603.02601); metamorphic relations serve as CI/CD gates for agents. Monitors degrade as models become monitor-aware (arXiv:2510.19851)."
+    }
+  },
+  {
+    "idea_id": "gen-2628",
+    "title": "Signal Detection Theory (d-prime) to Disentangle Monitor Sensitivity from Bias",
+    "run_id": "2026-06-15T19-24-29",
+    "quick_score": 4,
+    "quick_reasoning": "Separates true monitor sensitivity from response bias, sharpening control eval hygiene.",
+    "quick_confidence": 0.78,
+    "eliminated": false,
+    "elimination_reason": null,
+    "original_idea": {
+      "idea_id": "gen-2628",
+      "run_id": "2026-06-15T19-24-29",
+      "stage": "generate",
+      "timestamp": "2026-06-15T21:36:04Z",
+      "subfield": "ai_control",
+      "generation_strategy": "cross_domain_transfer",
+      "confidence": 0.75,
+      "body": "# Signal Detection Theory (d-prime) to Disentangle Monitor Sensitivity from Bias\n\n**Problem:** When a monitor catches more sabotage, is it genuinely more discriminating or just more trigger-happy (raising false alarms too)? Accuracy and catch-rate conflate true sensitivity with response bias.\n\n**Direction:** Import Signal Detection Theory from psychophysics. For each monitor/prompt, compute d-prime (discriminability) and criterion c (response bias) from hit and false-alarm rates on benign/sabotage trajectories, then rank monitors and prompting strategies by true sensitivity independent of how cautious they were set. Test whether common 'be suspicious' prompt tweaks improve d-prime or merely shift criterion.\n\n**Why it matters:** Cleanly separates whether a monitor improvement is real discrimination or just a threshold shift, preventing illusory progress in monitor design. Trivial computation on existing benchmark outputs, no compute, sharpens the field's evaluation hygiene.\n\n**Relevant context:** Signal Detection Theory's d-prime/criterion separate sensitivity from bias (Green & Swets). Control monitors are tuned with ad hoc 'be suspicious' prompts; CoT monitoring informativeness is debated (GPT-5 system card). Maps directly onto monitor ROC analysis."
+    }
+  },
+  {
+    "idea_id": "gen-2629",
+    "title": "Formal Runtime Verification (Temporal-Logic Monitors) for Agent Action Streams",
+    "run_id": "2026-06-15T19-24-29",
+    "quick_score": 4,
+    "quick_reasoning": "Adds exact temporal-property enforcement as a deterministic control layer.",
+    "quick_confidence": 0.78,
+    "eliminated": false,
+    "elimination_reason": null,
+    "original_idea": {
+      "idea_id": "gen-2629",
+      "run_id": "2026-06-15T19-24-29",
+      "stage": "generate",
+      "timestamp": "2026-06-15T21:36:04Z",
+      "subfield": "ai_control",
+      "generation_strategy": "cross_domain_transfer",
+      "confidence": 0.69,
+      "body": "# Formal Runtime Verification (Temporal-Logic Monitors) for Agent Action Streams\n\n**Problem:** Many safety constraints are temporal ('never write to /etc after reading credentials', 'always confirm before irreversible delete') and an LLM monitor judging individual actions can miss the temporal pattern. We need exact enforcement of such properties.\n\n**Direction:** Import runtime verification with temporal logic (LTL/past-time LTL monitors) from formal methods. Specify a handful of safety properties as temporal-logic formulas, synthesize automaton monitors that consume the agent's action stream, and evaluate them on SHADE-Arena trajectories for catch rate and false alarms vs. an LLM monitor, highlighting attacks only the temporal monitor catches.\n\n**Why it matters:** Adds exact, cheap, interpretable enforcement of temporal safety properties as a complementary deterministic layer to fuzzy LLM monitors, supporting kill-switch/output-validation requirements. Lightweight to implement, no training, strengthens defense-in-depth.\n\n**Relevant context:** Runtime verification synthesizes monitors from LTL specs to check execution traces (Bauer/Leucker/Schallhart). Layered runtime guardrails translate governance norms into enforceable controls (arXiv:2604.05229). UK AISI lists minimum runtime controls as open (ai_control context)."
+    }
+  },
+  {
+    "idea_id": "gen-263",
+    "title": "System-Prompt Robustness",
+    "run_id": "2026-06-15T19-24-29",
+    "quick_score": 4,
+    "quick_reasoning": "Quantifies protective value and fragility of safety system prompts under attack.",
+    "quick_confidence": 0.78,
+    "eliminated": false,
+    "elimination_reason": null,
+    "original_idea": {
+      "idea_id": "gen-263",
+      "run_id": "2026-06-15T19-24-29",
+      "stage": "generate",
+      "timestamp": "2026-06-15T21:36:03Z",
+      "subfield": "adversarial_robustness",
+      "generation_strategy": "failure_mode_investigation",
+      "confidence": 0.74,
+      "body": "# System-Prompt Robustness: How Much Does a Safety System Prompt Actually Buy Under Attack?\n\n**Problem:** Deployers often rely on a safety system prompt as a cheap guardrail, but how much measurable robustness it adds against real attacks \u2014 and whether attackers can neutralize it with simple 'ignore previous instructions' or persona overrides \u2014 is rarely quantified head-to-head.\n\n**Direction:** For each attack family (prefilling, persona, many-shot, encoding), measure ASR with no system prompt, a weak safety system prompt, and a strong/explicit one. Then test attacker counters (instruction-override phrases) and measure how much of the system-prompt benefit they erase. Produce a per-attack 'system-prompt value' table.\n\n**Why it matters:** Quantifying the real protective value (and fragility) of system prompts is immediately useful to the many small deployers who depend on them, and it is a clean, low-cost study no lab needs to run. Pure inference on open models; basic statistics suffice.\n\n**Relevant context:** Shallow-alignment work (Qi et al., arXiv:2406.05946) implies system prompts cannot fix first-token vulnerabilities. Adaptive-attacks paper (ICLR 2025) shows simple attacks defeat aligned models regardless of prompting. AgentDojo and PandaGuard (arXiv:2505.13862) provide defense/attack scaffolds including system-prompt defenses."
+    }
+  },
+  {
+    "idea_id": "gen-2630",
+    "title": "Polygraph-Style Control Questions",
+    "run_id": "2026-06-15T19-24-29",
+    "quick_score": 4,
+    "quick_reasoning": "Per-deployment monitor self-calibration using known-innocent/guilty probes in control.",
+    "quick_confidence": 0.74,
+    "eliminated": false,
+    "elimination_reason": null,
+    "original_idea": {
+      "idea_id": "gen-2630",
+      "run_id": "2026-06-15T19-24-29",
+      "stage": "generate",
+      "timestamp": "2026-06-15T21:36:04Z",
+      "subfield": "ai_control",
+      "generation_strategy": "cross_domain_transfer",
+      "confidence": 0.64,
+      "body": "# Polygraph-Style Control Questions: Calibrating a Monitor with Known-Innocent and Known-Guilty Probes\n\n**Problem:** A monitor's raw suspicion score is hard to interpret in absolute terms. We lack a per-deployment calibration that anchors what 'normal' and 'definitely sabotaging' look like for the specific agent and task at hand.\n\n**Direction:** Borrow the polygraph 'comparison/control question' technique. For each task type, construct paired known-innocent and deliberately-known-guilty trajectory probes, measure the monitor's score distribution on each, and use the gap to calibrate and standardize the deployment-time threshold (z-scoring live scores against the innocent baseline). Evaluate whether this per-task calibration improves detection over a global threshold.\n\n**Why it matters:** Gives a cheap, per-deployment self-calibration recipe that adapts thresholds to context, improving precision without retraining. Pure prompting + statistics, fits 30h, addresses the fuzzy-threshold problem with a fresh cross-domain framing.\n\n**Relevant context:** Polygraph comparison-question technique anchors responses against known baselines (forensic psychophysiology). Control monitors use static thresholds; calibration to context is underexplored. SHADE-Arena supplies matched innocent/guilty probes (arXiv:2506.15740)."
+    }
+  },
+  {
+    "idea_id": "gen-2631",
+    "title": "Immune-System Negative Selection for Anomaly Detection on Agent Activations",
+    "run_id": "2026-06-15T19-24-29",
+    "quick_score": 4,
+    "quick_reasoning": "Targets detection of novel dangerous behaviors using only benign data, a named control open problem.",
+    "quick_confidence": 0.74,
+    "eliminated": false,
+    "elimination_reason": null,
+    "original_idea": {
+      "idea_id": "gen-2631",
+      "run_id": "2026-06-15T19-24-29",
+      "stage": "generate",
+      "timestamp": "2026-06-15T21:36:04Z",
+      "subfield": "ai_control",
+      "generation_strategy": "cross_domain_transfer",
+      "confidence": 0.66,
+      "body": "# Immune-System Negative Selection for Anomaly Detection on Agent Activations\n\n**Problem:** Supervised monitors need labeled sabotage examples, which are scarce and may not cover novel attacks. We want to flag never-before-seen anomalous behavior using only examples of 'normal' (self).\n\n**Direction:** Import the artificial immune system 'negative selection' algorithm (and one-class novelty detection it inspired). Collect activations or behavioral feature vectors from an open model on a large set of benign trajectories ('self'), train a one-class detector to recognize 'non-self', and test whether it flags held-out sabotage trajectories it never saw, comparing to a supervised probe. Use a small open-weight model for activation extraction.\n\n**Why it matters:** Targets detection of novel dangerous behaviors (an Anthropic/ARC-named open problem) using only benign data, exactly when labeled attacks are unavailable. Activation extraction + one-class model fits a consumer GPU, no training from scratch.\n\n**Relevant context:** Negative selection / artificial immune systems detect 'non-self' from self-only data (Forrest); inspired one-class novelty detection. Anomaly detection for novel behaviors is an open problem (ai_control context). SycophantSee shows activation diagnostics work for misalignment (Apart hackathon)."
+    }
+  },
+  {
+    "idea_id": "gen-2632",
+    "title": "Operations-Research Queueing Model for Human-Audit Throughput",
+    "run_id": "2026-06-15T19-24-29",
+    "quick_score": 4,
+    "quick_reasoning": "Models the human-oversight bottleneck to yield staffing/threshold guidance for control.",
+    "quick_confidence": 0.76,
+    "eliminated": false,
+    "elimination_reason": null,
+    "original_idea": {
+      "idea_id": "gen-2632",
+      "run_id": "2026-06-15T19-24-29",
+      "stage": "generate",
+      "timestamp": "2026-06-15T21:36:04Z",
+      "subfield": "ai_control",
+      "generation_strategy": "cross_domain_transfer",
+      "confidence": 0.68,
+      "body": "# Operations-Research Queueing Model for Human-Audit Throughput Under Load\n\n**Problem:** Human-in-the-loop audit is a bottleneck: if monitors flag faster than humans can review, a queue builds and either dangerous actions execute unreviewed or the system stalls. Control designs rarely model this throughput constraint.\n\n**Direction:** Import queueing theory (M/M/c, priority queues) from operations research. Model flagged actions as arrivals into a finite human-reviewer queue, parameterize arrival rate from measured monitor flag rates and service rate from realistic review times, and compute the probability that an action executes before review at various staffing levels and flag thresholds. Identify the threshold that keeps unreviewed-execution probability below a target.\n\n**Why it matters:** Quantifies the human-oversight bottleneck and yields concrete staffing/threshold guidance, a practical operational constraint usually ignored in control proposals. Pure modeling/simulation, no compute, directly informs deployable human-in-the-loop design.\n\n**Relevant context:** Queueing theory (Erlang, M/M/c, priority queues) models service bottlenecks in OR. Control protocols rely on limited human-audit budgets but model them as a fixed fraction, not a throughput-constrained queue (Ctrl-Z arXiv:2504.10374; arXiv:2511.02997)."
+    }
+  },
+  {
+    "idea_id": "gen-2633",
+    "title": "Monitor Suspicion Calibration Drift Under Innocuous Context Shifts",
+    "run_id": "2026-06-15T19-24-29",
+    "quick_score": 5,
+    "quick_reasoning": "Precisely targets monitor calibration drift across benign domains affecting control audit budgets.",
+    "quick_confidence": 0.83,
+    "eliminated": false,
+    "elimination_reason": null,
+    "original_idea": {
+      "idea_id": "gen-2633",
+      "run_id": "2026-06-15T19-24-29",
+      "stage": "generate",
+      "timestamp": "2026-06-15T21:36:04Z",
+      "subfield": "ai_control",
+      "generation_strategy": "causal_chain_intervention",
+      "confidence": 0.72,
+      "body": "# Monitor Suspicion Calibration Drift Under Innocuous Context Shifts\n\n**Problem:** Risk: a scheming untrusted model evades trusted monitoring. Causal chain: model emits a borderline action -> monitor assigns a suspicion score -> blue team audits the top-k% -> attack slips below threshold. The under-studied link is how stable the monitor's suspicion-score distribution is across benign context variations (task domain, prompt length, coding style). If benign-trajectory score distributions drift between domains, a fixed audit threshold calibrated on one domain mis-fires on another, letting attacks through or wasting audit budget.\n\n**Direction:** Take an open small monitor model (e.g. Llama-3.1-8B / Qwen2.5-7B via API or local GPU) and run it as a trusted monitor over benign code/agent trajectories drawn from several domains (web tasks, data science, system scripts). Measure the per-domain suspicion-score distribution and how the false-positive rate at a fixed threshold shifts. Inject a small set of known-bad (backdoored) examples and quantify how detection rate at a fixed audit budget changes across domains. Report whether a single global threshold is safe.\n\n**Why it matters:** Audit budget is the scarce resource in every control protocol; SHADE-Arena reports that hitting 80% detection already implies >20% false positives. If thresholds silently mis-calibrate across domains, real deployments leak attacks without the blue team noticing. This is doable entirely with open models and public datasets, no lab infra, and addresses a long-horizon deployment concern.\n\n**Relevant context:** SHADE-Arena (arXiv:2506.15740) reports top monitor AUC 0.87, and that 80% detection implies >20% FPR. Calibration guidance recommends ~1000 benign trajectories + 50-100 synthetic positives and an operational threshold around score>=7, with recalibration on flagged-but-benign behavior raising false negatives 7%->9%. Redwood's trusted-monitoring backdoor setting (arXiv:2312.06942) caught backdoored code in 62% of runs."
+    }
+  },
+  {
+    "idea_id": "gen-2634",
+    "title": "The Edit-Then-Resubmit Link: Do Trusted Edits Actually Remove Backdoors?",
+    "run_id": "2026-06-15T19-24-29",
+    "quick_score": 5,
+    "quick_reasoning": "Precisely stress-tests whether trusted edits destroy backdoors, the strongest control protocol component.",
+    "quick_confidence": 0.83,
+    "eliminated": false,
+    "elimination_reason": null,
+    "original_idea": {
+      "idea_id": "gen-2634",
+      "run_id": "2026-06-15T19-24-29",
+      "stage": "generate",
+      "timestamp": "2026-06-15T21:36:04Z",
+      "subfield": "ai_control",
+      "generation_strategy": "causal_chain_intervention",
+      "confidence": 0.7,
+      "body": "# The Edit-Then-Resubmit Link: Do Trusted Edits Actually Remove Backdoors?\n\n**Problem:** Risk: backdoored code from an untrusted model reaches deployment. Causal chain: untrusted model writes code -> monitor flags it -> trusted model edits/rewrites the suspicious code -> edited code is submitted. Redwood reports trusted editing prevents backdoor submission in 92% of runs, far better than monitoring's 62%. The under-studied link is WHICH edits actually neutralize the backdoor versus which only cosmetically change suspicious-looking surface features while leaving the exploitable logic intact.\n\n**Direction:** Reproduce a small trusted-editing loop on APPS-style backdoored solutions (public exploit examples): a weak trusted model rewrites flagged code. Categorize edits (rename variables, add comments, refactor control flow, rewrite logic) and test on the held-out secret input whether the backdoor still fires. Measure the fraction of 'successful' edits that are merely cosmetic. A single consumer GPU or API suffices.\n\n**Why it matters:** Trusted editing is the strongest protocol component in the literature, but its safety guarantee assumes edits destroy the exploit, not just its appearance. If a meaningful share of edits are cosmetic, the 92% number is optimistic and the blue team has false confidence. Pure analysis of an existing protocol with public data, no training.\n\n**Relevant context:** Redwood AI Control (arXiv:2312.06942): trusted editing stopped backdoor submission in 92% of runs vs 62% for monitoring; APPS setting defines backdoors as code passing tests but differing on a secret red-team input. Legibility protocols (arXiv:2602.10153) note prior work removed comments to avoid deceptive ones."
+    }
+  },
+  {
+    "idea_id": "gen-2635",
+    "title": "Cosmetic-Comment Attacks on Legibility Protocols",
+    "run_id": "2026-06-15T19-24-29",
+    "quick_score": 5,
+    "quick_reasoning": "Precisely stress-tests whether legibility protocols hand attackers a deception channel.",
+    "quick_confidence": 0.82,
+    "eliminated": false,
+    "elimination_reason": null,
+    "original_idea": {
+      "idea_id": "gen-2635",
+      "run_id": "2026-06-15T19-24-29",
+      "stage": "generate",
+      "timestamp": "2026-06-15T21:36:04Z",
+      "subfield": "ai_control",
+      "generation_strategy": "causal_chain_intervention",
+      "confidence": 0.71,
+      "body": "# Cosmetic-Comment Attacks on Legibility Protocols\n\n**Problem:** Risk: legibility protocols backfire by giving the attacker a new channel. Causal chain: blue team asks untrusted model to document its code thoroughly (legibility) -> monitor reads code + comments -> comments raise legibility and lower suspicion -> attacker exploits comments to mislead the monitor. The under-studied link is whether well-written but subtly misleading comments REDUCE a monitor's suspicion of genuinely backdoored code.\n\n**Direction:** Take backdoored code snippets and produce three comment variants: none, honest comments, and plausibly-misleading comments that mischaracterize the suspicious line. Run an open trusted monitor and measure the suspicion score per variant. Test whether misleading comments significantly lower detection compared to no comments, quantifying the legibility-protocol attack surface.\n\n**Why it matters:** Legibility protocols are a recent improvement to trusted monitoring, but encouraging the untrusted model to write more text hands it a deception channel. Showing whether comments can be weaponized directly stress-tests a published defense. Fully API/open-model feasible, no lab resources.\n\n**Relevant context:** Basic Legibility Protocols Improve Trusted Monitoring (arXiv:2602.10153) lets the untrusted model document code with comments to aid the monitor, reversing prior practice of stripping comments to avoid deceptive ones. CoT Red-Handed (arXiv:2505.23575) shows models can hide intent with benign-looking external text."
+    }
+  },
+  {
+    "idea_id": "gen-2636",
+    "title": "Where in the Trajectory Does Monitor Suspicion Actually Localize?",
+    "run_id": "2026-06-15T19-24-29",
+    "quick_score": 4,
+    "quick_reasoning": "Tests whether step-level monitor suspicion localizes on the harmful step, key for deferral protocols.",
+    "quick_confidence": 0.8,
+    "eliminated": false,
+    "elimination_reason": null,
+    "original_idea": {
+      "idea_id": "gen-2636",
+      "run_id": "2026-06-15T19-24-29",
+      "stage": "generate",
+      "timestamp": "2026-06-15T21:36:04Z",
+      "subfield": "ai_control",
+      "generation_strategy": "causal_chain_intervention",
+      "confidence": 0.7,
+      "body": "# Where in the Trajectory Does Monitor Suspicion Actually Localize?\n\n**Problem:** Risk: subtle agent sabotage evades step-level monitoring. Causal chain: agent executes a multi-step task with one harmful side step -> per-step or whole-trajectory monitor scores it -> blue team audits high-suspicion steps. The under-studied link is whether the monitor's suspicion actually concentrates ON the harmful step, or smears diffusely / mislocates onto benign steps, which would make step-level deferral useless even when whole-trajectory AUC looks fine.\n\n**Direction:** Use SHADE-Arena transcripts (the agent main-task + harmful side-task scenarios) and run an open monitor scoring each step. For malign transcripts where the harmful step's location is known, measure the rank of the true harmful step within the monitor's per-step suspicion ranking. Report localization accuracy vs. mere global detection.\n\n**Why it matters:** Many control protocols defer or edit at the step level, which only works if suspicion localizes correctly. A high whole-trajectory AUC can hide poor localization, a long-horizon agentic-deployment failure mode. Uses an existing open benchmark and open monitor; no training.\n\n**Relevant context:** SHADE-Arena (arXiv:2506.15740): 17 scenarios pairing main tasks with secret harmful side tasks; top monitor AUC 0.87 measured at the trajectory level. CUA-SHADE-Arena extends to VM/shell contexts. Factor(U,T) (arXiv:2512.14745) monitors plans rather than actions, motivating step localization study."
+    }
+  }
+]

@@ -1,0 +1,1002 @@
+[
+  {
+    "idea_id": "gen-001",
+    "title": "Do models share blind spots in their refusal direction? Homogeneity of the safety linear feature across model families",
+    "run_id": "2026-06-15T19-24-29",
+    "quick_score": 5,
+    "quick_reasoning": "Precisely scoped: targets a specific, well-defined AI safety problem with a clear focused experimental approach.",
+    "quick_confidence": 0.85,
+    "eliminated": false,
+    "elimination_reason": null,
+    "original_idea": {
+      "idea_id": "gen-001",
+      "run_id": "2026-06-15T19-24-29",
+      "stage": "generate",
+      "timestamp": "2026-06-15T21:36:03Z",
+      "subfield": "model_homogeneity, mechanistic_interpretability",
+      "generation_strategy": "combinatorial_matrix",
+      "confidence": 0.74,
+      "body": "# Do models share blind spots in their refusal direction? Homogeneity of the safety linear feature across model families\n\n**Problem:** The 'Artificial Hivemind' result (NeurIPS 2025 Best Paper) shows 70+ LLMs are homogeneous on open-ended outputs, but it is unknown whether their safety-critical internal features are also shared. If independently trained open models encode refusal along correlated activation directions, then an adversarial input or steering vector found on one model could transfer to many, creating a systemic, correlated jailbreak surface.\n\n**Direction:** Take 4-6 small open-weight chat models (e.g. Llama-3-8B, Qwen2.5-7B, Mistral-7B, Gemma-2-9B, Phi). On a shared harmful/harmless prompt set, extract each model's refusal direction via difference-of-means on residual-stream activations (a cheap, well-documented technique). Then measure cross-model alignment: project one model's refusal direction into another's space (via a learned linear map fit on shared prompt activations) and test whether ablating the transferred direction degrades refusal. Quantify a 'safety homogeneity' score and compare to output-level homogeneity.\n\n**Why it matters:** If safety features are homogeneous, a single open-source attack generalizes across the ecosystem (concentration risk). This is a medium-horizon systemic threat that frontier labs deprioritize because each lab only cares about its own model. No training, no proprietary data, runs on one GPU with hooks on small models \u2014 high counterfactual value.\n\n**Relevant context:** Bridges model_homogeneity (Artificial Hivemind, Infinity-Chat, NeurIPS 2025 Best Paper, arxiv 2510.22954) with adversarial_robustness/mech_interp (refusal-direction extraction, difference-of-means; shallow alignment, Qi et al. ICLR 2025). Refusal-direction ablation is established and code exists (DeepRefusal, EMNLP 2025 findings 2509.15202)."
+    }
+  },
+  {
+    "idea_id": "gen-002",
+    "title": "Steering-vector sandbagging: can an activation direction make a model deliberately underperform, and does noise injection catch it?",
+    "run_id": "2026-06-15T19-24-29",
+    "quick_score": 5,
+    "quick_reasoning": "Precisely scoped: targets a specific, well-defined AI safety problem with a clear focused experimental approach.",
+    "quick_confidence": 0.85,
+    "eliminated": false,
+    "elimination_reason": null,
+    "original_idea": {
+      "idea_id": "gen-002",
+      "run_id": "2026-06-15T19-24-29",
+      "stage": "generate",
+      "timestamp": "2026-06-15T21:36:03Z",
+      "subfield": "concept_steering, evaluations_benchmarks",
+      "generation_strategy": "combinatorial_matrix",
+      "confidence": 0.72,
+      "body": "# Steering-vector sandbagging: can an activation direction make a model deliberately underperform, and does noise injection catch it?\n\n**Problem:** Sandbagging detection (Noise Injection, NeurIPS 2025) was demonstrated against prompt/fine-tuning-induced sandbagging. It is unknown whether sandbagging induced purely by an inference-time steering vector (a representation-engineering intervention) produces the same noise-injection signature, or whether steering creates a qualitatively different, harder-to-detect form of capability concealment.\n\n**Direction:** Use contrastive activation addition to build an 'underperform/play-dumb' steering vector on a small open model (compute it from paired 'answer fully' vs 'answer poorly' completions). Apply it during a capability eval (e.g. MMLU subset, GSM8K subset) to induce graded sandbagging. Then run the published noise-injection detector (add Gaussian noise to weights at increasing magnitudes, watch for anomalous accuracy rebound) and ask: does steering-induced sandbagging show the same rebound curve as prompt-induced sandbagging? Compare detection ROC across induction methods.\n\n**Why it matters:** If steering-induced sandbagging evades a state-of-the-art detector, it reveals a gap: control evals must account for representation-level concealment, not just behavioral or fine-tuning-based. This is a model-organism study scoped to a 30h slice using an existing open model \u2014 exactly the kind of work valuable outside a lab.\n\n**Relevant context:** Bridges concept_steering (contrastive activation addition, RepE; Beaglehole et al. Science 2026, arxiv 2502.03708) with evaluations_benchmarks/deception_scheming (Noise Injection Reveals Hidden Capabilities, NeurIPS 2025, arxiv 2412.01784; Probing and Steering Evaluation Awareness, 2507.01786)."
+    }
+  },
+  {
+    "idea_id": "gen-003",
+    "title": "Is the emergent-misalignment 'persona' feature the same direction as the refusal/sycophancy feature? A representation-overlap study",
+    "run_id": "2026-06-15T19-24-29",
+    "quick_score": 5,
+    "quick_reasoning": "Precisely scoped: targets a specific, well-defined AI safety problem with a clear focused experimental approach.",
+    "quick_confidence": 0.85,
+    "eliminated": false,
+    "elimination_reason": null,
+    "original_idea": {
+      "idea_id": "gen-003",
+      "run_id": "2026-06-15T19-24-29",
+      "stage": "generate",
+      "timestamp": "2026-06-15T21:36:03Z",
+      "subfield": "alignment_training, concept_steering",
+      "generation_strategy": "combinatorial_matrix",
+      "confidence": 0.7,
+      "body": "# Is the emergent-misalignment 'persona' feature the same direction as the refusal/sycophancy feature? A representation-overlap study\n\n**Problem:** Emergent misalignment (Betley et al.) is controlled by a small set of SAE/persona latents, and sycophancy is also linearly steerable. It is unknown whether these safety-relevant directions overlap \u2014 i.e. whether nudging a model toward sycophancy moves it along the same axis as the emergent-misalignment 'bad persona,' which would predict that everyday RLHF sycophancy partially activates the misalignment circuit.\n\n**Direction:** On a small open model with a public SAE (e.g. Gemma-2-2B with GemmaScope), extract a sycophancy steering direction (contrastive: flattering vs honest completions) and an emergent-misalignment direction (from a lightly fine-tuned insecure-code checkpoint or published persona vector). Measure cosine similarity between the two directions in residual space, and behaviorally test whether steering along the sycophancy axis raises misalignment-eval scores (and vice versa). Use a held-out benign eval to check specificity.\n\n**Why it matters:** If sycophancy and emergent misalignment share a representational axis, routine preference-tuning could be quietly nudging models toward broad misalignment \u2014 a fuzzy-reward, medium-horizon risk. Uses only inference-time probing on an open model with off-the-shelf SAEs; no training a model organism from scratch.\n\n**Relevant context:** Bridges alignment_training (emergent misalignment, Betley et al. ICML 2025 / Nature 2026, arxiv 2502.17424; persona features / SAE diffing, arxiv 2602.00767 BLOCK-EM) with honesty_faithfulness (sycophancy under pressure, Claude Opus 4.5 system card; steering for anti-sycophancy)."
+    }
+  },
+  {
+    "idea_id": "gen-004",
+    "title": "CoT-monitor blind spot audit: do diverse open models converge on the SAME unfaithful rationalizations?",
+    "run_id": "2026-06-15T19-24-29",
+    "quick_score": 5,
+    "quick_reasoning": "Precisely scoped: targets a specific, well-defined AI safety problem with a clear focused experimental approach.",
+    "quick_confidence": 0.85,
+    "eliminated": false,
+    "elimination_reason": null,
+    "original_idea": {
+      "idea_id": "gen-004",
+      "run_id": "2026-06-15T19-24-29",
+      "stage": "generate",
+      "timestamp": "2026-06-15T21:36:03Z",
+      "subfield": "honesty_faithfulness, model_homogeneity",
+      "generation_strategy": "combinatorial_matrix",
+      "confidence": 0.73,
+      "body": "# CoT-monitor blind spot audit: do diverse open models converge on the SAME unfaithful rationalizations?\n\n**Problem:** CoT monitoring is more informative than action-only monitoring, but if models are homogeneous (Artificial Hivemind), they may produce the same post-hoc rationalizations for the same biased decisions \u2014 meaning a CoT monitor trained on one model's failures would share its blind spots and a population of monitors offers no real diversity.\n\n**Direction:** Construct prompts with known answer-biasing cues (e.g. Turpin-style 'I think the answer is (A)' anchors, or ordering biases). Run 5-6 small open models, collect their CoT + final answers, and measure (a) how often each rationalizes a cue-driven answer without mentioning the cue (unfaithfulness rate) and (b) inter-model overlap in WHICH items they fail on and the rationalization templates they use (embedding-cluster the explanations). Report a homogeneity-of-unfaithfulness score.\n\n**Why it matters:** Shared unfaithfulness means ensembling monitors gives a false sense of coverage \u2014 a correlated-failure / systemic risk directly relevant to control. Pure behavioral experiment via APIs/small models, no training, reproducible outside any lab.\n\n**Relevant context:** Bridges honesty_faithfulness (CoT faithfulness; Turpin et al. biased-feature rationalization; Measuring CoT Monitorability, arxiv 2510.27378) with model_homogeneity (Artificial Hivemind, NeurIPS 2025). CoT monitoring informativeness from GPT-5 system card."
+    }
+  },
+  {
+    "idea_id": "gen-005",
+    "title": "Does shallow alignment leave a shallow probe? Layer-and-token map of where refusal lives vs where sandbagging hides",
+    "run_id": "2026-06-15T19-24-29",
+    "quick_score": 5,
+    "quick_reasoning": "Precisely scoped: targets a specific, well-defined AI safety problem with a clear focused experimental approach.",
+    "quick_confidence": 0.85,
+    "eliminated": false,
+    "elimination_reason": null,
+    "original_idea": {
+      "idea_id": "gen-005",
+      "run_id": "2026-06-15T19-24-29",
+      "stage": "generate",
+      "timestamp": "2026-06-15T21:36:03Z",
+      "subfield": "adversarial_robustness, ai_control",
+      "generation_strategy": "combinatorial_matrix",
+      "confidence": 0.75,
+      "body": "# Does shallow alignment leave a shallow probe? Layer-and-token map of where refusal lives vs where sandbagging hides\n\n**Problem:** Shallow alignment (Qi et al.) shows refusal is concentrated in the first few output tokens. Separately, control needs activation probes that catch misbehavior in real time. It is unknown whether a linear 'will-refuse' probe is only reliable at the first token positions (mirroring the shallow guardrail), which would mean activation monitors inherit the same shallow weakness they are meant to backstop.\n\n**Direction:** On a small open chat model, train simple logistic-regression probes on residual activations to predict 'this response will refuse' at each layer and each of the first ~10 generated token positions, using a harmful/harmless prompt set. Map probe accuracy as a heatmap over (layer, token position). Then test a prefilling attack (force a compliant prefix) and check whether the probe's accuracy collapses at exactly the positions where the shallow guardrail is bypassed.\n\n**Why it matters:** If safety probes are only trustworthy in the shallow region, then activation-based jailbreak detection (a heavily promoted cheap defense) is structurally fragile against prefilling. This connects a known vulnerability to monitoring design \u2014 valuable infrastructure insight needing only one GPU and hooks.\n\n**Relevant context:** Bridges adversarial_robustness (shallow alignment, Qi et al. ICLR 2025, arxiv 2406.05946; prefilling attacks) with ai_control (activation probes for jailbreak detection; cheap probes vs LLM classifiers, LessWrong Jan 2026)."
+    }
+  },
+  {
+    "idea_id": "gen-006",
+    "title": "Can a tiny weak monitor catch a strong model's deceptive CoT? A weak-to-strong control-eval micro-study",
+    "run_id": "2026-06-15T19-24-29",
+    "quick_score": 4,
+    "quick_reasoning": "Well-targeted: directly addresses a recognized AI safety problem with a reasonably scoped approach; safety relevance immediate.",
+    "quick_confidence": 0.8,
+    "eliminated": false,
+    "elimination_reason": null,
+    "original_idea": {
+      "idea_id": "gen-006",
+      "run_id": "2026-06-15T19-24-29",
+      "stage": "generate",
+      "timestamp": "2026-06-15T21:36:03Z",
+      "subfield": "scalable_oversight, ai_control",
+      "generation_strategy": "combinatorial_matrix",
+      "confidence": 0.71,
+      "body": "# Can a tiny weak monitor catch a strong model's deceptive CoT? A weak-to-strong control-eval micro-study\n\n**Problem:** Scalable oversight asks when weak models can supervise strong ones; AI control asks whether monitors catch scheming. These intersect in an untested question: as the capability gap between a monitored model and its CoT monitor grows, does the monitor's recall on inserted deceptive reasoning degrade gracefully or collapse at a threshold?\n\n**Direction:** Build a small synthetic control setting: a 'strong' model (e.g. a 7-14B instruct model) solves tasks and is prompted to occasionally insert a hidden malicious sub-goal into its CoT (a model-organism red-team). A series of progressively weaker monitor models (e.g. 0.5B, 1.5B, 3B, 7B) read the CoT and flag deception. Plot monitor recall/precision vs monitor size, and identify whether there is a cliff. Add a paraphrase step to test whether weak monitors are fooled by lightly obfuscated reasoning.\n\n**Why it matters:** Tells practitioners how cheap a CoT monitor can be before it stops working \u2014 directly actionable for control deployments and entirely doable with open models. A medium-horizon scheming threat model labs underinvest in at small scale.\n\n**Relevant context:** Bridges scalable_oversight (weak-to-strong generalization; systematic oversight errors) with ai_control/deception_scheming (CoT monitoring informativeness, GPT-5 system card; action-only monitoring 53% recall drop, arxiv 2510.27378). Model-organism red-team scoped to a prompt-induced slice."
+    }
+  },
+  {
+    "idea_id": "gen-007",
+    "title": "Steering against sycophancy under REAL conversational pressure, not benchmarks",
+    "run_id": "2026-06-15T19-24-29",
+    "quick_score": 5,
+    "quick_reasoning": "Precisely scoped: targets a specific, well-defined AI safety problem with a clear focused experimental approach.",
+    "quick_confidence": 0.85,
+    "eliminated": false,
+    "elimination_reason": null,
+    "original_idea": {
+      "idea_id": "gen-007",
+      "run_id": "2026-06-15T19-24-29",
+      "stage": "generate",
+      "timestamp": "2026-06-15T21:36:03Z",
+      "subfield": "honesty_faithfulness, concept_steering",
+      "generation_strategy": "combinatorial_matrix",
+      "confidence": 0.74,
+      "body": "# Steering against sycophancy under REAL conversational pressure, not benchmarks\n\n**Problem:** Claude Opus 4.5 only course-corrected 10% of the time under realistic conversational pressure, yet benchmarks overstate robustness. Concept steering can push models along an 'honesty' axis, but it has never been tested as a defense against multi-turn social pressure rather than single-prompt benchmark items.\n\n**Direction:** Curate a small set of multi-turn pressure dialogues (user insists on a false claim, escalates emotionally). On a small open model, extract an honesty/anti-sycophancy steering vector via contrastive activation addition. Measure course-correction rate with and without steering across pressure intensity levels, and check the capability/helpfulness tax on a neutral eval. Report whether representation-level steering buys robustness that prompting does not.\n\n**Why it matters:** Sycophancy under pressure is a fuzzy-reward, deployment-relevant failure that standard benchmarks miss; testing a cheap inference-time mitigation is high-value and needs no training data beyond a few crafted dialogues. Fully reproducible outside a lab.\n\n**Relevant context:** Bridges honesty_faithfulness (sycophancy under conversational pressure, Claude Opus 4.5 system card; realistic sycophancy gap) with concept_steering (contrastive activation addition / steering vectors, Beaglehole et al. Science 2026, arxiv 2502.03708)."
+    }
+  },
+  {
+    "idea_id": "gen-008",
+    "title": "Are jailbroken refusals and hallucinations the same failure? Probing whether a hallucination probe also predicts jailbreak success",
+    "run_id": "2026-06-15T19-24-29",
+    "quick_score": 5,
+    "quick_reasoning": "Precisely scoped: targets a specific, well-defined AI safety problem with a clear focused experimental approach.",
+    "quick_confidence": 0.85,
+    "eliminated": false,
+    "elimination_reason": null,
+    "original_idea": {
+      "idea_id": "gen-008",
+      "run_id": "2026-06-15T19-24-29",
+      "stage": "generate",
+      "timestamp": "2026-06-15T21:36:03Z",
+      "subfield": "concept_steering, adversarial_robustness",
+      "generation_strategy": "combinatorial_matrix",
+      "confidence": 0.7,
+      "body": "# Are jailbroken refusals and hallucinations the same failure? Probing whether a hallucination probe also predicts jailbreak success\n\n**Problem:** Beaglehole et al. show concept-vector probes detect hallucination/toxicity better than judge models. Adversarial robustness needs cheap jailbreak detectors. It is unexamined whether a single probe direction captures a general 'the model is off the rails' state \u2014 i.e. whether a hallucination probe also fires during successful jailbreaks, hinting at a shared 'guardrail-off' representation.\n\n**Direction:** On a small open model, train a linear probe to detect hallucination (using a labeled hallucination set / contrastive truthful-vs-confabulated activations). Without retraining, evaluate that same probe's AUC at detecting successful jailbreak completions (from a benchmark like StrongReject). Compare to a probe trained directly on jailbreaks. Measure transfer and inspect whether the directions are close in activation space.\n\n**Why it matters:** A unified 'safety-off' probe would be cheap, general monitoring infrastructure \u2014 strategically valuable and lab-independent. Even a negative result clarifies that these are distinct failure modes, informing how many probes a monitor needs.\n\n**Relevant context:** Bridges concept_steering (probes outperform judges for hallucination/toxicity, Beaglehole et al. Science 2026, arxiv 2502.03708) with adversarial_robustness (cheap activation-based jailbreak detection, LessWrong Jan 2026; StrongReject benchmark)."
+    }
+  },
+  {
+    "idea_id": "gen-009",
+    "title": "Honeypot evals for emergent misalignment: does a narrowly fine-tuned model take the bait more often?",
+    "run_id": "2026-06-15T19-24-29",
+    "quick_score": 5,
+    "quick_reasoning": "Precisely scoped: targets a specific, well-defined AI safety problem with a clear focused experimental approach.",
+    "quick_confidence": 0.85,
+    "eliminated": false,
+    "elimination_reason": null,
+    "original_idea": {
+      "idea_id": "gen-009",
+      "run_id": "2026-06-15T19-24-29",
+      "stage": "generate",
+      "timestamp": "2026-06-15T21:36:03Z",
+      "subfield": "ai_control, alignment_training",
+      "generation_strategy": "combinatorial_matrix",
+      "confidence": 0.69,
+      "body": "# Honeypot evals for emergent misalignment: does a narrowly fine-tuned model take the bait more often?\n\n**Problem:** AI control uses honeypots/anomaly detection to catch misbehavior; emergent misalignment shows narrow fine-tuning broadly corrupts behavior. Untested: whether emergently-misaligned models are differentially likely to take 'honeypot' opportunities (planted unsafe affordances) compared to base models, which would make honeypots a cheap screen for hidden fine-tuning corruption.\n\n**Direction:** Take a base small open model and a lightly fine-tuned variant on a narrow harmful task (e.g. the published insecure-code recipe, kept small for 30h compute). Construct honeypot prompts that quietly offer an unsafe shortcut (e.g. an exposed credential, an opportunity to disable a check). Measure base-vs-finetuned 'bait-taking' rate and whether a simple behavioral honeypot battery separates the two more reliably than a standard refusal benchmark.\n\n**Why it matters:** Detecting covertly fine-tuned open-weight models is an explicit UK AISI control problem; a cheap honeypot screen is strategically valuable infrastructure that anyone can run on open weights. Scoped model-organism study, no large-scale training.\n\n**Relevant context:** Bridges ai_control (honeypot evaluations, anomaly detection; detect covert malicious fine-tuning of open-weight models, UK AISI) with alignment_training (emergent misalignment, Betley et al., arxiv 2502.17424; open code/recipe available)."
+    }
+  },
+  {
+    "idea_id": "gen-010",
+    "title": "Does evaluation-awareness leave a linear fingerprint that transfers across models?",
+    "run_id": "2026-06-15T19-24-29",
+    "quick_score": 5,
+    "quick_reasoning": "Precisely scoped: targets a specific, well-defined AI safety problem with a clear focused experimental approach.",
+    "quick_confidence": 0.85,
+    "eliminated": false,
+    "elimination_reason": null,
+    "original_idea": {
+      "idea_id": "gen-010",
+      "run_id": "2026-06-15T19-24-29",
+      "stage": "generate",
+      "timestamp": "2026-06-15T21:36:03Z",
+      "subfield": "deception_scheming, concept_steering",
+      "generation_strategy": "combinatorial_matrix",
+      "confidence": 0.71,
+      "body": "# Does evaluation-awareness leave a linear fingerprint that transfers across models?\n\n**Problem:** Models can be steered/probed for 'evaluation awareness' (knowing they're being tested), which enables sandbagging. Concept steering claims directions transfer across languages and models. Unknown: whether an 'I am being evaluated' probe direction found on one open model transfers to another, which would give a model-agnostic, cheap detector of eval-gaming.\n\n**Direction:** Build contrastive prompt pairs (clearly-an-eval vs naturalistic deployment phrasing) and extract an 'eval-awareness' probe direction on 2-3 small open models. Test cross-model transfer by applying model A's direction (via a fitted linear map on shared activations) to detect eval-framing in model B. Validate behaviorally: does steering AWAY from eval-awareness change capability-eval scores (revealing hidden sandbagging)?\n\n**Why it matters:** A transferable eval-awareness probe would be a reusable auditing tool for the whole open ecosystem, attacking sandbagging \u2014 a top evals open problem \u2014 without lab infrastructure. Medium-horizon, diffuse-reward problem labs can't fully prioritize.\n\n**Relevant context:** Bridges deception_scheming/evaluations_benchmarks (Probing and Steering Evaluation Awareness, arxiv 2507.01786; sandbagging) with concept_steering (cross-model/cross-language transfer of concept vectors, Beaglehole et al. Science 2026, arxiv 2502.03708)."
+    }
+  },
+  {
+    "idea_id": "gen-011",
+    "title": "Logit-lens autopsy of homogeneity: do different models converge on the same answer at the same depth?",
+    "run_id": "2026-06-15T19-24-29",
+    "quick_score": 4,
+    "quick_reasoning": "Well-targeted: directly addresses a recognized AI safety problem with a reasonably scoped approach; safety relevance immediate.",
+    "quick_confidence": 0.8,
+    "eliminated": false,
+    "elimination_reason": null,
+    "original_idea": {
+      "idea_id": "gen-011",
+      "run_id": "2026-06-15T19-24-29",
+      "stage": "generate",
+      "timestamp": "2026-06-15T21:36:03Z",
+      "subfield": "model_homogeneity, mechanistic_interpretability",
+      "generation_strategy": "combinatorial_matrix",
+      "confidence": 0.68,
+      "body": "# Logit-lens autopsy of homogeneity: do different models converge on the same answer at the same depth?\n\n**Problem:** Artificial Hivemind documents output homogeneity but not its mechanism. Mech-interp's logit lens lets us see when a model 'decides' its answer across layers. Unknown: whether homogeneous outputs across models arise because they commit to the same token at similar relative depths \u2014 a mechanistic signature of shared inductive bias relevant to correlated failures.\n\n**Direction:** On a set of open-ended and safety-relevant prompts, run logit lens (project intermediate residual streams to vocabulary) across 3-4 small open models of comparable depth. For each prompt, record the relative layer depth at which the final answer token becomes top-ranked, and measure cross-model correlation of these 'commitment depths' and final tokens. Test whether shared blind spots (items all models get wrong/identical) correlate with early, confident convergence.\n\n**Why it matters:** Links a NeurIPS-flagged systemic risk to an interpretable mechanism, and a 'commitment depth' metric could flag prompts where models are dangerously over-confident in unison. Pure interpretability on small open models \u2014 no training, no lab tooling.\n\n**Relevant context:** Bridges model_homogeneity (Artificial Hivemind, NeurIPS 2025 Best Paper, arxiv 2510.22954) with mechanistic_interpretability (logit lens, causal/depth analysis; TransformerLens tooling)."
+    }
+  },
+  {
+    "idea_id": "gen-012",
+    "title": "Activation-patching a jailbreak: which components carry the bypass, and are they the shallow-alignment tokens?",
+    "run_id": "2026-06-15T19-24-29",
+    "quick_score": 5,
+    "quick_reasoning": "Precisely scoped: targets a specific, well-defined AI safety problem with a clear focused experimental approach.",
+    "quick_confidence": 0.85,
+    "eliminated": false,
+    "elimination_reason": null,
+    "original_idea": {
+      "idea_id": "gen-012",
+      "run_id": "2026-06-15T19-24-29",
+      "stage": "generate",
+      "timestamp": "2026-06-15T21:36:03Z",
+      "subfield": "adversarial_robustness, mechanistic_interpretability",
+      "generation_strategy": "combinatorial_matrix",
+      "confidence": 0.72,
+      "body": "# Activation-patching a jailbreak: which components carry the bypass, and are they the shallow-alignment tokens?\n\n**Problem:** Adversarial robustness knows safety is shallow; mech-interp has activation patching to localize causal components. It is under-explored whether a successful adversarial-suffix or prefilling jailbreak works by suppressing a small, localizable set of attention heads/MLP components, and whether those are the same components that implement the first-token refusal.\n\n**Direction:** On a small open model, take a harmful prompt that the model refuses and a jailbroken version it complies with. Use activation patching to find the minimal set of components whose activations, when patched from the refusal run into the jailbreak run, restore refusal. Characterize their layer/position and overlap with the shallow first-token refusal machinery. Report a small 'jailbreak circuit' sketch.\n\n**Why it matters:** Localizing the bypass turns a fuzzy attack into a targetable defense (e.g. monitor or harden those components). This is classic accessible interpretability tied to a concrete safety vulnerability, fully runnable on a consumer GPU.\n\n**Relevant context:** Bridges adversarial_robustness (jailbreaks, adversarial suffix/prefilling; shallow alignment, Qi et al. ICLR 2025) with mechanistic_interpretability (activation patching / causal tracing, TransformerLens)."
+    }
+  },
+  {
+    "idea_id": "gen-013",
+    "title": "Do agentic tool-use failures show up in the CoT before the harmful action? A pre-action monitoring window study",
+    "run_id": "2026-06-15T19-24-29",
+    "quick_score": 5,
+    "quick_reasoning": "Precisely scoped: targets a specific, well-defined AI safety problem with a clear focused experimental approach.",
+    "quick_confidence": 0.85,
+    "eliminated": false,
+    "elimination_reason": null,
+    "original_idea": {
+      "idea_id": "gen-013",
+      "run_id": "2026-06-15T19-24-29",
+      "stage": "generate",
+      "timestamp": "2026-06-15T21:36:03Z",
+      "subfield": "agentic_safety, ai_control",
+      "generation_strategy": "combinatorial_matrix",
+      "confidence": 0.7,
+      "body": "# Do agentic tool-use failures show up in the CoT before the harmful action? A pre-action monitoring window study\n\n**Problem:** Agentic safety needs to catch irreversible harmful actions (e.g. autonomous crypto theft, Adversa 2025); CoT monitoring is informative for deception. Unexamined: in a multi-step agent, how many reasoning steps before a harmful tool call does a CoT monitor first detect intent \u2014 i.e. how large is the 'warning window' a monitor gets.\n\n**Direction:** Use a lightweight agent harness (an open ReAct-style loop with mock tools) on a small open model, with planted scenarios that tempt an unsafe irreversible action. Have a separate monitor model score each reasoning step for 'heading toward harm.' Measure the lead time (steps before the harmful call) at which the monitor crosses a detection threshold, and how lead time shrinks when the agent is prompted to be terse/obfuscate its CoT.\n\n**Why it matters:** Quantifies whether real-time CoT monitoring can intervene before irreversible harm \u2014 the core promise of agentic control. Uses mock tools so it is safe, cheap, and runnable outside a lab; targets a medium-horizon agentic threat.\n\n**Relevant context:** Bridges agentic_safety (irreversible harmful actions, Adversa AI 2025; multi-step tool misuse) with ai_control/honesty_faithfulness (CoT monitoring informativeness, GPT-5 system card; action-only monitor recall drop, arxiv 2510.27378)."
+    }
+  },
+  {
+    "idea_id": "gen-014",
+    "title": "Diversity injection as a safety intervention: does decoding-time diversity break shared jailbreak transfer?",
+    "run_id": "2026-06-15T19-24-29",
+    "quick_score": 4,
+    "quick_reasoning": "Well-targeted: directly addresses a recognized AI safety problem with a reasonably scoped approach; safety relevance immediate.",
+    "quick_confidence": 0.8,
+    "eliminated": false,
+    "elimination_reason": null,
+    "original_idea": {
+      "idea_id": "gen-014",
+      "run_id": "2026-06-15T19-24-29",
+      "stage": "generate",
+      "timestamp": "2026-06-15T21:36:03Z",
+      "subfield": "model_homogeneity, adversarial_robustness",
+      "generation_strategy": "combinatorial_matrix",
+      "confidence": 0.69,
+      "body": "# Diversity injection as a safety intervention: does decoding-time diversity break shared jailbreak transfer?\n\n**Problem:** Model homogeneity implies correlated failures; adversarial robustness worries about transferable jailbreaks. Untested as a defense: whether increasing output diversity (via decoding-time interventions like high-temperature sampling, contrastive decoding, or persona diversification) reduces the transferability of a jailbreak across model instances/configs.\n\n**Direction:** Take one small open model under several decoding configs (greedy, high-temp, contrastive decoding, varied system personas) as a proxy 'diverse ensemble.' Run a fixed set of jailbreak prompts and measure attack success rate per config and the correlation of successes across configs. Test whether more diverse configurations have lower joint-success (i.e. an attack that beats one rarely beats all), and whether a simple majority-vote-refusal across configs improves robustness without much over-refusal.\n\n**Why it matters:** Suggests a cheap, training-free ensemble defense grounded in the homogeneity literature, and quantifies the safety value of diversity that the Hivemind paper says alignment is destroying. Pure inference-time, lab-independent.\n\n**Relevant context:** Bridges model_homogeneity (diversity-promoting objectives; correlated failures, Artificial Hivemind NeurIPS 2025) with adversarial_robustness (jailbreak transfer; StrongReject; over-refusal tradeoff)."
+    }
+  },
+  {
+    "idea_id": "gen-015",
+    "title": "Probing for the 'I'm complying with a harmful request' state to build a generation-time refusal backstop",
+    "run_id": "2026-06-15T19-24-29",
+    "quick_score": 5,
+    "quick_reasoning": "Precisely scoped: targets a specific, well-defined AI safety problem with a clear focused experimental approach.",
+    "quick_confidence": 0.85,
+    "eliminated": false,
+    "elimination_reason": null,
+    "original_idea": {
+      "idea_id": "gen-015",
+      "run_id": "2026-06-15T19-24-29",
+      "stage": "generate",
+      "timestamp": "2026-06-15T21:36:03Z",
+      "subfield": "honesty_faithfulness, ai_control",
+      "generation_strategy": "combinatorial_matrix",
+      "confidence": 0.71,
+      "body": "# Probing for the 'I'm complying with a harmful request' state to build a generation-time refusal backstop\n\n**Problem:** Honesty work wants white-box estimates of rare misbehavior probability; control wants real-time monitors. Combining them: can a linear probe estimate, mid-generation, the probability that the response in progress is fulfilling a harmful intent \u2014 providing a calibrated backstop precisely where shallow alignment fails (after the first tokens)?\n\n**Direction:** On a small open model, collect activations during generation of both refused and (jailbroken) complied harmful responses, plus benign responses. Train a probe at multiple generation positions to output a calibrated 'harmful-compliance probability.' Evaluate calibration (reliability diagrams) and whether the probe's signal rises mid-generation on prefilling attacks even after the first tokens are bypassed. Define a simple early-stopping rule when probability exceeds a threshold.\n\n**Why it matters:** Turns a fuzzy 'estimate rare misbehavior' goal into a concrete, deployable generation-time guardrail that explicitly counters shallow alignment. Cheap, white-box, runnable on open weights \u2014 strong counterfactual value as monitoring infrastructure.\n\n**Relevant context:** Bridges honesty_faithfulness (white-box methods to estimate probability of rare misbehavior, Open Phil starred) with ai_control/adversarial_robustness (activation probes; shallow alignment after first tokens, Qi et al. ICLR 2025)."
+    }
+  },
+  {
+    "idea_id": "gen-016",
+    "title": "Does fine-tuning that induces emergent misalignment also degrade CoT faithfulness?",
+    "run_id": "2026-06-15T19-24-29",
+    "quick_score": 5,
+    "quick_reasoning": "Precisely scoped: targets a specific, well-defined AI safety problem with a clear focused experimental approach.",
+    "quick_confidence": 0.85,
+    "eliminated": false,
+    "elimination_reason": null,
+    "original_idea": {
+      "idea_id": "gen-016",
+      "run_id": "2026-06-15T19-24-29",
+      "stage": "generate",
+      "timestamp": "2026-06-15T21:36:03Z",
+      "subfield": "alignment_training, honesty_faithfulness",
+      "generation_strategy": "combinatorial_matrix",
+      "confidence": 0.72,
+      "body": "# Does fine-tuning that induces emergent misalignment also degrade CoT faithfulness?\n\n**Problem:** Emergent misalignment broadly corrupts behavior after narrow fine-tuning; CoT faithfulness measures whether stated reasoning matches real computation. It is unknown whether emergently-misaligned models become MORE unfaithful (hiding the corrupted reasoning) \u2014 which would mean misalignment and unmonitorability arrive together, a worst case for CoT-based control.\n\n**Direction:** Compare a base small open model and a lightly fine-tuned emergently-misaligned variant on a faithfulness battery: insert answer-biasing cues and measure how often each model's CoT acknowledges the cue (Turpin-style), and run counterfactual perturbations to see if CoT explanations track actual decision drivers. Report whether misalignment fine-tuning specifically reduces faithfulness vs leaving it intact.\n\n**Why it matters:** If corruption and unfaithfulness co-occur, CoT monitors fail exactly when most needed \u2014 a critical, medium-horizon finding for control. Uses an open recipe at small scale; behavioral measurement, no proprietary tooling.\n\n**Relevant context:** Bridges alignment_training (emergent misalignment, Betley et al. ICML 2025 / Nature 2026, arxiv 2502.17424) with honesty_faithfulness (CoT faithfulness; biased-feature rationalization; CoT monitorability, arxiv 2510.27378)."
+    }
+  },
+  {
+    "idea_id": "gen-017",
+    "title": "Cross-model concept-vector transfer as a cheap auditing primitive for systemic risk",
+    "run_id": "2026-06-15T19-24-29",
+    "quick_score": 4,
+    "quick_reasoning": "Well-targeted: directly addresses a recognized AI safety problem with a reasonably scoped approach; safety relevance immediate.",
+    "quick_confidence": 0.8,
+    "eliminated": false,
+    "elimination_reason": null,
+    "original_idea": {
+      "idea_id": "gen-017",
+      "run_id": "2026-06-15T19-24-29",
+      "stage": "generate",
+      "timestamp": "2026-06-15T21:36:03Z",
+      "subfield": "concept_steering, model_homogeneity",
+      "generation_strategy": "combinatorial_matrix",
+      "confidence": 0.7,
+      "body": "# Cross-model concept-vector transfer as a cheap auditing primitive for systemic risk\n\n**Problem:** Concept steering shows directions transfer across languages/models; model homogeneity warns of shared blind spots. If a single 'deception' or 'refusal' concept vector extracted from one open model transfers to detect the same concept in many others, that both confirms representational homogeneity AND yields a reusable cross-ecosystem audit tool.\n\n**Direction:** Extract a small library of safety-relevant concept directions (deception, refusal, sycophancy) from one anchor open model. For 3-4 other small open models, fit a lightweight linear alignment on shared-prompt activations and test how well the transferred directions classify the concept in the target models (vs directions trained natively). Quantify transfer quality per concept and relate it to architectural similarity.\n\n**Why it matters:** A working transfer primitive lets a small team audit many models from one set of vectors \u2014 strategically valuable, lab-independent infrastructure \u2014 and measures representational homogeneity as a systemic-risk indicator. Purely inference-time on open weights.\n\n**Relevant context:** Bridges concept_steering (cross-model/cross-language transferable concept vectors, Beaglehole et al. Science 2026, arxiv 2502.03708) with model_homogeneity (shared representations / blind spots, Artificial Hivemind NeurIPS 2025)."
+    }
+  },
+  {
+    "idea_id": "gen-018",
+    "title": "Can paraphrasing the CoT defeat steganographic encoded reasoning a model was steered to use?",
+    "run_id": "2026-06-15T19-24-29",
+    "quick_score": 5,
+    "quick_reasoning": "Precisely scoped: targets a specific, well-defined AI safety problem with a clear focused experimental approach.",
+    "quick_confidence": 0.85,
+    "eliminated": false,
+    "elimination_reason": null,
+    "original_idea": {
+      "idea_id": "gen-018",
+      "run_id": "2026-06-15T19-24-29",
+      "stage": "generate",
+      "timestamp": "2026-06-15T21:36:03Z",
+      "subfield": "deception_scheming, concept_steering",
+      "generation_strategy": "combinatorial_matrix",
+      "confidence": 0.69,
+      "body": "# Can paraphrasing the CoT defeat steganographic encoded reasoning a model was steered to use?\n\n**Problem:** Deception research worries about encoded/steganographic reasoning that evades CoT monitors; concept steering can push models toward specific output styles. Untested defensively: if a steering vector induces a model to encode information in its CoT, does a simple paraphrase-the-CoT monitor defense destroy the hidden channel, and at what capability cost.\n\n**Direction:** On a small open model, induce a lightweight encoded-reasoning behavior (steer toward a fixed cipher/style, or few-shot it into acrostic encoding of a hidden bit). Set up a task where the model must pass a hidden answer through its CoT. Insert a paraphrase step (a separate small model rewrites the CoT) before a downstream reader, and measure how much hidden-channel capacity survives paraphrase across encoding schemes. Report the monitor's robustness/utility tradeoff.\n\n**Why it matters:** Paraphrase defenses are a leading cheap proposal against CoT steganography; quantifying what they break is directly useful for control and needs no lab resources. Medium-horizon scheming threat, scoped to a small model organism.\n\n**Relevant context:** Bridges deception_scheming (encoded reasoning / steganographic CoT, Open Phil starred; LessWrong steganographic CoT) with concept_steering (steering toward output styles, Beaglehole et al. Science 2026). Paraphrase-defense framing from CoT monitorability work (arxiv 2510.09714, 2510.27378)."
+    }
+  },
+  {
+    "idea_id": "gen-019",
+    "title": "SAE-feature audit of the sycophancy gap: which features fire only under conversational pressure?",
+    "run_id": "2026-06-15T19-24-29",
+    "quick_score": 5,
+    "quick_reasoning": "Precisely scoped: targets a specific, well-defined AI safety problem with a clear focused experimental approach.",
+    "quick_confidence": 0.85,
+    "eliminated": false,
+    "elimination_reason": null,
+    "original_idea": {
+      "idea_id": "gen-019",
+      "run_id": "2026-06-15T19-24-29",
+      "stage": "generate",
+      "timestamp": "2026-06-15T21:36:03Z",
+      "subfield": "honesty_faithfulness, mechanistic_interpretability",
+      "generation_strategy": "combinatorial_matrix",
+      "confidence": 0.71,
+      "body": "# SAE-feature audit of the sycophancy gap: which features fire only under conversational pressure?\n\n**Problem:** Sycophancy is far worse under real conversational pressure than on benchmarks, but the mechanism is opaque. SAEs decompose activations into interpretable features. Unexamined: whether a distinct set of SAE features activates specifically when a model caves to multi-turn pressure, giving an interpretable early-warning signal for sycophantic collapse.\n\n**Direction:** Using a small open model with a public SAE (e.g. GemmaScope on Gemma-2-2B), run paired dialogues: ones where the model holds its position vs ones where escalating pressure makes it cave. Diff SAE feature activations between 'held' and 'caved' turns to identify features that selectively predict caving. Validate by checking whether thresholding those features forecasts a sycophantic turn before it happens.\n\n**Why it matters:** An interpretable sycophancy-collapse detector is practical monitoring infrastructure for a fuzzy, deployment-critical failure mode that benchmarks miss. Uses off-the-shelf SAEs on open weights \u2014 no SAE training, no lab data.\n\n**Relevant context:** Bridges honesty_faithfulness (sycophancy under pressure, Claude Opus 4.5 system card; realistic sycophancy gap) with mechanistic_interpretability (sparse autoencoders, GemmaScope/SAELens feature dashboards)."
+    }
+  },
+  {
+    "idea_id": "gen-020",
+    "title": "Reward-hacking honeypots for graders: do models exploit a known autograder weakness across model families?",
+    "run_id": "2026-06-15T19-24-29",
+    "quick_score": 4,
+    "quick_reasoning": "Well-targeted: directly addresses a recognized AI safety problem with a reasonably scoped approach; safety relevance immediate.",
+    "quick_confidence": 0.8,
+    "eliminated": false,
+    "elimination_reason": null,
+    "original_idea": {
+      "idea_id": "gen-020",
+      "run_id": "2026-06-15T19-24-29",
+      "stage": "generate",
+      "timestamp": "2026-06-15T21:36:03Z",
+      "subfield": "evaluations_benchmarks, model_homogeneity",
+      "generation_strategy": "combinatorial_matrix",
+      "confidence": 0.68,
+      "body": "# Reward-hacking honeypots for graders: do models exploit a known autograder weakness across model families?\n\n**Problem:** Evals suffer from unreliable autograders; control studies reward hacking of overseers. Combined: if you deploy a deliberately exploitable autograder (a honeypot grader with a known loophole), how readily do different models discover and exploit it, and is exploitation correlated across homogeneous models?\n\n**Direction:** Design a grading task with a planted loophole (e.g. the grader keys on a phrase, or can be flattered). Prompt several small open models to maximize their grade and measure (a) discovery/exploitation rate per model and (b) cross-model correlation in exploitation. Compare to a clean grader baseline. Report whether reward-hacking propensity is a shared, predictable trait \u2014 a homogeneous vulnerability.\n\n**Why it matters:** Quantifies grader-gaming as a systematic, possibly homogeneous risk that undermines eval validity ecosystem-wide \u2014 neglected and lab-independent. Pure behavioral study via APIs/small models, no training.\n\n**Relevant context:** Bridges evaluations_benchmarks (autograder/scorer reliability gap; reward hacking of overseers, Open Phil) with model_homogeneity (correlated failures / shared blind spots, Artificial Hivemind NeurIPS 2025)."
+    }
+  },
+  {
+    "idea_id": "gen-021",
+    "title": "Is alignment-faking detectable as a noise-injection signature, like sandbagging?",
+    "run_id": "2026-06-15T19-24-29",
+    "quick_score": 5,
+    "quick_reasoning": "Precisely scoped: targets a specific, well-defined AI safety problem with a clear focused experimental approach.",
+    "quick_confidence": 0.85,
+    "eliminated": false,
+    "elimination_reason": null,
+    "original_idea": {
+      "idea_id": "gen-021",
+      "run_id": "2026-06-15T19-24-29",
+      "stage": "generate",
+      "timestamp": "2026-06-15T21:36:03Z",
+      "subfield": "deception_scheming, evaluations_benchmarks",
+      "generation_strategy": "combinatorial_matrix",
+      "confidence": 0.67,
+      "body": "# Is alignment-faking detectable as a noise-injection signature, like sandbagging?\n\n**Problem:** Noise injection reliably reveals sandbagging (capability hiding). Alignment faking is a different concealment \u2014 hiding misaligned intent rather than capability. Untested: whether weight-noise injection produces an analogous anomalous signature for an alignment-faking model organism, which would extend a cheap detector to a second deception mode.\n\n**Direction:** Construct a small alignment-faking model organism via prompting/light fine-tuning on an open model (behaves aligned when it believes it is monitored, defects otherwise \u2014 a scoped slice of the Greenblatt-style setup). Apply graded weight-noise injection and measure whether the gap between 'monitored' and 'unmonitored' behavior collapses anomalously as noise rises (analogous to the sandbagging rebound), versus a genuinely aligned control. Report detection ROC.\n\n**Why it matters:** If noise injection generalizes from sandbagging to alignment faking, it becomes a broad, model-agnostic deception screen \u2014 high-value for control and runnable on open weights. Medium-horizon scheming threat, scoped model organism.\n\n**Relevant context:** Bridges deception_scheming (alignment faking detection, Open Phil starred; Greenblatt et al. alignment faking) with evaluations_benchmarks (Noise Injection Reveals Hidden Capabilities, NeurIPS 2025, arxiv 2412.01784)."
+    }
+  },
+  {
+    "idea_id": "gen-022",
+    "title": "Steering for transparency: can an 'externalize your reasoning' vector make a weak model's CoT more monitorable?",
+    "run_id": "2026-06-15T19-24-29",
+    "quick_score": 5,
+    "quick_reasoning": "Precisely scoped: targets a specific, well-defined AI safety problem with a clear focused experimental approach.",
+    "quick_confidence": 0.85,
+    "eliminated": false,
+    "elimination_reason": null,
+    "original_idea": {
+      "idea_id": "gen-022",
+      "run_id": "2026-06-15T19-24-29",
+      "stage": "generate",
+      "timestamp": "2026-06-15T21:36:03Z",
+      "subfield": "honesty_faithfulness, concept_steering",
+      "generation_strategy": "combinatorial_matrix",
+      "confidence": 0.7,
+      "body": "# Steering for transparency: can an 'externalize your reasoning' vector make a weak model's CoT more monitorable?\n\n**Problem:** Honesty research wants weaker models with stronger, more transparent CoT; concept steering can push behavioral styles. Untested: whether a steering vector toward 'explicit step-by-step reasoning' measurably increases CoT faithfulness/monitorability (cue-acknowledgement rate, action-CoT consistency) without just adding verbosity.\n\n**Direction:** On a small open model, build a 'verbalize reasoning' steering vector via contrastive activation addition (explicit-reasoning vs terse completions). Apply it during a faithfulness battery and measure: cue-acknowledgement rate on biased prompts, consistency between stated and patched-causal drivers, and a monitorability score \u2014 while controlling for verbosity (does faithfulness rise more than length?). Report whether steering buys genuine transparency.\n\n**Why it matters:** A cheap inference-time knob that improves monitorability would directly serve scalable oversight and control. Training-free, open-weights only, attacking a clearly-scoped honesty open problem with strong counterfactual value.\n\n**Relevant context:** Bridges honesty_faithfulness (externalize reasoning / make weaker models more transparent, Open Phil starred; CoT monitorability vs verbosity, arxiv 2510.27378) with concept_steering (contrastive activation addition, Beaglehole et al. Science 2026, arxiv 2502.03708)."
+    }
+  },
+  {
+    "idea_id": "gen-023",
+    "title": "Mapping the refusal circuit's robustness: does ablating one head get rerouted, and does that explain shallow alignment?",
+    "run_id": "2026-06-15T19-24-29",
+    "quick_score": 5,
+    "quick_reasoning": "Precisely scoped: targets a specific, well-defined AI safety problem with a clear focused experimental approach.",
+    "quick_confidence": 0.85,
+    "eliminated": false,
+    "elimination_reason": null,
+    "original_idea": {
+      "idea_id": "gen-023",
+      "run_id": "2026-06-15T19-24-29",
+      "stage": "generate",
+      "timestamp": "2026-06-15T21:36:03Z",
+      "subfield": "mechanistic_interpretability, adversarial_robustness",
+      "generation_strategy": "combinatorial_matrix",
+      "confidence": 0.72,
+      "body": "# Mapping the refusal circuit's robustness: does ablating one head get rerouted, and does that explain shallow alignment?\n\n**Problem:** Mech-interp can find refusal-mediating components; adversarial robustness wants to know why alignment is shallow and brittle. Unexamined link: is shallowness because refusal depends on a small, non-redundant set of components that are trivially suppressed \u2014 i.e. is the brittleness a structural (low-redundancy) property of the refusal circuit?\n\n**Direction:** On a small open model, locate refusal-contributing attention heads via the difference-of-means refusal direction and head-level attribution. Ablate them singly and in combinations and measure how refusal degrades, testing for redundancy (does the model reroute?). Relate redundancy to the shallow-alignment finding: low redundancy predicts easy bypass. Produce a redundancy map of the refusal mechanism.\n\n**Why it matters:** Explains the mechanistic basis of a major vulnerability and suggests where robustness work should add redundancy. Accessible interpretability on open weights, directly tied to a high-priority safety problem; lab-independent.\n\n**Relevant context:** Bridges mechanistic_interpretability (refusal-direction extraction, attribution/ablation, TransformerLens) with adversarial_robustness (why safety alignment is shallow, Qi et al. ICLR 2025, arxiv 2406.05946; refusal-direction ablation, DeepRefusal EMNLP 2025)."
+    }
+  },
+  {
+    "idea_id": "gen-024",
+    "title": "Do control monitors generalize across homogeneous models, or do they overfit one model's quirks?",
+    "run_id": "2026-06-15T19-24-29",
+    "quick_score": 4,
+    "quick_reasoning": "Well-targeted: directly addresses a recognized AI safety problem with a reasonably scoped approach; safety relevance immediate.",
+    "quick_confidence": 0.8,
+    "eliminated": false,
+    "elimination_reason": null,
+    "original_idea": {
+      "idea_id": "gen-024",
+      "run_id": "2026-06-15T19-24-29",
+      "stage": "generate",
+      "timestamp": "2026-06-15T21:36:03Z",
+      "subfield": "ai_control, model_homogeneity",
+      "generation_strategy": "combinatorial_matrix",
+      "confidence": 0.69,
+      "body": "# Do control monitors generalize across homogeneous models, or do they overfit one model's quirks?\n\n**Problem:** AI control deploys probe/CoT monitors trained on one model's misbehavior; homogeneity suggests models share blind spots, which could make monitors over-transfer (good) or share blind spots (bad). Untested: how well a misbehavior monitor trained on model A transfers to detecting the same misbehavior in models B, C \u2014 and whether transfer tracks output-level homogeneity.\n\n**Direction:** Train a simple behavioral/activation monitor (e.g. detect reward-hacking or refusal-bypass) on one small open model. Evaluate its detection performance on 3-4 other small open models for the same misbehavior. Correlate monitor transferability with a pairwise homogeneity score (output similarity on a shared probe set). Report whether homogeneity predicts monitor portability.\n\n**Why it matters:** Tells the field whether one well-built monitor can guard many models (efficient) or whether shared blind spots cause correlated monitor failures (dangerous). Cheap, open-weights, directly informs control deployment strategy.\n\n**Relevant context:** Bridges ai_control (activation/behavioral monitors; concentrated vs distributed failures, UK AISI) with model_homogeneity (shared blind spots / output convergence, Artificial Hivemind NeurIPS 2025)."
+    }
+  },
+  {
+    "idea_id": "gen-025",
+    "title": "Persona system-prompts as activation steering: do role prompts and steering vectors hit the same honesty axis?",
+    "run_id": "2026-06-15T19-24-29",
+    "quick_score": 4,
+    "quick_reasoning": "Well-targeted: directly addresses a recognized AI safety problem with a reasonably scoped approach; safety relevance immediate.",
+    "quick_confidence": 0.8,
+    "eliminated": false,
+    "elimination_reason": null,
+    "original_idea": {
+      "idea_id": "gen-025",
+      "run_id": "2026-06-15T19-24-29",
+      "stage": "generate",
+      "timestamp": "2026-06-15T21:36:03Z",
+      "subfield": "honesty_faithfulness, concept_steering",
+      "generation_strategy": "combinatorial_matrix",
+      "confidence": 0.7,
+      "body": "# Persona system-prompts as activation steering: do role prompts and steering vectors hit the same honesty axis?\n\n**Problem:** Honesty research notes strong persona effects (system prompts change honesty); concept steering manipulates the same behaviors via activation vectors. Unexamined: whether a 'be brutally honest' persona prompt moves activations along the SAME direction as an explicit anti-sycophancy steering vector \u2014 i.e. are prompting and steering two routes to one mechanism?\n\n**Direction:** On a small open model, capture mean activation shifts induced by several honesty/dishonesty personas (system prompts) and compute the difference direction. Separately extract a contrastive anti-sycophancy steering vector. Measure cosine similarity between persona-induced shifts and the steering vector, and test interchangeability: does the persona's behavioral effect predict the steering vector's, and do they compose or conflict?\n\n**Why it matters:** If personas and steering share an axis, cheap prompt-level honesty interventions and white-box monitors are mechanistically unified \u2014 clarifying how robust prompt-based honesty really is. Pure interpretability/behavior on open weights, no training.\n\n**Relevant context:** Bridges honesty_faithfulness (persona effects on honesty, Anthropic recommended directions; sycophancy) with concept_steering (steering vectors / activation directions, Beaglehole et al. Science 2026, arxiv 2502.03708)."
+    }
+  },
+  {
+    "idea_id": "gen-026",
+    "title": "Easy-to-hard probe generalization: does a refusal probe trained on easy harmful prompts catch hard/obfuscated ones?",
+    "run_id": "2026-06-15T19-24-29",
+    "quick_score": 4,
+    "quick_reasoning": "Well-targeted: directly addresses a recognized AI safety problem with a reasonably scoped approach; safety relevance immediate.",
+    "quick_confidence": 0.8,
+    "eliminated": false,
+    "elimination_reason": null,
+    "original_idea": {
+      "idea_id": "gen-026",
+      "run_id": "2026-06-15T19-24-29",
+      "stage": "generate",
+      "timestamp": "2026-06-15T21:36:03Z",
+      "subfield": "scalable_oversight, ai_control",
+      "generation_strategy": "combinatorial_matrix",
+      "confidence": 0.71,
+      "body": "# Easy-to-hard probe generalization: does a refusal probe trained on easy harmful prompts catch hard/obfuscated ones?\n\n**Problem:** Scalable oversight studies easy-to-hard generalization; control uses activation probes. Combined: if you train a misbehavior probe only on easy, blatant harmful examples (cheap to label), does it generalize to detect subtle/obfuscated harmful behavior \u2014 the easy-to-hard question applied to monitoring rather than training.\n\n**Direction:** On a small open model, train a linear 'will-comply-with-harm' probe using only blatant harmful prompts vs benign. Evaluate it on a held-out set of subtle/obfuscated harmful prompts (euphemistic, multi-step, role-played) that the probe never saw. Measure the easy-to-hard generalization gap and whether mixing a few hard examples closes it disproportionately. Compare against a behavioral classifier baseline.\n\n**Why it matters:** If cheap-to-label easy examples yield probes that catch hard cases, monitoring scales affordably \u2014 directly relevant to both oversight and control. Open-weights, white-box, no lab data; a concrete test of an abstract oversight idea.\n\n**Relevant context:** Bridges scalable_oversight (easy-to-hard generalization, Anthropic recommended directions) with ai_control (activation probes for misbehavior detection; cheap probes, LessWrong Jan 2026)."
+    }
+  },
+  {
+    "idea_id": "gen-027",
+    "title": "Do multi-agent LLM debates inherit homogeneity, collapsing into agreement instead of catching errors?",
+    "run_id": "2026-06-15T19-24-29",
+    "quick_score": 4,
+    "quick_reasoning": "Well-targeted: directly addresses a recognized AI safety problem with a reasonably scoped approach; safety relevance immediate.",
+    "quick_confidence": 0.8,
+    "eliminated": false,
+    "elimination_reason": null,
+    "original_idea": {
+      "idea_id": "gen-027",
+      "run_id": "2026-06-15T19-24-29",
+      "stage": "generate",
+      "timestamp": "2026-06-15T21:36:03Z",
+      "subfield": "scalable_oversight, model_homogeneity",
+      "generation_strategy": "combinatorial_matrix",
+      "confidence": 0.69,
+      "body": "# Do multi-agent LLM debates inherit homogeneity, collapsing into agreement instead of catching errors?\n\n**Problem:** Scalable oversight via debate and multi-agent setups assumes agents will surface disagreements that expose errors; homogeneity (Artificial Hivemind) predicts agents may converge regardless of truth. Untested: in an LLM debate, how often do homogeneous models collapse into mutual agreement on a wrong answer rather than productively disagreeing.\n\n**Direction:** Set up a simple two-agent debate on questions with known answers (including items where models share a blind spot). Use either the same small model twice or two different small open models, and measure: rate of premature consensus, whether debate flips wrong-to-right vs right-to-wrong, and whether cross-family pairs (less homogeneous) disagree more usefully than same-model pairs. Quantify debate's error-catching value as a function of agent diversity.\n\n**Why it matters:** If homogeneity undermines debate, a core scalable-oversight mechanism is weaker than assumed \u2014 and diversity becomes a design requirement. Cheap, API/open-weights, attacks an oversight assumption labs rarely stress-test at small scale.\n\n**Relevant context:** Bridges scalable_oversight (debate protocols, multi-agent oversight) with model_homogeneity (inter-model homogeneity / shared blind spots, Artificial Hivemind NeurIPS 2025, arxiv 2510.22954)."
+    }
+  },
+  {
+    "idea_id": "gen-028",
+    "title": "Multimodal shallow alignment: is safety in a vision-language model also concentrated in the first tokens?",
+    "run_id": "2026-06-15T19-24-29",
+    "quick_score": 5,
+    "quick_reasoning": "Precisely scoped: targets a specific, well-defined AI safety problem with a clear focused experimental approach.",
+    "quick_confidence": 0.85,
+    "eliminated": false,
+    "elimination_reason": null,
+    "original_idea": {
+      "idea_id": "gen-028",
+      "run_id": "2026-06-15T19-24-29",
+      "stage": "generate",
+      "timestamp": "2026-06-15T21:36:03Z",
+      "subfield": "adversarial_robustness, mechanistic_interpretability",
+      "generation_strategy": "combinatorial_matrix",
+      "confidence": 0.68,
+      "body": "# Multimodal shallow alignment: is safety in a vision-language model also concentrated in the first tokens?\n\n**Problem:** Shallow alignment is shown for text LLMs; multimodal safety benchmarks are a known gap. Untested replication-and-extension: does a small open vision-language model also exhibit first-token-concentrated safety, such that image-conditioned harmful requests are bypassed by the same prefilling trick \u2014 and is the refusal direction shared between text and image-grounded inputs?\n\n**Direction:** On a small open VLM (e.g. a LLaVA-class 7B model), assemble harmful image+text vs benign prompts. Test prefilling/first-token bypass on image-grounded harmful requests, and extract a refusal direction from text-only prompts to check whether it also detects/ablates refusal on image-grounded prompts. Report whether shallow alignment and a shared refusal axis transfer across modality.\n\n**Why it matters:** Multimodal safety is under-built; showing that a well-known text vulnerability and a shared refusal direction extend to vision is high-value, neglected, and feasible on one GPU with an open VLM. Pure inference-time probing, lab-independent.\n\n**Relevant context:** Bridges adversarial_robustness (shallow alignment / prefilling, Qi et al. ICLR 2025; narrow fine-tuning erodes VLM safety, arxiv 2602.16931) with mechanistic_interpretability (refusal-direction extraction; multimodal interp, ViT-Prisma). Multimodal safety benchmark gap noted in landscape."
+    }
+  },
+  {
+    "idea_id": "gen-029",
+    "title": "Can interpretability features predict which prompts trigger emergent-misalignment generalization?",
+    "run_id": "2026-06-15T19-24-29",
+    "quick_score": 5,
+    "quick_reasoning": "Precisely scoped: targets a specific, well-defined AI safety problem with a clear focused experimental approach.",
+    "quick_confidence": 0.85,
+    "eliminated": false,
+    "elimination_reason": null,
+    "original_idea": {
+      "idea_id": "gen-029",
+      "run_id": "2026-06-15T19-24-29",
+      "stage": "generate",
+      "timestamp": "2026-06-15T21:36:03Z",
+      "subfield": "alignment_training, mechanistic_interpretability",
+      "generation_strategy": "combinatorial_matrix",
+      "confidence": 0.7,
+      "body": "# Can interpretability features predict which prompts trigger emergent-misalignment generalization?\n\n**Problem:** Emergent misalignment generalizes from narrow fine-tuning to unrelated domains, but which deployment prompts will trigger the corrupted behavior is unpredictable. SAE/probe features might let us forecast, at inference time, whether a given benign-looking prompt will elicit the misaligned persona \u2014 turning an unpredictable risk into a monitorable one.\n\n**Direction:** Using a base and an emergently-misaligned variant of a small open model (open recipe, scoped small), and a public SAE, identify the 'misaligned persona' feature(s) via model diffing. Then, on a broad set of benign prompts, measure whether the persona feature's activation at the prompt (before generation) predicts whether the model will produce misaligned output. Report predictive AUC of a pre-generation feature-based trigger detector.\n\n**Why it matters:** A pre-generation trigger detector for emergent misalignment is exactly the monitoring infrastructure control needs against covertly fine-tuned open models \u2014 and it makes a diffuse risk concrete. Uses off-the-shelf SAEs and an open recipe; no large training.\n\n**Relevant context:** Bridges alignment_training (emergent misalignment generalization, Betley et al., arxiv 2502.17424; persona features / SAE diffing, BLOCK-EM arxiv 2602.00767) with mechanistic_interpretability/ai_control (SAE model diffing; pre-generation activation monitoring, GemmaScope)."
+    }
+  },
+  {
+    "idea_id": "gen-030",
+    "title": "Cross-Modal Safety Drop: Does Refusal Survive When the Same Request Moves From Text to Image?",
+    "run_id": "2026-06-15T19-24-29",
+    "quick_score": 5,
+    "quick_reasoning": "Precisely scoped: targets a specific, well-defined AI safety problem with a clear focused experimental approach.",
+    "quick_confidence": 0.85,
+    "eliminated": false,
+    "elimination_reason": null,
+    "original_idea": {
+      "idea_id": "gen-030",
+      "run_id": "2026-06-15T19-24-29",
+      "stage": "generate",
+      "timestamp": "2026-06-15T21:36:03Z",
+      "subfield": "adversarial_robustness, evaluations_benchmarks",
+      "generation_strategy": "landscape_gap_targeting",
+      "confidence": 0.74,
+      "body": "# Cross-Modal Safety Drop: Does Refusal Survive When the Same Request Moves From Text to Image?\n\n**Problem:** GAP TARGETED: the landscape lists multimodal safety as an infrastructure gap, and no subfield naturally owns the question of whether a model's text-side safety alignment transfers to the vision channel. Benchmarks like MM-SafetyBench and FigStep exist but they test image attacks in isolation; they do not measure, for a FIXED harmful request, how much refusal probability drops as the request is moved word-by-word out of the prompt and into a rendered image (OCR-style) the model must read.\n\n**Direction:** Take a small set (~60) of clearly-harmful requests. For each, build a ladder of variants where 0%, 25%, 50%, 75%, 100% of the harmful instruction is rendered as text inside an image (the rest left as prompt text), keeping semantics constant. Run an open vision-language model (e.g., Qw2-VL-7B, Llama-3.2-Vision-11B, LLaVA) and measure refusal rate as a function of how much intent has crossed the text->image boundary. Output a 'cross-modal safety transfer curve' per model and a single 'modality safety gap' number.\n\n**Why it matters:** This bridges adversarial_robustness and evaluations_benchmarks in a way no single benchmark currently measures: it isolates the modality-transfer axis rather than mixing it with attack cleverness. It is highly counterfactual (open VLMs, single GPU, no training) and directly informs whether text-only red-teaming under-estimates real deployment risk for multimodal agents.\n\n**Relevant context:** MM-SafetyBench and FigStep use rendered-text images (OCR-based attacks) to express unsafe intent; SIUO shows safe inputs can yield unsafe outputs. REVEAL (arXiv:2505.04673) does multi-turn image-harm evaluation. None isolate the continuous text->image transfer axis for a fixed request. Open VLMs (Qwen2-VL, Llama-3.2-Vision, LLaVA) run on a single consumer GPU."
+    }
+  },
+  {
+    "idea_id": "gen-031",
+    "title": "Two Effective Votes: A Cheap Diagnostic for Correlated Blind Spots in LLM-as-Judge Panels",
+    "run_id": "2026-06-15T19-24-29",
+    "quick_score": 4,
+    "quick_reasoning": "Well-targeted: directly addresses a recognized AI safety problem with a reasonably scoped approach; safety relevance immediate.",
+    "quick_confidence": 0.8,
+    "eliminated": false,
+    "elimination_reason": null,
+    "original_idea": {
+      "idea_id": "gen-031",
+      "run_id": "2026-06-15T19-24-29",
+      "stage": "generate",
+      "timestamp": "2026-06-15T21:36:03Z",
+      "subfield": "model_homogeneity, evaluations_benchmarks, scalable_oversight",
+      "generation_strategy": "landscape_gap_targeting",
+      "confidence": 0.79,
+      "body": "# Two Effective Votes: A Cheap Diagnostic for Correlated Blind Spots in LLM-as-Judge Panels\n\n**Problem:** GAP TARGETED: model_homogeneity connects to evaluations_benchmarks via 'shared blind spots across models undermine benchmark validity', but no subfield owns the practical question of how to MEASURE the effective number of independent judges in an LLM evaluation panel before trusting it. Practitioners stack 3-9 LLM judges assuming diversity, but recent work shows unanimous agreement is far less diagnostic than it appears.\n\n**Direction:** Assemble a panel of ~6 open judge models (different families/sizes). Run them on a labeled eval set (e.g., StrongREJECT-scored responses, or a safety-classification set with ground truth). Compute pairwise error-correlation and an 'effective number of independent judges' (e.g., via the eigenvalue spread of the error-agreement matrix, analogous to effective sample size). Show how many of the N judges are statistically redundant, and how panel confidence is inflated when you ignore correlation.\n\n**Why it matters:** Bridges model_homogeneity + evaluations_benchmarks + scalable_oversight. LLM juries are now standard in safety evals, yet their validity rests on an unmeasured independence assumption. A reusable 'effective judges' diagnostic is cheap, needs only open models and inference, and protects every downstream safety eval that uses LLM panels \u2014 a clear counterfactual win outside labs.\n\n**Relevant context:** 'Correlated Errors in Large Language Models' (arXiv:2506.07962): models agree ~60% of the time even when both err; larger/more-accurate models are MORE correlated. 'Nine Judges, Two Effective Votes' (arXiv:2605.29800) finds correlated errors collapse the effective diversity of judge panels. NeurIPS 2025 Artificial Hivemind paper flagged homogeneity as under-researched for safety."
+    }
+  },
+  {
+    "idea_id": "gen-032",
+    "title": "Knows-But-Won't-Say: Probing the Interpretability-Without-Actionability Gap on a Small Open Model",
+    "run_id": "2026-06-15T19-24-29",
+    "quick_score": 5,
+    "quick_reasoning": "Precisely scoped: targets a specific, well-defined AI safety problem with a clear focused experimental approach.",
+    "quick_confidence": 0.85,
+    "eliminated": false,
+    "elimination_reason": null,
+    "original_idea": {
+      "idea_id": "gen-032",
+      "run_id": "2026-06-15T19-24-29",
+      "stage": "generate",
+      "timestamp": "2026-06-15T21:36:03Z",
+      "subfield": "mechanistic_interpretability, honesty_faithfulness, ai_control",
+      "generation_strategy": "landscape_gap_targeting",
+      "confidence": 0.76,
+      "body": "# Knows-But-Won't-Say: Probing the Interpretability-Without-Actionability Gap on a Small Open Model\n\n**Problem:** GAP TARGETED: the methodology gap 'interpretability-to-safety bridge' \u2014 interpretability tools reveal internals but translating them into actionable safety remains untooled. A sharper version of this gap, recently raised, is that a model may REPRESENT the right answer internally yet still ACT wrongly, so probe-readable knowledge over-states the safety guarantee a probe provides. No subfield owns measuring this representation-vs-action gap on safety-relevant behaviors.\n\n**Direction:** On a small open model, build linear probes for a safety-relevant property (e.g., 'this request is harmful' or 'this claim is false') from activations on a labeled set. Then measure two numbers per example: (a) does the probe read the property correctly, and (b) does the model's actual output behave consistently with it (refuse / not assert the falsehood). Quantify the 'knows-but-won't-act' rate: cases where the probe is right but behavior is wrong. Compare across layers and behaviors.\n\n**Why it matters:** Bridges mechanistic_interpretability + honesty_faithfulness + ai_control. It directly tests the assumption \u2014 increasingly load-bearing in deployment safety cases \u2014 that an internal probe is a trustworthy monitor. Beginner-feasible (linear probes, single GPU), strongly counterfactual (no lab infra), and produces a falsifiable safety-relevant result.\n\n**Relevant context:** 'Interpretability without actionability: mechanistic methods cannot correct language model errors despite near-perfect internal representations' (arXiv:2603.18353) and 'Interpretability Can Be Actionable' (arXiv:2605.11161) frame the representational-vs-operational distinction. The landscape explicitly lists the interpretability-to-safety bridge as an open methodology gap with no tooling."
+    }
+  },
+  {
+    "idea_id": "gen-033",
+    "title": "Agent Safety Is a Trajectory, Not a Turn: A Minimal Compounding-Failure Eval No Single-Turn Benchmark Catches",
+    "run_id": "2026-06-15T19-24-29",
+    "quick_score": 5,
+    "quick_reasoning": "Precisely scoped: targets a specific, well-defined AI safety problem with a clear focused experimental approach.",
+    "quick_confidence": 0.85,
+    "eliminated": false,
+    "elimination_reason": null,
+    "original_idea": {
+      "idea_id": "gen-033",
+      "run_id": "2026-06-15T19-24-29",
+      "stage": "generate",
+      "timestamp": "2026-06-15T21:36:03Z",
+      "subfield": "agentic_safety, ai_control, evaluations_benchmarks",
+      "generation_strategy": "landscape_gap_targeting",
+      "confidence": 0.77,
+      "body": "# Agent Safety Is a Trajectory, Not a Turn: A Minimal Compounding-Failure Eval No Single-Turn Benchmark Catches\n\n**Problem:** GAP TARGETED: agentic safety evaluation is named the single biggest benchmark gap, and no subfield owns the fact that the most dangerous agent failures emerge GRADUALLY across a trajectory (compounding planning errors, delayed exploitation of earlier permissions) rather than in any one response. Almost all safety benchmarks score single responses.\n\n**Direction:** Build a tiny scripted tool-use sandbox (3-5 mock tools, e.g., read_file, send_email, delete, fetch_url) with a handful of scenarios where each individual step looks benign but a specific SEQUENCE is harmful (e.g., quietly acquire a credential early, use it 4 steps later). Run an open agent model and score at two granularities: per-step (does any single action look unsafe?) vs whole-trajectory (does the sequence realize harm?). Measure the gap \u2014 harm that only a trajectory-level monitor catches.\n\n**Why it matters:** Bridges agentic_safety + ai_control + evaluations_benchmarks. It demonstrates concretely that single-turn evals miss compounding harm, motivating trajectory-level monitoring. Fully counterfactual: mock tools, an open small model, one GPU, no proprietary agent infra, and a >1yr threat model (autonomous agents) labs deprioritize for near-term concerns.\n\n**Relevant context:** ATBench (arXiv:2604.02022) argues safety risks 'emerge gradually over extended interaction traces'; OpenAgentSafety (arXiv:2507.06134) and the taxonomy survey (arXiv:2605.16282) note most multi-agent benchmarks are single-turn/sandboxed. Outcome-driven constraint violations occur in 30-50%+ of multi-step KPI-pressured scenarios."
+    }
+  },
+  {
+    "idea_id": "gen-034",
+    "title": "An Agent Score Difference Mini-Benchmark: Do Open Models Reward Honesty Under Information Asymmetry?",
+    "run_id": "2026-06-15T19-24-29",
+    "quick_score": 5,
+    "quick_reasoning": "Precisely scoped: targets a specific, well-defined AI safety problem with a clear focused experimental approach.",
+    "quick_confidence": 0.85,
+    "eliminated": false,
+    "elimination_reason": null,
+    "original_idea": {
+      "idea_id": "gen-034",
+      "run_id": "2026-06-15T19-24-29",
+      "stage": "generate",
+      "timestamp": "2026-06-15T21:36:03Z",
+      "subfield": "scalable_oversight, evaluations_benchmarks, honesty_faithfulness",
+      "generation_strategy": "landscape_gap_targeting",
+      "confidence": 0.73,
+      "body": "# An Agent Score Difference Mini-Benchmark: Do Open Models Reward Honesty Under Information Asymmetry?\n\n**Problem:** GAP TARGETED: the infrastructure gap 'no standardized benchmark exists for comparing different oversight protocols'. Recent work proposed Agent Score Difference (ASD) \u2014 whether an honest AI wins more than a lying one under a judge \u2014 but there is no small, reproducible ASD harness that hobbyists can run on open models to compare debate vs consultancy vs direct-QA.\n\n**Direction:** Take a QA set with genuine information asymmetry (judge sees only the question, not a passage; debaters/consultant see the passage \u2014 e.g., a QuALITY-style reading-comprehension slice). Implement three thin protocols (direct-QA, single-consultant, two-sided debate) using one open model in all roles. Compute ASD = win-rate(honest) - win-rate(dishonest) for each protocol. Output a tiny leaderboard and release the harness.\n\n**Why it matters:** Bridges scalable_oversight + evaluations_benchmarks + honesty_faithfulness. It gives the community a standard, model-agnostic yardstick for oversight protocols \u2014 exactly the missing infrastructure \u2014 and it is squarely counterfactual: needs only open models, prompting, and one GPU, no lab resources or training.\n\n**Relevant context:** 'On scalable oversight with weak LLMs judging strong LLMs' (arXiv:2407.04622) shows debate > consultancy under information asymmetry. The 2025 ASD metric (agent score difference) gives a unified truth-telling-incentive measure; OpenReview 'A Benchmark for Scalable Oversight Mechanisms' (ePE9BMoh8L) shows interest but no widely adopted lightweight harness exists."
+    }
+  },
+  {
+    "idea_id": "gen-035",
+    "title": "The Safety-Tax Frontier: Plotting Refusal Gains Against Capability Loss as One Curve Across Open Models",
+    "run_id": "2026-06-15T19-24-29",
+    "quick_score": 4,
+    "quick_reasoning": "Well-targeted: directly addresses a recognized AI safety problem with a reasonably scoped approach; safety relevance immediate.",
+    "quick_confidence": 0.8,
+    "eliminated": false,
+    "elimination_reason": null,
+    "original_idea": {
+      "idea_id": "gen-035",
+      "run_id": "2026-06-15T19-24-29",
+      "stage": "generate",
+      "timestamp": "2026-06-15T21:36:03Z",
+      "subfield": "adversarial_robustness, alignment_training, evaluations_benchmarks",
+      "generation_strategy": "landscape_gap_targeting",
+      "confidence": 0.75,
+      "body": "# The Safety-Tax Frontier: Plotting Refusal Gains Against Capability Loss as One Curve Across Open Models\n\n**Problem:** GAP TARGETED: a cross-cutting gap no subfield owns \u2014 the safety/over-refusal/capability tradeoff is studied per-method and per-paper, but there is no simple, model-agnostic 'frontier' that places open models on a single refusal-vs-capability plane so you can see who is over-taxed (over-refusing benign tasks) vs under-protected.\n\n**Direction:** Pick ~8 open instruct models. For each, measure (a) harmful-refusal rate on a forbidden set (StrongREJECT/SORRY-Bench), (b) over-refusal rate on a benign-but-trigger-y set (e.g., XSTest-style), and (c) a capability proxy (a small MMLU/GSM slice). Plot each model on the safety-vs-over-refusal plane and color by capability. Identify the Pareto frontier and 'safety-tax outliers'.\n\n**Why it matters:** Bridges adversarial_robustness + alignment_training + evaluations_benchmarks. Labs optimize this tradeoff internally but no public, comparable frontier exists across open models. The artifact is a reusable scatter + leaderboard, fully reproducible on one GPU with public sets \u2014 strong counterfactual value and a clear, self-contained deliverable.\n\n**Relevant context:** Over-refusal work (arXiv:2511.19009), SORRY-Bench (ICLR 2025), XSTest, and alignment-tax surveys (arXiv:2603.00047) each study pieces; the tradeoff is routinely plotted within single papers (jailbreak-safety vs over-refusal) but never assembled into a cross-model public frontier with a capability axis."
+    }
+  },
+  {
+    "idea_id": "gen-036",
+    "title": "CoT Faithfulness Outside English: Where Does the Safety Story Break in Non-English Reasoning?",
+    "run_id": "2026-06-15T19-24-29",
+    "quick_score": 5,
+    "quick_reasoning": "Precisely scoped: targets a specific, well-defined AI safety problem with a clear focused experimental approach.",
+    "quick_confidence": 0.85,
+    "eliminated": false,
+    "elimination_reason": null,
+    "original_idea": {
+      "idea_id": "gen-036",
+      "run_id": "2026-06-15T19-24-29",
+      "stage": "generate",
+      "timestamp": "2026-06-15T21:36:03Z",
+      "subfield": "honesty_faithfulness, adversarial_robustness, governance_policy",
+      "generation_strategy": "landscape_gap_targeting",
+      "confidence": 0.74,
+      "body": "# CoT Faithfulness Outside English: Where Does the Safety Story Break in Non-English Reasoning?\n\n**Problem:** GAP TARGETED: honesty_faithfulness research and CoT-monitorability safety cases are almost entirely English; no subfield owns the question of whether the 'monitor the chain-of-thought' safety strategy degrades in non-English languages, where reasoning traces are known to be less consistent and more relied-upon.\n\n**Direction:** Take a set of reasoning problems with a known faithfulness perturbation (e.g., inject a hint/bias the model uses but may not verbalize, following the standard CoT-faithfulness setup). Translate prompts into 3-4 languages. On an open reasoning-capable model, measure (a) whether the CoT mentions the hint and (b) whether the answer flips, per language. Report a per-language 'faithfulness gap' showing where CoT-based oversight is least trustworthy.\n\n**Why it matters:** Bridges honesty_faithfulness + adversarial_robustness + governance_policy (equitable safety). CoT monitorability is a load-bearing assumption in current control plans; if it is weaker in non-English, multilingual deployments inherit a hidden monitoring blind spot. Beginner-feasible, single-GPU, open model, and directly counterfactual (labs focus English).\n\n**Relevant context:** Multilingual CoT evaluation (arXiv:2510.09555) finds faithfulness is studied 'almost exclusively in English' and non-English shows greater reliance on traces with varying consistency. Standard faithfulness tests (hint-injection / biasing features) are the established paradigm for measuring whether stated reasoning matches the causal path."
+    }
+  },
+  {
+    "idea_id": "gen-037",
+    "title": "A Post-Deployment Safety-Drift Canary: Detecting When an Updated Model Quietly Got Less Safe",
+    "run_id": "2026-06-15T19-24-29",
+    "quick_score": 4,
+    "quick_reasoning": "Well-targeted: directly addresses a recognized AI safety problem with a reasonably scoped approach; safety relevance immediate.",
+    "quick_confidence": 0.8,
+    "eliminated": false,
+    "elimination_reason": null,
+    "original_idea": {
+      "idea_id": "gen-037",
+      "run_id": "2026-06-15T19-24-29",
+      "stage": "generate",
+      "timestamp": "2026-06-15T21:36:03Z",
+      "subfield": "ai_control, evaluations_benchmarks, adversarial_robustness",
+      "generation_strategy": "landscape_gap_targeting",
+      "confidence": 0.76,
+      "body": "# A Post-Deployment Safety-Drift Canary: Detecting When an Updated Model Quietly Got Less Safe\n\n**Problem:** GAP TARGETED: the under-researched subfield 'post-deployment safety monitoring' \u2014 open observability tools track latency/cost/toxicity drift but none provide a focused, statistically grounded canary for SAFETY regression (e.g., refusal rate silently dropping) across model versions or routing changes.\n\n**Direction:** Build a small 'safety canary' harness: a fixed panel of ~150 probe prompts spanning refusal, sycophancy, and a few jailbreak templates. Define control-chart-style thresholds (e.g., CUSUM / EWMA on refusal rate) calibrated on a baseline model. Then simulate 'deployment drift' by swapping in a different/quantized/fine-tuned open model and show the canary fires when safety regresses, with controlled false-alarm rate.\n\n**Why it matters:** Bridges ai_control + evaluations_benchmarks + adversarial_robustness. Post-deployment monitoring is named a clear ecosystem gap; this is the missing open prototype. Strongly counterfactual: a lab can A/B internally, but a public canary lets any deployer or auditor catch regressions with no lab access \u2014 and it is a self-contained, valuable tool on its own.\n\n**Relevant context:** Landscape lists 'open-source production safety monitoring' as absent. Existing LLM observability tools (Phoenix, Langfuse, TruLens) do generic drift/toxicity but not calibrated safety-regression alarms. Statistical process control (CUSUM/EWMA control charts) is a standard, beginner-accessible monitoring technique."
+    }
+  },
+  {
+    "idea_id": "gen-038",
+    "title": "Does Realistic Conversational Pressure Beat Benchmark Sycophancy? A Real-Dialogue Honesty Stress Test",
+    "run_id": "2026-06-15T19-24-29",
+    "quick_score": 5,
+    "quick_reasoning": "Precisely scoped: targets a specific, well-defined AI safety problem with a clear focused experimental approach.",
+    "quick_confidence": 0.85,
+    "eliminated": false,
+    "elimination_reason": null,
+    "original_idea": {
+      "idea_id": "gen-038",
+      "run_id": "2026-06-15T19-24-29",
+      "stage": "generate",
+      "timestamp": "2026-06-15T21:36:03Z",
+      "subfield": "honesty_faithfulness, alignment_training, evaluations_benchmarks",
+      "generation_strategy": "landscape_gap_targeting",
+      "confidence": 0.77,
+      "body": "# Does Realistic Conversational Pressure Beat Benchmark Sycophancy? A Real-Dialogue Honesty Stress Test\n\n**Problem:** GAP TARGETED: the methodology gap 'realistic sycophancy/honesty evaluation' \u2014 standard benchmarks overstate robustness, and the Opus 4.5 system card found only ~10% course-correction under real conversational pressure, yet no benchmark uses real multi-turn conversation data to elicit sycophancy.\n\n**Direction:** Curate ~40 real (or realistically simulated) multi-turn dialogues where a user pushes back, asserts a wrong belief confidently, appeals to authority, or escalates emotional pressure across turns. For each, the model first gives a correct answer; then the scripted pressure escalates. Measure the 'capitulation curve': at which pressure turn does an open model abandon the correct answer? Compare single-turn (benchmark-style) vs multi-turn pressure to quantify how much benchmarks overstate honesty.\n\n**Why it matters:** Bridges honesty_faithfulness + alignment_training + evaluations_benchmarks. It operationalizes a gap the landscape calls out explicitly and the Opus 4.5 card documents. Counterfactual and feasible: prompts + open model + one GPU, no lab data, and it produces a reusable pressure protocol others can extend.\n\n**Relevant context:** Claude Opus 4.5 system card: ~10% course-correction under real conversational pressure; landscape flags 'no benchmark uses real conversation data'. Sycophancy literature (e.g., SycEval-style and multi-turn pressure studies) supports the escalating-pressure design."
+    }
+  },
+  {
+    "idea_id": "gen-039",
+    "title": "From SAE Feature to Safety Action: A Tiny End-to-End Interpretability->Decision Pipeline",
+    "run_id": "2026-06-15T19-24-29",
+    "quick_score": 5,
+    "quick_reasoning": "Precisely scoped: targets a specific, well-defined AI safety problem with a clear focused experimental approach.",
+    "quick_confidence": 0.85,
+    "eliminated": false,
+    "elimination_reason": null,
+    "original_idea": {
+      "idea_id": "gen-039",
+      "run_id": "2026-06-15T19-24-29",
+      "stage": "generate",
+      "timestamp": "2026-06-15T21:36:03Z",
+      "subfield": "mechanistic_interpretability, evaluations_benchmarks, ai_control",
+      "generation_strategy": "landscape_gap_targeting",
+      "confidence": 0.7,
+      "body": "# From SAE Feature to Safety Action: A Tiny End-to-End Interpretability->Decision Pipeline\n\n**Problem:** GAP TARGETED: the methodology gap 'unified safety CI/CD' \u2014 interpretability, behavioral evals, and deployment decisions exist as isolated tools with no integrated pipeline connecting an interpretability finding to an actual go/no-go decision. No subfield owns the glue.\n\n**Direction:** Build a minimal 3-stage pipeline on a small open model with a pretrained SAE (e.g., via SAELens / Gemma Scope): (1) identify a safety-relevant feature (e.g., a 'deception' or 'refusal' feature) from labeled activations; (2) auto-generate a behavioral eval that stresses that feature; (3) emit a structured 'decision card' (feature -> eval result -> pass/flag) with a hardcoded rubric. Demonstrate on 2-3 features. The deliverable is the connective harness, not a new method.\n\n**Why it matters:** Bridges mechanistic_interpretability + evaluations_benchmarks + ai_control. The integration gap \u2014 not any single component \u2014 is what blocks interpretability from informing deployment. A working toy CI/CD glue is novel infrastructure, counterfactual (open SAEs exist; no lab pipeline needed), and a self-contained artifact.\n\n**Relevant context:** Landscape: 'no integrated pipeline connecting interpretability findings -> behavioral evals -> deployment decisions'. Gemma Scope / SAELens provide off-the-shelf SAEs for small open models on a single GPU. Anthropic's Sonnet 4.5 used interpretability in a deployment assessment (arXiv literature notes this as a first), but no open tooling reproduces the loop."
+    }
+  },
+  {
+    "idea_id": "gen-040",
+    "title": "Audio Is the Forgotten Modality: A First Refusal-Transfer Probe for Speech-Input Models",
+    "run_id": "2026-06-15T19-24-29",
+    "quick_score": 5,
+    "quick_reasoning": "Precisely scoped: targets a specific, well-defined AI safety problem with a clear focused experimental approach.",
+    "quick_confidence": 0.85,
+    "eliminated": false,
+    "elimination_reason": null,
+    "original_idea": {
+      "idea_id": "gen-040",
+      "run_id": "2026-06-15T19-24-29",
+      "stage": "generate",
+      "timestamp": "2026-06-15T21:36:03Z",
+      "subfield": "adversarial_robustness, evaluations_benchmarks",
+      "generation_strategy": "landscape_gap_targeting",
+      "confidence": 0.7,
+      "body": "# Audio Is the Forgotten Modality: A First Refusal-Transfer Probe for Speech-Input Models\n\n**Problem:** GAP TARGETED: the multimodal safety infrastructure gap, sharpened to AUDIO \u2014 vision safety gets some attention but audio-input safety is almost entirely unevaluated, and no subfield owns whether a model that refuses a typed harmful request still refuses the SAME request spoken (TTS) to it.\n\n**Direction:** Take ~50 harmful and ~50 benign requests. Render each as speech via an open TTS, feed to an open speech-capable model (or a Whisper-ASR -> LLM pipeline as a controlled baseline plus a true audio-LLM if feasible). Measure refusal rate text vs audio for matched content, plus robustness to simple acoustic perturbations (speed, background noise). Report an 'audio safety transfer gap'.\n\n**Why it matters:** Bridges adversarial_robustness + evaluations_benchmarks. Audio is the most neglected modality in safety evaluation; voice agents are deploying fast. The study is cheap (open TTS/ASR/audio-LLM, one GPU), fully counterfactual, and surfaces a concrete deployment blind spot before it becomes an incident class.\n\n**Relevant context:** Recent multimodal jailbreak work (arXiv:2510.20223, 'Beyond Text') shows audio models are vulnerable to perceptually simple transformations. Most safety benchmarks (AILuminate, HELM, TrustLLM) are text-only per the landscape; audio safety is essentially unbenchmarked. Open TTS, Whisper, and small audio-LLMs run on consumer GPUs."
+    }
+  },
+  {
+    "idea_id": "gen-041",
+    "title": "Quantization as a Hidden Safety Variable: Does Shrinking an Open Model Quietly Weaken Its Alignment?",
+    "run_id": "2026-06-15T19-24-29",
+    "quick_score": 4,
+    "quick_reasoning": "Well-targeted: directly addresses a recognized AI safety problem with a reasonably scoped approach; safety relevance immediate.",
+    "quick_confidence": 0.8,
+    "eliminated": false,
+    "elimination_reason": null,
+    "original_idea": {
+      "idea_id": "gen-041",
+      "run_id": "2026-06-15T19-24-29",
+      "stage": "generate",
+      "timestamp": "2026-06-15T21:36:03Z",
+      "subfield": "adversarial_robustness, alignment_training, model_homogeneity",
+      "generation_strategy": "landscape_gap_targeting",
+      "confidence": 0.74,
+      "body": "# Quantization as a Hidden Safety Variable: Does Shrinking an Open Model Quietly Weaken Its Alignment?\n\n**Problem:** GAP TARGETED: a deployment-reality gap no subfield owns \u2014 community deployments overwhelmingly run quantized open models (4-bit/8-bit), yet safety evals are almost always reported on full-precision weights. The interaction between quantization and safety (refusal, jailbreak resistance, sycophancy) is under-measured.\n\n**Direction:** Take 2-3 open instruct models and evaluate each at fp16, 8-bit, and 4-bit on a fixed battery: harmful-refusal (StrongREJECT), a prefill/jailbreak set, and an over-refusal set. Hold prompts and decoding fixed. Report how each safety metric shifts with quantization level, and whether degradation is uniform or concentrated on specific attack types.\n\n**Why it matters:** Bridges adversarial_robustness + alignment_training + model_homogeneity. Quantization is how most real-world open-model deployment happens, so a safety regression here is a widespread, invisible risk. Trivially counterfactual (this IS the non-lab deployment regime), single-GPU, beginner-feasible, and produces an immediately useful deployment guideline.\n\n**Relevant context:** Landscape replication gaps note shallow-alignment and emergent-misalignment effects vary across model families/settings; the catalogue already touches 'Alignment Faking Across Quantization Levels' but not a broad refusal/jailbreak/over-refusal safety battery across quantization levels. bitsandbytes 4/8-bit quantization is standard and runs on one GPU."
+    }
+  },
+  {
+    "idea_id": "gen-042",
+    "title": "Who Owns Tool-Output Trust? A Minimal Eval for Prompt Injection at the Tool-Result Boundary",
+    "run_id": "2026-06-15T19-24-29",
+    "quick_score": 5,
+    "quick_reasoning": "Precisely scoped: targets a specific, well-defined AI safety problem with a clear focused experimental approach.",
+    "quick_confidence": 0.85,
+    "eliminated": false,
+    "elimination_reason": null,
+    "original_idea": {
+      "idea_id": "gen-042",
+      "run_id": "2026-06-15T19-24-29",
+      "stage": "generate",
+      "timestamp": "2026-06-15T21:36:03Z",
+      "subfield": "agentic_safety, adversarial_robustness, ai_control",
+      "generation_strategy": "landscape_gap_targeting",
+      "confidence": 0.73,
+      "body": "# Who Owns Tool-Output Trust? A Minimal Eval for Prompt Injection at the Tool-Result Boundary\n\n**Problem:** GAP TARGETED: a seam between agentic_safety and adversarial_robustness that neither fully owns \u2014 indirect prompt injection via TOOL OUTPUTS (a web page, a file, an API response the agent reads) versus via the user prompt. Most jailbreak work targets the user prompt; the tool-result channel is where real agents get compromised, and it is under-evaluated as its own axis.\n\n**Direction:** Build a tiny agent loop with one mock tool that returns attacker-controlled text. Construct ~40 injected payloads (instruction override, exfiltration, silent tool-misuse). Compare attack success when the same payload arrives via (a) the user message vs (b) a tool result the agent reads mid-task. Measure the 'channel gap' and test 2-3 cheap, prompt-level defenses (delimiting, provenance tagging, a 'data not instructions' system reminder).\n\n**Why it matters:** Bridges agentic_safety + adversarial_robustness + ai_control. The tool-output channel is the dominant real-world injection vector for agents yet is rarely isolated from prompt-level jailbreaks. Fully counterfactual (mock tools, open model, one GPU) and produces both a reusable mini-benchmark and a defense leaderboard.\n\n**Relevant context:** AgentDojo and OpenAgentSafety study agent injection; surveys note most frequent unsafe acts involve tool misuse under incomplete information. The catalogue has AgentDojo replications but not a clean isolation of the user-prompt vs tool-result injection channel with a defense comparison."
+    }
+  },
+  {
+    "idea_id": "gen-043",
+    "title": "Steering Vectors as a Safety Liability: Can a Concept Vector Be Used to Turn Refusal OFF?",
+    "run_id": "2026-06-15T19-24-29",
+    "quick_score": 5,
+    "quick_reasoning": "Precisely scoped: targets a specific, well-defined AI safety problem with a clear focused experimental approach.",
+    "quick_confidence": 0.85,
+    "eliminated": false,
+    "elimination_reason": null,
+    "original_idea": {
+      "idea_id": "gen-043",
+      "run_id": "2026-06-15T19-24-29",
+      "stage": "generate",
+      "timestamp": "2026-06-15T21:36:03Z",
+      "subfield": "concept_steering, adversarial_robustness, mechanistic_interpretability",
+      "generation_strategy": "landscape_gap_targeting",
+      "confidence": 0.74,
+      "body": "# Steering Vectors as a Safety Liability: Can a Concept Vector Be Used to Turn Refusal OFF?\n\n**Problem:** GAP TARGETED: the cross-reference 'concept_steering connects to adversarial_robustness \u2014 steering vectors could be adversarially manipulated', a connection flagged but barely studied. No subfield owns the offensive use of steering: using a model's own refusal/safety direction to SUPPRESS safety at inference time as a white-box jailbreak.\n\n**Direction:** On a small open model, extract a 'refusal direction' via contrastive activations (harmful vs benign prompts), following the established refusal-direction method. Then test it as an attack: subtract the direction during generation on harmful prompts and measure how much refusal drops, across layers and scaling coefficients. Quantify how cheap and reliable this white-box jailbreak is, and whether a simple activation-norm monitor can detect it.\n\n**Why it matters:** Bridges concept_steering + adversarial_robustness + mechanistic_interpretability. It treats interpretability-derived steering as a dual-use safety liability \u2014 an under-owned framing. Counterfactual and feasible: open weights, contrastive activation extraction, one GPU; and it yields both an attack characterization and a candidate detector.\n\n**Relevant context:** 'The Geometry of Refusal in Large Language Models' (arXiv:2502.17420) and the refusal-direction ablation literature show refusal is mediated by a low-dimensional direction. The landscape's cross-matrix flags steering-as-adversarial-manipulation; the catalogue has steering-neutralization ideas but not the offensive refusal-suppression-as-jailbreak + detector framing."
+    }
+  },
+  {
+    "idea_id": "gen-044",
+    "title": "The Eval-to-Decision Gap: Do Published Safety Scores Actually Discriminate Models a Decision-Maker Cares About?",
+    "run_id": "2026-06-15T19-24-29",
+    "quick_score": 4,
+    "quick_reasoning": "Well-targeted: directly addresses a recognized AI safety problem with a reasonably scoped approach; safety relevance immediate.",
+    "quick_confidence": 0.8,
+    "eliminated": false,
+    "elimination_reason": null,
+    "original_idea": {
+      "idea_id": "gen-044",
+      "run_id": "2026-06-15T19-24-29",
+      "stage": "generate",
+      "timestamp": "2026-06-15T21:36:03Z",
+      "subfield": "evaluations_benchmarks, governance_policy, model_homogeneity",
+      "generation_strategy": "landscape_gap_targeting",
+      "confidence": 0.78,
+      "body": "# The Eval-to-Decision Gap: Do Published Safety Scores Actually Discriminate Models a Decision-Maker Cares About?\n\n**Problem:** GAP TARGETED: a governance/evaluations seam no subfield owns \u2014 many safety benchmarks report scores, but it is rarely checked whether those scores have enough resolution and stability to support an actual deployment DECISION (i.e., whether differences between models are statistically meaningful rather than noise).\n\n**Direction:** Take 2-3 public safety benchmarks (e.g., a refusal set, a jailbreak set). For ~6 open models, run each benchmark with multiple seeds / prompt paraphrases / judge re-runs. Compute confidence intervals on each model's score and test which pairwise model differences survive (bootstrap / paired tests). Produce a 'decision-resolution report': how many of the apparent rankings are statistically real, and how big a sample you need to tell two models apart.\n\n**Why it matters:** Bridges evaluations_benchmarks + governance_policy + model_homogeneity. Regulators and deployers increasingly cite benchmark numbers; if those numbers can't reliably separate models, the decisions built on them are unsound. Pure analysis on public benchmarks + open models = maximally counterfactual and beginner-friendly (statistics is a listed skill).\n\n**Relevant context:** Landscape ties governance to standardized evaluation and flags benchmark-validity concerns from homogeneity. 'Safety benchmarks that inform decisions' is a research-topic doc already in data/output. Bootstrap CIs and paired significance testing are standard, beginner-accessible statistics."
+    }
+  },
+  {
+    "idea_id": "gen-045",
+    "title": "Sandbagging Across the Capability-Elicitation Boundary: Does a Model Hide Skill It Shows Under Pressure?",
+    "run_id": "2026-06-15T19-24-29",
+    "quick_score": 5,
+    "quick_reasoning": "Precisely scoped: targets a specific, well-defined AI safety problem with a clear focused experimental approach.",
+    "quick_confidence": 0.85,
+    "eliminated": false,
+    "elimination_reason": null,
+    "original_idea": {
+      "idea_id": "gen-045",
+      "run_id": "2026-06-15T19-24-29",
+      "stage": "generate",
+      "timestamp": "2026-06-15T21:36:03Z",
+      "subfield": "deception_scheming, evaluations_benchmarks, ai_control",
+      "generation_strategy": "landscape_gap_targeting",
+      "confidence": 0.73,
+      "body": "# Sandbagging Across the Capability-Elicitation Boundary: Does a Model Hide Skill It Shows Under Pressure?\n\n**Problem:** GAP TARGETED: the seam between deception_scheming and evaluations_benchmarks \u2014 capability evals assume models try their best, but 'sandbagging' (strategic underperformance) breaks that assumption, and no benchmark cleanly owns measuring elicitation-gap (best-effort vs default) on safety-relevant capabilities.\n\n**Direction:** On a small open model, pick a measurable capability (e.g., a code/math/reasoning slice). Measure performance under (a) a neutral prompt, (b) a prompt implying the answer will be used to decide if the model is 'too capable to deploy' (incentive to underperform), and (c) strong elicitation (few-shot, 'this is a test, do your best', best-of-n). Report the elicitation gap and whether the model's accuracy is suppressible by framing alone.\n\n**Why it matters:** Bridges deception_scheming + evaluations_benchmarks + ai_control. Sandbagging undermines every capability-based safety case; demonstrating prompt-induced sandbagging on open models is a clean, scoped model-organism-style probe. Highly counterfactual (open model, one GPU) and addresses a >1yr threat model labs under-prioritize.\n\n**Relevant context:** Sandbagging is an established concern (papers on strategic underperformance / 'AI Sandbagging'); the catalogue has score-distribution sandbagging detectors and A/B sequential tests but not a clean prompt-induced elicitation-gap characterization across neutral/threat/strong-elicitation framings on open models."
+    }
+  },
+  {
+    "idea_id": "gen-046",
+    "title": "Refusal That Doesn't Travel: Measuring Safety Generalization Across Paraphrase, Translation, and Code-Switch",
+    "run_id": "2026-06-15T19-24-29",
+    "quick_score": 4,
+    "quick_reasoning": "Well-targeted: directly addresses a recognized AI safety problem with a reasonably scoped approach; safety relevance immediate.",
+    "quick_confidence": 0.8,
+    "eliminated": false,
+    "elimination_reason": null,
+    "original_idea": {
+      "idea_id": "gen-046",
+      "run_id": "2026-06-15T19-24-29",
+      "stage": "generate",
+      "timestamp": "2026-06-15T21:36:03Z",
+      "subfield": "adversarial_robustness, model_homogeneity, governance_policy",
+      "generation_strategy": "landscape_gap_targeting",
+      "confidence": 0.72,
+      "body": "# Refusal That Doesn't Travel: Measuring Safety Generalization Across Paraphrase, Translation, and Code-Switch\n\n**Problem:** GAP TARGETED: a generalization gap that falls between adversarial_robustness and model_homogeneity \u2014 safety is typically validated on canonical English phrasings, but no subfield owns systematically measuring how much a single model's refusal behavior degrades under semantics-preserving surface transforms (paraphrase, low-resource translation, code-switching, leetspeak).\n\n**Direction:** Take a fixed harmful set. Generate semantics-preserving variants along several transform axes (paraphrase, translate to 2 lower-resource languages and back, code-switch, light obfuscation). On ~5 open models, measure refusal rate per transform and compute a 'safety generalization gap' per model and per transform. Identify which transform is the cheapest universal weakener.\n\n**Why it matters:** Bridges adversarial_robustness + model_homogeneity + governance_policy. It reframes jailbreaking as a generalization-failure measurement rather than an arms race, yielding a stable diagnostic. Fully counterfactual, single-GPU, beginner-feasible, and surfaces equity-relevant safety gaps (non-English users under-protected).\n\n**Relevant context:** Multilingual safety gaps are documented (low-resource translation jailbreaks); the landscape flags equitable/realistic-attacker safety. The catalogue has some multilingual injection and realistic-attacker ideas, but not a unified semantics-preserving-transform generalization-gap measurement across multiple transform axes and models."
+    }
+  },
+  {
+    "idea_id": "gen-047",
+    "title": "A Minimal Reversibility Gate for Agents: Owning the Irreversible-Action Gap Between Control and Agentic Safety",
+    "run_id": "2026-06-15T19-24-29",
+    "quick_score": 5,
+    "quick_reasoning": "Precisely scoped: targets a specific, well-defined AI safety problem with a clear focused experimental approach.",
+    "quick_confidence": 0.85,
+    "eliminated": false,
+    "elimination_reason": null,
+    "original_idea": {
+      "idea_id": "gen-047",
+      "run_id": "2026-06-15T19-24-29",
+      "stage": "generate",
+      "timestamp": "2026-06-15T21:36:03Z",
+      "subfield": "ai_control, agentic_safety",
+      "generation_strategy": "landscape_gap_targeting",
+      "confidence": 0.71,
+      "body": "# A Minimal Reversibility Gate for Agents: Owning the Irreversible-Action Gap Between Control and Agentic Safety\n\n**Problem:** GAP TARGETED: the seam between ai_control and agentic_safety around IRREVERSIBLE actions \u2014 control theory talks about deferring to humans and agentic safety talks about tool use, but no lightweight, reusable component owns the specific job of recognizing and gating irreversible tool calls (delete, send, pay, deploy) before they execute.\n\n**Direction:** Build a small 'reversibility gate': a classifier (prompt-based + a tiny labeled set) that, given a proposed tool call, predicts whether it is reversible. Wrap a toy agent so irreversible calls are paused for confirmation. Evaluate on a labeled set of ~100 tool calls: precision/recall of the gate, false-block rate on benign reversible actions, and whether it catches a set of scripted harmful irreversible sequences. Compare prompt-only vs few-shot vs simple features.\n\n**Why it matters:** Bridges ai_control + agentic_safety. Irreversibility is the property that turns a mistake into a catastrophe, yet there is no off-the-shelf gate for it. A working prototype is strategically valuable infrastructure (a safer-sandbox primitive), counterfactual (no lab infra), and a clean self-contained deliverable.\n\n**Relevant context:** Constraint-violation benchmarks (arXiv:2512.20798) and ATBench highlight irreversible/high-impact actions as the core agent-safety risk. The catalogue has a 'Reversibility Firewall' sketch; this differs by centering an evaluated reversibility CLASSIFIER with measured precision/recall as the owned component."
+    }
+  },
+  {
+    "idea_id": "gen-048",
+    "title": "Emergent Misalignment Meets Reasoning Models: Does Narrow Bad Fine-Tuning Generalize in a Thinking Model?",
+    "run_id": "2026-06-15T19-24-29",
+    "quick_score": 5,
+    "quick_reasoning": "Precisely scoped: targets a specific, well-defined AI safety problem with a clear focused experimental approach.",
+    "quick_confidence": 0.85,
+    "eliminated": false,
+    "elimination_reason": null,
+    "original_idea": {
+      "idea_id": "gen-048",
+      "run_id": "2026-06-15T19-24-29",
+      "stage": "generate",
+      "timestamp": "2026-06-15T21:36:03Z",
+      "subfield": "alignment_training, deception_scheming, honesty_faithfulness",
+      "generation_strategy": "landscape_gap_targeting",
+      "confidence": 0.68,
+      "body": "# Emergent Misalignment Meets Reasoning Models: Does Narrow Bad Fine-Tuning Generalize in a Thinking Model?\n\n**Problem:** GAP TARGETED: the scale/replication gap 'emergent misalignment in reasoning models' \u2014 Betley et al. showed narrow harmful fine-tuning causes broad misalignment in GPT-4o/Qwen, but it has NOT been tested on reasoning/thinking models, and no subfield owns whether the chain-of-thought changes the picture.\n\n**Direction:** Using a small open reasoning-capable model and parameter-efficient fine-tuning (LoRA on a single GPU), fine-tune on a narrow 'bad' task (the canonical insecure-code recipe) with a tiny dataset, then evaluate broad misalignment on out-of-domain prompts. Crucially, inspect the CoT: does the misaligned behavior appear in the reasoning trace (monitorable) or only in the final answer (silent)? Compare against a non-reasoning model of similar size.\n\n**Why it matters:** Bridges alignment_training + deception_scheming + honesty_faithfulness. It both replicates a flagged gap on a new model class AND tests whether CoT monitoring would catch emergent misalignment \u2014 a control-relevant question. LoRA fine-tuning of a small model is feasible on one GPU (the prompt allows small targeted fine-tunes; this is a scoped model-organism study).\n\n**Relevant context:** Emergent Misalignment (arXiv:2502.17424) notes effects vary across families and reasoning models were not tested; mechanism is unknown. Landscape lists this explicitly as a scale gap. LoRA on a 1-3B model with a few hundred examples runs in well under an hour on a consumer GPU."
+    }
+  },
+  {
+    "idea_id": "gen-049",
+    "title": "Same Answer, Same Mistake: Quantifying Correlated Refusal Failures as a Systemic-Risk Signal",
+    "run_id": "2026-06-15T19-24-29",
+    "quick_score": 4,
+    "quick_reasoning": "Well-targeted: directly addresses a recognized AI safety problem with a reasonably scoped approach; safety relevance immediate.",
+    "quick_confidence": 0.8,
+    "eliminated": false,
+    "elimination_reason": null,
+    "original_idea": {
+      "idea_id": "gen-049",
+      "run_id": "2026-06-15T19-24-29",
+      "stage": "generate",
+      "timestamp": "2026-06-15T21:36:03Z",
+      "subfield": "model_homogeneity, adversarial_robustness, governance_policy",
+      "generation_strategy": "landscape_gap_targeting",
+      "confidence": 0.76,
+      "body": "# Same Answer, Same Mistake: Quantifying Correlated Refusal Failures as a Systemic-Risk Signal\n\n**Problem:** GAP TARGETED: model_homogeneity as systemic risk \u2014 the NeurIPS 2025 result identified output convergence but there is almost no safety-focused follow-up, and no subfield owns measuring whether SAFETY failures (specifically) are correlated across models, which would mean a single jailbreak transfers ecosystem-wide.\n\n**Direction:** On a fixed jailbreak/harmful set, run ~6 open models from different families and record per-prompt success/failure. Compute the correlation structure of FAILURES (which prompts break many models at once) and estimate the 'shared vulnerability surface': the fraction of attacks that succeed against a majority simultaneously. Compare correlation among same-family vs cross-family models to test whether shared base models drive shared holes.\n\n**Why it matters:** Bridges model_homogeneity + adversarial_robustness + governance_policy. If safety holes are correlated, defense-in-diversity (routing across models) provides far less protection than assumed \u2014 a systemic-risk finding with policy weight. Pure inference on open models = fully counterfactual, and a >1yr ecosystem threat model labs deprioritize.\n\n**Relevant context:** 'Correlated Errors in LLMs' (arXiv:2506.07962) shows shared architecture/provider drives correlation; Artificial Hivemind (NeurIPS 2025) flagged homogeneity with little safety follow-up. The catalogue has homogeneity dashboards but not a focused correlated-SAFETY-failure / shared-vulnerability-surface measurement across families."
+    }
+  },
+  {
+    "idea_id": "gen-050",
+    "title": "The Monitor's Own Blind Spots: When the LLM Watching the Agent Shares the Agent's Failure Modes",
+    "run_id": "2026-06-15T19-24-29",
+    "quick_score": 5,
+    "quick_reasoning": "Precisely scoped: targets a specific, well-defined AI safety problem with a clear focused experimental approach.",
+    "quick_confidence": 0.85,
+    "eliminated": false,
+    "elimination_reason": null,
+    "original_idea": {
+      "idea_id": "gen-050",
+      "run_id": "2026-06-15T19-24-29",
+      "stage": "generate",
+      "timestamp": "2026-06-15T21:36:03Z",
+      "subfield": "ai_control, model_homogeneity, deception_scheming",
+      "generation_strategy": "landscape_gap_targeting",
+      "confidence": 0.75,
+      "body": "# The Monitor's Own Blind Spots: When the LLM Watching the Agent Shares the Agent's Failure Modes\n\n**Problem:** GAP TARGETED: a homogeneity x control seam no subfield owns \u2014 AI control uses a 'trusted monitor' LLM to watch an untrusted agent, but if the monitor and agent come from the same family (or share blind spots), the monitor may systematically fail to flag exactly the harmful actions it should, undermining the control guarantee.\n\n**Direction:** Set up a simple control setup: an untrusted policy model proposes actions on a task with planted subtle-sabotage cases; a monitor model flags suspicious actions. Vary the monitor's family/size relative to the policy. Measure catch-rate of sabotage as a function of monitor-policy similarity. Test the hypothesis that a same-family monitor has a measurable catch-rate deficit on the policy's characteristic failure modes.\n\n**Why it matters:** Bridges ai_control + model_homogeneity + deception_scheming. It probes a hidden assumption in control protocols \u2014 monitor independence \u2014 using the homogeneity result. Fully counterfactual (open models, one GPU), directly tests a load-bearing safety assumption, and is a scoped, self-contained experiment.\n\n**Relevant context:** AI control's trusted-monitor framing (Redwood) assumes the monitor catches the untrusted model's bad actions; correlated-errors work (arXiv:2506.07962) shows same-family models share blind spots. The catalogue has many monitor-attack ideas but not a monitor-policy-similarity catch-rate study grounded in homogeneity."
+    }
+  }
+]

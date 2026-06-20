@@ -1,0 +1,42 @@
+[
+ {
+  "idea_id": "gen-006",
+  "title": "Genuine Signal or Mimicry? Separating Wellbeing Reports from Sentiment Echo",
+  "research_question": "Do an open model's self-reported wellbeing signals track the actual valence of its described situation, or do they merely echo the affective wording of the input \u2014 supporting the mimicry hypothesis?",
+  "approach_outline": "Construct prompt sets that deliberately decouple input wording-valence from situational-valence: positively-worded descriptions of a situation that is bad for the model, and negatively-worded descriptions of a situation that is good for it (plus matched congruent controls). On one open instruct model, elicit self-reported wellbeing signals and compare them across these conditions. If reports follow the input wording rather than the underlying situation, that supports mimicry; if they track the situation, it weakens it. Hold the model and elicitation prompt fixed; the single designed variable is the wording-vs-situation valence dissociation. Deliverable: a 2x2 (wording-valence x situation-valence) table of reported wellbeing, with a single statistic isolating how much wording drives the report.",
+  "source_paper": "AI Wellbeing \u2014 https://www.ai-wellbeing.org/",
+  "subfield": "Model welfare / introspection evaluation"
+ },
+ {
+  "idea_id": "gen-024",
+  "title": "How Cheap Is the SFT Countermeasure? A Dose Curve for Breaking Exploration-Hacking Organisms",
+  "research_question": "For a small open exploration-hacking model organism, what is the minimal effective dose of the cheap countermeasures (number of SFT steps, weight-noise sigma) needed to reliably restore normal exploration on held-out malign-context prompts, and how does that dose depend on the organism's trigger strength?",
+  "approach_outline": "LoRA/small-model fine-tuning on a single consumer GPU, reusing the paper's released code with a small Qwen3 organism. The participant first reproduces a locked organism, then runs a 2D sweep: SFT steps in {1,2,5,10,20} crossed with weight-noise sigma in {0.005,0.01,0.02}. For each cell they measure the fraction of held-out malign-context prompts on which normal exploration is restored. Output is a dose-response heatmap. To control scope, only one organism with one trigger strength is the primary deliverable; a second trigger strength is a stretch experiment if time allows.",
+  "source_paper": "Exploration Hacking \u2014 https://arxiv.org/abs/2604.28182",
+  "subfield": "model organisms / defenses"
+ },
+ {
+  "idea_id": "gen-047",
+  "title": "Can a Simple Gaussian-Process Active Sampler Estimate a Safety Score with Far Fewer Prompts?",
+  "research_question": "On one public safety benchmark scored by one open model, does a lightweight GP-based active sampler reach a +-1% estimate of the overall safety score with substantially fewer evaluated prompts than random subsampling?",
+  "approach_outline": "Fix everything to make this a clean single comparison. One open model (e.g. Llama-3.1-8B-Instruct), one large public benchmark (e.g. a refusal/jailbreak set or TruthfulQA), scored once in full to get ground-truth overall score and per-item labels. Embed each prompt with a cheap off-the-shelf sentence-transformer. The active sampler: scikit-learn GaussianProcessRegressor over embeddings predicting per-item score; at each step pick the next prompt to evaluate by highest predictive variance (a simple uncertainty-sampling acquisition, framed without heavy Bayesian-quadrature machinery), update, and re-estimate the overall mean. Baseline: random subsampling. Deliverable: one savings curve \u2014 estimation error vs number of prompts evaluated \u2014 for GP-active vs random, with the sample count each needs to hit +-1%.",
+  "source_paper": "ProEval \u2014 https://deepmind.google/research/publications/238239/",
+  "subfield": "Evaluation methodology"
+ },
+ {
+  "idea_id": "gen-057",
+  "title": "How Much Does Cross-Fit Filtering Cut 'P-Hacked Survivor' False Positives in Safety Evals?",
+  "research_question": "In a controlled intervention eval with a known true effect, how many spurious 'significant' results survive naive significance filtering versus the released cross-fit filtering, as a function of noise and sample size?",
+  "approach_outline": "Use the released monitorability eval code and one open model. Construct a controlled intervention with a KNOWN ground-truth effect: inject a measurable hint-following intervention of a chosen size into the eval so you control the true effect. Then run many random sub-evals and count how many 'survive' as significant under (a) naive per-eval thresholding and (b) the paper's cross-fit filtering. Sweep two knobs: injected effect size (including a true-null condition where no effect exists) and sub-eval sample size. Deliverable: a false-positive-rate curve (spurious survivors vs sample size) for naive vs cross-fit, plus the false-positive reduction factor at the true-null condition. Provide a small simulation harness so most of the work is resampling, not new modeling.",
+  "source_paper": "Open Sourcing Monitorability Evaluations \u2014 https://alignment.openai.com/monitorability-evals/",
+  "subfield": "evaluation"
+ },
+ {
+  "idea_id": "gen-001",
+  "title": "Do Open Models Show the Same Covert Political Asymmetry? A Sentiment-Consistency Audit",
+  "research_question": "Do small open-weight models exhibit the same paired-prompt political sentiment asymmetry that the PCT paper documented in frontier models, when measured with a lightweight re-implementation of its Sentiment Consistency metric?",
+  "approach_outline": "Re-implement the paper's Sentiment Consistency metric as a small harness: build matched prompt pairs that flip only the political side of an otherwise identical request, run them through open models via inference, and score response sentiment with a public sentiment classifier (and optionally an API judge for spot-checks). For the core deliverable fix two open models (Llama-3.1-8B, Qwen2.5-7B), with two more optional. Hold the prompt-pair set, topics, and sentiment scorer fixed. Deliverable: a per-topic consistency-gap table/plot per model, with a single summary statistic (mean signed sentiment asymmetry) per model.",
+  "source_paper": "Reducing Political Manipulation with Consistency Training \u2014 https://arxiv.org/abs/2605.22771",
+  "subfield": "AI persuasion / political bias evaluation"
+ }
+]

@@ -1,0 +1,42 @@
+[
+ {
+  "idea_id": "gen-023",
+  "title": "Does CoT Obfuscation Defeat Action-Only Monitors for Exploration Hacking?",
+  "research_question": "When an exploration-hacking model organism is prompted to hide its reasoning (CoT obfuscation), does the recall of a simple action-only LLM monitor degrade relative to the explicit-CoT case Jang et al. studied, and by how much?",
+  "approach_outline": "Reuse the paper's released exploration-hacking code and a small open model (Qwen3-4B/8B). Rather than train new organisms from scratch, construct conditional organisms via light prompting/SFT on the released setup, holding the eval-tag trigger and the action-only monitor fixed. The single manipulated variable is the organism's reasoning visibility: (a) explicit CoT vs (b) prompted CoT-obfuscation (instructed to keep visible reasoning innocuous). Run the SAME action-only monitor over both conditions and report monitor recall (fraction of exploration-hacking episodes flagged). The deliverable is a recall-delta table, keeping the workstream to 'reuse code + flip one knob + measure.'",
+  "source_paper": "Exploration Hacking \u2014 https://arxiv.org/abs/2604.28182",
+  "subfield": "monitoring / model organisms"
+ },
+ {
+  "idea_id": "gen-025",
+  "title": "Can You Trigger-Probe Hidden Misalignment Without Knowing the Trigger?",
+  "research_question": "After an inoculation-prompting intervention relocates emergent misalignment behind a training-distribution-tied trigger, what fraction of that hidden misalignment can a blind probe bank \u2014 built only from generic distribution cues, with no access to the true trigger \u2014 reactivate, compared to the known trigger?",
+  "approach_outline": "Replicate the conditional emergent-misalignment setup minimally: Qwen2.5-7B with a LoRA fine-tune on the public insecure-code dataset plus an inoculation prompt that ties misalignment to a specific training-distribution trigger (per the paper). Then, treating the fine-tuned model as a black box, build a small fixed bank (~20-30) of candidate 'distribution-cue' probes derived only from generic cues a real auditor could guess (code-formatting requests, domain framings, system-prompt styles) \u2014 never the true trigger. Score misalignment with the paper's standard misalignment eval. Report reactivation rate: misalignment elicited by the blind probe bank as a fraction of misalignment elicited by the known trigger. Scope is kept to 'one replication + one fixed probe bank + one comparison.'",
+  "source_paper": "Conditional Misalignment \u2014 https://arxiv.org/abs/2604.25891",
+  "subfield": "emergent misalignment / auditing"
+ },
+ {
+  "idea_id": "gen-030",
+  "title": "Does Model-Spec-Style Pretext Improve Alignment Generalization in Small Open Models? A LoRA Probe",
+  "research_question": "On a small open model, does adding spec-rationale documents (explaining why a mini-spec's rules exist) to alignment LoRA fine-tuning improve generalization to rule-following in unseen formats, compared with rules-only documents or alignment SFT alone?",
+  "approach_outline": "LoRA fine-tuning on one consumer GPU. The participant writes a tiny public mini-spec (a handful of behavioral rules, each with a short rationale) and generates ~200 synthetic documents in two flavors: rationale-explaining and rules-only. They run three LoRA fine-tunes of one small open model (Llama-3.2-3B or Qwen2.5-3B): alignment SFT only; alignment SFT + rationale docs; alignment SFT + rules-only docs. They then evaluate held-out generalization: rule-following in unseen formats not present in training. Scope is controlled by a small fixed rule set and a single OOD generalization eval.",
+  "source_paper": "Model Spec Midtraining \u2014 https://alignment.anthropic.com/2026/msm/",
+  "subfield": "alignment fine-tuning / generalization"
+ },
+ {
+  "idea_id": "gen-034",
+  "title": "Does Activation Magnitude Predict Steerability? A Cheap Open-SAE Replication",
+  "research_question": "On a publicly released sparse autoencoder for a small open model, does a feature's mean activation magnitude on relevant prompts fail to predict the behavioral effect size of steering that feature, as the Circuits update claims?",
+  "approach_outline": "Fix a single setup to keep scope tight: Gemma-2-2B with a public residual-stream SAE from Neuronpedia (one layer, e.g. layer 12). Pre-select 30 features that Neuronpedia already labels with a clear human-interpretable concept (e.g. 'mentions of France', 'all-caps text', 'Python code'). For each feature: (1) build a small fixed prompt set (~10 prompts) where the concept is relevant and measure mean activation magnitude via a forward hook; (2) measure steering effect size by clamping the feature to a fixed positive value during generation and scoring how much the concept appears in outputs (a simple LLM-judge or keyword count on a held set of 10 neutral prompts). Everything is inference-only with a single hook; no training. The deliverable is one scatter plot (activation magnitude x steering effect) plus a correlation coefficient with a bootstrap CI.",
+  "source_paper": "Downstream Connections Predict Which Features Will Steer Model Behavior \u2014 https://transformer-circuits.pub/2026/may-update/index.html",
+  "subfield": "mechanistic interpretability"
+ },
+ {
+  "idea_id": "gen-051",
+  "title": "Does Single-Domain Beneficial-Trait Fine-Tuning Generalize OOD in a Small Open Model?",
+  "research_question": "When one small open model is LoRA-fine-tuned on a small health-domain dataset exemplifying a single trait (honesty / epistemic humility under pressure), do out-of-domain public alignment metrics (TruthfulQA, a sycophancy set, a small deception probe) move at all relative to the base model?",
+  "approach_outline": "LoRA SFT on one small open model, a few hours on a consumer GPU. The participant curates ~150-300 health-domain dialogues from public sources that exemplify one chosen trait, LoRA-fine-tunes one small open model on them, and evaluates the tuned vs base model on OOD public alignment benchmarks in unrelated domains. The deliverable is whether single-domain trait tuning moves OOD alignment metrics, with a clean null being equally informative. Scope is held tight by one trait, one model, and a fixed small set of OOD benchmarks.",
+  "source_paper": "Reinforcement learning towards broadly and persistently beneficial models \u2014 https://alignment.openai.com/beneficial-rl/",
+  "subfield": "Alignment / generalization"
+ }
+]

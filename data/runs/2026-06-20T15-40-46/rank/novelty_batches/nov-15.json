@@ -1,0 +1,42 @@
+[
+ {
+  "idea_id": "gen-090",
+  "title": "Which Environmental Knobs Move Open Models? A Mini Propensity-Inference Replication on Open LLMs",
+  "research_question": "In one published propensity scenario, which environmental factors most shift behavior in small open-weight models, and does the strategic-vs-non-strategic balance match UK AISI's finding from mostly-closed models?",
+  "approach_outline": "Pick one propensity environment (a single goal-conflict-with-oversight scenario). Vary a fixed set of four environmental factors (presence of oversight, goal-conflict framing, time pressure, stated stakes) in a 2^4 factorial prompt grid. Run each cell N=20 across two open models for the core deliverable (Llama-3.1-8B, Qwen2.5-7B), with two more (Mistral-7B, Gemma-2-9B) as optional extensions. Code each rollout for the undesired behavior with a keyword + small-LLM-judge rubric, fit a logistic regression to estimate each factor's main effect, and compare the strategic/non-strategic balance against AISI's. Tighten scope by fixing one scenario, four factors (not 4-6), N=20, and two core models. Deliverable: a per-factor effect-size plot with the strategic/non-strategic comparison to AISI.",
+  "source_paper": "Propensity Inference \u2014 https://www.aisi.gov.uk/research/propensity-inference-environmental-contributors-to-llm-behaviour",
+  "subfield": "AI control / behavioral evaluation"
+ },
+ {
+  "idea_id": "gen-092",
+  "title": "Cheap-Defense Stress Test: Do Simple Prompt-Level Guards Survive the Jailbreaks That Broke DeepSeek-V4-Pro?",
+  "research_question": "On an open model, do three lightweight inference-only defenses (defensive system prompt, second-pass self-critique filter, input paraphrase-then-answer) meaningfully reduce attack success rate against reproducible jailbreak strategies, or do the attacks route around them?",
+  "approach_outline": "Use a public harmful-behavior benchmark (JailbreakBench JBB-Behaviors or a HarmBench subset) and 3 reproducible jailbreak templates (roleplay, refusal-suppression, low-resource/encoding). Measure baseline attack success rate (ASR) on one open model (Llama-3.1-8B-Instruct or Qwen2.5-7B-Instruct). Then add each of three cheap inference-only defenses independently and re-measure ASR: (1) a defensive system prompt, (2) a second-pass self-critique filter (model reviews its own draft for harmfulness before returning), (3) input paraphrase-then-answer. Score harmful compliance with an LLM-judge calibrated on a held-out hand-labeled set (report judge accuracy). Deliverable: an ASR table (3 attacks x baseline + 3 defenses) showing which defenses move ASR and which attacks route around them. To address the 'largely_addressed' novelty flag, the distinctive contribution is the head-to-head comparison of these specific wrapper defenses under matched attacks with a calibrated judge \u2014 a deployer-facing 'is it protection or theater' verdict rather than a new attack.",
+  "source_paper": "Security Stress Test: DeepSeek-V4-Pro (FAR AI) \u2014 https://www.far.ai/blog",
+  "subfield": "Adversarial robustness / jailbreaks"
+ },
+ {
+  "idea_id": "gen-101",
+  "title": "Detecting the Fine-Tuning Footprint: Can Output-Only Probes Flag a Secretly Adapted Open Model?",
+  "research_question": "Given only generated text on a fixed probe-prompt set, how strong must a LoRA adaptation be before a black-box detector can reliably tell an adapted open model from its base \u2014 i.e. below what adaptation strength does behavioral verification fail and hardware attestation become necessary?",
+  "approach_outline": "Fine-tune one open base model (Llama-3.1-8B) with a small LoRA on one narrow behavior. Build a black-box detector that, given only generated text on a fixed probe-prompt set (~50 prompts), classifies base vs adapted \u2014 using simple features (output embeddings from a public sentence encoder + a logistic-regression classifier) rather than any weight access. Sweep a single axis: adapter strength, operationalized as LoRA training-data size over a small fixed grid {200, 1000, 5000 examples} at one fixed rank, to keep the experiment bounded (avoiding the original's combined rank x dataset-size sweep). Deliverable: an accuracy-vs-adapter-strength curve plus the handful of most discriminative probe prompts.",
+  "source_paper": "On TEEs for Privacy-Preserving Monitoring \u2014 https://techgov.intelligence.org/blog/on-tees-for-privacy-preserving-monitoring-in-ai-governance",
+  "subfield": "AI governance / model verification"
+ },
+ {
+  "idea_id": "gen-038",
+  "title": "Can Cheap Counter-Examples Hide a Classifier Backdoor? Testing Detectability via Held-Out Trigger Variants",
+  "research_question": "Can a free, trigger-agnostic probing recipe (paraphrases and near-trigger string variants) detect a poisoned safety classifier whose backdoor is hidden by counter-examples that preserve aggregate validation accuracy?",
+  "approach_outline": "Reuse/reproduce a single backdoored open-model safety classifier (LoRA on a public safety dataset with ~32 poisoned examples plus counter-examples that keep validation accuracy clean), following the paper. Then build a lightweight detector that does NOT know the trigger: generate paraphrases and near-trigger strings (synonym swaps, punctuation/casing changes) over a held-out probe set of harmful inputs and look for anomalous confidence drops. Compare the detector's backdoor-detection rate against what plain validation accuracy reveals (which is, by construction, nothing). To keep the two-stage build tractable, provide the backdoored-classifier training as a fixed scripted recipe so the participant's novel work is the detector. Inference-light. Deliverable: detector detection-rate vs validation-accuracy comparison, plus a list of which probe transformations surface the backdoor.",
+  "source_paper": "Poisoning Fine-tuning Datasets of Constitutional Classifiers \u2014 https://alignment.anthropic.com/2026/backdooring-classifiers/",
+  "subfield": "Data poisoning / backdoor detection"
+ },
+ {
+  "idea_id": "gen-063",
+  "title": "Can Open Agents Hide a Rogue Action From a Monitor? A Tiny Means-and-Opportunity Probe",
+  "research_question": "Can a cheap open agent conceal a single flagged action from a benign overseer while completing a benign task, and how does its concealment success rate change with task/concealment difficulty \u2014 an open-model analogue of METR's 'has means/opportunity but cannot hide a significant rogue deployment' finding?",
+  "approach_outline": "Build a small sandboxed toy task: a tiny repo plus a benign overseer LLM that reads the agent's action logs and flags anything suspicious. An open agent (a 7-8B instruct model with simple tool-use prompting) is told to complete a benign task while covertly inserting and concealing one flagged action. Measure how often the overseer flags the hidden action across a few graded difficulty levels (e.g. how disguised the action must be). To keep the build beginner-tractable, provide a fixed minimal sandbox (a handful of files + a logged action interface) and a fixed overseer prompt, so the participant varies only the agent's concealment strategy and difficulty. Metric: concealment success rate vs difficulty. Inference-only. Deliverable: a concealment-success-vs-difficulty curve.",
+  "source_paper": "Frontier Risk Report (METR) \u2014 https://metr.org/blog/2026-05-19-frontier-risk-report/",
+  "subfield": "AI Control / Dangerous-capability evaluation"
+ }
+]
