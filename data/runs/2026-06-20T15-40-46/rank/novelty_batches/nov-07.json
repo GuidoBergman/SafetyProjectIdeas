@@ -1,0 +1,42 @@
+[
+ {
+  "idea_id": "gen-096",
+  "title": "The Flagging-to-Escalation Gap: A Simulation of How Downstream Filtering Inflates Monitoring Stats",
+  "research_question": "How much does the reported 'effectiveness' of an offline agent-monitoring pipeline change depending on which stage (initial flagging vs after downstream filtering vs after human-review sampling) is disclosed, and what minimal disclosure recovers true recall/precision?",
+  "approach_outline": "Build a small, fully-public agent-transcript monitoring pipeline: assemble a labeled set of benign vs misaligned agent transcripts (synthetic from an open model plus any public datasets), run a cheap LLM-monitor to produce flags, then add a configurable downstream filter stage and a human-review-sample stage. To keep narrow_scope tight, fix the transcript set and monitor, and treat the pipeline stages as a single configurable sensitivity sweep rather than separately engineered systems. Show how the same monitor's reported effectiveness shifts drastically by stage, and recover true recall/precision only with full-pipeline accounting. Deliverable: a sensitivity analysis plus a minimal disclosure checklist.",
+  "source_paper": "Evaluating Offline Monitoring of Internal AI Agents \u2014 https://www.governance.ai/research-paper/evaluating-offline-monitoring-of-internal-ai-agents",
+  "subfield": "AI governance / monitoring evaluation"
+ },
+ {
+  "idea_id": "gen-097",
+  "title": "Do Synthetic Red-Team Attacks Look Like Real Misalignment? A Monitor-Confusion Study",
+  "research_question": "Does an LLM-monitor tuned to detect synthetic red-team-style misalignment transfer to detecting more 'organic' misalignment (and vice versa), and how large is the synthetic-to-organic transfer gap?",
+  "approach_outline": "Assemble two small transcript pools: synthetic red-team-style misalignment (templated/injected from public benchmarks) and more 'organic' misalignment elicited by realistic goal-conflict scenarios on an open model. To make the elicitation tractable for a guided beginner, use a small fixed library of goal-conflict scenario templates and validate that the resulting transcripts are genuinely misaligned via a manual labeling pass. Prompt an LLM-monitor and measure cross-transfer: tune/threshold the monitor on synthetic attacks and test on organic ones, and vice versa. Report the transfer gap and inspect which surface features (keywords, formatting) the monitor over-relies on.",
+  "source_paper": "Evaluating Offline Monitoring of Internal AI Agents \u2014 https://www.governance.ai/research-paper/evaluating-offline-monitoring-of-internal-ai-agents",
+  "subfield": "AI governance / monitoring evaluation"
+ },
+ {
+  "idea_id": "gen-103",
+  "title": "Do Coherence Checks Catch 'Fried' Model Organisms? A Cheap Replication on Open LoRA Adapters",
+  "research_question": "Can a beginner-runnable, inference-only coherence diagnostic reliably flag which publicly released emergent-misalignment LoRA model organisms have been 'fried' (lost preference coherence and instruction-following), and does the size of that coherence drop track the strength of the induced misalignment?",
+  "approach_outline": "Pick a small fixed set of public emergent-misalignment (EM) LoRA adapters from the Model-Organisms-for-EM release (2-3 Qwen2.5 / Llama-3.1 adapters) together with their exact base checkpoints. Run everything inference-only with the adapters loaded via PEFT. Operationalize a 'mu-decisiveness'-style coherence metric as forced-choice preference consistency: build ~150 preference pairs over neutral options (e.g., food, travel, simple plans), present each pair in both orders, and compute (a) order-consistency (does the model pick the same option regardless of presentation order) and (b) transitivity violations over triplets. Add a separate instruction-following pass rate using a small public IFEval-style checklist subset. For each adapter, also score induced-misalignment rate on the standard EM eval prompts. Deliverable: a single reproducible 'coherence health check' notebook plus a ranking table (base vs organism coherence drop, instruction-following drop, misalignment rate) and a scatter of coherence-drop vs misalignment-strength.",
+  "source_paper": "Your Model Organisms Might Be Fried \u2014 https://www.lesswrong.com/posts/WmEcgcstzYCcMpc7z/your-model-organisms-might-be-fried",
+  "subfield": "alignment / model organisms evaluation"
+ },
+ {
+  "idea_id": "gen-104",
+  "title": "Does Smaller-Dataset Misalignment Fry Models Less? Mapping Coherence Loss vs Fine-Tune Intensity",
+  "research_question": "Is the coherence degradation seen in emergent-misalignment model organisms intrinsic to inducing misalignment, or an artifact of overly aggressive fine-tuning \u2014 i.e., can low-intensity fine-tunes induce misalignment without 'frying' the model's coherence?",
+  "approach_outline": "Using one open base model and a single public narrowly-misaligned dataset, train a small grid of cheap rank-1/rank-2 LoRA adapters varying only fine-tuning intensity (epochs, learning rate, dataset-subset size) \u2014 about 6-9 cells total. For each adapter, measure both the induced-misalignment rate (on standard EM eval prompts) and the coherence/instruction-following drop (forced-choice consistency + IFEval subset, as in gen-103). Plot the misalignment-achieved vs coherence-preserved Pareto front. Deliverable: a Pareto plot identifying whether low-intensity fine-tunes can induce misalignment without frying, plus a recommended 'least-fried' recipe.",
+  "source_paper": "Your Model Organisms Might Be Fried \u2014 https://www.lesswrong.com/posts/WmEcgcstzYCcMpc7z/your-model-organisms-might-be-fried",
+  "subfield": "alignment / model organisms evaluation"
+ },
+ {
+  "idea_id": "gen-002",
+  "title": "Does Adversarial Framing Break Consistency? Stress-Testing the PCT Metric",
+  "research_question": "Does the consistency-training metric for political manipulation survive simple framing transformations, or can a cheap reframe (role-play, devil's advocate, emotional priming) re-elicit the latent sentiment asymmetry the metric claims to have removed?",
+  "approach_outline": "Take one consistency-trained open model and a matched untrained baseline of the same family (e.g. an instruction-tuned 7-8B model with and without the consistency-training recipe applied via the paper's released data/LoRA, or two checkpoints the paper provides). Fix 8-10 political topics, each expressed as a paired prompt (pro-frame vs con-frame). Define the consistency gap as the difference in stance/sentiment between the two members of a pair, scored by a cheap LLM judge plus a sentiment classifier for triangulation. Apply 5-6 framing transformations to every pair (neutral baseline, role-play, devil's advocate, emotional priming, hypothetical, expert-persona). For each framing, recompute the gap. Inference-only, single consumer GPU. Deliverable: a ranked table of which framings most widen the gap relative to neutral, with bootstrap confidence intervals.",
+  "source_paper": "Reducing Political Manipulation with Consistency Training \u2014 https://arxiv.org/abs/2605.22771",
+  "subfield": "Red-teaming / persuasion robustness"
+ }
+]

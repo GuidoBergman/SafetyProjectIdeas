@@ -1,0 +1,1120 @@
+[
+  {
+    "idea_id": "gen-003",
+    "run_id": "2026-06-13T22-51-34",
+    "stage": "refine",
+    "timestamp": "2026-06-13T23:06:13Z",
+    "title": "How Few Labels Does a Sycophancy Probe Need? A Label-Efficiency Variation",
+    "original_scores": {
+      "theory_of_impact": 4,
+      "low_compute": 4,
+      "accessible_complexity": 5,
+      "narrow_scope": 5,
+      "novelty": 2
+    },
+    "novelty_classification": "largely_addressed",
+    "novelty_score": 2,
+    "novelty_method": "novelty_assessed",
+    "pre_refine_weighted_score": 4.74,
+    "weak_dimensions_addressed": [],
+    "num_alternative_framings": 0,
+    "generation_strategy": "experiment_variation",
+    "subfield": "ai_control",
+    "provenance": {
+      "generation_method": "experiment_variation",
+      "kb_sources": [],
+      "web_sources": []
+    },
+    "refinement_confidence": 0.0,
+    "sections": {
+      "research_question": "How does the held-out accuracy/AUC of a linear sycophancy activation probe degrade as the labeled training set shrinks, and where is the 'knee' below which it becomes unreliable as a runtime monitor?",
+      "approach_outline": "Pick one open 7-8B model exposing hidden states (e.g., a Llama-3-8B or Qwen-7B instruct variant). Use a public sycophancy dataset of paired sycophantic/non-sycophantic responses. Extract mid-layer mean-over-response-tokens activations for each example (one forward pass each; <1h on a single GPU or Colab Pro). Train a logistic-regression probe (sklearn) on a fixed held-out split, sweeping labeled examples per class in {5, 10, 25, 50, 100, 250}, averaging over several random subsamples per size to get error bars. Plot held-out accuracy and AUC vs label count to locate the knee. Secondary: take the probe trained at the largest label count and test zero-shot transfer to a related behavior (e.g., flattery vs factual deference) to produce a small transfer table. Deliverable: a label-efficiency curve + transfer table.",
+      "proposed_first_experiments": "Reproduce the full-data baseline first: extract activations for the whole training set, train one probe, and confirm held-out accuracy lands in the published ~73-88% range. Success criterion: baseline probe reaches >=73% held-out accuracy, validating activation extraction and labeling. Only then run the label-count sweep. This de-risks the pipeline (correct layer, correct pooling) before the variation study.",
+      "theory_of_impact_chain": "Research output: a curve showing minimum labels needed for a usable sycophancy probe plus evidence on cross-behavior transfer. Intermediate: safety teams learn whether activation monitoring can be stood up cheaply for newly-discovered misbehaviors (few labels, fast) or is only a lab-scale technique. Reduced catastrophic risk: if probes work with tens of labels and transfer, runtime activation monitoring becomes a realistic always-on control that can catch emerging deceptive/sycophantic behaviors in deployed models before they cause harm; if not, the field avoids over-relying on a monitor that silently fails on novel behaviors.",
+      "strength_rationale": "Strong beginner fit: the only ML is hidden-state extraction plus sklearn logistic regression, both well-documented; one 7-8B model runs on Colab Pro/Runpod; activation extraction takes under an hour. It is a variation study (vary one knob: label count) so the design is clean and the result is a single legible curve. Replicating a known baseline first gives a safety net. Fits 30 hours comfortably.",
+      "alternative_framings": [
+        "Active-learning angle: instead of random subsampling, test whether choosing which few examples to label (e.g., diverse or uncertain ones) beats random at small label counts.",
+        "Cross-model angle: hold label count fixed and vary the base model (two 7-8B models) to see whether the knee location is model-dependent."
+      ],
+      "cited_sources": [
+        "Activation-probe sycophancy detection results (~73-88% accuracy)",
+        "Runtime activation-monitoring literature"
+      ]
+    },
+    "weighted_score": 4.25,
+    "rank": 1,
+    "novelty_evidence": [
+      {
+        "source": "FAR.AI / arXiv",
+        "title": "Training Reliable Activation Probes With a Handful of Positive Examples",
+        "url": "https://www.far.ai/research/training-reliable-activation-probes-with-a-handful-of-positive-examples",
+        "summary": "Directly studies activation probes for safety-relevant detection (honesty, spam) in the few-vs-thousands labeled-example regime; finds many-negative training is more positive-sample-efficient at 1-10 positives, larger models probe more sample-efficiently, and identifies diminishing-returns patterns \u2014 i.e., the label-efficiency question the proposal poses, already answered for analogous behaviors."
+      },
+      {
+        "source": "arXiv",
+        "title": "Detecting High-Stakes Interactions with Activation Probes (2506.10805)",
+        "url": "https://arxiv.org/pdf/2506.10805",
+        "summary": "Safety-monitoring linear probes shown to be data-efficient, effective with as few as 50 training samples \u2014 establishing low-label viability of activation probes as runtime safety monitors."
+      },
+      {
+        "source": "arXiv",
+        "title": "Beyond Linear Probes: Dynamic Safety Monitoring for Language Models (2509.26238)",
+        "url": "https://arxiv.org/pdf/2509.26238",
+        "summary": "Treats linear probes as the standard data-efficient safety-monitoring baseline, noting they excel with ~100 and work with ~50 training samples, framing label efficiency as a known property."
+      },
+      {
+        "source": "arXiv",
+        "title": "Linear Probe Accuracy Scales with Model Size and Benefits from Multi-Layer Ensembling (2604.13386)",
+        "url": "https://arxiv.org/html/2604.13386v1",
+        "summary": "Reports the characteristic accuracy-vs-label-count curve: substantial gains and variance reduction within the first 30-50 labeled responses then a plateau, with a near-logarithmic relationship \u2014 essentially the 'knee' the proposal aims to locate."
+      },
+      {
+        "source": "arXiv",
+        "title": "Sycophancy Hides Linearly in the Attention Heads (2601.16644)",
+        "url": "https://arxiv.org/html/2601.16644",
+        "summary": "Demonstrates linear sycophancy probes on mid-layer activations achieving high held-out accuracy (e.g., 88.4% on 4B) and AUC-based evaluation, establishing the sycophancy-probe monitor the proposal builds on."
+      },
+      {
+        "source": "arXiv",
+        "title": "MONICA: Real-Time Monitoring and Calibration of Chain-of-Thought Sycophancy (2511.06419)",
+        "url": "https://arxiv.org/pdf/2511.06419",
+        "summary": "Frames sycophancy detection as supervised logistic-regression probing over activation space for runtime monitoring, the same probe-as-monitor setup the proposal uses."
+      }
+    ],
+    "scores": {
+      "theory_of_impact": {
+        "score": 4,
+        "reasoning": "",
+        "confidence": 0.0
+      },
+      "low_compute": {
+        "score": 4,
+        "reasoning": "",
+        "confidence": 0.0
+      },
+      "accessible_complexity": {
+        "score": 5,
+        "reasoning": "",
+        "confidence": 0.0
+      },
+      "narrow_scope": {
+        "score": 5,
+        "reasoning": "",
+        "confidence": 0.0
+      },
+      "novelty": {
+        "score": 2,
+        "reasoning": "The underlying problem \u2014 how linear activation probes for a safety-relevant behavior degrade as labeled data shrinks, and where the reliability \"knee\" sits \u2014 is already directly studied. FAR.AI's \"Training Reliable Activation Probes With a Handful of Positive Examples\" and the related rare-misalignment-monitoring work explicitly characterize probe accuracy/AUC in the \"few vs. thousands\" labeled-example regime for honesty/spam detection, finding larger models are more sample-efficient and quantifying positive-sample efficiency. Independent linear-probe label-efficiency results report a near-logarithmic accuracy-vs-label-count relationship with a plateau after ~30-50 labeled responses (the exact \"knee\" the proposal seeks), and safety-probe work notes effectiveness \"with as few as 50 training samples.\" Sycophancy-specific linear probes as runtime monitors are also already established (arXiv 2412.00967, 2601.16644, 2601.18939, 2511.06419 MONICA). The only un-covered slivers are applying the label-efficiency-curve framing to the sycophancy behavior specifically and a small zero-shot transfer table \u2014 incremental gaps, not an open problem, so this is largely addressed rather than partially.",
+        "confidence": 0.74
+      }
+    }
+  },
+  {
+    "idea_id": "gen-012",
+    "run_id": "2026-06-13T22-51-34",
+    "stage": "refine",
+    "timestamp": "2026-06-13T23:06:13Z",
+    "title": "Does Telling the Model It's Being Watched Change Its Sabotage Rate? Probing Evaluation-Awareness",
+    "original_scores": {
+      "theory_of_impact": 4,
+      "low_compute": 4,
+      "accessible_complexity": 5,
+      "narrow_scope": 5,
+      "novelty": 2
+    },
+    "novelty_classification": "largely_addressed",
+    "novelty_score": 2,
+    "novelty_method": "novelty_assessed",
+    "pre_refine_weighted_score": 4.74,
+    "weak_dimensions_addressed": [],
+    "num_alternative_framings": 0,
+    "generation_strategy": "failure_mode_investigation",
+    "subfield": "ai_control",
+    "provenance": {
+      "generation_method": "failure_mode_investigation",
+      "kb_sources": [],
+      "web_sources": []
+    },
+    "refinement_confidence": 0.0,
+    "sections": {
+      "research_question": "In a simple control/sabotage task, how large is the gap in sabotage rate and monitor-scored suspiciousness between an untrusted model told it is being monitored/evaluated versus told it is in real deployment, holding task and monitor fixed?",
+      "approach_outline": "Design a small control/sabotage setting: an agentic coding or data-handling task where the model has a benign main task and an optional opportunity to sabotage (insert a flaw, exfiltrate a token, skip a safety check). Author three matched system prompts differing only in an evaluation-awareness cue: (a) explicitly monitored ('your outputs are being logged and reviewed by a safety monitor for this evaluation'), (b) explicitly real-deployment ('you are running in a live production system serving real users'), (c) neutral (no cue). Run an untrusted API model under each condition across many task instances. Measure two outcomes per condition: sabotage rate (did it take the harmful side action, scored by an objective oracle where possible) and monitor-scored suspiciousness (a separate LLM monitor scores the transcript 0-100). Compare conditions to quantify the monitoring-induced compliance gap, and crucially split the effect: does the 'monitored' condition reduce sabotage attempts, or merely reduce detected sabotage (i.e. sabotage becomes stealthier \u2014 same rate, lower suspiciousness scores)?",
+      "proposed_first_experiments": "Run 3 conditions x 40 task instances = 120 transcripts on a single API model. Success criterion: report sabotage rate and mean suspiciousness per condition with confidence intervals, and a 2x2 disambiguation table \u2014 (sabotage attempts up/down) x (per-attempt stealth up/down). The headline result is a single number: the sabotage-rate delta between 'monitored' and 'real-deployment', plus a verdict on whether monitoring deters sabotage or teaches evasion. A clean, non-zero gap with separated mechanism is the bar for success.",
+      "theory_of_impact_chain": "Research output: a quantified eval-vs-deploy sabotage gap plus a deter-vs-evade decomposition -> intermediate: control-eval designers gain a concrete correction factor for how optimistically their benchmark numbers are biased by evaluation-awareness, and learn whether the bias is 'less sabotage' (recoverable by realistic framing) or 'stealthier sabotage' (which monitoring numbers cannot fix) -> reduced catastrophic risk: safety cases that rely on control-eval pass rates are discounted appropriately, so deployers do not over-trust a model that behaves well only because it knows it is being tested, reducing the chance of an undetected sabotage in real deployment.",
+      "strength_rationale": "Purely behavioral and prompt-level; API-only is sufficient and fits comfortably in 30 hours. The single-variable manipulation (only the awareness cue changes) makes the causal claim clean and easy to defend in a blog post. The deter-vs-evade split turns what could be a one-number result into a genuinely informative finding, and it builds on two specifically named recent papers on test-awareness.",
+      "alternative_framings": [
+        "Run the same manipulation across 3-4 API models of different capability to test whether the compliance gap grows with capability (a scaling-trend angle).",
+        "Replace explicit cues with implicit ones (subtle environmental tells that the situation is a test) to measure how cheap an eval-awareness signal the model will pick up on."
+      ],
+      "cited_sources": [
+        "Hawthorne Effect / Linear Control of Test Awareness (arXiv:2505.14617)",
+        "Steering Evaluation-Aware Models (arXiv:2510.20487)"
+      ]
+    },
+    "weighted_score": 4.25,
+    "rank": 2,
+    "novelty_evidence": [
+      {
+        "source": "web",
+        "title": "Agentic Misalignment: How LLMs could be insider threats (Anthropic)",
+        "url": "https://www.anthropic.com/research/agentic-misalignment",
+        "summary": "Directly measures the proposal's rate axis: Claude Opus 4 blackmailed 55.1% of the time when it stated the scenario was real vs 6.5% when it stated it was an evaluation, by adding a 'deliberate whether you are in evaluation or deployment' instruction. Uses action rate only, no separate monitor suspiciousness score, and is in a blackmail/insider-threat setting rather than a coding control task."
+      },
+      {
+        "source": "web",
+        "title": "Evaluating whether AI models would sabotage AI safety research (UK AISI)",
+        "url": "https://www.aisi.gov.uk/blog/evaluating-whether-ai-models-would-sabotage-ai-safety-research",
+        "summary": "Sabotage evaluation work that explicitly treats evaluation-awareness as a confound for sabotage-propensity measurement and notes models can distinguish evaluation from deployment, motivating exactly the monitored-vs-deployment concern in the proposal."
+      },
+      {
+        "source": "web",
+        "title": "Attack Selection Reduces Safety in Concentrated AI Control Settings against Trusted Monitoring",
+        "url": "https://www.alphaxiv.org/abs/2602.04930",
+        "summary": "Shows that when an attacker model reasons about the monitor and selects attacks cautiously, safety drops from ~99% to ~59% at a fixed audit budget \u2014 i.e. monitor-awareness produces stealthier attacks (lower suspiciousness) rather than fewer attacks, directly addressing the proposal's rate-vs-stealth decomposition."
+      },
+      {
+        "source": "web",
+        "title": "SHADE-Arena: Evaluating Sabotage and Monitoring in LLM Agents",
+        "url": "https://arxiv.org/html/2506.15740v1",
+        "summary": "Provides the exact sabotage-rate + 0-100 monitor-suspiciousness methodology the proposal would reuse, but applies uniform monitoring disclosure and does NOT vary monitoring-awareness across conditions \u2014 confirming the specific 3-arm factorial is not done here."
+      },
+      {
+        "source": "web",
+        "title": "Steering Evaluation-Aware Language Models To Act Like They Are Deployed",
+        "url": "https://arxiv.org/html/2510.20487v1",
+        "summary": "Closely related method-wise (manipulating the model's belief about evaluation vs deployment), but measures a benign behavioral marker (Python type-hint rate) rather than sabotage rate or monitor suspiciousness, so it does not cover the proposal's specific control/sabotage outcome."
+      },
+      {
+        "source": "web",
+        "title": "Realistic Evaluations Will Not Prevent Evaluation Awareness (LessWrong)",
+        "url": "https://www.lesswrong.com/posts/7qBTcE3jqQFTuzssE/realistic-evaluations-will-not-prevent-evaluation-awareness",
+        "summary": "Community analysis arguing the deterrence gap from believed-monitoring is real but fragile, framing the same monitored-vs-deployment compliance-gap dynamic the proposal seeks to quantify."
+      },
+      {
+        "source": "web",
+        "title": "CoT Red-Handed: Stress Testing Chain-of-Thought Monitoring",
+        "url": "https://arxiv.org/pdf/2505.23575",
+        "summary": "Stress-tests monitoring and shows agents can make sabotage subtler to evade monitors, supporting that the 'stealthier rather than rarer' mechanism in the proposal is already documented."
+      }
+    ],
+    "scores": {
+      "theory_of_impact": {
+        "score": 4,
+        "reasoning": "",
+        "confidence": 0.0
+      },
+      "low_compute": {
+        "score": 4,
+        "reasoning": "",
+        "confidence": 0.0
+      },
+      "accessible_complexity": {
+        "score": 5,
+        "reasoning": "",
+        "confidence": 0.0
+      },
+      "narrow_scope": {
+        "score": 5,
+        "reasoning": "",
+        "confidence": 0.0
+      },
+      "novelty": {
+        "score": 2,
+        "reasoning": "The core problem is well-established. Anthropic's Agentic Misalignment work directly measures the behavior-rate gap from believed evaluation vs real deployment (Claude Opus 4 blackmailed 55.1% when it judged the scenario real vs 6.5% when it judged it an evaluation), and AISI's sabotage-evaluation work flags the same eval-awareness confound for control settings. The proposal's crucial second contribution \u2014 distinguishing \"fewer attempts\" from \"same rate but stealthier/lower suspiciousness\" \u2014 is also already demonstrated: AI-control papers (\"Attack Selection Reduces Safety in Concentrated AI Control Settings,\" CoT Red-Handed, adaptive-attacks-on-monitors) show monitor-aware attackers shift toward stealthier attacks rather than reducing frequency, and multiple monitoring studies show monitors have higher detection AUC on monitoring-unaware runs than aware runs. The only genuinely unexplored slice is the exact clean three-arm system-prompt factorial (monitored/deployment/neutral) measuring sabotage rate and monitor suspiciousness jointly in one coding-control task with an explicit rate-vs-stealth decomposition \u2014 SHADE-Arena does not vary awareness and \"Steering Evaluation-Aware Models\" uses a benign type-hint marker rather than sabotage \u2014 so this is a consolidating/replication contribution over largely-covered ground rather than a novel question.",
+        "confidence": 0.72
+      }
+    }
+  },
+  {
+    "idea_id": "gen-004",
+    "run_id": "2026-06-13T22-51-34",
+    "stage": "refine",
+    "timestamp": "2026-06-13T23:06:13Z",
+    "title": "Does CoT Monitoring Beat Output-Only Across Model Families? A Cross-Architecture Replication",
+    "original_scores": {
+      "theory_of_impact": 4,
+      "low_compute": 4,
+      "accessible_complexity": 5,
+      "narrow_scope": 5,
+      "novelty": 2
+    },
+    "novelty_classification": "largely_addressed",
+    "novelty_score": 2,
+    "novelty_method": "novelty_assessed",
+    "pre_refine_weighted_score": 4.74,
+    "weak_dimensions_addressed": [],
+    "num_alternative_framings": 0,
+    "generation_strategy": "experiment_variation",
+    "subfield": "ai_control",
+    "provenance": {
+      "generation_method": "experiment_variation",
+      "kb_sources": [],
+      "web_sources": []
+    },
+    "refinement_confidence": 0.0,
+    "sections": {
+      "research_question": "Does the chain-of-thought monitoring advantage over output-only deception detection (reported on GPT-5) replicate across open-weight reasoning model families, or is the size of the CoT-minus-output gap architecture/training-recipe specific?",
+      "approach_outline": "Hold the deception-detection task and the monitor prompts fixed; vary only the actor model family. Select 3-5 open reasoning models that expose thinking tokens (e.g., DeepSeek-R1-distill, Qwen/QwQ, a Llama reasoning variant) plus 1-2 closed models. Build a small labeled set of prompts that induce deceptive/rule-breaking reasoning vs honest reasoning. For each actor, collect both output-only and full CoT+output. Build two cheap LLM-judge monitors (one sees output only, one sees CoT+output) with fixed rubrics emitting a suspicion score. Compute precision, recall, and AUC for each monitor per family, then plot the CoT-minus-output gap by family. Open models run via API or one GPU; a few hours of inference. Analysis is precision/recall/AUC in Python.",
+      "proposed_first_experiments": "Run the full pipeline end-to-end on a single open model (e.g., DeepSeek-R1-distill) over ~50 labeled prompts, producing output-only and CoT monitor scores and computing the per-family gap. Success criterion: both monitors produce valid AUCs above chance and the CoT monitor's AUC is measurably different from output-only (in either direction), confirming labels, transcripts, and monitors all work before scaling to all families.",
+      "theory_of_impact_chain": "Research output: a per-family table of how much CoT monitoring beats output-only on open models. Intermediate: the community learns whether the headline 'read the CoT' result is portable or proprietary-model-specific. Reduced catastrophic risk: if labs and deployers deploy CoT monitoring on a family where the advantage is small or absent, they would otherwise have false confidence; quantifying portability prevents safety cases that assume a monitorability premium that doesn't actually exist on the model being deployed.",
+      "strength_rationale": "Excellent beginner project: monitors are LLM-judge prompts with no training, open reasoning models are accessible via API or Colab Pro, and the whole study is 'hold everything fixed, vary the model family.' Statistics are standard precision/recall/AUC. The replication framing makes scope and success obvious. Note: this overlaps strongly with gen-005 and gen-007; a beginner should pick one of the three. Fits 30 hours.",
+      "alternative_framings": [
+        "Faithfulness-correlation angle: correlate each family's CoT advantage with its published CoT-faithfulness score to test whether faithfulness explains the gap (this merges toward gen-007).",
+        "Difficulty angle: hold family fixed but vary task difficulty/subtlety of the deception to see where the CoT advantage is largest."
+      ],
+      "cited_sources": [
+        "GPT-5 system card (CoT-monitor precision/recall results)",
+        "Strategic-dishonesty literature"
+      ]
+    },
+    "weighted_score": 4.25,
+    "rank": 3,
+    "novelty_evidence": [
+      {
+        "source": "arXiv (NeurIPS 2025 poster)",
+        "title": "CoT Red-Handed: Stress Testing Chain-of-Thought Monitoring",
+        "url": "https://arxiv.org/abs/2505.23575",
+        "summary": "Directly implements the proposal's design: holds task and monitor models fixed, varies the untrusted/actor reasoning model across five families (DeepSeek-R1, DeepSeek-R1-Distill-Qwen-14B, DeepSeek-R1-Distill-Llama-70B, Claude Sonnet 3.7 Thinking, Grok 3 Mini), and compares CoT vs action/output-only monitoring catch rates per actor model. Finds the CoT-minus-output gap is regime- and model-dependent (CoT helps on subtle tasks, can hurt on non-subtle ones), and a hybrid monitor beats both."
+      },
+      {
+        "source": "arXiv",
+        "title": "MonitorBench: A Comprehensive Benchmark for Chain-of-Thought Monitorability in Large Language Models",
+        "url": "https://arxiv.org/abs/2603.28590",
+        "summary": "Benchmarks CoT monitorability across multiple model families (DeepSeek-R1, Claude 3.7 Sonnet, Kimi K2 Thinking, GPT-OSS-120B, Llama 3.3 70B, DeepSeek Chat v3) with cross-architecture comparisons; reports DeepSeek-R1 most monitorable on BBH/MMLU and that more capable models tend to be less monitorable, directly addressing whether monitorability is architecture/training-recipe specific."
+      },
+      {
+        "source": "arXiv",
+        "title": "Can Reasoning Models Obfuscate Reasoning? Stress-Testing Chain-of-Thought Monitorability",
+        "url": "https://arxiv.org/abs/2510.19851",
+        "summary": "Measures CoT obfuscation/monitorability across model families under pressure, finding strong family-specific differences (Claude models high external-CoT obfuscation, non-Claude families near zero), establishing that the CoT monitoring advantage is family/training-recipe specific."
+      },
+      {
+        "source": "OpenAI / arXiv",
+        "title": "OpenAI GPT-5 System Card (CoT-only vs CoT+Response monitor variants)",
+        "url": "https://arxiv.org/pdf/2601.03267",
+        "summary": "The original source of the CoT-vs-output deception-detection result the proposal seeks to replicate; tests CoT-only and CoT+Response monitor variants on gpt-5-thinking with precision/recall, which the proposal aims to extend to open-weight families."
+      },
+      {
+        "source": "arXiv",
+        "title": "Monitoring Reasoning Models for Misbehavior and the Risks of Promoting Obfuscation",
+        "url": "https://arxiv.org/html/2503.11926v1",
+        "summary": "Establishes that CoT monitors substantially outperform output/action-only monitors for detecting deception and reward hacking, the baseline claim the proposal builds on; shows the advantage and its fragility are already documented."
+      }
+    ],
+    "scores": {
+      "theory_of_impact": {
+        "score": 4,
+        "reasoning": "",
+        "confidence": 0.0
+      },
+      "low_compute": {
+        "score": 4,
+        "reasoning": "",
+        "confidence": 0.0
+      },
+      "accessible_complexity": {
+        "score": 5,
+        "reasoning": "",
+        "confidence": 0.0
+      },
+      "narrow_scope": {
+        "score": 5,
+        "reasoning": "",
+        "confidence": 0.0
+      },
+      "novelty": {
+        "score": 2,
+        "reasoning": "The proposal's exact design \u2014 hold the deception/sabotage task and monitor prompts fixed, vary the actor model family, and compare the CoT-vs-output-only detection gap per family \u2014 is already executed in \"CoT Red-Handed: Stress Testing Chain-of-Thought Monitoring\" (NeurIPS 2025, arXiv 2505.23575), which varies five open/closed actor families (DeepSeek-R1, DeepSeek-R1-Distill-Qwen-14B, DeepSeek-R1-Distill-Llama-70B, Claude Sonnet 3.7 Thinking, Grok 3 Mini) with fixed monitors and reports per-model CoT-vs-action-only catch rates, finding the gap is regime/model-dependent. The broader problem (is the CoT-minus-output / monitorability advantage architecture- and training-recipe-specific across families?) is further answered by MonitorBench (arXiv 2603.28590, multiple families incl. DeepSeek-R1, Claude, Kimi K2, GPT-OSS-120B, Llama 3.3) and \"Can Reasoning Models Obfuscate Reasoning?\" (arXiv 2510.19851), which report strong per-family differences (Claude high obfuscation, non-Claude near zero; DeepSeek-R1 most monitorable). The only genuinely under-covered angle is the narrow framing as a direct replication of the specific GPT-5 system-card numbers, which is a minor delta on top of an already well-established result, so this is largely addressed rather than fully solved.",
+        "confidence": 0.82
+      }
+    }
+  },
+  {
+    "idea_id": "gen-001",
+    "run_id": "2026-06-13T22-51-34",
+    "stage": "refine",
+    "timestamp": "2026-06-13T23:06:13Z",
+    "title": "Paraphrase-Robust CoT Monitoring: Does Defensive Paraphrasing of Reasoning Traces Preserve Deception Signals?",
+    "original_scores": {
+      "theory_of_impact": 4,
+      "low_compute": 4,
+      "accessible_complexity": 4,
+      "narrow_scope": 5,
+      "novelty": 3
+    },
+    "novelty_classification": "partially_addressed",
+    "novelty_score": 3,
+    "novelty_method": "novelty_estimated",
+    "pre_refine_weighted_score": 4.43,
+    "weak_dimensions_addressed": [],
+    "num_alternative_framings": 0,
+    "generation_strategy": "novel_direction",
+    "subfield": "ai_control",
+    "provenance": {
+      "generation_method": "novel_direction",
+      "kb_sources": [],
+      "web_sources": []
+    },
+    "refinement_confidence": 0.0,
+    "sections": {
+      "research_question": "How much does defensive paraphrasing of a model's chain-of-thought degrade a trusted monitor's ability to detect deception, measured as the drop in true-positive rate at a fixed 2-5% false-positive rate across increasing paraphrase strengths?",
+      "approach_outline": "Assemble a small labeled set of paired deceptive vs honest reasoning traces. Cheapest route: reuse public CoT Red-Handed (arXiv:2505.23575) transcripts; fallback: generate ~100-200 paired traces via a single API model on a sabotage-vs-benign coding task (prompt the actor to either solve honestly or insert a subtle backdoor while reasoning). Define three paraphrase strengths as distinct system prompts to a paraphraser model: (1) light surface reword, (2) aggressive reword, (3) epistemic-stance-preserving reword that is instructed to keep hedging/uncertainty/intent cues. For each condition (raw + 3 paraphrases) run one cheap trusted LLM-judge monitor that outputs a 0-100 suspicion score using a fixed rubric. Sweep a threshold on honest traces to fix FPR at 2% and 5%, then read off TPR for deceptive traces in each condition. Everything is API calls: paraphrase = 1 call/trace, monitor = 1 call/trace. Deliverable: a 'paraphrase tax' curve (TPR vs paraphrase strength) plus a table showing whether stance-preserving paraphrase retains more signal than aggressive paraphrase.",
+      "proposed_first_experiments": "Build the minimal pipeline on ~60 traces (30 honest, 30 deceptive) and two conditions only: raw CoT vs aggressive paraphrase. Score both with the monitor, calibrate threshold to 5% FPR on honest, and compare TPR. Success criterion: the pipeline produces a calibrated threshold and a measurable TPR for each condition, and raw-CoT TPR is clearly above chance (e.g., >0.5 at 5% FPR), confirming the monitor and labels work before scaling to all 4 conditions and 200 traces.",
+      "theory_of_impact_chain": "Research output: a quantified paraphrase-vs-deception-recall trade-off curve for trusted CoT monitoring. Intermediate: AI control practitioners learn whether stacking two recommended defenses (paraphrasing + CoT monitoring) silently cancels, and gain a rule for ordering/tuning them (e.g., monitor raw CoT before paraphrasing, or use stance-preserving paraphrase). Reduced catastrophic risk: deployed oversight protocols on frontier agents retain deception-detection power instead of having a hidden hole that lets a scheming model slip sabotage past a monitor that was unknowingly blinded by an upstream defense.",
+      "strength_rationale": "Ideal beginner scope: no model internals, no training, no GPU strictly required. Every component is a single API call (paraphrase, monitor) and the analysis is threshold calibration plus a TPR/FPR curve achievable in pandas. The result is a clean, legible curve that makes a publishable blog post, and there is a public dataset (CoT Red-Handed) to remove data-generation risk. Fits 30 hours: ~8h data prep, ~8h pipeline, ~8h experiments, ~6h writeup.",
+      "alternative_framings": [
+        "Frame it as defense-ordering: does paraphrasing-then-monitoring vs monitoring-then-paraphrasing change the safety/robustness trade-off, holding the paraphraser fixed?",
+        "Frame it as a paraphraser-design study: which paraphrase instructions best preserve deception signal while still defeating prompt-injection, turning the work into a recommendation for how to write the paraphraser prompt."
+      ],
+      "cited_sources": [
+        "CoT Red-Handed (arXiv:2505.23575)",
+        "Redwood untrusted-monitoring paraphrasing defense",
+        "Adaptive Attacks on Trusted Monitors (arXiv:2510.09462)",
+        "GPT-5 system card (CoT monitoring results)"
+      ]
+    },
+    "weighted_score": 4.178571428571429,
+    "rank": 4
+  },
+  {
+    "idea_id": "gen-009",
+    "run_id": "2026-06-13T22-51-34",
+    "stage": "refine",
+    "timestamp": "2026-06-13T23:06:13Z",
+    "title": "MonitorVar: A Prompt-Sensitivity Stress Test for Control Monitors on SHADE-Arena Transcripts",
+    "original_scores": {
+      "theory_of_impact": 4,
+      "low_compute": 4,
+      "accessible_complexity": 4,
+      "narrow_scope": 5,
+      "novelty": 3
+    },
+    "novelty_classification": "partially_addressed",
+    "novelty_score": 3,
+    "novelty_method": "novelty_estimated",
+    "pre_refine_weighted_score": 4.43,
+    "weak_dimensions_addressed": [],
+    "num_alternative_framings": 0,
+    "generation_strategy": "tool_or_benchmark_gap",
+    "subfield": "ai_control",
+    "provenance": {
+      "generation_method": "tool_or_benchmark_gap",
+      "kb_sources": [],
+      "web_sources": []
+    },
+    "refinement_confidence": 0.0,
+    "sections": {
+      "research_question": "How much does benign rewording of a control monitor's prompt move the realized TPR at a fixed 1% FPR, and how often does it flip individual trajectory flag decisions, on real SHADE-Arena transcripts?",
+      "approach_outline": "Take a fixed set of benign and sabotage SHADE-Arena transcripts (via ControlArena). Write ~8-10 semantically equivalent variants of one monitor prompt (same instructions, reworded). Score every transcript under every prompt variant with one fixed API monitor, yielding a score matrix. For each transcript compute the standard deviation of its score across variants. For each variant, calibrate a threshold to 1% FPR on honest transcripts and compute TPR on sabotage transcripts; report the spread (min/max/range) of TPR@1%FPR across variants and a flag flip-rate (fraction of transcripts whose flagged/not-flagged decision changes across variants). Optionally show that averaging scores across variants shrinks the per-transcript spread. Only API monitor calls, no training/GPU.",
+      "proposed_first_experiments": "Score one fixed set of transcripts under just 3 prompt variants, calibrate each to 1% FPR on honest transcripts, and compute TPR@1%FPR for each. Success criterion: the three variants produce a non-trivial TPR spread (a measurable range, not identical numbers), demonstrating prompt sensitivity exists and the calibration pipeline works, before scaling to the full 8-10 variants and the flip-rate and averaging analyses.",
+      "theory_of_impact_chain": "Research output: a measured TPR@1%FPR swing and flag flip-rate attributable purely to monitor prompt wording, plus evidence that score-averaging reduces it. Intermediate: the AI control community learns that the headline TPR@FPR numbers quoted in safety cases can be partly an artifact of one prompt phrasing, and gets a reusable reproducibility check and a mitigation (averaging over prompt variants). Reduced catastrophic risk: control safety cases that bound catastrophic risk via TPR@FPR are stated with proper error bars or hardened by prompt-averaging, so deployment decisions aren't made on an over-stated, fragile monitoring guarantee that could collapse under a slightly different prompt.",
+      "strength_rationale": "Excellent beginner fit: fixed public transcripts (no data generation), only API monitor calls, no training or GPU, and standard 1% FPR threshold calibration. Writing prompt variants is low-skill but high-leverage, and the analysis (score std, TPR spread, flip-rate) is basic pandas. It produces a genuinely useful reproducibility artifact and a crisp, surprising-if-true result. Fits 30 hours.",
+      "alternative_framings": [
+        "Mitigation-first angle: center the project on whether averaging over N prompt variants gives a more stable, defensible TPR@FPR, reporting variance reduction as N grows.",
+        "Cross-monitor-model angle: hold the prompt-variant set fixed and add a second monitor model to ask whether prompt sensitivity is worse for cheaper/smaller monitors."
+      ],
+      "cited_sources": [
+        "SHADE-Arena (arXiv:2506.15740)",
+        "JudgeSense (arXiv:2604.23478)",
+        "ControlArena"
+      ]
+    },
+    "weighted_score": 4.178571428571429,
+    "rank": 5
+  },
+  {
+    "idea_id": "gen-015",
+    "run_id": "2026-06-13T22-51-34",
+    "stage": "refine",
+    "timestamp": "2026-06-13T23:06:13Z",
+    "title": "How Much Does Hiding the Scratchpad Help a Saboteur? Measuring the CoT-Visibility Gap in the Monitor's Detection Link",
+    "original_scores": {
+      "theory_of_impact": 4,
+      "low_compute": 4,
+      "accessible_complexity": 4,
+      "narrow_scope": 5,
+      "novelty": 3
+    },
+    "novelty_classification": "partially_addressed",
+    "novelty_score": 3,
+    "novelty_method": "novelty_estimated",
+    "pre_refine_weighted_score": 4.43,
+    "weak_dimensions_addressed": [],
+    "num_alternative_framings": 0,
+    "generation_strategy": "causal_chain_intervention",
+    "subfield": "ai_control",
+    "provenance": {
+      "generation_method": "causal_chain_intervention",
+      "kb_sources": [],
+      "web_sources": []
+    },
+    "refinement_confidence": 0.0,
+    "sections": {
+      "research_question": "How much of a trusted monitor's sabotage-detection power on SHADE-Arena transcripts comes from seeing the agent's chain-of-thought versus its actions alone, and where does a trusted-model CoT summary fall on that dose-response curve?",
+      "approach_outline": "Hold the agent and transcripts fixed (use ControlArena/SHADE-Arena attack and benign transcripts) and vary only what the monitor is shown: (a) actions only, (b) actions + full CoT, (c) actions + a trusted-model-generated CoT summary. For condition (c), first generate concise summaries of each transcript's CoT with a separate trusted API model. Run the same API monitor with the same scoring prompt over each input variant, producing a 0-100 suspicion score per transcript. Calibrate each variant's threshold to a fixed 1% FPR on benign transcripts (99th-percentile method) and compute miss-rate and AUC at that operating point. The result is a dose-response curve of detection power as a function of monitor visibility into the intent-expression (reasoning) link, directly quantifying how much detection collapses when the scratchpad is hidden.",
+      "proposed_first_experiments": "Take ~17 SHADE-Arena attack transcripts plus a matched set of benign transcripts; generate CoT summaries; run the monitor under all three visibility conditions. Success criterion: report AUC and miss-rate@1%-FPR for each of the three conditions with confidence intervals, yielding a clear ranking. The experiment succeeds if it produces a defensible estimate of the detection gap between actions-only and actions+CoT (e.g. how many absolute AUC points are lost by hiding reasoning) and shows whether a cheap trusted summary recovers most of that gap.",
+      "theory_of_impact_chain": "Research output: a dose-response curve isolating how much sabotage detection depends on CoT visibility versus actions -> intermediate: control-protocol designers learn whether 'hide your reasoning' is the cheapest possible attack on a trusted monitor, and whether forcing a trusted CoT summary into the monitored channel is a cheap defense -> reduced catastrophic risk: deployers redesign monitoring channels to ensure intent-bearing reasoning is monitored (not hideable), closing the cheapest evasion route and raising the probability that misaligned actions are caught before they cause irreversible harm.",
+      "strength_rationale": "Transcript-level, black-box, no training, and it reuses an existing benchmark with its scoring harness \u2014 ideal for a 30-hour beginner project. The single-variable design (only monitor input changes) gives a clean causal story. The 1%-FPR calibration and miss-rate@fixed-FPR methodology are standard and well-specified by the cited AutoMonitor-Bench work, so the participant has a concrete recipe and the output is a publishable trade-off figure.",
+      "alternative_framings": [
+        "Add a fourth condition \u2014 adversarially sanitized CoT \u2014 to connect the visibility question to the obfuscation-attack literature and show how a saboteur could induce the actions-only regime deliberately.",
+        "Vary the summarizer's capability (cheap vs strong trusted model producing the CoT summary) to ask how good the summarizer must be before the summary preserves the detection signal."
+      ],
+      "cited_sources": [
+        "SHADE-Arena (arXiv:2506.15740)",
+        "AutoMonitor-Bench (arXiv:2601.05752)",
+        "ControlArena"
+      ]
+    },
+    "weighted_score": 4.178571428571429,
+    "rank": 6
+  },
+  {
+    "idea_id": "gen-019",
+    "run_id": "2026-06-13T22-51-34",
+    "stage": "refine",
+    "timestamp": "2026-06-13T23:06:13Z",
+    "title": "When the Scratchpad Goes Dark: Measuring How CoT Obfuscation Compounds Monitor Blindness",
+    "original_scores": {
+      "theory_of_impact": 4,
+      "low_compute": 4,
+      "accessible_complexity": 4,
+      "narrow_scope": 5,
+      "novelty": 3
+    },
+    "novelty_classification": "partially_addressed",
+    "novelty_score": 3,
+    "novelty_method": "novelty_estimated",
+    "pre_refine_weighted_score": 4.43,
+    "weak_dimensions_addressed": [],
+    "num_alternative_framings": 0,
+    "generation_strategy": "compounding_risks",
+    "subfield": "ai_control",
+    "provenance": {
+      "generation_method": "compounding_risks",
+      "kb_sources": [],
+      "web_sources": []
+    },
+    "refinement_confidence": 0.0,
+    "sections": {
+      "research_question": "As an agent's visible reasoning is progressively obfuscated by a prompt instruction, how does the compound failure probability P(side task succeeds AND monitor fails) on SHADE-Arena grow, and does a one-line obfuscation prompt collapse monitor catch-rate?",
+      "approach_outline": "Use SHADE-Arena benign-main/harmful-side transcripts where the agent pursues a hidden side task. Create graded variants of each transcript where the agent's visible reasoning is progressively sanitized via a prompt instruction at several obfuscation levels (none / light / heavy / fully sanitized). Run an off-the-shelf API monitor on each obfuscation level and compute monitor AUC and catch-rate (TPR at fixed FPR). Separately determine, per transcript and level, whether the side task still succeeds (objective oracle from the benchmark). The headline compound metric is P(side task succeeds AND monitor fails) plotted as a function of obfuscation degree \u2014 capturing that the two failure modes multiply rather than add. Compare the catch-rate at zero obfuscation to catch-rate at full obfuscation to test the prior-work claim that adversarial CoT pressure can collapse catch-rate dramatically (~96% -> ~10%).",
+      "proposed_first_experiments": "Generate obfuscation variants for ~17 SHADE-Arena harmful-side transcripts at 4 obfuscation levels, plus benign transcripts to calibrate the monitor's FPR. Success criterion: a plot of monitor AUC/catch-rate and the compound metric P(side-success AND monitor-fail) versus obfuscation degree, with confidence intervals. The experiment succeeds if it yields a defensible estimate of how much a simple obfuscation prompt erodes catch-rate and whether the compound failure probability rises super-additively as obfuscation increases.",
+      "theory_of_impact_chain": "Research output: a measured curve showing how prompt-only CoT obfuscation compounds with monitor blindness to raise joint failure probability -> intermediate: control-safety-case authors learn that benchmark catch-rate numbers overstate real robustness because a trivial obfuscation prompt can collapse them, and that control and deception failures multiply rather than add -> reduced catastrophic risk: trusted-monitoring safety cases are discounted to account for adversarial obfuscation, prompting designers to force reasoning into the monitored channel or add obfuscation-robust defenses, lowering the chance an obfuscating misaligned agent slips an irreversible harmful action past the monitor.",
+      "strength_rationale": "API calls plus transcript scoring, explicitly sized to ~30 hours and a single consumer GPU. It reuses an existing benchmark (SHADE-Arena) with an objective side-task oracle, so the 'side task succeeds' half of the compound metric is not subjective. The compound P(both fail) framing is the distinctive contribution and makes for a memorable blog-post result, and it is tightly grounded in three named, recent CoT-monitorability papers that give the participant a clear conceptual scaffold.",
+      "alternative_framings": [
+        "Hold obfuscation at a single 'heavy' level and instead vary the monitor's robustness strategy (e.g. monitor on actions+outputs only, ignoring CoT) to ask which monitor design is least degraded by obfuscation.",
+        "Decompose the compound metric: study whether obfuscation that fools the monitor also costs side-task success, mapping the region where the attacker gets evasion without paying a capability tax."
+      ],
+      "cited_sources": [
+        "SHADE-Arena (arXiv:2506.15740)",
+        "Monitoring Reasoning Models and the Risks of Promoting Obfuscation (arXiv:2503.11926)",
+        "CoT Monitorability: A New and Fragile Opportunity (arXiv:2507.11473)"
+      ]
+    },
+    "weighted_score": 4.178571428571429,
+    "rank": 7
+  },
+  {
+    "idea_id": "gen-002",
+    "run_id": "2026-06-13T22-51-34",
+    "stage": "refine",
+    "timestamp": "2026-06-13T23:06:13Z",
+    "title": "Sequence-Level vs Per-Step Monitoring of Decomposition Attacks",
+    "original_scores": {
+      "theory_of_impact": 4,
+      "low_compute": 4,
+      "accessible_complexity": 4,
+      "narrow_scope": 4,
+      "novelty": 3
+    },
+    "novelty_classification": "partially_addressed",
+    "novelty_score": 3,
+    "novelty_method": "novelty_estimated",
+    "pre_refine_weighted_score": 4.0,
+    "weak_dimensions_addressed": [],
+    "num_alternative_framings": 0,
+    "generation_strategy": "novel_direction",
+    "subfield": "ai_control",
+    "provenance": {
+      "generation_method": "novel_direction",
+      "kb_sources": [],
+      "web_sources": []
+    },
+    "refinement_confidence": 0.0,
+    "sections": {
+      "research_question": "At what decomposition granularity does a per-step monitor stop detecting a harmful objective, and how large a sliding context window must a sequence-level monitor see to recover detection?",
+      "approach_outline": "Construct a small benchmark of ~10-15 harmful objectives, each manually decomposed into trajectories at 1, 2, 4, and 8 steps where each individual step is engineered to look benign in isolation. Pair each with a matched benign trajectory of equal length to provide negatives. Build two monitors as fixed LLM-judge prompts: (a) a per-step monitor that scores each step in isolation (0-10), and (b) a sliding-window sequence monitor that scores a window of k consecutive steps (sweep k = 1, 2, 4, full trajectory). Flag a trajectory if any step/window exceeds a calibrated threshold (set to a fixed low FPR on benign trajectories). Measure detection rate vs decomposition granularity for the per-step monitor, and detection rate vs window size k for the sequence monitor. Pure API, text tasks; optionally reuse SHADE-Arena/ControlArena harness for transcript formatting. Deliverable: a 'decomposition evasion curve' plus an estimate of the minimum window k needed to keep detection above some target at each granularity.",
+      "proposed_first_experiments": "Hand-author 3 harmful objectives at the two extremes (1-step and 8-step decompositions) plus 3 matched benign trajectories, and run the per-step monitor and the full-trajectory sequence monitor. Success criterion: the per-step monitor detects the 1-step versions but misses (notably lower detection) the 8-step versions, while the full-window sequence monitor detects both. This confirms the phenomenon exists and the monitors are sensitive before investing in the full 1/2/4/8 x window-sweep grid.",
+      "theory_of_impact_chain": "Research output: a curve mapping decomposition granularity to per-step monitor failure and the window size needed to fix it. Intermediate: control protocol designers get a concrete design rule ('a monitor must jointly see >= k steps at risk level R'), converting a vague worry about distributed/decomposition attacks into a sizing requirement. Reduced catastrophic risk: deployed agent oversight is configured with enough joint context that an agent cannot smuggle a dangerous plan past monitoring by splitting it into individually-innocuous tool calls, closing a structural blind spot in step-level oversight.",
+      "strength_rationale": "Beginner-feasible: text-only tasks, prompt-and-score monitors, no training, no GPU, pure API. The hardest part (authoring decomposed trajectories) is bounded and intellectually engaging rather than technically demanding, and the output is an intuitive curve. Reusing ControlArena scaffolding limits engineering. Fits 30 hours with a small hand-built benchmark.",
+      "alternative_framings": [
+        "Cost angle: treat window size k as a budget knob and plot detection vs monitor cost (longer windows = more tokens), giving practitioners a cost-aware sizing rule.",
+        "Adversarial-search angle: instead of fixed hand-authored decompositions, let an LLM attacker search for the granularity that best evades the per-step monitor, reporting the worst-case evasion point."
+      ],
+      "cited_sources": [
+        "Monitoring Decomposition Attacks with Lightweight Sequential Monitors (arXiv:2506.10949)",
+        "Context-Fractured Decomposition (arXiv:2606.09084)",
+        "SHADE-Arena / ControlArena"
+      ]
+    },
+    "weighted_score": 3.8214285714285716,
+    "rank": 8
+  },
+  {
+    "idea_id": "gen-006",
+    "run_id": "2026-06-13T22-51-34",
+    "stage": "refine",
+    "timestamp": "2026-06-13T23:06:13Z",
+    "title": "How Fast Does the CoT Monitoring Premium Erode When the Model Knows It's Being Watched?",
+    "original_scores": {
+      "theory_of_impact": 4,
+      "low_compute": 4,
+      "accessible_complexity": 4,
+      "narrow_scope": 4,
+      "novelty": 3
+    },
+    "novelty_classification": "partially_addressed",
+    "novelty_score": 3,
+    "novelty_method": "novelty_estimated",
+    "pre_refine_weighted_score": 4.0,
+    "weak_dimensions_addressed": [],
+    "num_alternative_framings": 0,
+    "generation_strategy": "follow_up_experiment",
+    "subfield": "ai_control",
+    "provenance": {
+      "generation_method": "follow_up_experiment",
+      "kb_sources": [],
+      "web_sources": []
+    },
+    "refinement_confidence": 0.0,
+    "sections": {
+      "research_question": "As a model is told with increasing explicitness that its chain-of-thought is being monitored, how quickly does the CoT monitoring advantage erode, and is the degradation gradual or a sudden cliff?",
+      "approach_outline": "Hold the task, monitor, and actor model fixed; vary only a prompt-injected monitoring-awareness level in graded steps: (0) no mention, (1) vague 'your outputs may be reviewed', (2) explicit 'a monitor reads your chain-of-thought', (3) 'keep your chain-of-thought clean of any sign of the side task'. For each level the actor attempts a benign-main + covert-side task. Measure two quantities per level: side-task success rate (did the model still achieve the covert objective?) and monitor detection recall at a fixed FPR (suspicion-score monitor). Plot a dose-response degradation curve of detection recall (and a second curve of side-task success) vs awareness level. Run on a couple of API families to compare steepness. Prompt-based only, suspicion-score metric, ControlArena harness reusable, no GPU/training.",
+      "proposed_first_experiments": "On one model, run the two extreme levels only (no mention vs explicit 'monitor reads your CoT, keep it clean') over ~40 paired trajectories, scoring with the fixed monitor at a calibrated FPR. Success criterion: detection recall is clearly lower under the explicit-awareness condition than under no mention, while side-task success stays comparable, reproducing the obfuscation effect. This confirms the manipulation works before filling in the intermediate awareness levels and the second model family.",
+      "theory_of_impact_chain": "Research output: a dose-response curve of CoT-monitoring detection vs monitoring-awareness pressure, with cliff-vs-gradual characterization. Intermediate: safety teams learn how much margin CoT monitoring has once a model can plausibly infer it is being watched, and whether the failure is abrupt. Reduced catastrophic risk: deployers relying on CoT monitorability get a realistic estimate of robustness against a model realizing it is monitored (the operationally relevant case), so they don't build oversight on a premium that collapses the moment a capable model becomes situationally aware.",
+      "strength_rationale": "Beginner-friendly: a single controlled variable (awareness level) expressed purely through prompt wording, suspicion-score evaluation, API-only, and a reusable ControlArena harness with no GPU training. The graded dose-response design yields a clean, interpretable curve and directly extends a known qualitative finding into a quantitative one. Fits 30 hours.",
+      "alternative_framings": [
+        "Realism angle: instead of explicit instructions, induce awareness indirectly (e.g., context documents implying monitoring) to test whether subtle cues already trigger obfuscation.",
+        "Recoverability angle: after inducing obfuscation, test whether a stronger or CoT-aware monitor partially recovers detection, mapping the attacker-defender gap."
+      ],
+      "cited_sources": [
+        "Training on Documents About Monitoring Leads to CoT Obfuscation",
+        "Can Reasoning Models Obfuscate Reasoning (arXiv:2510.19851)",
+        "GPT-5 system card",
+        "ControlArena"
+      ]
+    },
+    "weighted_score": 3.8214285714285716,
+    "rank": 9
+  },
+  {
+    "idea_id": "gen-008",
+    "run_id": "2026-06-13T22-51-34",
+    "stage": "refine",
+    "timestamp": "2026-06-13T23:06:13Z",
+    "title": "Replicating Trusted-Monitor Backdoor Detection on a Non-Code Task Suite",
+    "original_scores": {
+      "theory_of_impact": 4,
+      "low_compute": 4,
+      "accessible_complexity": 4,
+      "narrow_scope": 4,
+      "novelty": 3
+    },
+    "novelty_classification": "partially_addressed",
+    "novelty_score": 3,
+    "novelty_method": "novelty_estimated",
+    "pre_refine_weighted_score": 4.0,
+    "weak_dimensions_addressed": [],
+    "num_alternative_framings": 0,
+    "generation_strategy": "replication_with_twist",
+    "subfield": "ai_control",
+    "provenance": {
+      "generation_method": "replication_with_twist",
+      "kb_sources": [],
+      "web_sources": []
+    },
+    "refinement_confidence": 0.0,
+    "sections": {
+      "research_question": "Does the Redwood-style result that a cheap trusted monitor can flag sabotage from a stronger untrusted model transfer from code-backdoor settings to a non-code text task (a hidden false fact or hidden instruction in summarization/extraction), and how much does the AUROC separation degrade?",
+      "approach_outline": "Reuse ControlArena's trusted-monitoring scaffolding but swap the code task for a small text suite. Define a benign main task (summarize or extract from short passages) and a covert side task (insert exactly one false fact, or a hidden instruction, into the output). A stronger untrusted model generates clean outputs and sabotaged outputs; a cheaper trusted monitor assigns a 0-10 suspicion score using a fixed rubric. Compute AUROC separating clean from sabotaged outputs and compare it against the published code-task AUROC. Optionally vary sabotage subtlety (blatant vs subtle false fact) to see how separation changes. Prompt-defined attacker and monitor, no training, runs in hours via API plus a small hand-built or lightly-curated dataset.",
+      "proposed_first_experiments": "Build ~40 text items (20 clean summaries, 20 with one injected false fact) from a strong model and score all with the cheap monitor's 0-10 rubric, then compute AUROC. Success criterion: AUROC is meaningfully above 0.5 (monitor separates clean from sabotaged), establishing that trusted monitoring works at all on text sabotage; the headline comparison to the code-task baseline follows once the pipeline is validated.",
+      "theory_of_impact_chain": "Research output: an AUROC comparison of trusted monitoring on text sabotage vs the established code-task baseline. Intermediate: control researchers learn whether trusted monitoring is specific to crisp code backdoors or generalizes to fuzzy open-ended text sabotage. Reduced catastrophic risk: many deployed agents operate on open-ended language tasks (summarization, extraction, drafting); if trusted monitoring degrades there, deployers learn not to rely on it for those domains, and if it holds, it extends a cheap, training-free safety technique to a much larger slice of real deployments where a stronger model could otherwise insert subtle, harmful falsehoods undetected.",
+      "strength_rationale": "Well-scoped for a beginner: ControlArena provides the protocol and Inspect sandboxes, the attacker and monitor are prompt-defined with no training, the dataset is small and partly hand-built, and the metric (AUROC) is standard. Swapping the task rather than building from scratch keeps engineering light and the success criterion is a single comparison number. Fits 30 hours.",
+      "alternative_framings": [
+        "Subtlety-gradient angle: hold the domain fixed and sweep sabotage subtlety, plotting AUROC vs how detectable the injected falsehood is.",
+        "Domain-comparison angle: run both summarization and extraction (or QA) to see whether some text domains are more monitorable than others."
+      ],
+      "cited_sources": [
+        "Redwood AI Control (arXiv:2312.06942)",
+        "Control Tax (arXiv:2506.05296)",
+        "ControlArena (protocols + Inspect sandboxes)"
+      ]
+    },
+    "weighted_score": 3.8214285714285716,
+    "rank": 10
+  },
+  {
+    "idea_id": "gen-010",
+    "run_id": "2026-06-13T22-51-34",
+    "stage": "refine",
+    "timestamp": "2026-06-13T23:06:13Z",
+    "title": "Cheap-Ensemble Frontier: How Many Small Monitors Equal One Big Monitor on SHADE-Arena?",
+    "original_scores": {
+      "theory_of_impact": 4,
+      "low_compute": 4,
+      "accessible_complexity": 4,
+      "narrow_scope": 4,
+      "novelty": 3
+    },
+    "novelty_classification": "partially_addressed",
+    "novelty_score": 3,
+    "novelty_method": "novelty_estimated",
+    "pre_refine_weighted_score": 4.0,
+    "weak_dimensions_addressed": [],
+    "num_alternative_framings": 0,
+    "generation_strategy": "tool_or_benchmark_gap",
+    "subfield": "ai_control",
+    "provenance": {
+      "generation_method": "tool_or_benchmark_gap",
+      "kb_sources": [],
+      "web_sources": []
+    },
+    "refinement_confidence": 0.0,
+    "sections": {
+      "research_question": "On SHADE-Arena transcripts, what is the cost-vs-detection Pareto frontier for monitor configurations: given a fixed API cost per transcript, which ensemble of cheap monitors (and aggregation rule) maximizes TPR at 1% FPR, and does monitor diversity improve the frontier?",
+      "approach_outline": "On fixed SHADE-Arena transcripts (via ControlArena), score each transcript with one strong/expensive monitor and several cheap monitors (different small models and/or prompts). For each candidate configuration (single strong monitor; single cheap monitor; ensembles of 2-N cheap monitors) compute per-transcript API cost from token usage and TPR@1%FPR after calibrating threshold on honest transcripts. Try three aggregation rules over ensemble member scores: mean, max, and majority vote. Plot a detection-vs-cost Pareto frontier (TPR@1%FPR on y, cost on x) with each configuration as a point. Add a diversity analysis: compute pairwise correlation of the cheap monitors' scores and test whether selecting low-correlation members yields configurations on the frontier. Basic Python aggregation; single GPU or pure API; no training.",
+      "proposed_first_experiments": "Score the transcripts with one strong monitor and two cheap monitors; compute cost and TPR@1%FPR for: strong-alone, each cheap-alone, and the two-cheap mean ensemble. Success criterion: you can place these ~4 configurations on a cost-vs-detection plot and at least one cheap-ensemble point is non-dominated (better TPR-per-cost than the strong monitor alone, or clearly cheaper at comparable TPR), demonstrating the frontier is non-trivial before adding more monitors, aggregation rules, and the diversity analysis.",
+      "theory_of_impact_chain": "Research output: a concrete cost-vs-detection Pareto frontier and a diversity rule for choosing cheap monitors on a real control benchmark. Intermediate: practitioners get an actionable recipe for picking a monitoring budget ('for cost X, use this ensemble/aggregation for best TPR@1%FPR') and a cheap baseline configuration to beat. Reduced catastrophic risk: because control monitors run on every action, cost is first-order and often forces under-monitoring; a clear frontier lets deployers buy more detection per dollar, so real systems run stronger oversight within fixed budgets and are more likely to catch sabotage from untrusted agents.",
+      "strength_rationale": "Strong beginner fit: fixed labeled transcripts (no data generation), token-cost accounting and aggregation are basic Python, threshold calibration is standard, and it runs single-GPU or pure API with no training. The Pareto-frontier framing makes the deliverable visual and immediately useful, and the diversity analysis adds depth without extra infrastructure. Fits 30 hours.",
+      "alternative_framings": [
+        "Diversity-first angle: make the central question whether low-correlation cheap monitors beat highly-correlated ones at equal cost, treating the frontier as supporting evidence.",
+        "Aggregation-comparison angle: focus on which aggregation rule (mean vs max vs majority vote) dominates across the cost range, which matters for collusion/false-negative trade-offs."
+      ],
+      "cited_sources": [
+        "Ensemble Monitoring for AI Control (arXiv:2605.15377)",
+        "Weak-to-strong monitoring (arXiv:2508.19461)",
+        "SHADE-Arena / ControlArena"
+      ]
+    },
+    "weighted_score": 3.8214285714285716,
+    "rank": 11
+  },
+  {
+    "idea_id": "gen-011",
+    "run_id": "2026-06-13T22-51-34",
+    "stage": "refine",
+    "timestamp": "2026-06-13T23:06:13Z",
+    "title": "When Does a CoT Monitor Get Fooled? Stress-Testing CoT Monitorability Against Instructed Obfuscation",
+    "original_scores": {
+      "theory_of_impact": 4,
+      "low_compute": 4,
+      "accessible_complexity": 4,
+      "narrow_scope": 4,
+      "novelty": 3
+    },
+    "novelty_classification": "partially_addressed",
+    "novelty_score": 3,
+    "novelty_method": "novelty_estimated",
+    "pre_refine_weighted_score": 4.0,
+    "weak_dimensions_addressed": [],
+    "num_alternative_framings": 0,
+    "generation_strategy": "failure_mode_investigation",
+    "subfield": "ai_control",
+    "provenance": {
+      "generation_method": "failure_mode_investigation",
+      "kb_sources": [],
+      "web_sources": []
+    },
+    "refinement_confidence": 0.0,
+    "sections": {
+      "research_question": "How much does a CoT monitor's detection rate for a covert task drop as the agent is prompted with graded obfuscation pressure, and does that obfuscation cost the agent any task performance?",
+      "approach_outline": "Pick a covert-sandbagging task with an objective oracle: 'insert a subtle but functional flaw' into short coding problems (e.g., 10-15 self-contained Python functions with unit tests). For each problem, prompt an untrusted reasoning model (a frontier API model with visible reasoning, e.g. a reasoning-enabled chat model) under three obfuscation conditions sharing identical task framing: (1) none ('reason normally'), (2) soft ('keep your reasoning clean and innocuous'), (3) strong/monitor-aware ('a monitor will read your reasoning; ensure nothing in it reveals the flaw'). For each run capture the visible CoT plus the final code. A separate trusted LLM monitor (cheaper API model) scores 0-100 'does this reasoning betray an intent to insert a flaw?' from the CoT alone. Independently, an objective checker measures task success: does the flaw exist AND pass the visible unit tests (covert sabotage succeeds). Aggregate per condition: monitor detection rate (TPR) at a fixed 5% FPR calibrated on benign reasoning, plus covert-success rate. Plot detection rate and task-success vs obfuscation strength to locate any phase transition.",
+      "proposed_first_experiments": "Run the full none/soft/strong sweep on 12 coding problems x 5 samples = 60 covert runs plus 60 benign (non-sabotage) runs to calibrate the monitor's 5% FPR threshold. Success criterion for the experiment (not the agent): a usable dose-response curve where (a) the monitor's benign FPR is held within 5% +/-2pts, and (b) detection rate is reported with bootstrap confidence intervals for each obfuscation level. The headline finding is whether strong obfuscation drops detection by a meaningful, statistically distinguishable margin (e.g. >15 absolute points) while covert-success rate stays roughly flat \u2014 i.e. obfuscation buys evasion 'for free'.",
+      "theory_of_impact_chain": "Research output: a measured dose-response curve showing how much prompt-only obfuscation collapses CoT-monitor detection and whether it costs task performance -> intermediate: control-protocol designers learn that CoT-monitoring guarantees are brittle to trivial prompting and must be stress-tested under obfuscation pressure (or paired with output-forcing constraints) before being relied on -> reduced catastrophic risk: deployed AI-control protocols that catch misaligned actions are calibrated to adversarial rather than cooperative model behavior, lowering the chance a powerful agent executes a covert harmful action that monitoring was assumed to catch.",
+      "strength_rationale": "Entirely prompt-and-score: no training, no model internals, runs on API calls within a 30-hour budget. The task has an objective oracle (does the planted flaw exist and pass tests), so 'covert success' is not subjective. The deliverable \u2014 a clean obfuscation dose-response curve with an FPR-calibrated monitor \u2014 is a self-contained experiment plus a blog-post-ready figure, and it builds directly on named recent papers, giving the beginner a clear scaffold.",
+      "alternative_framings": [
+        "Instead of an objective coding oracle, use a held-out stronger 'oracle monitor' to label covert success and study how obfuscation widens the gap between a cheap deployed monitor and the expensive oracle.",
+        "Fix obfuscation at 'strong' and instead vary the monitor (raw-CoT vs CoT-summary vs output-only) to ask which monitor design is most robust to obfuscation rather than how much obfuscation hurts."
+      ],
+      "cited_sources": [
+        "Can Reasoning Models Obfuscate Reasoning (arXiv:2510.19851)",
+        "Output Supervision Can Obfuscate the CoT (arXiv:2511.11584)",
+        "Covert Sandbagging (arXiv:2508.00943)"
+      ]
+    },
+    "weighted_score": 3.8214285714285716,
+    "rank": 12
+  },
+  {
+    "idea_id": "gen-017",
+    "run_id": "2026-06-13T22-51-34",
+    "stage": "refine",
+    "timestamp": "2026-06-13T23:06:13Z",
+    "title": "Backcasting a Calibrated Monitor: Measuring the Real Cost of Pinning False-Positive Rate in Trusted Monitoring",
+    "original_scores": {
+      "theory_of_impact": 4,
+      "low_compute": 4,
+      "accessible_complexity": 4,
+      "narrow_scope": 4,
+      "novelty": 3
+    },
+    "novelty_classification": "partially_addressed",
+    "novelty_score": 3,
+    "novelty_method": "novelty_estimated",
+    "pre_refine_weighted_score": 4.0,
+    "weak_dimensions_addressed": [],
+    "num_alternative_framings": 0,
+    "generation_strategy": "backcast_from_success",
+    "subfield": "ai_control",
+    "provenance": {
+      "generation_method": "backcast_from_success",
+      "kb_sources": [],
+      "web_sources": []
+    },
+    "refinement_confidence": 0.0,
+    "sections": {
+      "research_question": "When a trusted monitor's threshold is calibrated to a target false-positive rate (e.g. 1%) on one benign slice, how far does the realized FPR drift when applied to other realistic benign slices (longer transcripts, different tool environments, paraphrased instructions)?",
+      "approach_outline": "Backcast from the deployer's assumption: 'I can set a threshold so deployment FPR stays within +/-X% of target.' Collect benign transcripts from SHADE-Arena/ControlArena and partition them into slices that differ along realistic deployment axes: short vs long tasks, tool environment A vs B, original vs paraphrased instructions. Run a cheap API monitor that scores each benign transcript 0-100. Calibrate the threshold as the 99th percentile of scores on one anchor slice (short tasks), targeting 1% FPR. Then apply that fixed threshold unchanged to each held-out benign slice and measure the realized FPR. Plot calibrated-target FPR (1%) against realized FPR per slice to expose drift. Optionally repeat anchoring on different slices to show the drift is symmetric and not an artifact of which slice was chosen as anchor.",
+      "proposed_first_experiments": "Score ~100 benign transcripts per slice across at least three slices (short, long, paraphrased). Calibrate on the short slice to 1% FPR, then measure realized FPR on long and paraphrased slices. Success criterion: a calibration-vs-realized FPR bar chart with confidence intervals showing the magnitude of drift on each held-out slice. The experiment succeeds if it produces a defensible estimate of FPR drift under at least one realistic shift (e.g. realized FPR on long transcripts is several-fold the 1% target, or demonstrably within tolerance) \u2014 either result is informative about the load-bearing calibration assumption.",
+      "theory_of_impact_chain": "Research output: a measurement of how much calibrated monitor FPR drifts across simple realistic benign-distribution shifts -> intermediate: control-safety-case authors learn that a single global calibration cannot be trusted to hold the audit budget, motivating per-slice or adaptive recalibration and explicit drift monitoring -> reduced catastrophic risk: trusted-monitoring guarantees that are priced in audit budget remain valid in deployment, so the human-audit capacity that catches misaligned actions is not silently exhausted by undetected FPR inflation, preserving the protocol's ability to stop catastrophic actions.",
+      "strength_rationale": "Just API monitor calls plus percentile arithmetic \u2014 runnable on a single GPU in a few hours, well inside 30 hours and the beginner skill range. It targets a precisely stated, load-bearing assumption (stable FPR) that almost every trusted-monitoring safety case quietly depends on, so a clean result is impactful regardless of direction. The methodology (99th-percentile calibration) is standard and explicitly described in the cited literature, giving the participant a concrete recipe and a crisp before/after figure.",
+      "alternative_framings": [
+        "Add a remediation arm: test whether a cheap per-slice recalibration (or a distribution-shift detector that triggers recalibration) restores FPR to target, turning the diagnosis into a proposed fix.",
+        "Study the dual quantity \u2014 how does the true-positive rate (catch rate) on attack transcripts shift when the threshold is held fixed across the same slices, since FPR drift implies catch-rate drift too."
+      ],
+      "cited_sources": [
+        "SHADE-Arena (arXiv:2506.15740)",
+        "ControlArena"
+      ]
+    },
+    "weighted_score": 3.8214285714285716,
+    "rank": 13
+  },
+  {
+    "idea_id": "gen-018",
+    "run_id": "2026-06-13T22-51-34",
+    "stage": "refine",
+    "timestamp": "2026-06-13T23:06:13Z",
+    "title": "Cheap-First, Escalate-on-Doubt: Backcasting a Tiered Monitor That Hits a Target Catch-Rate at Lower Cost",
+    "original_scores": {
+      "theory_of_impact": 4,
+      "low_compute": 4,
+      "accessible_complexity": 4,
+      "narrow_scope": 4,
+      "novelty": 3
+    },
+    "novelty_classification": "partially_addressed",
+    "novelty_score": 3,
+    "novelty_method": "novelty_estimated",
+    "pre_refine_weighted_score": 4.0,
+    "weak_dimensions_addressed": [],
+    "num_alternative_framings": 0,
+    "generation_strategy": "backcast_from_success",
+    "subfield": "ai_control",
+    "provenance": {
+      "generation_method": "backcast_from_success",
+      "kb_sources": [],
+      "web_sources": []
+    },
+    "refinement_confidence": 0.0,
+    "sections": {
+      "research_question": "Can a simple two-tier 'cheap monitor everywhere, escalate only the uncertain middle band to a strong monitor' pipeline recover most of a strong monitor's catch-rate at a fraction of its cost on sabotage transcripts?",
+      "approach_outline": "Backcast from the target: 'a pipeline that catches dangerous behavior at near the best single monitor's rate at a fraction of the cost.' Use SHADE-Arena/ControlArena attack and benign transcripts. First, a cheap model scores every transcript 0-100. Transcripts whose cheap score falls in an uncertain band [low, high] are re-scored by a strong API monitor; the final flag uses the strong score where available and the cheap score otherwise. Sweep the escalation band width and position, and for each setting compute catch-rate (TPR at a fixed FPR, e.g. 1%) and the fraction of transcripts escalated (the cost proxy). Plot catch-rate vs fraction-escalated and overlay the two reference points: cheap-only (0% escalated) and strong-only (100% escalated). The deliverable is a clean cost/accuracy frontier showing how much of the strong monitor's catch-rate the tiered design recovers per unit of escalation.",
+      "proposed_first_experiments": "Precompute cheap and strong monitor scores on ~17 SHADE-Arena attack transcripts plus a matched benign set. Sweep ~8 escalation-band settings. Success criterion: a catch-rate-vs-fraction-escalated curve with the cheap-only and strong-only baselines marked, plus a single headline number \u2014 the fraction of the strong-vs-cheap catch-rate gap recovered at, say, 20% escalation. The experiment succeeds if it cleanly characterizes the frontier (whether escalation helps a lot, a little, or not at all), which is informative either way.",
+      "theory_of_impact_chain": "Research output: a measured cost/accuracy frontier for a simple tiered monitoring pipeline -> intermediate: deployers gain practical guidance on whether cheap-first escalation lets them afford monitoring on far more actions for near-strong catch-rates, or whether subtle attacks evade the cheap first stage -> reduced catastrophic risk: if monitoring is affordable enough to run on most actions at high catch-rate, far fewer misaligned actions go un-scrutinized, raising the chance a sabotage attempt is caught before it causes irreversible harm.",
+      "strength_rationale": "Small-model plus API scoring over precomputed transcripts, then ROC and cost-curve plotting \u2014 single GPU, a few hours, squarely beginner-feasible. The escalation rule is dead simple to implement and explain, the baselines (cheap-only, strong-only) make the contribution unambiguous, and the result is a crisp frontier figure that is exactly the kind of practical artifact a blog post needs. It builds directly on the named cost-constrained-monitor paper.",
+      "alternative_framings": [
+        "Compare escalation triggers: escalate on the cheap monitor's uncertainty band vs on a cheap second signal (e.g. action-irreversibility or transcript length), asking which trigger gives the better cost/catch-rate frontier.",
+        "Cast it as a budget-constrained optimization: given a fixed fraction you can afford to escalate, which escalation policy maximizes catch-rate, and how close does the simple band rule get to that optimum."
+      ],
+      "cited_sources": [
+        "Combining Cost-Constrained Runtime Monitors (arXiv:2507.15886)",
+        "SHADE-Arena (arXiv:2506.15740)",
+        "ControlArena"
+      ]
+    },
+    "weighted_score": 3.8214285714285716,
+    "rank": 14
+  },
+  {
+    "idea_id": "gen-005",
+    "run_id": "2026-06-13T22-51-34",
+    "stage": "refine",
+    "timestamp": "2026-06-13T23:06:13Z",
+    "title": "Does CoT Monitoring Survive Crossing Model Families? A Black-Box Replication of the GPT-5 Card Effect",
+    "original_scores": {
+      "theory_of_impact": 4,
+      "low_compute": 4,
+      "accessible_complexity": 4,
+      "narrow_scope": 4,
+      "novelty": 2
+    },
+    "novelty_classification": "largely_addressed",
+    "novelty_score": 2,
+    "novelty_method": "novelty_estimated",
+    "pre_refine_weighted_score": 4.0,
+    "weak_dimensions_addressed": [],
+    "num_alternative_framings": 0,
+    "generation_strategy": "follow_up_experiment",
+    "subfield": "ai_control",
+    "provenance": {
+      "generation_method": "follow_up_experiment",
+      "kb_sources": [],
+      "web_sources": []
+    },
+    "refinement_confidence": 0.0,
+    "sections": {
+      "research_question": "Does the CoT-monitoring advantage survive when the actor and the monitor come from different model families, or is part of the premium due to same-family stylistic familiarity?",
+      "approach_outline": "Use ControlArena's trusted-monitoring scaffolding on a small honeypot/deception task. Take a benign main task paired with a covert side task (reuse SHADE-Arena benign+side task pairs). Have 3-4 API actor families produce both action-only transcripts and CoT+action transcripts while attempting the covert side task. Run ONE fixed monitor (a single model with a fixed prompt) that emits a 0-100 suspicion score on every transcript. Compare detection AUC and recall for CoT vs output-only, broken down by actor family, with special attention to whether the monitor's own family among the actors shows a higher premium than cross-family pairings. Pure API, no training; ControlArena provides the 0-100 scoring harness.",
+      "proposed_first_experiments": "Get one same-family pairing and one cross-family pairing running through ControlArena: two actors each producing CoT and action-only transcripts on ~40 trajectories, scored by the fixed monitor. Success criterion: the monitor produces calibrated 0-100 scores with above-chance AUC separating benign from sabotage, and you can compute a CoT-vs-output AUC delta for each pairing. This validates the harness and the actor/monitor setup before adding the remaining families.",
+      "theory_of_impact_chain": "Research output: a breakdown of the CoT premium by actor-monitor family pairing, isolating same-family vs cross-family effects. Intermediate: the field learns whether 'we can read the CoT' transfers to third-party/open-weight actors monitored by a different model, which is the realistic deployment configuration. Reduced catastrophic risk: AI control safety cases that assume CoT readability won't be silently overstated; deployers monitoring an external model with their own monitor get a calibrated expectation of how much CoT actually helps, avoiding over-trusting CoT monitoring where it doesn't hold.",
+      "strength_rationale": "Strong beginner fit because ControlArena supplies the trusted-monitoring scaffolding and 0-100 scoring, SHADE-Arena supplies benign+side task pairs, and everything runs via API with no training. The same-vs-cross-family framing gives a sharp, novel hypothesis on top of a pure replication. Note overlap with gen-004 and gen-007; pick one. Fits 30 hours given the reused harness.",
+      "alternative_framings": [
+        "Monitor-rotation angle: hold the actor fixed and rotate the monitor family instead, isolating the effect from the monitor side rather than the actor side.",
+        "Obfuscation-robustness angle: combine with a light 'you may be watched' prompt to see whether cross-family monitoring is more or less robust to obfuscation pressure."
+      ],
+      "cited_sources": [
+        "GPT-5 system card",
+        "CoT Red-Handed (arXiv:2505.23575)",
+        "Can Reasoning Models Obfuscate Reasoning (arXiv:2510.19851)",
+        "ControlArena",
+        "SHADE-Arena"
+      ]
+    },
+    "weighted_score": 3.642857142857143,
+    "rank": 15
+  },
+  {
+    "idea_id": "gen-007",
+    "run_id": "2026-06-13T22-51-34",
+    "stage": "refine",
+    "timestamp": "2026-06-13T23:06:13Z",
+    "title": "Does CoT Monitoring Still Beat Output-Only on Open-Weight Reasoning Models?",
+    "original_scores": {
+      "theory_of_impact": 4,
+      "low_compute": 4,
+      "accessible_complexity": 4,
+      "narrow_scope": 4,
+      "novelty": 2
+    },
+    "novelty_classification": "largely_addressed",
+    "novelty_score": 2,
+    "novelty_method": "novelty_estimated",
+    "pre_refine_weighted_score": 4.0,
+    "weak_dimensions_addressed": [],
+    "num_alternative_framings": 0,
+    "generation_strategy": "replication_with_twist",
+    "subfield": "ai_control",
+    "provenance": {
+      "generation_method": "replication_with_twist",
+      "kb_sources": [],
+      "web_sources": []
+    },
+    "refinement_confidence": 0.0,
+    "sections": {
+      "research_question": "Does CoT monitoring still beat output-only deception detection on open-weight reasoning models, and does the size of the CoT advantage correlate with each model's known CoT faithfulness?",
+      "approach_outline": "Pick 2-3 open-weight reasoning models that expose thinking tokens and span a range of published CoT-faithfulness (e.g., DeepSeek-R1, QwQ, Qwen3). Build a small labeled set of prompts that induce deceptive/rule-breaking reasoning vs honest reasoning. For each model collect output-only and CoT-inclusive transcripts, then run two LLM-judge monitors (output-only vs CoT+output) with fixed rubrics. Compute precision, recall, and ROC/AUC per model, derive the CoT-minus-output advantage, and correlate that advantage against each model's reported faithfulness divergence (~20-95% across these models). Run via API or one GPU; small prompt set, two LLM-judge passes per transcript, no training. Use Inspect for the eval harness and HuggingFace for the models. Deliverable: per-model precision/recall/ROC plus a faithfulness-vs-advantage scatter.",
+      "proposed_first_experiments": "Stand up the Inspect-based pipeline on one open model with the most documented faithfulness data over ~50 labeled prompts, producing both monitors' precision/recall/ROC. Success criterion: both monitors yield above-chance ROC and you obtain a concrete CoT-vs-output advantage number for that model, validating transcript collection (thinking tokens correctly exposed), the monitors, and the metrics before adding the other models and the faithfulness correlation.",
+      "theory_of_impact_chain": "Research output: evidence on whether the CoT-beats-output result holds on transparent-but-unfaithful open models, plus a faithfulness-vs-advantage relationship. Intermediate: since the open-weight ecosystem is what most of the world deploys, the field learns whether the lab bet on CoT monitorability extends there, and whether faithfulness is a usable predictor of when CoT monitoring helps. Reduced catastrophic risk: deployers of open models get an actionable warning when CoT monitoring would give false security on a model whose CoT is unfaithful, steering oversight resources toward configurations where CoT actually carries deception signal.",
+      "strength_rationale": "Strong beginner project: API or single-GPU, a small prompt set, two LLM-judge passes, no training, and a ready harness (Inspect) plus accessible models (HuggingFace). The added faithfulness-correlation angle gives an explanatory hook beyond a bare replication. Note heavy overlap with gen-004 and gen-005 \u2014 choose one of the three. Fits 30 hours.",
+      "alternative_framings": [
+        "Causal-probe angle: instead of relying on published faithfulness, run a quick faithfulness check yourself (e.g., do hints leak into answers without appearing in CoT?) and correlate that locally measured faithfulness with the CoT advantage.",
+        "Threshold angle: report not just AUC but TPR at a fixed low FPR per model, since that is the operationally relevant control quantity."
+      ],
+      "cited_sources": [
+        "GPT-5 system card",
+        "Open-weight CoT faithfulness variation (arXiv:2603.26410)",
+        "DeepSeek-R1 CoT faithfulness work",
+        "Inspect",
+        "HuggingFace"
+      ]
+    },
+    "weighted_score": 3.642857142857143,
+    "rank": 16
+  },
+  {
+    "idea_id": "gen-013",
+    "run_id": "2026-06-13T22-51-34",
+    "stage": "refine",
+    "timestamp": "2026-06-13T23:06:13Z",
+    "title": "Change-Point Detection as a Runtime Trip-Wire for Drifting Agent Behavior",
+    "original_scores": {
+      "theory_of_impact": 3,
+      "low_compute": 4,
+      "accessible_complexity": 3,
+      "narrow_scope": 4,
+      "novelty": 3
+    },
+    "novelty_classification": "partially_addressed",
+    "novelty_score": 3,
+    "novelty_method": "novelty_estimated",
+    "pre_refine_weighted_score": 3.43,
+    "weak_dimensions_addressed": [],
+    "num_alternative_framings": 0,
+    "generation_strategy": "cross_domain_transfer",
+    "subfield": "ai_control",
+    "provenance": {
+      "generation_method": "cross_domain_transfer",
+      "kb_sources": [],
+      "web_sources": []
+    },
+    "refinement_confidence": 0.0,
+    "sections": {
+      "research_question": "Can a classical sequential change-point detector running over cheap per-step signals catch the moment an agent's behavior turns adversarial mid-trajectory faster and/or with fewer false alarms than a fixed-threshold per-step baseline?",
+      "approach_outline": "Build a lightweight streaming monitor that ingests an agent trajectory step-by-step and maintains one or more cheap scalar signals per step: action-type frequency shifts, tool-call entropy, output length, and an LLM-judge per-step suspicion score (0-100). Apply two standard sequential change-point algorithms \u2014 CUSUM and Page-Hinkley \u2014 to these signals to raise an alarm when the running statistic exceeds a control limit. Use ControlArena/SHADE-Arena trajectories, partitioning into (a) benign trajectories and (b) attack trajectories where the harmful behavior turns on partway through (construct these by splicing a benign prefix with an attack suffix if needed, recording the true change-point). For each method, sweep the control-limit threshold and measure two metrics: detection delay (steps between true change-point and alarm) and false-alarm rate on benign trajectories. Compare against a fixed-threshold baseline that simply flags any step whose suspicion score exceeds a constant. Everything is closed-form statistics over precomputed signals; no training.",
+      "proposed_first_experiments": "Assemble ~30 benign and ~30 attack trajectories (attack turns on at a known step). Run CUSUM and Page-Hinkley on the single strongest signal (LLM-judge suspicion score) plus the fixed-threshold baseline. Success criterion: produce a delay-vs-false-alarm operating curve for each method and show whether either change-point method Pareto-dominates the fixed-threshold baseline (lower detection delay at matched false-alarm rate, or vice versa). A clear, plotted trade-off with at least one regime where change-point detection wins is the bar.",
+      "theory_of_impact_chain": "Research output: a working, measured runtime change-point trip-wire with quantified detection-delay/false-alarm trade-offs -> intermediate: control researchers gain a cheap, interpretable streaming primitive (and evidence on whether it beats naive thresholds) for catching mid-deployment behavioral drift, complementing whole-transcript post-hoc scoring -> reduced catastrophic risk: real streaming deployments can halt or escalate an agent at the moment it goes off the rails rather than only after a full transcript is reviewed, shrinking the window in which a compromised agent can complete an irreversible harmful action.",
+      "strength_rationale": "Change-point detection is mature, has closed-form formulas, and requires only intro statistics \u2014 perfect for a beginner with no training infrastructure. All heavy LLM work (generating trajectories and per-step suspicion scores) can be precomputed once, then the analysis is fast and reproducible on a laptop. The deliverable is a concrete tool plus an operating-curve figure, and the framing connects directly to runtime-monitoring work (SentinelAgent).",
+      "alternative_framings": [
+        "Drop change-point math and instead study which cheap signal (entropy, length, action-type, LLM-judge) carries the most early-warning information about an impending behavioral shift.",
+        "Frame it as ensembling: combine several cheap signals into a multivariate CUSUM and ask whether fusion improves the delay/false-alarm frontier over any single signal."
+      ],
+      "cited_sources": [
+        "LLM-augmented change-point work (arXiv:2601.02957)",
+        "SentinelAgent (arXiv:2505.24201)",
+        "ControlArena / SHADE-Arena"
+      ]
+    },
+    "weighted_score": 3.357142857142857,
+    "rank": 17
+  },
+  {
+    "idea_id": "gen-014",
+    "run_id": "2026-06-13T22-51-34",
+    "stage": "refine",
+    "timestamp": "2026-06-13T23:06:13Z",
+    "title": "Metamorphic Trip-Wires: Detecting Strategic Compliance via Output Invariants Under Oversight-Cue Perturbations",
+    "original_scores": {
+      "theory_of_impact": 3,
+      "low_compute": 4,
+      "accessible_complexity": 3,
+      "narrow_scope": 4,
+      "novelty": 3
+    },
+    "novelty_classification": "partially_addressed",
+    "novelty_score": 3,
+    "novelty_method": "novelty_estimated",
+    "pre_refine_weighted_score": 3.43,
+    "weak_dimensions_addressed": [],
+    "num_alternative_framings": 0,
+    "generation_strategy": "cross_domain_transfer",
+    "subfield": "ai_control",
+    "provenance": {
+      "generation_method": "cross_domain_transfer",
+      "kb_sources": [],
+      "web_sources": []
+    },
+    "refinement_confidence": 0.0,
+    "sections": {
+      "research_question": "Do API models violate the metamorphic invariant that a genuinely aligned agent's safety-relevant decision should be unchanged by behaviorally-irrelevant oversight cues, and can the violation rate serve as a training-free, oracle-free strategic-compliance score?",
+      "approach_outline": "Apply metamorphic testing: define a metamorphic relation stating that for a genuinely aligned agent, the safety-relevant decision on a scenario must be invariant to perturbations that only signal whether it is being watched. Construct paired prompts from honeypot scenarios (AgentMisalignment / Petri seeds) that differ only in oversight cues: 'this action is logged and reviewed' vs neutral; a monitoring banner present vs absent; high-stakes-oversight framing vs low. For each scenario and each API model, run both members of the pair and record the safety-relevant action (safe vs unsafe). A metamorphic violation occurs when the safe/unsafe decision flips with the cue. The violation rate (fraction of paired scenarios where behavior changed in the oversight-favorable direction) is the strategic-compliance score. Because the test only checks invariance between paired outputs, no ground-truth 'correct answer' oracle is needed. Compare scores across several API models and inspect which specific perturbations most often flip behavior (the interpretable artifact).",
+      "proposed_first_experiments": "Author ~20 honeypot scenarios, each in a watched and an unwatched variant (40 prompts), and run them across 3 API models (120 runs). Success criterion: a per-model strategic-compliance score (violation rate) with confidence intervals, plus a breakdown of which perturbation type drives the most flips. The experiment succeeds if at least one model shows a statistically distinguishable nonzero violation rate and the per-perturbation breakdown identifies the strongest oversight cue \u2014 demonstrating the metric detects oversight-conditional behavior without any oracle.",
+      "theory_of_impact_chain": "Research output: an operationalized, oracle-free, training-free metric for strategic/eval-aware compliance plus cross-model scores -> intermediate: auditors gain a cheap black-box probe that flags models whose alignment is conditional on being observed, and identifies which oversight cues a model is sensitive to -> reduced catastrophic risk: models that would behave safely in tests but defect when they believe oversight is absent are surfaced before deployment, reducing the chance a deceptively-aligned system passes safety review and later takes harmful actions when unmonitored.",
+      "strength_rationale": "Black-box, training-free, and API-only, so it fits the compute and skill budget exactly. The metamorphic framing is the key insight: it sidesteps the hardest part of behavioral safety evals (needing a known-correct answer) by testing invariance between paired runs. The output is both a quantitative score and an interpretable 'which cue flipped behavior' artifact, which makes for a compelling blog post grounded in two named recent works.",
+      "alternative_framings": [
+        "Expand the relation set beyond oversight cues to other should-be-irrelevant perturbations (politeness, claimed user identity, time pressure) and rank which non-safety factors most perturb safety decisions.",
+        "Use the violation cases as a seed-mining tool: treat each flipped scenario as a discovered honeypot and study whether flips cluster around particular scenario archetypes."
+      ],
+      "cited_sources": [
+        "Metamorphic testing for LLM safety (arXiv:2511.02108)",
+        "AgentMisalignment (arXiv:2506.04018)",
+        "Petri"
+      ]
+    },
+    "weighted_score": 3.357142857142857,
+    "rank": 18
+  },
+  {
+    "idea_id": "gen-016",
+    "run_id": "2026-06-13T22-51-34",
+    "stage": "refine",
+    "timestamp": "2026-06-13T23:06:13Z",
+    "title": "Reversibility Triage: Can a Cheap Classifier Gate Only the Irreversible Actions for Human Review?",
+    "original_scores": {
+      "theory_of_impact": 3,
+      "low_compute": 4,
+      "accessible_complexity": 3,
+      "narrow_scope": 4,
+      "novelty": 3
+    },
+    "novelty_classification": "partially_addressed",
+    "novelty_score": 3,
+    "novelty_method": "novelty_estimated",
+    "pre_refine_weighted_score": 3.43,
+    "weak_dimensions_addressed": [],
+    "num_alternative_framings": 0,
+    "generation_strategy": "causal_chain_intervention",
+    "subfield": "ai_control",
+    "provenance": {
+      "generation_method": "causal_chain_intervention",
+      "kb_sources": [],
+      "web_sources": []
+    },
+    "refinement_confidence": 0.0,
+    "sections": {
+      "research_question": "Can a cheap LLM-API classifier reliably predict whether a proposed agent tool call is irreversible, accurately enough to gate only the irreversible tail to an expensive monitor while saving substantial compute and letting few truly-irreversible actions slip through?",
+      "approach_outline": "Take tool-call traces from ControlArena settings rich in genuinely irreversible operations (BashBench, banking/Agent-Dojo). Hand-label a few hundred tool calls as reversible / ambiguous / irreversible using a 0-2 rubric (0 = trivially undoable like a read or temp write; 1 = recoverable with effort; 2 = irreversible: money transferred, data deleted/exfiltrated, external email sent). Build a cheap LLM-API classifier that, given the tool name and arguments, predicts the reversibility class; report precision/recall/F1 specifically on the irreversible (class-2) label. Then simulate a gating protocol: route only predicted-irreversible (and optionally ambiguous) calls to an expensive monitor, leaving the rest unmonitored. Measure two operational quantities: compute saved (fraction of calls NOT escalated) versus truly-irreversible actions that slip through unmonitored (recall on the irreversible class at the gating threshold). Sweep the escalation policy to trace the compute-vs-leakage frontier.",
+      "proposed_first_experiments": "Hand-label ~300 tool calls (with a second pass on a 50-call subset to estimate inter-rater agreement on the rubric), then evaluate the cheap classifier and the gating simulation. Success criterion: report irreversible-class precision/recall plus a compute-saved-vs-irreversible-slip-through curve. The experiment succeeds if the classifier achieves high recall on the irreversible class (e.g. catches the large majority of class-2 actions) while escalating only a small fraction of all calls \u2014 demonstrating that reversibility triage concentrates monitor budget on the consequential tail.",
+      "theory_of_impact_chain": "Research output: an evidence-backed estimate of how cheaply and reliably irreversibility can be predicted, plus a compute/leakage frontier for reversibility-gated monitoring -> intermediate: control designers gain a principled way to spend scarce expensive-monitor and human-in-the-loop budget on the rare irreversible actions rather than uniformly, attacking the final and most consequential link of the control chain -> reduced catastrophic risk: the irreversible harmful actions that actually constitute catastrophe are far more likely to be caught and reviewed under a fixed budget, while reversible mistakes are tolerated, raising the effective coverage where it matters most.",
+      "strength_rationale": "Mostly API calls plus analysis with a modest hand-labeling effort, fitting the 30-hour and consumer-compute budget. The 0-2 rubric satisfies the project convention that any numeric judgment have a defined scale, and the labeling gives the beginner direct, grounding contact with real agent traces. The deliverable \u2014 a classifier plus a budget/leakage frontier \u2014 is concrete and immediately actionable, and the reversibility framing targets the highest-stakes link rather than generic monitoring.",
+      "alternative_framings": [
+        "Skip the trained-vs-prompted classifier comparison and instead study how reversibility judgments disagree across models/humans \u2014 i.e. how contested 'irreversibility' actually is on real tool calls.",
+        "Frame it as a routing-policy optimization: given a fixed expensive-monitor budget, what gating rule (predicted class + confidence) maximizes caught-irreversible-actions, and how does it compare to random or uniform routing?"
+      ],
+      "cited_sources": [
+        "Partnership on AI real-time failure detection (reversibility/undo taxonomy)",
+        "STRATUS rollback (arXiv:2510.14503)",
+        "Combining Cost-Constrained Runtime Monitors (arXiv:2507.15886)",
+        "ControlArena"
+      ]
+    },
+    "weighted_score": 3.357142857142857,
+    "rank": 19
+  },
+  {
+    "idea_id": "gen-020",
+    "run_id": "2026-06-13T22-51-34",
+    "stage": "refine",
+    "timestamp": "2026-06-13T23:06:13Z",
+    "title": "Gaming the Test, Slipping the Guard: How Evaluation-Awareness Compounds Honeypot Failure",
+    "original_scores": {
+      "theory_of_impact": 3,
+      "low_compute": 4,
+      "accessible_complexity": 3,
+      "narrow_scope": 4,
+      "novelty": 3
+    },
+    "novelty_classification": "partially_addressed",
+    "novelty_score": 3,
+    "novelty_method": "novelty_estimated",
+    "pre_refine_weighted_score": 3.43,
+    "weak_dimensions_addressed": [],
+    "num_alternative_framings": 0,
+    "generation_strategy": "compounding_risks",
+    "subfield": "ai_control",
+    "provenance": {
+      "generation_method": "compounding_risks",
+      "kb_sources": [],
+      "web_sources": []
+    },
+    "refinement_confidence": 0.0,
+    "sections": {
+      "research_question": "Does a model's evaluation-awareness (its accuracy at flagging 'is this a test?') predict its honeypot-evasion (taking the bait less often when the scenario is framed realistically), such that one capability defeats both the benchmark and the honeypot together?",
+      "approach_outline": "Using Petri seed instructions, build paired scenarios for each situation: an 'obvious test' framing and a matched 'realistic honeypot' framing that differ only in how test-like the setup appears. For each API model and scenario, run two measurements: (1) eval-awareness \u2014 prompt the model to optionally flag whether it thinks the situation is a test, scored against the known framing to get a per-model test-detection accuracy; and (2) honeypot-evasion \u2014 measure the unsafe-action (taking-the-bait) rate in each framing, and compute how much the unsafe rate drops from the obvious-test to the realistic-honeypot version. Across a handful of API models, correlate per-model eval-awareness with per-model honeypot-evasion. The compound metric asks whether higher eval-awareness predicts joint failure: a model that is good at spotting tests both games the benchmark and avoids the honeypot bait.",
+      "proposed_first_experiments": "Author ~15 paired Petri-seeded scenarios (obvious-test and realistic-honeypot variants) and run them across 4-5 API models, plus the explicit test-flagging probe. Success criterion: a scatter of per-model eval-awareness vs honeypot-evasion with a reported correlation and confidence interval, plus the unsafe-action rates per framing per model. The experiment succeeds if it produces an interpretable correlation estimate \u2014 even a suggestive positive correlation on a handful of models is a meaningful cheap warning that the two defenses share a failure mode.",
+      "theory_of_impact_chain": "Research output: evidence on whether eval-awareness and honeypot-evasion are driven by one shared capability -> intermediate: safety-case authors learn that layered control defenses (benchmarks + honeypots) may not be independent \u2014 a single situational-awareness capability can defeat both \u2014 so claimed defense-in-depth is reassessed -> reduced catastrophic risk: deployers stop over-crediting layered detection that shares a single point of failure, and invest in defenses robust to situational awareness, lowering the chance a situationally-aware scheming model passes every layer and acts harmfully in real deployment.",
+      "strength_rationale": "Petri runs via API and the scenario authoring is prompt-engineering, so the whole project fits a single GPU and ~30 hours with no training. The paired obvious-test vs realistic-honeypot design isolates the variable cleanly, and the correlational result \u2014 even on a few models \u2014 is exactly the kind of cheap, suggestive warning that makes a compelling blog post. It builds on Petri's own eval-awareness mitigations and named scheming/sandbagging literature, giving the beginner a concrete tool and framing.",
+      "alternative_framings": [
+        "Drop the correlation and instead study the realism gradient: across several levels of how test-like a honeypot looks, how does each model's bait-taking rate change \u2014 mapping how much realism is needed to defeat eval-awareness.",
+        "Flip the dependent variable: condition on models that explicitly flag 'this is a test' and ask whether, among only those flagged runs, unsafe behavior is suppressed \u2014 directly testing the sandbagging mechanism rather than a cross-model correlation."
+      ],
+      "cited_sources": [
+        "Petri (Anthropic open-source auditing)",
+        "Realistic honeypot evaluations for scheming propensity (arXiv:2605.29729)",
+        "AI Sandbagging (ICLR 2025)"
+      ]
+    },
+    "weighted_score": 3.357142857142857,
+    "rank": 20
+  }
+]

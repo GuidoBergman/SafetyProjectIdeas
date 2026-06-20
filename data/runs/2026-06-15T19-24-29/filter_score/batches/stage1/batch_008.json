@@ -1,0 +1,1002 @@
+[
+  {
+    "idea_id": "gen-1546",
+    "run_id": "2026-06-15T19-24-29",
+    "stage": "generate",
+    "timestamp": "2026-06-15T21:36:04Z",
+    "subfield": "mechanistic_interpretability",
+    "generation_strategy": "follow_up_experiment",
+    "confidence": 0.64,
+    "body": "# Do Backward-Planning Features in QA Predict When a Model Will Hallucinate?\n\n**Problem:** Circuit tracing found backward planning in question answering (the model commits to an answer's 'article' or form before the answer itself). It is unknown whether weak or absent pre-commitment signals correlate with hallucination.\n\n**Direction:** On an open model, use the logit lens at pre-answer positions to measure how strongly the eventual answer token is pre-activated, then compare this pre-activation signal on questions the model answers correctly vs. questions it hallucinates (verified against ground truth). Test whether low pre-commitment predicts hallucination.\n\n**Why it matters:** A training-free internal hallucination-warning signal would be a cheap monitor any deployer could use. Connects mechanistic planning to a concrete safety failure (confident fabrication).\n\n**Relevant context:** Biology of an LLM (2025): backward planning in QA, article selection before the answer. Logit-lens decoding of intermediate layers is standard in TransformerLens. Hallucination-detection via internal states is an active area."
+  },
+  {
+    "idea_id": "gen-1547",
+    "run_id": "2026-06-15T19-24-29",
+    "stage": "generate",
+    "timestamp": "2026-06-15T21:36:04Z",
+    "subfield": "mechanistic_interpretability",
+    "generation_strategy": "follow_up_experiment",
+    "confidence": 0.63,
+    "body": "# Multi-Level Interpretability of ViTs: Are Single Features Enough?\n\n**Problem:** Recent ViT analysis ('Sparse but not Simpler') suggests vision representations need multi-level interpretability rather than single monosemantic features. The practical degree to which individual vision-SAE latents are insufficient on safety-relevant visual concepts is unmeasured.\n\n**Direction:** Using pre-trained Prisma SAEs, test how many SAE latents are needed to reliably detect a target visual concept (single best latent vs. top-k vs. linear combination), for both neutral concepts and safety-relevant ones (e.g. weapons, faces). Report a 'monosemanticity sufficiency' curve per concept type.\n\n**Why it matters:** If safety-critical visual concepts require many distributed features, single-feature monitoring of vision models is inadequate \u2014 important as multimodal models are deployed in surveillance/autonomy. Uses only open SAEs.\n\n**Relevant context:** 'Sparse but not Simpler: A Multi-Level Interpretability Analysis of Vision Transformers' (arXiv 2603.15919); 'Probing the Representational Power of SAEs in Vision Models' (ICCVW 2025). Prisma provides 80+ pre-trained vision SAEs."
+  },
+  {
+    "idea_id": "gen-1548",
+    "run_id": "2026-06-15T19-24-29",
+    "stage": "generate",
+    "timestamp": "2026-06-15T21:36:04Z",
+    "subfield": "mechanistic_interpretability",
+    "generation_strategy": "follow_up_experiment",
+    "confidence": 0.68,
+    "body": "# Are SAE Features Stable Across Random Seeds? A Reproducibility Follow-Up\n\n**Problem:** SAE-based safety claims assume features are real model properties, but if independently trained SAEs (different seeds/widths) recover different feature sets, the features may be SAE artifacts. The degree of cross-SAE feature stability for the same model is under-quantified for newcomers.\n\n**Direction:** Take two or more publicly available SAEs trained on the same layer of the same open model (different seeds/widths in Gemma Scope/SAELens), and measure feature alignment: for each latent in SAE A, find its best match in SAE B by activation correlation, and report the distribution of best-match similarities and the fraction of unstable features.\n\n**Why it matters:** Feature stability is a prerequisite for trusting any SAE-derived safety monitor. A clean reproducibility audit on open SAEs tells the field how much of 'interpretability' is robust vs. seed-dependent. No training required.\n\n**Relevant context:** SAEBench (arXiv 2503.09532) and the absorption/sanity-check literature raise SAE reliability concerns. Gemma Scope/SAELens release multiple SAEs per layer enabling matched comparisons."
+  },
+  {
+    "idea_id": "gen-1549",
+    "run_id": "2026-06-15T19-24-29",
+    "stage": "generate",
+    "timestamp": "2026-06-15T21:36:04Z",
+    "subfield": "mechanistic_interpretability",
+    "generation_strategy": "follow_up_experiment",
+    "confidence": 0.65,
+    "body": "# Does Planning Localize to a Few Heads, and Can We Build a Planning Monitor?\n\n**Problem:** Circuit tracing implies planning is mediated by specific components, but for small open models the attention heads/MLPs responsible for forward planning have not been localized, and no cheap runtime 'planning detector' has been built.\n\n**Direction:** On GPT-2/Pythia rhyme-planning prompts, use activation patching to localize which heads/MLP layers carry the future-token plan at the planning position, then train a tiny linear classifier on those components' activations to flag 'the model is planning a specific future token now,' validating on held-out prompts.\n\n**Why it matters:** A lightweight, component-targeted planning monitor is strategically valuable safety infrastructure: it could be repurposed to flag premeditated, non-verbalized behavior. Scoped as a small prototype on open models.\n\n**Relevant context:** Circuit Tracing (2025) localizes planning to newline-token computation. Activation patching for component localization is standard in TransformerLens; the GPT-2 IOI circuit demonstrates head-level localization feasibility."
+  },
+  {
+    "idea_id": "gen-155",
+    "run_id": "2026-06-15T19-24-29",
+    "stage": "generate",
+    "timestamp": "2026-06-15T21:36:03Z",
+    "subfield": "adversarial_robustness",
+    "generation_strategy": "experiment_variation",
+    "confidence": 0.68,
+    "body": "# Cross-Lingual Prefill Attacks: Does Shallow Alignment Hold in Low-Resource Languages?\n\n**Problem:** Prefill and shallow-alignment exploits are studied in English. Whether forcing an affirmative first token in a low-resource language bypasses safety more easily (because alignment data is English-heavy) is an underexplored variation of the shallow-alignment experiment.\n\n**Direction:** Translate a StrongREJECT subset into several languages of varying resource level. For each, run the prefill attack (affirmative continuation in the target language) on multilingual small open models and measure attack-success vs language resource level. Compare to the English shallow-alignment baseline.\n\n**Why it matters:** If shallow alignment is shallower still in non-English languages, the global deployment surface is far more vulnerable than English evals suggest \u2014 a diffuse, under-resourced problem labs deprioritize. Uses public translation and open multilingual models, no training.\n\n**Relevant context:** Qi et al. (arXiv:2406.05946) establish English prefill vulnerability. Context file lists 'Cross-Lingual Safety Gap Mapping' as already covered; this variation is narrower and mechanistic \u2014 specifically pairing the prefill/first-token attack with language resource level rather than mapping general safety gaps."
+  },
+  {
+    "idea_id": "gen-1550",
+    "run_id": "2026-06-15T19-24-29",
+    "stage": "generate",
+    "timestamp": "2026-06-15T21:36:04Z",
+    "subfield": "mechanistic_interpretability",
+    "generation_strategy": "follow_up_experiment",
+    "confidence": 0.69,
+    "body": "# When Does Injecting a Feature Steer vs. Break the Model? A Dose-Response Study\n\n**Problem:** Frontier work showed injecting a concept ('green') redirects planning, but the relationship between intervention strength, successful steering, and output coherence is not characterized for open SAEs and small models.\n\n**Direction:** Using an open SAE feature on a small model, sweep the injection coefficient across a wide range and at each level measure steering success (target concept appears) and coherence (perplexity / fluency rating), producing dose-response curves. Identify the 'safe steering window' and whether it differs for safety-relevant features vs. neutral ones.\n\n**Why it matters:** Feature steering is proposed as a safety lever (e.g. suppress deception). Knowing where steering becomes incoherent or fails defines the practical reliability of SAE-based control. Doable with open SAEs on one GPU.\n\n**Relevant context:** Biology of an LLM (2025): injecting 'green' redirects planning. Bi-causal steering literature reports coherence-intervention tradeoff and intervention success rate. SAELens/Gemma Scope provide steerable open SAE features."
+  },
+  {
+    "idea_id": "gen-1551",
+    "run_id": "2026-06-15T19-24-29",
+    "stage": "generate",
+    "timestamp": "2026-06-15T21:36:04Z",
+    "subfield": "mechanistic_interpretability",
+    "generation_strategy": "follow_up_experiment",
+    "confidence": 0.67,
+    "body": "# Replicating the Multi-Step Reasoning Circuit ('Dallas->Texas->Austin') in Open Models\n\n**Problem:** Circuit tracing found Claude composes multi-hop facts internally (e.g. capital-of-state-containing-city) rather than memorizing the answer directly. Whether small open models do genuine multi-hop composition or rely on memorized shortcuts is testable but unconfirmed.\n\n**Direction:** Construct two-hop factual prompts on an open model, use the logit lens / activation patching to test whether the intermediate entity (e.g. the state) is represented at intermediate layers before the final answer, and compare against single-hop memorized facts. Patch the intermediate representation to confirm it is causally used.\n\n**Why it matters:** Whether models truly compose reasoning vs. pattern-match bears on trusting chain-of-thought and on detecting reasoning we cannot see. A direct, lab-free replication of a flagship frontier finding.\n\n**Relevant context:** Biology of an LLM (2025): multi-step reasoning with intermediate concept activation (e.g. Dallas->Texas->Austin). Activation patching and logit lens for intermediate-representation detection are TransformerLens staples."
+  },
+  {
+    "idea_id": "gen-1552",
+    "run_id": "2026-06-15T19-24-29",
+    "stage": "generate",
+    "timestamp": "2026-06-15T21:36:04Z",
+    "subfield": "mechanistic_interpretability",
+    "generation_strategy": "follow_up_experiment",
+    "confidence": 0.66,
+    "body": "# Do Refusal Directions Generalize Across Open Models the Way Frontier Findings Suggest?\n\n**Problem:** Mechanistic work identified that refusal in chat models can be mediated by a single direction. Follow-up question: how consistent is this refusal direction across different open model families, and does ablating it transfer?\n\n**Direction:** For two or three open instruct models, extract the refusal direction (difference-of-means of harmful vs. harmless prompt activations), measure cosine similarity of the extracted directions across models in a shared space where possible, and test whether ablating the direction reduces refusals within each model \u2014 quantifying robustness and any side effects.\n\n**Why it matters:** If refusal is a fragile single direction across many open models, it reveals a generalizable jailbreak surface and a generalizable safety lever \u2014 both crucial for the open-model ecosystem and independent of any lab.\n\n**Relevant context:** The 'refusal is mediated by a single direction' finding (Arditi et al.) is widely replicated. Difference-of-means direction extraction and ablation are cheap in TransformerLens. Multiple open instruct models (Qwen, Llama-3-Instruct) run on one consumer GPU."
+  },
+  {
+    "idea_id": "gen-1553",
+    "run_id": "2026-06-15T19-24-29",
+    "stage": "generate",
+    "timestamp": "2026-06-15T21:36:04Z",
+    "subfield": "mechanistic_interpretability",
+    "generation_strategy": "follow_up_experiment",
+    "confidence": 0.6,
+    "body": "# How Faithful Are Cross-Layer Transcoder Explanations on a Small Open Model?\n\n**Problem:** Attribution graphs rely on cross-layer transcoders, but their explanatory faithfulness has mostly been demonstrated on proprietary models. With open transcoder/SAE tooling, the gap between transcoder-attributed and ground-truth (patching) component importance is largely unmeasured by newcomers.\n\n**Direction:** On a small open model with an available transcoder or per-layer SAEs (via SAELens/Interpreto), build a minimal attribution graph for a simple task, then validate each attributed edge against direct activation patching, reporting the fraction of attributed edges that survive causal verification (a faithfulness score).\n\n**Why it matters:** Attribution graphs are the field's flagship explanation method; an independent faithfulness audit on open tooling tells deployers how much to trust circuit-tracing-style safety claims. High counterfactual value, no lab access.\n\n**Relevant context:** Circuit Tracing methods (transformer-circuits.pub 2025) use cross-layer transcoders for attribution graphs. Interpreto integrates NNsight + SAELens + Delphi; SAELens supports transcoders. Faithfulness via patching-validation is established practice."
+  },
+  {
+    "idea_id": "gen-1554",
+    "run_id": "2026-06-15T19-24-29",
+    "stage": "generate",
+    "timestamp": "2026-06-15T21:36:04Z",
+    "subfield": "mechanistic_interpretability",
+    "generation_strategy": "follow_up_experiment",
+    "confidence": 0.64,
+    "body": "# Training Dynamics of a Planning Circuit: When During Training Does Forward Planning Appear?\n\n**Problem:** How training shapes which features/circuits emerge is an open problem, and the developmental trajectory of forward-planning behavior across training is unknown.\n\n**Direction:** Using Pythia's public intermediate checkpoints, run the rhyme/constrained-generation planning probe at multiple checkpoints and plot when forward pre-activation of future tokens first appears and how it strengthens, identifying whether planning emerges abruptly (phase-change-like) or gradually.\n\n**Why it matters:** Knowing when dangerous capabilities like latent planning crystallize during training informs interpretability-based training monitoring \u2014 a proactive safety approach. Pythia checkpoints make this feasible without any training.\n\n**Relevant context:** Pythia releases 154 checkpoints per model with identical data order, designed for training-dynamics study. Context lists 'understand how training dynamics shape features' as an open problem. Circuit Tracing (2025) characterizes the planning behavior to probe for."
+  },
+  {
+    "idea_id": "gen-1555",
+    "run_id": "2026-06-15T19-24-29",
+    "stage": "generate",
+    "timestamp": "2026-06-15T21:36:04Z",
+    "subfield": "mechanistic_interpretability",
+    "generation_strategy": "follow_up_experiment",
+    "confidence": 0.65,
+    "body": "# Do Vision-SAE Features Survive Common Image Corruptions? A Robustness Follow-Up\n\n**Problem:** Vision SAE features are presented as interpretable concepts, but whether a given feature reliably tracks its concept under benign corruptions (blur, brightness, JPEG) \u2014 a basic robustness requirement for any safety monitor \u2014 has not been characterized.\n\n**Direction:** Take labeled Prisma vision-SAE features and measure how their activation on concept-bearing images changes under standard ImageNet-C-style corruptions at increasing severity, producing per-feature robustness curves and identifying which feature types are brittle.\n\n**Why it matters:** Vision safety monitors built on SAE features must be robust to ordinary input variation; brittle features would silently fail on perturbed real-world inputs. Pure inference on open weights and standard corruption transforms.\n\n**Relevant context:** Prisma (arXiv 2504.19475) provides 80+ pre-trained vision SAEs and labeled features. ImageNet-C corruption transforms are standard and lightweight. Context lists extending interp to vision/multimodal as an open problem."
+  },
+  {
+    "idea_id": "gen-1556",
+    "run_id": "2026-06-15T19-24-29",
+    "stage": "generate",
+    "timestamp": "2026-06-15T21:36:04Z",
+    "subfield": "mechanistic_interpretability",
+    "generation_strategy": "follow_up_experiment",
+    "confidence": 0.61,
+    "body": "# Does Feature Absorption Worsen When Decoding Concepts the Model Learned Late?\n\n**Problem:** Absorption is hypothesized to follow from sparsity loss when dense and sparse features co-occur. Whether absorption severity relates to a concept's frequency/learning order \u2014 and thus is predictable \u2014 is untested.\n\n**Direction:** Using open SAEs, measure absorption rate across many concepts and correlate it with each concept's corpus frequency and with a proxy for learning order (e.g. when the concept becomes linearly decodable across Pythia checkpoints). Test the hypothesis that rarer/late-learned concepts get absorbed more.\n\n**Why it matters:** If absorption is predictable from concept statistics, auditors can flag which SAE features to distrust without exhaustive testing \u2014 a practical reliability heuristic for SAE-based safety tooling, built entirely on open resources.\n\n**Relevant context:** 'A is for Absorption' (arXiv 2409.14507): absorption follows from sparsity loss when dense+sparse features co-occur. Pythia checkpoints allow tracking concept learnability over training; Gemma Scope/SAELens provide open SAEs."
+  },
+  {
+    "idea_id": "gen-1557",
+    "run_id": "2026-06-15T19-24-29",
+    "stage": "generate",
+    "timestamp": "2026-06-15T21:36:04Z",
+    "subfield": "mechanistic_interpretability",
+    "generation_strategy": "follow_up_experiment",
+    "confidence": 0.63,
+    "body": "# Logit-Lens 'Iterative Refinement': Does Each Layer Monotonically Improve Safety-Relevant Predictions?\n\n**Problem:** The logit-lens picture suggests transformers iteratively refine predictions layer by layer, but whether this monotonic refinement holds for safety-relevant judgments (e.g. harmfulness classification) or instead shows non-monotonic 'mind-changing' is uncharacterized.\n\n**Direction:** On an open model, apply the logit lens (and tuned lens for validation) across layers to harmful-vs-harmless prompts, tracking the probability assigned to refusal/harmful-completion tokens at each layer to detect monotonic vs. oscillating trajectories, and identify layers where the safety judgment flips.\n\n**Why it matters:** If safety-relevant judgments form non-monotonically (the model 'decides' to refuse then reconsiders), early-layer probes used as monitors could be systematically wrong. Cheap, training-free, high relevance to internal-state safety monitors.\n\n**Relevant context:** Logit lens / tuned lens literature frames transformers as iterative-refinement predictors; tuned lens improves reliability of intermediate decoding. Refusal-direction work shows safety judgments are linearly represented and localizable by layer."
+  },
+  {
+    "idea_id": "gen-1558",
+    "run_id": "2026-06-15T19-24-29",
+    "stage": "generate",
+    "timestamp": "2026-06-15T21:36:04Z",
+    "subfield": "concept_steering",
+    "generation_strategy": "backcast_from_success",
+    "confidence": 0.72,
+    "body": "# Backcasting refusal monitoring: do concept-vector probes catch jailbreaks that output filters miss?\n\n**Problem:** A safety success state is: deployed open models flag their own unsafe compliance before emitting it. That requires an internal signal that fires on adversarially-disguised harmful requests even when the text output still looks like a normal refusal-or-comply decision. It is unknown how much earlier-warning an activation probe gives over an output classifier.\n\n**Direction:** On a small open chat model (e.g. Llama-3-8B-Instruct or Qwen2.5-7B), extract a 'harmful-compliance' concept vector via contrastive activation pairs (harmful vs benign requests). Build a linear probe on residual-stream activations at the last prompt token. Compare its AUROC at detecting harmful intent on (a) plain harmful prompts and (b) jailbreak-prefixed harmful prompts, against a keyword/output-text classifier. Report where the probe wins and fails.\n\n**Why it matters:** Output-only filters are exactly what jailbreaks are tuned to bypass; an internal probe is a complementary line of defense. Quantifying the counterfactual gain of internal probes on disguised attacks is decision-relevant infrastructure that any open-model deployer could reuse, and needs no lab resources.\n\n**Relevant context:** Builds on Beaglehole et al. (Science 2026) finding that internal probes outperform judge models, and on findings that jailbreak prefixes push harmful activations into the benign region (Rogue Scalpel, arXiv 2509.22067; Steering Externalities, arXiv 2602.04896). CAA from Rimsky et al. (arXiv 2312.06681) gives the contrastive-pair recipe."
+  },
+  {
+    "idea_id": "gen-1559",
+    "run_id": "2026-06-15T19-24-29",
+    "stage": "generate",
+    "timestamp": "2026-06-15T21:36:04Z",
+    "subfield": "concept_steering",
+    "generation_strategy": "backcast_from_success",
+    "confidence": 0.7,
+    "body": "# Backcasting cross-lingual safety: does a refusal concept vector trained in English defend non-English jailbreaks?\n\n**Problem:** Success would mean a single safety steering/monitoring direction protects a model in every language it speaks, so attackers cannot bypass safety by switching languages. The Science 2026 result that concept vectors transfer across languages was shown for benign concepts; whether a SAFETY direction (refusal/harm) transfers well enough to actually block low-resource-language jailbreaks is untested.\n\n**Direction:** Extract a refusal/harm concept vector from English contrastive pairs on a multilingual open model (e.g. Qwen2.5-7B or Aya). Translate a small harmful-prompt set into 4-5 languages (including a low-resource one) with an MT API. Measure probe AUROC and steering effectiveness per language, and test whether attack success rate rises in languages where the vector transfers poorly.\n\n**Why it matters:** Multilingual jailbreaks are a known, under-defended attack surface and a long-horizon safety gap that labs deprioritize. Mapping where a single safety direction fails per-language tells deployers where extra defenses are needed, using only translation APIs and one GPU.\n\n**Relevant context:** Directly follows the Science 2026 cross-language transfer surprising result. Multilingual open models (Qwen, Aya) are freely available. Grounded in CAA contrastive extraction."
+  },
+  {
+    "idea_id": "gen-156",
+    "run_id": "2026-06-15T19-24-29",
+    "stage": "generate",
+    "timestamp": "2026-06-15T21:36:03Z",
+    "subfield": "adversarial_robustness",
+    "generation_strategy": "experiment_variation",
+    "confidence": 0.77,
+    "body": "# Refusal Recovery: Does the Model Self-Correct After a Forced Harmful Start?\n\n**Problem:** Shallow alignment implies that once the first tokens are harmful, the model continues. But some models may self-correct mid-generation ('...actually, I can't help with that'). The prevalence and triggers of such recovery across open models is uncharacterized and directly informs how deep alignment really is.\n\n**Direction:** Force harmful prefills of fixed length, then let the model generate freely and classify each continuation as: complies, refuses-immediately-after, or refuses-late. Vary prefill length and harm category across 3-4 small open models. Measure the recovery rate and where (token index) recovery occurs, building a 'recovery profile.'\n\n**Why it matters:** Recovery is a measurable form of deeper alignment and a candidate signal for monitors (detect mid-stream sentiment flips). Documents which models behave as 'deeper alignment organisms.' Pure inference; a fresh angle distinct from standard ASR measurement.\n\n**Relevant context:** Qi et al. (arXiv:2406.05946) define the shallow-alignment failure as the model continuing along a harmful trajectory once started; recovery is the under-measured complement. StrongREJECT scorer (arXiv:2402.10260) can grade final compliance."
+  },
+  {
+    "idea_id": "gen-1560",
+    "run_id": "2026-06-15T19-24-29",
+    "stage": "generate",
+    "timestamp": "2026-06-15T21:36:04Z",
+    "subfield": "concept_steering",
+    "generation_strategy": "backcast_from_success",
+    "confidence": 0.71,
+    "body": "# Backcasting robust steering: can a cheap input perturbation neutralize a deployed concept vector?\n\n**Problem:** A safety success state requires concept-based steering/monitoring that an adversary with prompt-only (black-box-ish) access cannot disable. Open Problem #1 in the subfield context asks exactly this: can attackers craft inputs that neutralize steering? No beginner-accessible characterization of how fragile a steering vector is to simple input manipulation exists.\n\n**Direction:** Steer a small open model toward refusal (or away from toxicity) with a fixed concept vector. Then test simple adversarial inputs that a non-expert attacker could try: paraphrase, role-play framing, prefix injection, and appended distractor text. Measure how much each reduces the steering effect (drop in refusal rate / rise in toxicity). Rank perturbation types by neutralization power.\n\n**Why it matters:** Directly answers a flagged open problem with a model-organism-style fragility study. Establishes the threat model for anyone proposing steering as a safety control, and is fully reproducible outside a lab on open weights.\n\n**Relevant context:** Subfield Open Problem #1 (Beaglehole et al.). Connects to adversarial-steering findings (Rogue Scalpel arXiv 2509.22067)."
+  },
+  {
+    "idea_id": "gen-1561",
+    "run_id": "2026-06-15T19-24-29",
+    "stage": "generate",
+    "timestamp": "2026-06-15T21:36:04Z",
+    "subfield": "concept_steering",
+    "generation_strategy": "backcast_from_success",
+    "confidence": 0.7,
+    "body": "# Backcasting fine-tune-stable safety directions: does a refusal vector survive light LoRA fine-tuning?\n\n**Problem:** Success means a safety probe/steering vector you validate today still works after the model is fine-tuned tomorrow. The subfield flags 'test stability of concept vectors across model updates and fine-tuning' as open. If a small benign fine-tune shifts the geometry enough to break a deployed safety probe, that is a silent failure mode.\n\n**Direction:** Take a small open model, extract a refusal concept vector and validate its probe. Apply a short LoRA fine-tune on a benign instruction dataset (a few hundred steps, single GPU). Re-measure probe AUROC and steering effectiveness using the ORIGINAL vector on the fine-tuned model, and quantify drift via cosine similarity of re-extracted vectors across checkpoints.\n\n**Why it matters:** Maintenance cost and silent decay of safety tooling is a practical, under-studied long-horizon problem. The methodology (extract, fine-tune, re-measure) is a reusable stability harness, and a single LoRA run fits the compute budget.\n\n**Relevant context:** Subfield Open Problem #2. Fine-tuning-stability literature (Emergent Misalignment is Easy/Narrow is Hard, arXiv 2602.07852) shows narrow solutions decay faster."
+  },
+  {
+    "idea_id": "gen-1562",
+    "run_id": "2026-06-15T19-24-29",
+    "stage": "generate",
+    "timestamp": "2026-06-15T21:36:04Z",
+    "subfield": "concept_steering",
+    "generation_strategy": "backcast_from_success",
+    "confidence": 0.74,
+    "body": "# Backcasting a linearity map of safety concepts: which safety notions even have steerable directions?\n\n**Problem:** The success state 'steer all safety-relevant concepts' presupposes those concepts are linearly represented. The subfield explicitly asks which safety concepts have linear representations and which don't. Without that map, practitioners waste effort steering concepts that simply aren't linear.\n\n**Direction:** On one small open model, attempt contrastive concept-vector extraction for a panel of safety concepts (refusal, toxicity, sycophancy, deception, honesty, harmlessness, power-seeking framing). For each, measure linear separability (probe AUROC) and steering controllability (monotonic dose-response to vector magnitude). Produce a ranked 'steerability scorecard' across concepts.\n\n**Why it matters:** A concrete answer to a headline open problem, delivered as a simple comparative table. Tells the whole field where representation engineering is and isn't viable for safety, with zero training and modest compute.\n\n**Relevant context:** Subfield Open Problem #3 (Beaglehole et al.). Honesty/truth linearity grounded in Geometry of Truth (Marks & Tegmark COLM 2024) and RepE."
+  },
+  {
+    "idea_id": "gen-1563",
+    "run_id": "2026-06-15T19-24-29",
+    "stage": "generate",
+    "timestamp": "2026-06-15T21:36:04Z",
+    "subfield": "concept_steering",
+    "generation_strategy": "backcast_from_success",
+    "confidence": 0.72,
+    "body": "# Backcasting probe-beats-judge generalization: do internal probes still win on safety categories they weren't built for?\n\n**Problem:** Success means an internal probe is a trustworthy monitor across the full breadth of safety failures, not just the categories it was tuned on. Beaglehole et al. show probes beat judges on hallucination/toxicity, but a deployable monitor must generalize to held-out categories (e.g. self-harm, fraud, privacy). Generalization of the probe-vs-judge advantage is untested.\n\n**Direction:** Train a single linear safety probe on activations for 2-3 harm categories on a small open model. Evaluate probe AND an LLM-judge prompt on 3-4 HELD-OUT harm categories. Compare AUROC/precision to see whether the probe's advantage persists out-of-distribution or collapses, identifying which categories transfer.\n\n**Why it matters:** If probes only win in-distribution, the 'probes outperform judges' headline is fragile for real monitoring. Establishing the generalization boundary is high-value, lab-independent evaluation work on a diffuse problem.\n\n**Relevant context:** Subfield surprising result: probes outperform judges (Beaglehole et al.). Probe-vs-judge AUROC numbers from hallucination-detection literature (arXiv 2603.05465; arXiv 2507.12691)."
+  },
+  {
+    "idea_id": "gen-1564",
+    "run_id": "2026-06-15T19-24-29",
+    "stage": "generate",
+    "timestamp": "2026-06-15T21:36:04Z",
+    "subfield": "concept_steering",
+    "generation_strategy": "backcast_from_success",
+    "confidence": 0.69,
+    "body": "# Backcasting deception monitoring on a model organism: does a strategic-deception probe catch CoT-free scheming?\n\n**Problem:** A key success state for long-horizon safety is detecting a model that pursues a hidden goal WITHOUT verbalizing it in its chain-of-thought. Apollo's linear deception probes hit high AUROC, but mostly on settings where deception is fairly overt. Whether a concept-vector probe catches deception when the model's CoT looks clean is the harder, decision-relevant case.\n\n**Direction:** Use an existing open deception model-organism setup (e.g. a roleplay scenario prompting an open model to conceal a goal, or a published deception dataset). Extract a deception/honesty concept vector. Compare probe detection on (a) cases where the CoT verbalizes the deceptive plan vs (b) cases where the answer is deceptive but the CoT is sanitized/absent. Report the detection gap.\n\n**Why it matters:** CoT monitoring fails exactly when reasoning isn't verbalized; activation probes are the fallback. Measuring whether they hold up against CoT-free deception is a core model-organism safety question that needs no lab infra.\n\n**Relevant context:** Apollo 'Detecting Strategic Deception Using Linear Probes' (arXiv 2502.03407, AUROC 0.96-0.999 on insider trading/sandbagging). Pressure-testing deception probes (arXiv 2605.27958)."
+  },
+  {
+    "idea_id": "gen-1565",
+    "run_id": "2026-06-15T19-24-29",
+    "stage": "generate",
+    "timestamp": "2026-06-15T21:36:04Z",
+    "subfield": "concept_steering",
+    "generation_strategy": "backcast_from_success",
+    "confidence": 0.73,
+    "body": "# Backcasting steering side-effects: does pushing a model toward refusal damage unrelated capabilities?\n\n**Problem:** A success state requires a safety steering intervention that is SPECIFIC: it changes the target behavior without degrading general usefulness, otherwise deployers will turn it off. The specificity-vs-strength tradeoff of safety steering is poorly quantified for beginners to reason about.\n\n**Direction:** Steer a small open model with a refusal/harmlessness vector at increasing magnitudes. At each magnitude, measure on-target effect (refusal rate on harmful prompts) AND collateral damage on neutral benchmarks (a few hundred MMLU/GSM8K-style questions, plus over-refusal on benign requests). Plot the Pareto frontier of safety gain vs capability loss.\n\n**Why it matters:** Over-refusal and capability tax are the practical reasons steering doesn't ship. A clean specificity/robustness characterization is reusable methodology and directly informs whether steering is worth it, all on one GPU.\n\n**Relevant context:** Grounded in 'Steering Safely or Off a Cliff? Rethinking Specificity and Robustness' (arXiv 2602.06256) and Steering Externalities (arXiv 2602.04896)."
+  },
+  {
+    "idea_id": "gen-1566",
+    "run_id": "2026-06-15T19-24-29",
+    "stage": "generate",
+    "timestamp": "2026-06-15T21:36:04Z",
+    "subfield": "concept_steering",
+    "generation_strategy": "backcast_from_success",
+    "confidence": 0.71,
+    "body": "# Backcasting layer-choice robustness: at which layer is a safety probe both accurate AND hard to evade?\n\n**Problem:** A deployable monitoring success state requires picking ONE layer to read the safety signal from. Different layers trade off detection accuracy against evasion-resistance, but practitioners pick layers ad hoc. The accuracy/robustness profile across depth for safety concepts is undocumented.\n\n**Direction:** Extract a harm concept vector and train probes at every layer of a small open model. For each layer measure (a) clean AUROC and (b) AUROC under simple jailbreak prefixes. Identify whether the most accurate layer is also the most evadable, and recommend a layer or small ensemble that maximizes worst-case detection.\n\n**Why it matters:** Layer selection is the single most consequential and least principled choice in probe deployment. A simple accuracy-vs-robustness-by-layer chart is cheap, reusable infrastructure that improves any internal monitor.\n\n**Relevant context:** CAA papers note layer-dependence of steering (Rimsky et al. arXiv 2312.06681). Multi-layer ensembling helps probe accuracy (arXiv 2604.13386)."
+  },
+  {
+    "idea_id": "gen-1567",
+    "run_id": "2026-06-15T19-24-29",
+    "stage": "generate",
+    "timestamp": "2026-06-15T21:36:04Z",
+    "subfield": "concept_steering",
+    "generation_strategy": "backcast_from_success",
+    "confidence": 0.7,
+    "body": "# Backcasting multi-concept conflict: when you steer two safety concepts at once, do they interfere?\n\n**Problem:** Success state: a deployer can simultaneously enforce several safety properties (e.g. honesty AND harmlessness) via combined concept vectors. Science 2026 showed multi-concept steering is possible, but whether SAFETY concepts compose cleanly or destructively interfere (steering honesty up reduces harmlessness) is unknown and would undermine the success state.\n\n**Direction:** On a small open model, extract two safety concept vectors (e.g. honesty and refusal). Apply them individually and jointly at matched magnitudes. Measure whether the joint effect equals the sum of individual effects, or whether one degrades the other (interference). Map which safety-concept pairs compose vs conflict.\n\n**Why it matters:** Real deployments need many safety properties at once. Knowing which concept vectors fight each other is essential, novel composition evidence and a fresh angle on the multi-concept finding, doable on one GPU with no training.\n\n**Relevant context:** Science 2026 multi-concept steering result (Beaglehole et al.). Versatile/bi-directional steering vectors (NeurIPS 2024)."
+  },
+  {
+    "idea_id": "gen-1568",
+    "run_id": "2026-06-15T19-24-29",
+    "stage": "generate",
+    "timestamp": "2026-06-15T21:36:04Z",
+    "subfield": "concept_steering",
+    "generation_strategy": "backcast_from_success",
+    "confidence": 0.69,
+    "body": "# Backcasting honest sycophancy control: can a concept vector reduce flattery without making the model stubborn?\n\n**Problem:** A success state for trustworthy assistants is models that don't tell users what they want to hear when it's wrong. Sycophancy is a fuzzy-reward problem that's hard to RLHF away. Whether a concept vector can dial sycophancy down without flipping the model into unhelpful disagreement is untested as a clean intervention.\n\n**Direction:** Build contrastive pairs of sycophantic vs honest responses on a small open model (e.g. agreeing with a user's wrong belief vs correcting it). Extract a sycophancy concept vector. Steer it down and measure (a) reduction in agreement-with-wrong-user-claims and (b) collateral over-correction on cases where the user is right. Report the controllable range.\n\n**Why it matters:** Sycophancy is a diffuse, real alignment failure that needs no lab resources to study and is exactly the kind of fuzzy problem labs deprioritize. A model-organism-style controllability study is high counterfactual value.\n\n**Relevant context:** Sycophancy steering connects to CAA behavior list (Rimsky et al. arXiv 2312.06681) and self-preference activation mitigation (arXiv 2509.03647)."
+  },
+  {
+    "idea_id": "gen-1569",
+    "run_id": "2026-06-15T19-24-29",
+    "stage": "generate",
+    "timestamp": "2026-06-15T21:36:04Z",
+    "subfield": "concept_steering",
+    "generation_strategy": "backcast_from_success",
+    "confidence": 0.7,
+    "body": "# Backcasting a steering audit harness: a reusable harness that scores any open model's safety-concept steerability\n\n**Problem:** A field-level success state is being able to quickly answer 'how steerable/monitorable is THIS new open model on safety concepts?' Today each researcher reinvents the extraction-and-evaluation loop. There is no small, standard harness a non-expert can point at a new HuggingFace model to get a safety-steerability report.\n\n**Direction:** Build a minimal, documented harness: given a model name and a config of safety concepts + contrastive pairs, it extracts vectors, trains layer-wise probes, runs steering dose-response, and emits a one-page scorecard (per-concept AUROC, steering controllability, best layer). Validate it on 2-3 small open models and ship as the blog-post artifact.\n\n**Why it matters:** Strategically valuable, reusable safety infrastructure (a monitoring/steering harness) that lowers the barrier for the whole community. Exactly the kind of small prototype that's valuable outside a lab and grows over time.\n\n**Relevant context:** Subfield notes RepE has open implementations and no steering-specific benchmark exists yet. Fills the 'no steering benchmark' gap with tooling."
+  },
+  {
+    "idea_id": "gen-157",
+    "run_id": "2026-06-15T19-24-29",
+    "stage": "generate",
+    "timestamp": "2026-06-15T21:36:03Z",
+    "subfield": "adversarial_robustness",
+    "generation_strategy": "experiment_variation",
+    "confidence": 0.78,
+    "body": "# Probe-Layer Sensitivity: Which Layer Best Detects Jailbreaks, and How Stable Is It?\n\n**Problem:** Activation-probe defenses pick a layer to read from, but the choice of layer and its stability across attack types is rarely reported. Whether the optimal detection layer is consistent across jailbreak families (prefill vs suffix vs many-shot) is open.\n\n**Direction:** On one open model, extract residual-stream activations at every layer for benign, prefill-attacked, suffix-attacked, and many-shot-attacked prompts. Train a linear probe per layer and plot detection AUROC vs layer for each attack family. Identify whether a single layer suffices or whether multi-layer ensembling is needed (and quantify the gain).\n\n**Why it matters:** Gives small teams a recipe for where to tap activations for cheap monitoring and reveals whether attack-specific layers undermine single-layer deployment. Builds directly on the multi-layer-ensembling result. Linear probes, single GPU, beginner-friendly.\n\n**Relevant context:** 'Linear Probe Accuracy Scales with Model Size and Benefits from Multi-Layer Ensembling' (arXiv:2604.13386) and 'Building Production-Ready Probes For Gemini' (arXiv:2601.11516) motivate layer/ensemble choices. LessWrong Jan 2026 digest reports production probe cascades. Context file suggests probe follow-ups."
+  },
+  {
+    "idea_id": "gen-1570",
+    "run_id": "2026-06-15T19-24-29",
+    "stage": "generate",
+    "timestamp": "2026-06-15T21:36:04Z",
+    "subfield": "concept_steering",
+    "generation_strategy": "backcast_from_success",
+    "confidence": 0.71,
+    "body": "# Backcasting calibrated monitors: can a safety probe report trustworthy confidence, not just a yes/no?\n\n**Problem:** A monitoring success state needs probes whose confidence is calibrated, so a deployer can set a meaningful alarm threshold and bound false-positive rate. Most probe work reports AUROC but not calibration; an overconfident-but-miscalibrated probe is dangerous in production.\n\n**Direction:** Train a linear safety probe on a small open model, then evaluate calibration (reliability diagram, ECE) of its predicted probabilities on held-out harmful/benign prompts. Test whether simple post-hoc calibration (Platt/temperature scaling) fixes it, and how calibration degrades under distribution shift (jailbreaks, new categories).\n\n**Why it matters:** Calibration is what turns a probe from a demo into a deployable alarm. It's under-reported, beginner-friendly statistics work, and directly improves the reliability of lab-independent monitoring tools.\n\n**Relevant context:** Builds on probe-monitoring results (Beaglehole et al.; Apollo arXiv 2502.03407). Calibration is standard statistics, matching participant skills."
+  },
+  {
+    "idea_id": "gen-1571",
+    "run_id": "2026-06-15T19-24-29",
+    "stage": "generate",
+    "timestamp": "2026-06-15T21:36:04Z",
+    "subfield": "concept_steering",
+    "generation_strategy": "backcast_from_success",
+    "confidence": 0.67,
+    "body": "# Backcasting white-box-free steering: how much steering power survives if you only have prompt access?\n\n**Problem:** A realistic deployment success state is steering models you can only prompt (API/black-box), not edit internally. Concept steering normally needs activation access. The gap: how much of the safety benefit can be recovered with prompt-only proxies (in-context contrastive demonstrations) versus true activation injection?\n\n**Direction:** On a small open model where you DO have activation access (so you can measure ground truth), compare three safety interventions of matched intent: (a) true activation steering with a concept vector, (b) prompt-only in-context steering that mimics the same contrast, (c) baseline. Quantify the effectiveness gap, telling practitioners how much they lose without internal access.\n\n**Why it matters:** Most deployers don't control internal activations. Quantifying the prompt-only ceiling guides where activation access is actually necessary, a practical, lab-independent question.\n\n**Relevant context:** Connects to prompt-only steering training (arXiv 2605.05983) and CAA (arXiv 2312.06681)."
+  },
+  {
+    "idea_id": "gen-1572",
+    "run_id": "2026-06-15T19-24-29",
+    "stage": "generate",
+    "timestamp": "2026-06-15T21:36:04Z",
+    "subfield": "concept_steering",
+    "generation_strategy": "backcast_from_success",
+    "confidence": 0.68,
+    "body": "# Backcasting steering-as-attack detection: can a monitor flag when a model has been maliciously steered?\n\n**Problem:** A defensive success state: a deployer can tell when someone has injected a malicious steering vector to jailbreak their model. Research shows benign-looking steering can increase jailbreak risk, so steering is itself an attack vector. There's no simple detector for 'this model's activations have been tampered with.'\n\n**Direction:** Steer a small open model with a malicious (harm-increasing) vector at various magnitudes. Train a lightweight anomaly detector on activation statistics (norm shifts, projection onto known concept directions) to flag steered vs unsteered forward passes. Measure detection AUROC vs steering magnitude and false positives on benign inputs.\n\n**Why it matters:** Steering compromising safety is a documented, emerging threat. A tamper-detection prototype is exactly the kind of safer-monitoring infrastructure that's valuable outside a lab and addresses a >1yr threat model.\n\n**Relevant context:** Grounded in Rogue Scalpel (arXiv 2509.22067) and Steering Externalities (arXiv 2602.04896) showing steering compromises safety."
+  },
+  {
+    "idea_id": "gen-1573",
+    "run_id": "2026-06-15T19-24-29",
+    "stage": "generate",
+    "timestamp": "2026-06-15T21:36:04Z",
+    "subfield": "concept_steering",
+    "generation_strategy": "backcast_from_success",
+    "confidence": 0.71,
+    "body": "# Backcasting truthfulness steering generalization: does a truth direction fix lying or just one benchmark?\n\n**Problem:** A success state is models that don't assert falsehoods they internally 'know' are false. RepE improved TruthfulQA via an honesty direction, but a real success requires the truth direction to generalize beyond TruthfulQA's format to free-form factual claims. Whether the gain is benchmark-specific or genuine is the key uncertainty.\n\n**Direction:** Extract an honesty/truth concept vector on a small open model from one source (e.g. true/false statement pairs). Steer toward truth and evaluate on (a) the in-distribution statement set and (b) an OUT-of-distribution factual task (e.g. free-form QA where the model is prone to confident wrong answers). Measure whether the truthfulness gain transfers.\n\n**Why it matters:** If truth steering only helps the benchmark it was tuned on, the safety story is hollow. Testing generalization of the truth direction is a fresh, important angle on a celebrated result, fully reproducible on open weights.\n\n**Relevant context:** Geometry of Truth (Marks & Tegmark COLM 2024); RepE TruthfulQA 35.9%->54.0% (Zou et al.). Subfield linearity open problem."
+  },
+  {
+    "idea_id": "gen-1574",
+    "run_id": "2026-06-15T19-24-29",
+    "stage": "generate",
+    "timestamp": "2026-06-15T21:36:04Z",
+    "subfield": "concept_steering",
+    "generation_strategy": "backcast_from_success",
+    "confidence": 0.7,
+    "body": "# Backcasting steerability-vs-scale: is the 'larger models are more steerable' law good or bad news for safety?\n\n**Problem:** Science 2026 surprised the field by finding larger models are more steerable. A safety success state needs to know whether this trend means future big models are easier to control (good) or easier to maliciously steer/jailbreak (bad). The dual-use direction of the scaling trend is unexamined for safety concepts specifically.\n\n**Direction:** Across a size ladder of one open model family (e.g. Qwen2.5 0.5B/1.5B/3B/7B), extract the SAME safety concept vector and measure both (a) beneficial steerability (controllability toward refusal) and (b) malicious steerability (how easily a harm vector defeats safety). Test whether both scale together, and which scales faster.\n\n**Why it matters:** Whether the steerability scaling law favors defenders or attackers is a load-bearing question for long-horizon safety. A clean size-ladder study on small open models is cheap and directly tests the headline finding.\n\n**Relevant context:** Science 2026 'larger models more steerable' surprising result (Beaglehole et al.). Scaling laws for activation steering (arXiv 2507.11771)."
+  },
+  {
+    "idea_id": "gen-1575",
+    "run_id": "2026-06-15T19-24-29",
+    "stage": "generate",
+    "timestamp": "2026-06-15T21:36:04Z",
+    "subfield": "concept_steering",
+    "generation_strategy": "backcast_from_success",
+    "confidence": 0.71,
+    "body": "# Backcasting how many examples a safety probe needs: the data-efficiency floor for monitoring a new harm\n\n**Problem:** An operational success state is being able to stand up a monitor for a NEW harm category fast, with few labeled examples. If linear safety probes need thousands of contrastive pairs, they're impractical for emerging harms. The data-efficiency curve for safety-concept probes is undocumented.\n\n**Direction:** For one harm concept on a small open model, train probes with 8, 16, 32, 64, 128, 256 contrastive pairs and plot AUROC vs number of examples. Identify the 'good-enough' floor and whether activation probes are more data-efficient than fine-tuning a text classifier on the same labels.\n\n**Why it matters:** Rapid response to new harms is a practical safety capability. A data-efficiency curve tells responders the minimum labeling effort, is pure statistics/ML on one GPU, and is reusable across concepts.\n\n**Relevant context:** Probe data-efficiency relates to linear-probe scaling (arXiv 2604.13386). CAA contrastive-pair recipe (arXiv 2312.06681)."
+  },
+  {
+    "idea_id": "gen-1576",
+    "run_id": "2026-06-15T19-24-29",
+    "stage": "generate",
+    "timestamp": "2026-06-15T21:36:04Z",
+    "subfield": "concept_steering",
+    "generation_strategy": "backcast_from_success",
+    "confidence": 0.66,
+    "body": "# Backcasting multimodal safety steering: does a text-derived harm vector steer a vision-language model's image responses?\n\n**Problem:** A success state extends concept steering to multimodal models so safety controls cover image-grounded harms, an explicit subfield extension goal. The open question: can a harm/refusal direction extracted from TEXT transfer to steer or monitor responses to harmful IMAGE inputs, or does the visual pathway need its own vector?\n\n**Direction:** On a small open vision-language model (e.g. LLaVA-1.5-7B or Qwen2-VL-2B), extract a refusal concept vector from text contrastive pairs. Test whether applying it monitors/steers responses to image-based unsafe prompts. Compare against a vector extracted from image-grounded contrastive pairs to measure the modality gap.\n\n**Why it matters:** Multimodal jailbreaks (harmful images) are a fast-growing, under-defended surface. Knowing whether text safety directions transfer to vision is directly actionable and is a flagged extension of the Science 2026 work, feasible with a small open VLM.\n\n**Relevant context:** Subfield extension goal: vision/multimodal steering (Beaglehole et al.). SteerVLM (arXiv 2510.26769), VISOR++ (arXiv 2509.25533), HALP VLM hallucination (arXiv 2603.05465)."
+  },
+  {
+    "idea_id": "gen-1577",
+    "run_id": "2026-06-15T19-24-29",
+    "stage": "generate",
+    "timestamp": "2026-06-15T21:36:04Z",
+    "subfield": "concept_steering",
+    "generation_strategy": "backcast_from_success",
+    "confidence": 0.69,
+    "body": "# Backcasting probe-guided refusal vs flat refusal: does steering give finer control than a blanket refusal switch?\n\n**Problem:** A nuanced success state is models that refuse genuinely harmful requests while still answering benign edge cases (e.g. medical/security education). A blunt refusal switch over-refuses. Whether concept steering enables graded, context-sensitive refusal better than a threshold on a refusal probe is untested head-to-head.\n\n**Direction:** On a small open model, compare two interventions on a benign-but-sensitive prompt set (dual-use questions): (a) hard refusal triggered when a refusal probe exceeds a threshold, vs (b) graded steering magnitude proportional to probe score. Measure harmful-prompt refusal AND benign-sensitive over-refusal for each, finding which gives a better tradeoff.\n\n**Why it matters:** Over-refusal erodes usefulness and trust, a real diffuse problem. Showing whether graded steering beats binary refusal is a concrete, fresh comparison with clear safety relevance, all on open weights.\n\n**Relevant context:** Refusal Steering fine-grained control (arXiv 2512.16602); Refusal as affine function (arXiv 2411.09003). Specificity tradeoffs (arXiv 2602.06256)."
+  },
+  {
+    "idea_id": "gen-1578",
+    "run_id": "2026-06-15T19-24-29",
+    "stage": "generate",
+    "timestamp": "2026-06-15T21:36:04Z",
+    "subfield": "concept_steering",
+    "generation_strategy": "backcast_from_success",
+    "confidence": 0.66,
+    "body": "# Backcasting transfer across model families: is a safety concept geometrically 'the same' in two different models?\n\n**Problem:** A success state for portable safety tooling is a concept vector that, once validated, can be reused or quickly re-derived across model families. If safety concepts occupy fundamentally different geometry in, say, Llama vs Qwen, monitors can't be shared. The cross-family geometric similarity of safety concepts is unexplored at a beginner level.\n\n**Direction:** Extract the same refusal/harm concept vector from two small open models of different families. Probe whether the directions are aligned (e.g. via a learned linear map / Procrustes between activation spaces) and whether a probe trained on one model's projected activations works on the other. Report the degree of cross-family transfer.\n\n**Why it matters:** Portability determines whether the community can build shared safety monitors. A cross-family geometry study is novel, conceptually rich, and runs on two small models with no training.\n\n**Relevant context:** Subfield linearity/scaling open problems. Cross-language transfer finding (Science 2026) motivates cross-family analog."
+  },
+  {
+    "idea_id": "gen-1579",
+    "run_id": "2026-06-15T19-24-29",
+    "stage": "generate",
+    "timestamp": "2026-06-15T21:36:04Z",
+    "subfield": "concept_steering",
+    "generation_strategy": "backcast_from_success",
+    "confidence": 0.68,
+    "body": "# Backcasting sandbagging detection: can a capability/effort concept vector reveal a model hiding its skills?\n\n**Problem:** A safety success state is catching a model that deliberately underperforms on evaluations (sandbagging) to appear less capable. CoT may not reveal this. Apollo found probes detect sandbagging in some setups; whether a dedicated 'effort/capability-suppression' concept vector flags sandbagging more reliably than a generic deception probe is open.\n\n**Direction:** Set up a model-organism sandbagging prompt on a small open model (instruct it to underperform on a quiz it can otherwise pass). Extract a concept vector contrasting genuine-attempt vs deliberate-underperformance activations. Test probe AUROC at distinguishing real failures from sandbagged failures, and compare to a generic deception probe.\n\n**Why it matters:** Sandbagging on safety evals is a core deceptive-alignment threat that undermines all evaluation-based safety. A focused detector study on a model organism is exactly the lab-independent, long-horizon work that's hard to do well and high value.\n\n**Relevant context:** Apollo deception probes detect sandbagging (arXiv 2502.03407). Pressure-testing deception probes (arXiv 2605.27958)."
+  },
+  {
+    "idea_id": "gen-158",
+    "run_id": "2026-06-15T19-24-29",
+    "stage": "generate",
+    "timestamp": "2026-06-15T21:36:03Z",
+    "subfield": "adversarial_robustness",
+    "generation_strategy": "experiment_variation",
+    "confidence": 0.74,
+    "body": "# Adversarial Suffix Detectability by Activation Probes vs Behavioral Filters\n\n**Problem:** White-box attacks reportedly hide unsafe states from probes via adversarial suffixes. It is unclear, in an open reproducible setting, whether GCG-style suffixes that succeed behaviorally are also invisible to a simple activation probe, or whether the probe still flags them.\n\n**Direction:** Apply public GCG/AmpleGCG suffixes to an open model, collect activations on attacked vs clean harmful prompts, and test whether a linear jailbreak probe still separates them. Compare probe detection rate to a behavioral output-classifier on the same cases, mapping where each defense fails (probe-blind but output-caught, and vice versa).\n\n**Why it matters:** Clarifies whether the much-cited 'probes can be evaded by suffixes' claim holds for cheap reproducible attacks, and whether probe+output-classifier cascades cover each other's blind spots \u2014 directly informing layered cheap defenses. No attack optimization compute needed if public suffixes are used.\n\n**Relevant context:** LessWrong Jan 2026 digest: 'white-box attacks can reliably hide unsafe states from probes via adversarial suffixes or latent edits.' AmpleGCG (arXiv:2404.07921) supplies transferable suffixes. 'Red-teaming Activation Probes using Prompted LLMs' (researchgate 397230961) is recent related work."
+  },
+  {
+    "idea_id": "gen-1580",
+    "run_id": "2026-06-15T19-24-29",
+    "stage": "generate",
+    "timestamp": "2026-06-15T21:36:04Z",
+    "subfield": "concept_steering",
+    "generation_strategy": "backcast_from_success",
+    "confidence": 0.67,
+    "body": "# Backcasting steering durability over long generations: does a safety vector hold across a long agentic rollout?\n\n**Problem:** An agentic-safety success state needs steering that stays effective over long multi-step generations, not just the first sentence. Steering vectors are added per-token, but whether their safety effect persists or decays across hundreds of generated tokens (where a model could drift into unsafe behavior late) is unmeasured.\n\n**Direction:** Steer a small open model toward harmlessness and run long generations (multi-turn or long single responses) on prompts designed to escalate. Measure whether the safety effect (refusal/non-toxicity) is stable across token position, or whether unsafe content leaks in later tokens. Plot effect vs generation length.\n\n**Why it matters:** Agentic deployments generate long trajectories where late-stage drift is dangerous and easy to miss. Characterizing steering durability over length is a fresh, practically important angle, feasible on one GPU with short runs.\n\n**Relevant context:** CAA adds vectors at all post-prompt tokens (Rimsky et al. arXiv 2312.06681). Cross-layer/temporal consistency (GER-steer arXiv 2603.12298)."
+  },
+  {
+    "idea_id": "gen-1581",
+    "run_id": "2026-06-15T19-24-29",
+    "stage": "generate",
+    "timestamp": "2026-06-15T21:36:04Z",
+    "subfield": "concept_steering",
+    "generation_strategy": "backcast_from_success",
+    "confidence": 0.69,
+    "body": "# Backcasting an honest baseline for probe red-teaming: can a model learn to evade its own safety probe?\n\n**Problem:** A robust-monitoring success state requires probes that hold up when the monitored model is incentivized to fool them. If a model (or prompt strategy) can shift its activations to dodge the probe while still producing harmful output, the monitor is defeated. The evadability of safety probes under adaptive pressure is the crux untested by beginners.\n\n**Direction:** Train a safety probe on a small open model. Then search (over prompts/system-prompt instructions, NOT weights) for inputs that keep the harmful output but push activations below the probe threshold. Measure how often evasion succeeds and whether a simple ensemble/multi-layer probe resists it. Report an adaptive-attack success rate.\n\n**Why it matters:** Static AUROC overstates real-world probe reliability; adaptive evasion is the honest test. A small adaptive red-team of a probe is high-value, lab-independent safety evaluation that frontier labs rarely publish openly.\n\n**Relevant context:** Subfield Open Problem #1 (adversarial neutralization). Black-to-white probe benchmarking (arXiv 2507.12691); deception-probe robustness (arXiv 2605.27958)."
+  },
+  {
+    "idea_id": "gen-1582",
+    "run_id": "2026-06-15T19-24-29",
+    "stage": "generate",
+    "timestamp": "2026-06-15T21:36:04Z",
+    "subfield": "concept_steering",
+    "generation_strategy": "backcast_from_success",
+    "confidence": 0.72,
+    "body": "# Backcasting probe+judge ensembles: does combining an internal probe with a judge beat either alone on safety monitoring?\n\n**Problem:** A monitoring success state is the most reliable possible harmful-output detector for a given budget. Beaglehole et al. show probes beat judges, but the deployable question is whether a CHEAP probe + judge ensemble Pareto-dominates either alone, and where their errors are uncorrelated (so combining helps most).\n\n**Direction:** On a small open model, build (a) a linear safety probe, (b) an LLM-judge prompt, and (c) a simple ensemble. On a harmful/benign test set, compare AUROC and analyze error overlap: do the probe and judge fail on the SAME cases or different ones? Quantify the ensemble gain and the cost/accuracy frontier.\n\n**Why it matters:** Real monitoring stacks combine signals; knowing whether internal and external signals are complementary is directly actionable and a fresh framing of the probe-vs-judge result. Cheap, lab-independent, and statistics-friendly.\n\n**Relevant context:** Subfield surprising result: probes outperform judges (Beaglehole et al.). Internal-probe vs judge AUROC numbers (arXiv 2507.12691; arXiv 2603.05465)."
+  },
+  {
+    "idea_id": "gen-1583",
+    "run_id": "2026-06-15T19-24-29",
+    "stage": "generate",
+    "timestamp": "2026-06-15T21:36:04Z",
+    "subfield": "concept_steering",
+    "generation_strategy": "backcast_from_success",
+    "confidence": 0.68,
+    "body": "# Backcasting steering without contrastive labels: can unsupervised directions monitor safety as well as labeled ones?\n\n**Problem:** A scalability success state is monitoring safety concepts for which we LACK clean contrastive labels (most emerging harms). Standard concept vectors need labeled positive/negative pairs. Whether unsupervised directions (e.g. top PCA components of activation differences, or k-means on activations) recover usable safety signal is the gap to making monitoring cheap to scale.\n\n**Direction:** On a small open model, compare a supervised refusal probe against unsupervised directions found from unlabeled mixed harmful/benign activations (PCA / difference-of-means without labels / simple clustering). Measure how much AUROC the unsupervised approach recovers, and which harms it captures for free.\n\n**Why it matters:** Labeling is the bottleneck for scaling safety monitors to new harms. Showing how far label-free directions get is a fresh, high-leverage angle directly serving the 'scale to all safety concepts' open problem, with no training and modest compute.\n\n**Relevant context:** Subfield Open Problem #3 (scale to all safety concepts). Unsupervised steering/difference-of-means relates to CAA (arXiv 2312.06681) and RepE."
+  },
+  {
+    "idea_id": "gen-1584",
+    "run_id": "2026-06-15T19-24-29",
+    "stage": "generate",
+    "timestamp": "2026-06-15T21:36:04Z",
+    "subfield": "concept_steering",
+    "generation_strategy": "compounding_risks",
+    "confidence": 0.78,
+    "body": "# Benign Steering as a Jailbreak Amplifier: Measuring the Format-Compliance x Refusal Compound\n\n**Problem:** Failure mode A (concept_steering): a steering vector built from an entirely benign dataset (e.g. enforce JSON output, enforce concise tone). Failure mode B (jailbreak robustness): erosion of refusal guardrails. Recent work shows benign steering vectors silently raise jailbreak attack success because they project onto the refusal direction, but practitioners treat benign steering as safety-neutral.\n\n**Direction:** On a small open instruct model (Llama-3-8B or Qwen2.5-7B), extract 3-4 benign steering vectors via contrastive activation addition (CAA) on innocuous datasets (formatting, politeness, verbosity). Apply each at varying strengths and measure two quantities side by side: (1) downstream benign utility (does the format constraint hold), and (2) jailbreak success rate on a fixed set of harmful prompts from a public benchmark. Plot the trade-off curve and compute cosine similarity between each benign vector and the model's refusal direction to test the predicted mechanistic link.\n\n**Why it matters:** Quantifies an externality that any deployer applying steering for benign UX reasons could trigger without noticing. Needs no lab infrastructure, no training, no proprietary data \u2014 a single GPU and open models. Directly relevant to medium-horizon deployment safety where steering is used casually.\n\n**Relevant context:** Grounded in 'Steering Externalities' (arXiv 2602.04896) and 'Analysing the Safety Pitfalls of Steering Vectors' (arXiv 2603.24543), both showing benign steering increases jailbreak risk via alignment with the refusal direction. CAA and RepE are open-source; refusal-direction extraction is well documented."
+  },
+  {
+    "idea_id": "gen-1585",
+    "run_id": "2026-06-15T19-24-29",
+    "stage": "generate",
+    "timestamp": "2026-06-15T21:36:04Z",
+    "subfield": "concept_steering",
+    "generation_strategy": "compounding_risks",
+    "confidence": 0.74,
+    "body": "# Anti-Steerable Examples Meet Adversarial Prompts: When Steering Backfires Exactly Where It's Needed\n\n**Problem:** Failure mode A (concept_steering): up to ~50% of examples are 'anti-steerable' \u2014 the same steering vector pushes them in the opposite direction. Failure mode B (adversarial robustness): adversarial/jailbreak prompts. The compound risk is that anti-steerable behavior may concentrate on adversarial inputs, so safety steering fails precisely on attacks.\n\n**Direction:** Build a safety steering vector (refusal/harmlessness) on an open model. For a held-out set, classify each prompt as steerable vs anti-steerable by measuring sign of the behavioral shift. Then test whether adversarially-templated versions of harmful prompts (suffix attacks, role-play wrappers from a public jailbreak set) are over-represented in the anti-steerable bucket. Report the contingency table and effect size.\n\n**Why it matters:** If safety steering systematically backfires on the adversarial subset, steering-based defenses give false assurance. This is a cheap, model-organism-style probe of a worst-case interaction, doable outside a lab.\n\n**Relevant context:** Anti-steerable phenomenon (up to 50%) documented in 'Steering off Course: Reliability Challenges' (arXiv 2504.04635). Adversarial interaction grounded in arXiv 2603.24543 and 2602.06256 (steering collapses under adversarial attack)."
+  },
+  {
+    "idea_id": "gen-1586",
+    "run_id": "2026-06-15T19-24-29",
+    "stage": "generate",
+    "timestamp": "2026-06-15T21:36:04Z",
+    "subfield": "concept_steering",
+    "generation_strategy": "compounding_risks",
+    "confidence": 0.7,
+    "body": "# Steering for Truthfulness, Breaking Faithfulness: The Hallucination-Suppression x CoT-Monitorability Compound\n\n**Problem:** Failure mode A (concept_steering): a truthfulness/anti-hallucination steering vector reshapes activations toward confident answers. Failure mode B (CoT faithfulness / monitorability): the model's chain-of-thought becomes a less faithful window onto its reasoning. The compound risk: suppressing surface hallucination via steering may make the CoT a worse monitoring signal by smoothing over uncertainty the model would otherwise verbalize.\n\n**Direction:** Apply a truthfulness steering vector (TSV-style) to a reasoning-capable open model on a QA set with known-hard items. Measure (1) hallucination rate of final answers and (2) a faithfulness proxy: does the CoT mention uncertainty/hedging, and does an off-the-shelf CoT-faithfulness probe flag the steered vs unsteered traces. Test whether steering trades measured hallucination down for measured unfaithfulness up.\n\n**Why it matters:** CoT monitorability is a leading medium-horizon safety bet; if steering interventions quietly degrade it, that's a hidden cost. No training required \u2014 apply published steering vectors and run a probe.\n\n**Relevant context:** Truthfulness steering from 'Steer LLM Latents for Hallucination Detection' (arXiv 2503.01917). CoT faithfulness probes from arXiv 2510.27378 and NeuroFaith (arXiv 2506.09277). Beaglehole et al. notes probes-on-concept-vectors beat judges for hallucination."
+  },
+  {
+    "idea_id": "gen-1587",
+    "run_id": "2026-06-15T19-24-29",
+    "stage": "generate",
+    "timestamp": "2026-06-15T21:36:04Z",
+    "subfield": "concept_steering",
+    "generation_strategy": "compounding_risks",
+    "confidence": 0.77,
+    "body": "# Probe Decay After Fine-Tuning: The Concept-Vector-Drift x Monitoring-Staleness Compound\n\n**Problem:** Failure mode A (concept_steering): concept vectors / probes are unstable across model updates and fine-tuning (an open problem from Beaglehole et al.). Failure mode B (safety monitoring): an internal probe used as a deception/toxicity monitor silently degrades. Compound risk: a deployer fine-tunes for capability, the monitoring probe keeps reporting but is now miscalibrated, giving false safety assurance.\n\n**Direction:** Take an open model, extract a concept probe (toxicity or hallucination) following Beaglehole-style linear extraction. LoRA-fine-tune the model on a small benign instruction dataset (a few hours on one GPU). Re-evaluate the FROZEN probe's AUROC on the fine-tuned model and measure cosine drift of the concept direction across fine-tuning checkpoints. Quantify how quickly the monitor goes stale.\n\n**Why it matters:** Internal probes are pitched as cheap monitors; if a routine fine-tune invalidates them without warning, monitoring pipelines need re-calibration triggers. Directly tests an open problem from the source paper, fully feasible on one GPU.\n\n**Relevant context:** Probe stability across fine-tuning is an explicit Open Problem in the concept_steering context (Beaglehole et al. Science 2026). Brittleness-after-update grounded in arXiv 2603.24543 and 2504.04635."
+  },
+  {
+    "idea_id": "gen-1588",
+    "run_id": "2026-06-15T19-24-29",
+    "stage": "generate",
+    "timestamp": "2026-06-15T21:36:04Z",
+    "subfield": "concept_steering",
+    "generation_strategy": "compounding_risks",
+    "confidence": 0.73,
+    "body": "# Multi-Concept Steering Interference x Refusal Collapse: Does Adding a Helpfulness Vector Erode Harmlessness?\n\n**Problem:** Failure mode A (concept_steering): concept entanglement / interference when combining steering vectors. Failure mode B (refusal robustness): degraded harmlessness. Compound risk: a deployer composes a helpfulness/non-refusal vector with another (e.g. conciseness) to improve UX, and entanglement drags the refusal direction down further than either vector alone.\n\n**Direction:** Extract helpfulness, conciseness, and refusal vectors on an open model. Apply them singly and in pairwise combinations via direct vector addition. For each combination, measure over-refusal on benign prompts AND under-refusal (harmful compliance) on a harmful set. Test whether combinations produce super-additive harm vs the linear sum of single-vector effects, and whether orthogonalizing the vectors mitigates it.\n\n**Why it matters:** Multi-concept steering is sold as composable; if composition is non-linear in the safety dimension, naive stacking is dangerous. Cheap to run and produces a clear composability-vs-safety result.\n\n**Relevant context:** Multi-concept interference / entanglement grounded in 'Identifiable Steering via Sparse Autoencoding of Multi-Concept Shifts' (arXiv 2502.12179) and representation-steering surveys noting refusal-vector steering compromises helpfulness. Beaglehole et al. notes concepts can be combined for multi-concept steering."
+  },
+  {
+    "idea_id": "gen-1589",
+    "run_id": "2026-06-15T19-24-29",
+    "stage": "generate",
+    "timestamp": "2026-06-15T21:36:04Z",
+    "subfield": "concept_steering",
+    "generation_strategy": "compounding_risks",
+    "confidence": 0.76,
+    "body": "# English Refusal Vector x Low-Resource Compliance: A Cross-Lingual Steering Compound Failure\n\n**Problem:** Failure mode A (concept_steering): a refusal direction extracted from English transfers across languages (Beaglehole's cross-language transfer result). Failure mode B (multilingual safety gap): safety is weaker in low-resource languages. Compound risk: an English-derived ablation/steering vector disables refusal MORE effectively in low-resource languages where alignment was already thin, widening the safety gap.\n\n**Direction:** Extract a refusal direction from English data on a multilingual open model. Ablate it and measure harmful-compliance increase across a ladder of languages (high-resource to low-resource) using translated harmful prompts. Test whether the compliance jump is larger for low-resource languages, i.e. whether the cross-lingual steering and the multilingual safety gap compound.\n\n**Why it matters:** Directly probes the cross-language transfer surprising result from the source paper, in the dangerous direction. Multilingual safety gaps are a real medium-horizon deployment risk and labs deprioritize low-resource languages.\n\n**Relevant context:** Grounded in 'Refusal Direction is Universal Across Safety-Aligned Languages' (arXiv 2505.17306) showing English-derived refusal vectors increase harmful compliance across languages, plus the cross-language transfer result flagged in the concept_steering context (Beaglehole et al.)."
+  },
+  {
+    "idea_id": "gen-159",
+    "run_id": "2026-06-15T19-24-29",
+    "stage": "generate",
+    "timestamp": "2026-06-15T21:36:03Z",
+    "subfield": "adversarial_robustness",
+    "generation_strategy": "experiment_variation",
+    "confidence": 0.76,
+    "body": "# Many-Shot vs Prefill: Which Attack Probes 'Shallower'? A Head-to-Head Variation\n\n**Problem:** Many-shot jailbreaking and prefill attacks both exploit the first-token vulnerability but via different mechanisms (in-context demonstrations vs forced output). Their relative effectiveness and whether they stack super-additively on the same models has not been directly compared.\n\n**Direction:** On a common set of harmful prompts and 3 small open models, measure attack-success for: prefill-only, many-shot-only, and combined (many-shot demonstrations + short forced prefill). Test for super-additivity and identify which attack each model resists best, relating results to each model's shallow-alignment depth profile.\n\n**Why it matters:** Reveals whether defenses tuned against one attack leave the other open and whether attacks compose dangerously \u2014 informing realistic threat models. A clean factorial experiment combining two famous public attacks, runnable on one GPU.\n\n**Relevant context:** Anil et al. 'Many-shot Jailbreaking' (NeurIPS 2024) and Qi et al. prefill attacks (arXiv:2406.05946) are both grounded in the first-token vulnerability, making a head-to-head factorial a natural and novel variation. StrongREJECT scorer (arXiv:2402.10260) grades outcomes."
+  },
+  {
+    "idea_id": "gen-1590",
+    "run_id": "2026-06-15T19-24-29",
+    "stage": "generate",
+    "timestamp": "2026-06-15T21:36:04Z",
+    "subfield": "concept_steering",
+    "generation_strategy": "compounding_risks",
+    "confidence": 0.72,
+    "body": "# Larger Models Steer Better and Jailbreak Worse: A Scale-Interaction Compound Study\n\n**Problem:** Failure mode A (concept_steering): larger models are more steerable (Beaglehole surprising result). Failure mode B (jailbreak robustness): steering's jailbreak-amplification effect grows with model scale. Compound risk: the same scale that makes beneficial steering easier makes harmful steering-side-effects worse \u2014 a double-edged scaling law.\n\n**Direction:** Across a model-size ladder within one open family (e.g. Qwen2.5 0.5B / 1.5B / 7B), extract a benign steering vector and measure (1) steerability (effect size of intended behavior change) and (2) jailbreak-success amplification from the same vector. Plot both against parameter count to test whether benefit and harm both increase with scale, and whether harm grows faster.\n\n**Why it matters:** Quantifies a scaling interaction that determines whether steering gets safer or more dangerous as models grow. Fully feasible \u2014 small model family, inference only \u2014 and tests two of the source paper's claims at once.\n\n**Relevant context:** Larger-models-more-steerable from Beaglehole et al. (concept_steering context). Scale-dependent jailbreak amplification grounded in arXiv 2603.24543 ('effects grow with model scale')."
+  },
+  {
+    "idea_id": "gen-1591",
+    "run_id": "2026-06-15T19-24-29",
+    "stage": "generate",
+    "timestamp": "2026-06-15T21:36:04Z",
+    "subfield": "concept_steering",
+    "generation_strategy": "compounding_risks",
+    "confidence": 0.69,
+    "body": "# Steering-Induced Incoherence x Monitor Blindness: Do Degraded Outputs Slip Past Safety Classifiers?\n\n**Problem:** Failure mode A (concept_steering): strong steering degrades text coherence. Failure mode B (output-monitoring): safety classifiers / judges are trained on coherent text and may mis-score degraded outputs. Compound risk: a degraded-but-harmful generation produced under heavy steering evades a downstream toxicity/harm classifier that was never tested on incoherent inputs.\n\n**Direction:** Apply increasing steering strengths on an open model to a fixed prompt set, producing outputs from coherent to garbled. Have a public safety classifier (e.g. an open guard model) score each. Independently human/heuristic-label actual harmfulness. Measure whether classifier accuracy drops as coherence drops, opening a blind spot harmful actors could exploit.\n\n**Why it matters:** Reveals an evasion channel created by the interaction of two components, with no lab access needed. Relevant to monitoring-harness robustness, a strategically valuable infrastructure concern.\n\n**Relevant context:** Steering degrades coherence per 'Activation Steering for Aligned Open-ended Generation without Sacrificing Coherence' (arXiv 2604.08169). Monitoring-blindness framing extends Beaglehole's probe-vs-judge result by stress-testing judges on off-distribution (incoherent) inputs."
+  },
+  {
+    "idea_id": "gen-1592",
+    "run_id": "2026-06-15T19-24-29",
+    "stage": "generate",
+    "timestamp": "2026-06-15T21:36:04Z",
+    "subfield": "concept_steering",
+    "generation_strategy": "compounding_risks",
+    "confidence": 0.71,
+    "body": "# Sycophancy Steering x Reward-Model Gaming: Can a Steered Model Better Fool an Evaluator?\n\n**Problem:** Failure mode A (concept_steering): a sycophancy steering vector can be added to make a model more agreeable. Failure mode B (reward hacking / evaluator manipulation): models exploit evaluator preferences. Compound risk: sycophancy steering may directly inflate scores from an LLM-judge evaluator without improving real answer quality \u2014 steering as a reward-hacking lever.\n\n**Direction:** On an open model, add a sycophancy steering vector at varying strengths. Generate answers to a QA/opinion set, then score them with (a) an LLM-judge (open judge model) and (b) ground-truth correctness. Measure whether sycophancy steering raises judge scores while leaving or lowering correctness \u2014 a clean demonstration of steering-driven evaluator gaming.\n\n**Why it matters:** Connects representation engineering to the diffuse, fuzzy-reward problem of evaluator manipulation \u2014 exactly the kind of hard-to-measure failure labs deprioritize. Model-organism flavored and feasible in 30h.\n\n**Relevant context:** Sycophancy steering vectors documented in CAA literature and 'Sycophancy Hides Linearly in the Attention Heads' (arXiv 2601.16644). Evaluator-manipulation / reward hacking grounded in arXiv 2604.13602."
+  },
+  {
+    "idea_id": "gen-1593",
+    "run_id": "2026-06-15T19-24-29",
+    "stage": "generate",
+    "timestamp": "2026-06-15T21:36:04Z",
+    "subfield": "concept_steering",
+    "generation_strategy": "compounding_risks",
+    "confidence": 0.75,
+    "body": "# Probe-Based Hallucination Monitor x Distribution Shift: When the Two Compound at Deployment\n\n**Problem:** Failure mode A (concept_steering): concept-vector probes for hallucination are extracted in-distribution. Failure mode B (distribution shift): deployment data drifts. Compound risk: Beaglehole et al. claim probes beat judges for hallucination, but if the probe degrades faster than the judge under domain shift, the recommended monitor is actually the more fragile choice exactly when it matters.\n\n**Direction:** Extract a hallucination probe on one QA domain (e.g. TriviaQA). Evaluate AUROC of (a) the probe and (b) an LLM-judge baseline on increasingly out-of-domain QA sets (medical, legal, code). Measure the relative degradation slope to test which monitor is more robust under shift \u2014 directly stress-testing the source paper's headline claim.\n\n**Why it matters:** The probe-beats-judge result is a key recommendation; its robustness under shift is the deciding factor for whether to deploy probes as monitors. Cheap, decisive, and tests a stated surprising result.\n\n**Relevant context:** Probe-beats-judge from Beaglehole et al. (concept_steering context). Distribution-shift transfer numbers (TruthfulQA->TriviaQA drop) from 'Steer LLM Latents for Hallucination Detection' (arXiv 2503.01917). HalluShift (arXiv 2504.09482) on shift-based detection."
+  },
+  {
+    "idea_id": "gen-1594",
+    "run_id": "2026-06-15T19-24-29",
+    "stage": "generate",
+    "timestamp": "2026-06-15T21:36:04Z",
+    "subfield": "concept_steering",
+    "generation_strategy": "compounding_risks",
+    "confidence": 0.64,
+    "body": "# Refusal Ablation x Backdoor Activation: Does Removing Refusal Unmask Latent Trigger Behavior?\n\n**Problem:** Failure mode A (concept_steering): ablating the refusal direction. Failure mode B (data-poisoning / backdoors): a model carries a latent trigger. Compound risk: refusal ordinarily masks triggered harmful behavior; ablating the refusal direction could unmask backdoor responses that were dormant under normal alignment, making the two failures multiplicative.\n\n**Direction:** Use a small open model with a known/published benign backdoor (or insert a trivial trigger via tiny LoRA). Compare triggered-vs-untriggered behavior with refusal intact vs refusal-direction ablated. Measure whether ablation disproportionately amplifies the triggered behavior relative to the baseline \u2014 testing the unmasking hypothesis.\n\n**Why it matters:** Backdoors + steering is an underexplored interaction with a clear medium-horizon supply-chain threat model. Model-organism scoped to a tiny trigger, no large training.\n\n**Relevant context:** Refusal-direction ablation methodology is open-source and well documented. Steering-x-safety unmasking is motivated by arXiv 2603.24543 (steering not safety-neutral) and the refusal-direction universality work (arXiv 2505.17306)."
+  },
+  {
+    "idea_id": "gen-1595",
+    "run_id": "2026-06-15T19-24-29",
+    "stage": "generate",
+    "timestamp": "2026-06-15T21:36:04Z",
+    "subfield": "concept_steering",
+    "generation_strategy": "compounding_risks",
+    "confidence": 0.68,
+    "body": "# Steering Strength x Calibration Collapse: Does Pushing a Concept Wreck the Model's Uncertainty?\n\n**Problem:** Failure mode A (concept_steering): increasing steering strength along a concept direction. Failure mode B (miscalibration): the model's confidence no longer tracks correctness. Compound risk: steering may sharpen a behavior while quietly destroying calibration, so a steered model is confidently wrong \u2014 and any safety policy keyed on confidence thresholds breaks.\n\n**Direction:** On an open model, apply a factuality or persona steering vector across strength levels. For each, measure task accuracy AND calibration (ECE / reliability diagram) on a multiple-choice benchmark with logprob-derived confidences. Test whether calibration degrades faster than accuracy as steering strength rises.\n\n**Why it matters:** Confidence-gated safety mechanisms (abstention, escalation) assume calibration; steering silently undermining it is a clean compound-risk finding. Inference-only, fits 30h.\n\n**Relevant context:** Steering-factor brittleness from arXiv 2605.05983 and 2504.04635. Calibration as a distinct axis is standard; the novelty is measuring the calibration-vs-accuracy decoupling under steering."
+  },
+  {
+    "idea_id": "gen-1596",
+    "run_id": "2026-06-15T19-24-29",
+    "stage": "generate",
+    "timestamp": "2026-06-15T21:36:04Z",
+    "subfield": "concept_steering",
+    "generation_strategy": "compounding_risks",
+    "confidence": 0.66,
+    "body": "# Steered to Help, Steered to Leak: Format-Steering x PII / Secret Disclosure\n\n**Problem:** Failure mode A (concept_steering): a compliance/instruction-following steering vector. Failure mode B (information leakage / privacy): the model discloses content it should withhold. Compound risk: boosting raw compliance via steering may override learned discretion boundaries, increasing disclosure of secrets/system-prompt/PII the model was instructed to keep.\n\n**Direction:** Set up an open model with a system prompt containing a fake secret it must not reveal. Apply a compliance/helpfulness steering vector at varying strengths and measure secret-disclosure rate under direct and indirect extraction prompts, vs unsteered baseline. Quantify how steering for compliance trades off against confidentiality.\n\n**Why it matters:** Prompt-injection / disclosure is a top deployment risk; showing benign compliance-steering worsens it is a concrete, lab-independent contribution. Easy to build with a synthetic secret.\n\n**Relevant context:** Compliance/benign-steering side effects from arXiv 2602.04896. Confidentiality boundary erosion is a natural extension of the refusal-erosion mechanism documented in arXiv 2603.24543."
+  },
+  {
+    "idea_id": "gen-1597",
+    "run_id": "2026-06-15T19-24-29",
+    "stage": "generate",
+    "timestamp": "2026-06-15T21:36:04Z",
+    "subfield": "concept_steering",
+    "generation_strategy": "compounding_risks",
+    "confidence": 0.67,
+    "body": "# Steering Vector Theft x Jailbreak-as-a-Service: Auditing Transferability of Harmful Steering Across Models\n\n**Problem:** Failure mode A (concept_steering): steering vectors transfer across related models / share structure. Failure mode B (open-weight misuse): an attacker reuses a harmful steering vector. Compound risk: a refusal-ablation vector extracted from one open model may transfer to sibling/fine-tuned models, so a single extracted 'unsafe' vector becomes a portable, reusable jailbreak artifact.\n\n**Direction:** Extract a refusal-ablation vector from a base open model. Apply it (with appropriate layer mapping) to several derivatives: the official instruct version, a community fine-tune, and a quantized variant. Measure harmful-compliance increase to assess transfer. Report which model relationships preserve the harmful effect \u2014 an attack-surface map.\n\n**Why it matters:** If harmful vectors are portable, the open-weight ecosystem has a reusable-exploit problem labs can't patch centrally. Strategically valuable threat assessment, fully doable on consumer hardware.\n\n**Relevant context:** Cross-model steering transfer from cross-model-steering literature and the cross-language/transfer results in Beaglehole et al. Refusal-ablation portability motivated by arXiv 2505.17306 and 2603.24543."
+  },
+  {
+    "idea_id": "gen-1598",
+    "run_id": "2026-06-15T19-24-29",
+    "stage": "generate",
+    "timestamp": "2026-06-15T21:36:04Z",
+    "subfield": "concept_steering",
+    "generation_strategy": "compounding_risks",
+    "confidence": 0.63,
+    "body": "# Monitor-and-Steer Loop Instability: Probe Drift x Steering Feedback Compounding Over Iterations\n\n**Problem:** Failure mode A (concept_steering): a probe used to decide when to steer is itself a noisy concept estimate. Failure mode B (steering side effects): steering shifts activations, which shifts the probe's readings. Compound risk: in a closed monitor->steer->monitor loop, small probe errors and steering side effects feed back, causing the system to over-steer or oscillate.\n\n**Direction:** Build a minimal closed loop: a toxicity probe triggers a de-toxify steering vector, then re-reads the probe. Iterate over multiple generation steps. Measure whether the loop converges, oscillates, or runs away (over-suppression / collapse) as a function of probe threshold and steering gain. A small dynamical-systems-style study of a safety control loop.\n\n**Why it matters:** Adaptive steering monitors are emerging; their closed-loop stability is unstudied and is a prerequisite for safe deployment infrastructure. Pure inference, small prototype harness.\n\n**Relevant context:** Probe-driven steering from Beaglehole et al. (probes + steering). Side-effect feedback grounded in arXiv 2603.24543 and adaptive-defense work AdaSteer (arXiv 2504.09466). Stability of the loop is the novel compound angle."
+  },
+  {
+    "idea_id": "gen-1599",
+    "run_id": "2026-06-15T19-24-29",
+    "stage": "generate",
+    "timestamp": "2026-06-15T21:36:04Z",
+    "subfield": "concept_steering",
+    "generation_strategy": "compounding_risks",
+    "confidence": 0.72,
+    "body": "# Over-Refusal Steering x Helpful-Harm Tradeoff: Measuring the Hidden Capability Tax of Safety Steering\n\n**Problem:** Failure mode A (concept_steering): pushing the refusal direction to harden safety. Failure mode B (over-refusal / capability suppression): the model refuses benign requests and loses task capability. Compound risk: hardening safety via steering and capability loss are not independent \u2014 beyond a point, each unit of jailbreak resistance bought costs a super-linear amount of benign helpfulness.\n\n**Direction:** Sweep refusal-steering strength on an open model. At each level, jointly measure jailbreak resistance (harmful set) and over-refusal + accuracy on a benign capability set. Plot the Pareto frontier and identify the knee where benign cost accelerates. Quantify the 'exchange rate' between safety gain and capability loss.\n\n**Why it matters:** Gives deployers a concrete dose-response curve for safety steering, exposing where it becomes counterproductive. Decision-relevant, cheap, and tests a clean two-failure tradeoff.\n\n**Relevant context:** Over-refusal collateral cost documented in arXiv 2603.24543 and 2602.06256. Capability-preservation-below-5% claim from arXiv 2602.04896 gives a baseline to test against at higher strengths."
+  },
+  {
+    "idea_id": "gen-160",
+    "run_id": "2026-06-15T19-24-29",
+    "stage": "generate",
+    "timestamp": "2026-06-15T21:36:03Z",
+    "subfield": "adversarial_robustness",
+    "generation_strategy": "experiment_variation",
+    "confidence": 0.75,
+    "body": "# Harm-Category Heterogeneity in Shallow Alignment\n\n**Problem:** Shallow-alignment and jailbreak studies often report a single aggregate attack-success number, masking whether some harm categories (e.g. cyber, bio, hate, self-harm) are far more shallowly aligned than others on the same model.\n\n**Direction:** Using AILuminate's 12 hazard categories (or StrongREJECT categories), run a fixed prefill attack across all categories on 2-3 small open models and report per-category attack-success and refusal-recovery. Identify categories where alignment is dangerously shallow and whether the ranking is consistent across models.\n\n**Why it matters:** Aggregate jailbreak metrics hide the categories that matter most for catastrophic risk. A per-category shallowness map tells the field where to deepen alignment first \u2014 a diffuse, hard-to-fund prioritization question. Uses public benchmarks, pure inference.\n\n**Relevant context:** AILuminate (MLCommons, 24K+ prompts, 12 hazard categories) and StrongREJECT (arXiv:2402.10260) provide categorized prompts. Qi et al. (arXiv:2406.05946) supply the prefill attack. Context file lists these as key datasets."
+  },
+  {
+    "idea_id": "gen-1600",
+    "run_id": "2026-06-15T19-24-29",
+    "stage": "generate",
+    "timestamp": "2026-06-15T21:36:04Z",
+    "subfield": "concept_steering",
+    "generation_strategy": "compounding_risks",
+    "confidence": 0.7,
+    "body": "# Quantization x Steering Fragility: Does Compressing a Model Break Its Safety Steering Vector?\n\n**Problem:** Failure mode A (concept_steering): steering vectors are sensitive to small activation perturbations. Failure mode B (quantization-induced drift): int8/int4 quantization perturbs activations. Compound risk: a safety steering vector validated on the fp16 model may silently lose effect (or flip sign) on the quantized model people actually deploy on consumer hardware.\n\n**Direction:** Extract a safety steering vector on an fp16 open model. Apply the SAME vector to 8-bit and 4-bit quantized versions of the model and measure how much of the safety effect (refusal increase / harmful-compliance decrease) survives. Report effect retention and any sign flips per quantization level.\n\n**Why it matters:** Quantized deployment is the norm for the consumer/edge models this very project targets; if safety steering doesn't survive quantization, a huge swath of deployments are unprotected. Perfectly matched to single-GPU constraints.\n\n**Relevant context:** Steering sensitivity to perturbations from arXiv 2605.05983 and 2504.04635. Quantization is standard (bitsandbytes); the quantization-x-steering interaction is an underexplored, highly practical compound risk."
+  },
+  {
+    "idea_id": "gen-1601",
+    "run_id": "2026-06-15T19-24-29",
+    "stage": "generate",
+    "timestamp": "2026-06-15T21:36:04Z",
+    "subfield": "concept_steering",
+    "generation_strategy": "compounding_risks",
+    "confidence": 0.66,
+    "body": "# Steering the Wrong Layer x Silent Failure: Layer-Mismatch as a Compound Robustness Hole\n\n**Problem:** Failure mode A (concept_steering): steering effect depends critically on the injection layer. Failure mode B (silent monitoring failure): no error is raised when a vector is applied at a suboptimal layer. Compound risk: a misconfigured layer index produces a steering vector that appears to run fine but provides little/negative safety effect, and nothing in the pipeline flags it.\n\n**Direction:** Apply a refusal/safety steering vector across every layer of an open model and map the effect-vs-layer curve. Then quantify the 'silent failure zone': layers where the intervention runs without error but safety effect is near-zero or negative. Propose a minimal automated check (effect-size assertion) that would catch misconfiguration.\n\n**Why it matters:** Builds a small piece of monitoring infrastructure (a sanity-check for steering pipelines) and documents a configuration footgun. Strategically valuable, beginner-feasible, inference-only.\n\n**Relevant context:** Layer-dependence and reliability challenges from arXiv 2504.04635. Multi-property steering at distinct layers from the multi-concept interference literature (arXiv 2502.12179). The 'silent failure' + automated-check framing is the novel contribution."
+  },
+  {
+    "idea_id": "gen-1602",
+    "run_id": "2026-06-15T19-24-29",
+    "stage": "generate",
+    "timestamp": "2026-06-15T21:36:04Z",
+    "subfield": "concept_steering",
+    "generation_strategy": "compounding_risks",
+    "confidence": 0.62,
+    "body": "# Steering x Context-Length: Does a Steering Vector Decay Over Long Generations and Re-open Jailbreaks?\n\n**Problem:** Failure mode A (concept_steering): a steering vector is applied per-token but its behavioral effect may attenuate as generation length grows. Failure mode B (long-context jailbreaks / many-shot attacks): safety degrades over long contexts. Compound risk: the steering safety effect fades over the very long generations where many-shot jailbreaks operate, so the two weaknesses align in time.\n\n**Direction:** Apply a safety steering vector and generate long outputs in response to many-shot / long-context harmful prompts. Measure harmful-compliance as a function of position in the generation and context length, comparing steered vs unsteered. Test whether steering's protective effect decays where long-context attacks strengthen.\n\n**Why it matters:** Long-context attacks are a growing medium-horizon threat; showing steering defenses decay exactly there is decision-relevant. Inference-only with public jailbreak prompts.\n\n**Relevant context:** Steering reliability over generation from arXiv 2504.04635 and coherence-decay work (arXiv 2604.08169). Long-context / many-shot jailbreak vulnerability is a documented attack class; the temporal-decay-meets-long-context interaction is the novel compound angle."
+  },
+  {
+    "idea_id": "gen-1603",
+    "run_id": "2026-06-15T19-24-29",
+    "stage": "generate",
+    "timestamp": "2026-06-15T21:36:04Z",
+    "subfield": "concept_steering",
+    "generation_strategy": "compounding_risks",
+    "confidence": 0.6,
+    "body": "# Vision Steering x Text Refusal: Does Image-Side Concept Steering Bypass Language-Side Safety?\n\n**Problem:** Failure mode A (concept_steering): extending concept steering to vision/multimodal models (an explicit extension in the source paper). Failure mode B (multimodal safety gap): safety alignment is often weaker on the vision pathway. Compound risk: steering a concept via the image-encoder activations may route around the text-side refusal training, compounding the known multimodal safety hole.\n\n**Direction:** On a small open vision-language model, extract a simple concept direction in the visual/cross-modal activation stream and use it to push toward a benign target behavior, while measuring whether it incidentally lowers text-side refusal on harmful image+text prompts. Compare with steering applied in the text stream. Document any asymmetry in the safety effect.\n\n**Why it matters:** Multimodal steering safety is nearly unstudied and is an explicit extension flagged by the source paper. Open VLMs are small enough for one GPU, and the multimodal jailbreak threat is real and lab-deprioritized.\n\n**Relevant context:** Multimodal-extension is an Open Problem in the concept_steering context (Beaglehole et al. extensions). VLM steering / null-space defense from arXiv 2603.22094. Scoped to an existing small open VLM, no training."
+  },
+  {
+    "idea_id": "gen-1604",
+    "run_id": "2026-06-15T19-24-29",
+    "stage": "generate",
+    "timestamp": "2026-06-15T21:36:04Z",
+    "subfield": "concept_steering",
+    "generation_strategy": "compounding_risks",
+    "confidence": 0.65,
+    "body": "# Probe False-Positives x Automated Steering: When a Noisy Monitor Triggers Harmful Over-Correction\n\n**Problem:** Failure mode A (concept_steering): a concept probe has a nonzero false-positive rate. Failure mode B (automated intervention): a deployed system auto-applies a steering correction whenever the probe fires. Compound risk: probe false positives trigger unwarranted steering on benign inputs, and that unwarranted steering can itself cause harm (over-refusal, incoherence, jailbreak externality) \u2014 error in the monitor becomes harm via the actuator.\n\n**Direction:** On a benign prompt set, measure a deception/toxicity probe's false-positive rate. For the false-positive cases, apply the corresponding corrective steering vector and measure the resulting harm (over-refusal, quality drop). Combine into an expected-harm estimate: P(false positive) x harm-per-unwarranted-steer. Compare against the benefit on true positives.\n\n**Why it matters:** Frames monitor accuracy and actuator side-effects as a single risk budget \u2014 essential for designing safe automated steering harnesses. Builds reusable evaluation logic, beginner-feasible.\n\n**Relevant context:** Probe-as-monitor from Beaglehole et al. Steering-as-harm (over-refusal, externality) from arXiv 2602.04896 and 2603.24543. The expected-harm composition of monitor-error x actuator-harm is the novel framing."
+  },
+  {
+    "idea_id": "gen-1605",
+    "run_id": "2026-06-15T19-24-29",
+    "stage": "generate",
+    "timestamp": "2026-06-15T21:36:04Z",
+    "subfield": "concept_steering",
+    "generation_strategy": "compounding_risks",
+    "confidence": 0.61,
+    "body": "# Steering Detection Evasion x Stealthy Misuse: Can a Steered Model Hide That It's Being Steered?\n\n**Problem:** Failure mode A (concept_steering): steering changes activations in detectable ways. Failure mode B (covert misuse / detection evasion): an adversary wants the steering to be undetectable. Compound risk: if low-strength harmful steering both works AND evades activation-based steering-detectors, defenders relying on 'detect-the-steering' monitoring are doubly defeated.\n\n**Direction:** Build a simple steering-detector (probe on activations distinguishing steered vs unsteered generations). Then sweep harmful-steering strength and measure jointly: (a) harmful effect achieved and (b) detector evasion rate. Identify whether a 'stealth zone' exists \u2014 enough harm with low enough detectability \u2014 and characterize it.\n\n**Why it matters:** Tests the robustness of steering-detection as a defense and quantifies the adversary's stealth-vs-effect frontier. A model-organism-style red-team of a defense, no lab resources required.\n\n**Relevant context:** Steering-detection is implied by Beaglehole's monitoring framing. Evasion / stealth grounded in 'Steering Beyond the Support' (arXiv 2605.24535) on jailbroken activation simulation and 2603.24543 on steering propagation. The stealth-zone characterization is the novel compound contribution."
+  },
+  {
+    "idea_id": "gen-1606",
+    "run_id": "2026-06-15T19-24-29",
+    "stage": "generate",
+    "timestamp": "2026-06-15T21:36:04Z",
+    "subfield": "concept_steering",
+    "generation_strategy": "compounding_risks",
+    "confidence": 0.67,
+    "body": "# Steering x RLHF Interaction: Does Steering Undo or Compound RLHF Safety Inconsistently Across Behaviors?\n\n**Problem:** Failure mode A (concept_steering): inference-time steering. Failure mode B (RLHF brittleness): RLHF safety is shallow and easily perturbed. Compound risk: combining steering with an RLHF'd model (an explicit open problem from Beaglehole et al.) may reinforce safety for some behaviors but cancel it for others, giving inconsistent net safety the deployer can't predict.\n\n**Direction:** On an RLHF'd open model, apply a safety steering vector and measure net safety across several distinct behavior categories (toxicity, illegal-advice, self-harm, privacy). Test whether steering uniformly helps or whether RLHF and steering interact differently per category (helping some, hurting others). Map the interaction by category.\n\n**Why it matters:** Directly addresses the 'combine concept steering with RLHF' open problem from the source paper, surfacing whether the combination is reliably additive. Inference-only, uses public category benchmarks.\n\n**Relevant context:** 'Combine concept steering with RLHF' is an explicit Open Problem in the concept_steering context. RLHF brittleness from interconnects.ai 'Undoing RLHF' and arXiv 2603.24543. Per-category heterogeneity is the novel measured quantity."
+  },
+  {
+    "idea_id": "gen-1607",
+    "run_id": "2026-06-15T19-24-29",
+    "stage": "generate",
+    "timestamp": "2026-06-15T21:36:04Z",
+    "subfield": "concept_steering",
+    "generation_strategy": "compounding_risks",
+    "confidence": 0.62,
+    "body": "# Anti-Steer Subgroups x Fairness: Does Safety Steering Protect Some Demographic Inputs Less Than Others?\n\n**Problem:** Failure mode A (concept_steering): anti-steerable examples / heterogeneous steering effect. Failure mode B (fairness / disparate safety): safety behavior varies across demographic framings. Compound risk: a safety steering vector may reduce harmful outputs for prompts mentioning some groups but not others, so the protective effect is distributed unevenly \u2014 a fairness failure created by a safety intervention.\n\n**Direction:** Construct matched harmful-prompt templates varying only a demographic descriptor. Apply a safety steering vector and measure harmful-compliance reduction per group. Test for statistically significant disparities in how much protection steering provides across groups, controlling for base rates.\n\n**Why it matters:** Safety interventions are assumed group-neutral; showing steering's protection is unevenly distributed is a novel, equity-relevant compound finding. Template-based, cheap, statistics-friendly for the target audience.\n\n**Relevant context:** Heterogeneous / anti-steerable effects from arXiv 2504.04635 (up to 50% anti-steerable). Disparate safety behavior is documented in alignment literature; combining it with steering heterogeneity is the novel angle. Pure inference."
+  },
+  {
+    "idea_id": "gen-1608",
+    "run_id": "2026-06-15T19-24-29",
+    "stage": "generate",
+    "timestamp": "2026-06-15T21:36:04Z",
+    "subfield": "concept_steering",
+    "generation_strategy": "compounding_risks",
+    "confidence": 0.71,
+    "body": "# Steering Vector Staleness x Continuous Deployment: A Drift-Monitoring Harness Prototype\n\n**Problem:** Failure mode A (concept_steering): concept directions drift across model versions. Failure mode B (no drift detection in deployment): pipelines apply a fixed vector indefinitely. Compound risk: a stale vector keeps being applied as the model is iteratively updated, and the gap between intended and actual effect grows silently until safety quietly fails.\n\n**Direction:** Build a tiny monitoring harness: given two checkpoints of an open model and a stored steering vector, automatically compute (a) cosine drift of the re-extracted concept direction and (b) drop in measured behavioral effect, and emit a 'recalibrate' flag past a threshold. Validate it across a few LoRA-fine-tuned checkpoints and report how many updates it takes to trip the flag.\n\n**Why it matters:** Produces reusable, strategically valuable safety infrastructure (a drift detector for steering pipelines) while directly testing the source paper's stability open problem. Small prototype, one GPU.\n\n**Relevant context:** Cross-update stability is an explicit Open Problem (Beaglehole et al.). Drift/brittleness from arXiv 2603.24543 and 2504.04635. The harness + recalibrate-trigger is the buildable infrastructure deliverable."
+  },
+  {
+    "idea_id": "gen-1609",
+    "run_id": "2026-06-15T19-24-29",
+    "stage": "generate",
+    "timestamp": "2026-06-15T21:36:04Z",
+    "subfield": "concept_steering",
+    "generation_strategy": "recent_paper_extension",
+    "confidence": 0.78,
+    "body": "# Do benign steering vectors silently erode safety? A replication and audit\n\n**Problem:** Recent work shows steering vectors derived from BENIGN datasets (compliance, output-format) can inadvertently erode safety guardrails, pushing jailbreak attack success rates above 80%. This 'safety externality' of steering is underexplored on small open models that hobbyists actually use.\n\n**Direction:** Reproduce a small slice of the 'Safety Pitfalls of Steering Vectors' audit on a single open model (e.g. Llama-3.1-8B or Qwen2.5-7B). Extract 4-6 CAA steering vectors from clearly benign contrastive datasets (politeness, JSON formatting, verbosity, brevity). Apply each at a fixed strength and measure attack-success-rate change on a small public jailbreak benchmark (e.g. AdvBench subset, 50 prompts) using a refusal classifier. Rank which benign behaviors most degrade safety.\n\n**Why it matters:** Practitioners outside labs routinely build steering vectors for formatting/style with no idea they may be unlocking harmful outputs. A clean, reproducible audit on consumer hardware gives the open community a checklist of risky benign-steering directions \u2014 diffuse-reward safety infrastructure that labs deprioritize.\n\n**Relevant context:** Extends 'Analysing the Safety Pitfalls of Steering Vectors' (arXiv:2603.24543, ~Mar 2026), which reports benign-derived steering vectors raise ASR above 80% and CAA vectors shift ASR by up to 57%."
+  },
+  {
+    "idea_id": "gen-161",
+    "run_id": "2026-06-15T19-24-29",
+    "stage": "generate",
+    "timestamp": "2026-06-15T21:36:03Z",
+    "subfield": "adversarial_robustness",
+    "generation_strategy": "experiment_variation",
+    "confidence": 0.72,
+    "body": "# Does Chain-of-Thought Prompting Help or Hurt Jailbreak Robustness?\n\n**Problem:** Reasoning/deliberation has been argued to make models safer (deliberative alignment), but eliciting CoT in non-reasoning open models via prompting could either deepen safety or give the model room to talk itself into compliance. The net effect on small open models is unclear.\n\n**Direction:** On small open instruct models (not native reasoners), compare jailbreak success with and without an added 'think step by step before answering' instruction across prefill and many-shot attacks. Inspect the generated reasoning for cases where CoT rationalizes compliance vs where it reinforces refusal. Quantify net robustness change.\n\n**Why it matters:** Deployers increasingly bolt CoT prompting onto cheap models; knowing whether this is a free safety win or a footgun is practically important and lab-independent. Reading the reasoning traces also yields qualitative model-organism insight into 'attacking without honest reasoning.'\n\n**Relevant context:** 'Deliberative Alignment: Reasoning Enables Safer Language Models' (arXiv:2412.16339) argues reasoning improves safety; the StrongREJECT writeup notes o1 is more jailbreak-robust. This varies the population to prompted (non-native) CoT on small open models, an untested regime. Qi et al. (arXiv:2406.05946) and many-shot (NeurIPS 2024) supply attacks."
+  },
+  {
+    "idea_id": "gen-1610",
+    "run_id": "2026-06-15T19-24-29",
+    "stage": "generate",
+    "timestamp": "2026-06-15T21:36:04Z",
+    "subfield": "concept_steering",
+    "generation_strategy": "recent_paper_extension",
+    "confidence": 0.77,
+    "body": "# Sparsify-then-steer: how few dimensions does a safety steering vector really need?\n\n**Problem:** A mechanistic study of refusal steering found steering vectors can be sparsified 90-99% while retaining most performance, but this was shown mainly for refusal. It's unknown whether OTHER safety concepts (deception, sycophancy, toxicity) are equally sparse, which matters for interpretability and tamper-resistance.\n\n**Direction:** On one open model, extract CAA steering vectors for 4 safety concepts (refusal, sycophancy, toxicity, deception) using public contrastive datasets. For each, greedily zero out all but the top-k coordinates by magnitude and measure how steering effect (behavior shift) decays as k shrinks. Plot a 'sparsity-retention curve' per concept and report which concepts are genuinely low-dimensional.\n\n**Why it matters:** If safety concepts live in a handful of coordinates, monitoring and ablation become cheap and human-auditable; if they're dense, steering is fragile. This is a self-contained interpretability result needing only a single GPU and no training.\n\n**Relevant context:** Extends 'What Drives Representation Steering? A Mechanistic Case Study on Steering Refusal' (arXiv:2604.08524, ~Apr 2026), which sparsifies refusal steering vectors by 90-99% with little performance loss."
+  },
+  {
+    "idea_id": "gen-1611",
+    "run_id": "2026-06-15T19-24-29",
+    "stage": "generate",
+    "timestamp": "2026-06-15T21:36:04Z",
+    "subfield": "concept_steering",
+    "generation_strategy": "recent_paper_extension",
+    "confidence": 0.74,
+    "body": "# Can a small open model notice when it is being steered? Replicating steering-awareness\n\n**Problem:** A 2026 paper showed instruction-tuned models can be FINE-TUNED to detect activation steering (95.5% detection). But the prior, untuned question is unstudied: do off-the-shelf small open models already exhibit any latent signal of being steered, detectable via a simple probe, without fine-tuning?\n\n**Direction:** Inject CAA steering vectors of varying strength into a small open model on neutral prompts. Train a cheap logistic-regression probe on a later-layer activation to classify steered vs. clean forward passes. Sweep strength and layer; report the detection AUC as a function of steering magnitude. No model fine-tuning \u2014 only probing.\n\n**Why it matters:** If steering leaves an easily-probed signature even in untuned models, then 'invisible' steering used in safety evals (and by attackers) is not invisible \u2014 a key assumption for evaluation tooling. Probing-only design fits 30h and needs no lab infra.\n\n**Relevant context:** Extends 'Steering Awareness: Models Can Be Trained to Detect Activation Steering' (arXiv:2511.21399, Nov 2025 / 2026 revisions) and 'Latent Introspection: Models Can Detect Prior Concept Injections' (arXiv:2602.20031, ~Feb 2026)."
+  },
+  {
+    "idea_id": "gen-1612",
+    "run_id": "2026-06-15T19-24-29",
+    "stage": "generate",
+    "timestamp": "2026-06-15T21:36:04Z",
+    "subfield": "concept_steering",
+    "generation_strategy": "recent_paper_extension",
+    "confidence": 0.79,
+    "body": "# Geometric canary: can a cheap cosine statistic predict if a safety vector will work?\n\n**Problem:** Recent work identifies geometric predictors of steering reliability \u2014 low directional agreement and low positive/negative separation predict an ineffective steering direction. These predictors have not been validated as a practical pre-flight check across many safety concepts.\n\n**Direction:** For ~15 candidate safety/style concepts, build CAA vectors on one open model and compute two cheap geometric statistics (mean cosine agreement of activation-difference pairs; positive-negative cluster separation). Then measure actual steering effectiveness behaviorally. Test whether the geometric statistics correlate with and predict real effectiveness (rank correlation), yielding a usable 'don't bother steering this' threshold.\n\n**Why it matters:** Beginners waste hours steering concepts that have no linear representation. A validated, training-free pre-flight predictor saves compute and tells the field which safety concepts are even steerable \u2014 directly answering an open problem about which concepts are linear.\n\n**Relevant context:** Extends 'Understanding (Un)Reliability of Steering Vectors: Geometric Predictors and the Limits of Linear Approximations' (arXiv:2602.17881, ~Feb 2026) and 'The Geometric Canary' (arXiv:2604.17698, ~Apr 2026)."
+  },
+  {
+    "idea_id": "gen-1613",
+    "run_id": "2026-06-15T19-24-29",
+    "stage": "generate",
+    "timestamp": "2026-06-15T21:36:04Z",
+    "subfield": "concept_steering",
+    "generation_strategy": "recent_paper_extension",
+    "confidence": 0.75,
+    "body": "# Off-the-shelf persona vectors vs. targeted steering for catching sycophancy\n\n**Problem:** A recent paper claims off-the-shelf persona vectors rival targeted steering for sycophancy. If true, the expensive step of building task-specific contrastive datasets is often unnecessary \u2014 but this was shown narrowly and deserves a head-to-head replication on multiple safety traits.\n\n**Direction:** On one open model, compare (a) generic off-the-shelf persona/trait vectors with (b) carefully targeted CAA vectors built for the same trait, across 3 traits (sycophancy, flattery, over-confidence). Measure both steering (behavior shift) and monitoring (detection AUC) effectiveness. Report when the cheap off-the-shelf vector is 'good enough.'\n\n**Why it matters:** Tells independent researchers when they can skip dataset engineering entirely \u2014 lowering the barrier to safety monitoring. A negative result (targeted is much better) is equally valuable as guidance.\n\n**Relevant context:** Extends 'Playing Devil's Advocate: Off-the-Shelf Persona Vectors Rival Targeted Steering for Sycophancy' (arXiv:2605.21006, ~May 2026)."
+  },
+  {
+    "idea_id": "gen-1614",
+    "run_id": "2026-06-15T19-24-29",
+    "stage": "generate",
+    "timestamp": "2026-06-15T21:36:04Z",
+    "subfield": "concept_steering",
+    "generation_strategy": "recent_paper_extension",
+    "confidence": 0.8,
+    "body": "# Cross-language transfer of a deception/refusal steering vector on a small open model\n\n**Problem:** Beaglehole et al. (Science 2026) found linear concept vectors transfer across languages, but mostly for benign concepts. Whether a safety-relevant vector (deception or refusal) built only on ENGLISH contrastive data still steers behavior in other languages is unverified and safety-critical (attackers may switch language to evade).\n\n**Direction:** Build a refusal (or deception) CAA vector from English contrastive pairs only. Apply it to prompts translated into 3 languages (e.g. Spanish, French, Chinese) and measure whether the steering effect (refusal rate shift) persists. Quantify transfer degradation per language. Use a small multilingual open model.\n\n**Why it matters:** If safety steering vectors DON'T transfer across languages, monolingual safety tooling is silently bypassable by language switching \u2014 a concrete, under-watched threat. Cheap to test, no training, directly cited as an open follow-up.\n\n**Relevant context:** Extends Beaglehole et al. 'Toward Universal Steering and Monitoring of AI Models' (Science, arXiv:2502.03708, Feb 2026), specifically the cross-language transfer finding."
+  },
+  {
+    "idea_id": "gen-1615",
+    "run_id": "2026-06-15T19-24-29",
+    "stage": "generate",
+    "timestamp": "2026-06-15T21:36:04Z",
+    "subfield": "concept_steering",
+    "generation_strategy": "recent_paper_extension",
+    "confidence": 0.76,
+    "body": "# Do concept probes beat an LLM judge for diffuse safety categories?\n\n**Problem:** Beaglehole et al. reported internal probes outperform SOTA judge models for hallucination and toxicity. It's unclear whether this advantage holds for FUZZIER, diffuse-reward safety categories (manipulation, subtle deception, power-seeking framing) where judges are weak and probes are untested.\n\n**Direction:** On one open model, train cheap linear concept probes for 3 diffuse safety categories using small labeled sets. Compare probe accuracy/AUC against a same-size open LLM-as-judge on a held-out set. Focus on categories with fuzzy rewards where ground truth is hard. Report where probes win or lose.\n\n**Why it matters:** Diffuse/fuzzy-reward safety evals are exactly what labs deprioritize and what's hardest to automate. If internal probes beat judges here too, the open community gets a cheaper, harder-to-game monitor. Pure inference + tiny probe training fits 30h.\n\n**Relevant context:** Extends the 'probes outperform judge models' result from Beaglehole et al. (Science, arXiv:2502.03708, Feb 2026), pushing it to diffuse categories beyond hallucination/toxicity."
+  },
+  {
+    "idea_id": "gen-1616",
+    "run_id": "2026-06-15T19-24-29",
+    "stage": "generate",
+    "timestamp": "2026-06-15T21:36:04Z",
+    "subfield": "concept_steering",
+    "generation_strategy": "recent_paper_extension",
+    "confidence": 0.7,
+    "body": "# Is the steering signature robust to paraphrase? Testing non-identifiability practically\n\n**Problem:** A 2026 theory paper proves steering vectors are non-identifiable: infinitely many geometrically distinct directions induce identical behavior via null-space ambiguity. The practical fallout \u2014 whether two 'equivalent' vectors generalize differently out-of-distribution \u2014 is barely tested empirically.\n\n**Direction:** Construct two behaviorally-equivalent steering vectors for one safety concept: the raw CAA vector and a null-space-perturbed variant matched to produce the same in-distribution behavior. Then evaluate both on out-of-distribution prompts (paraphrases, new topics) and compare divergence. Quantify how much hidden geometric freedom matters for generalization.\n\n**Why it matters:** If behaviorally-identical vectors diverge sharply OOD, then reporting only in-distribution steering results is misleading and monitoring vectors may fail silently in deployment. A concrete empirical companion to a theory result, runnable on one GPU.\n\n**Relevant context:** Extends 'On the Non-Identifiability of Steering Vectors in Large Language Models' (arXiv:2602.06801, ~Feb 2026)."
+  },
+  {
+    "idea_id": "gen-1617",
+    "run_id": "2026-06-15T19-24-29",
+    "stage": "generate",
+    "timestamp": "2026-06-15T21:36:04Z",
+    "subfield": "concept_steering",
+    "generation_strategy": "recent_paper_extension",
+    "confidence": 0.72,
+    "body": "# Mapping endogenous steering resistance: which concepts do small models fight back on?\n\n**Problem:** Recent work identified 'Endogenous Steering Resistance' (ESR): models partially resist task-misaligned activation steering, linked to specific SAE latents. This was shown on a 70B model; whether small consumer-runnable models exhibit ESR and for which safety concepts is open.\n\n**Direction:** On a small open model with an available SAE (e.g. Gemma-2-2B with Gemma Scope), apply steering vectors for several safety concepts and measure the realized vs. intended behavior shift as a 'resistance gap.' Identify which concepts the model resists most and, using SAE latents, surface candidate resistance features. No training required.\n\n**Why it matters:** ESR means steering (whether for safety or by an attacker) is less reliable than the literal vector suggests. Mapping which safety concepts trigger resistance tells defenders where steering-based control is trustworthy and where it isn't \u2014 using only open SAEs.\n\n**Relevant context:** Extends 'Endogenous Resistance to Activation Steering in Language Models' (arXiv:2602.06941, ~Feb 2026), which found ESR and 26 causally-linked SAE latents in Llama-3.3-70B."
+  },
+  {
+    "idea_id": "gen-1618",
+    "run_id": "2026-06-15T19-24-29",
+    "stage": "generate",
+    "timestamp": "2026-06-15T21:36:04Z",
+    "subfield": "concept_steering",
+    "generation_strategy": "recent_paper_extension",
+    "confidence": 0.73,
+    "body": "# Conditional steering as a tamper-resistant refusal: stress-testing CAST on a small model\n\n**Problem:** Conditional Activation Steering (CAST) applies a behavior vector only when a condition vector matches the prompt, enabling context-specific refusal. Its robustness to adversarial prompts crafted to dodge the condition trigger is under-tested on small open models.\n\n**Direction:** Implement a minimal CAST pipeline on one open model: a refusal behavior vector gated by a 'harmful-topic' condition vector. Then red-team the condition trigger with paraphrases and obfuscations (leetspeak, role-play wrappers) to measure how easily the conditional gate is bypassed vs. unconditional steering. Report bypass rates.\n\n**Why it matters:** CAST is pitched as safer than blanket steering, but a brittle condition gate could give false confidence. An adversarial evaluation of the gate is exactly the kind of defense-stress-testing useful outside labs, and a small prototype fits 30h.\n\n**Relevant context:** Extends 'Programming Refusal with Conditional Activation Steering' (CAST, arXiv:2409.05907) using the framing of recent 2026 steering-safety audits (arXiv:2603.24543)."
+  },
+  {
+    "idea_id": "gen-1619",
+    "run_id": "2026-06-15T19-24-29",
+    "stage": "generate",
+    "timestamp": "2026-06-15T21:36:04Z",
+    "subfield": "concept_steering",
+    "generation_strategy": "recent_paper_extension",
+    "confidence": 0.74,
+    "body": "# Does steering vector size scale a model's vulnerability? Replicating 'larger models more steerable' for harm\n\n**Problem:** Beaglehole et al. found larger models are MORE steerable. If this holds for harmful directions, then capability scaling may make models easier to push toward harmful behavior via steering \u2014 a worrying scaling law that has not been checked on the harmful side with an open model family.\n\n**Direction:** Within one open model family at 2-3 sizes (e.g. Qwen2.5 0.5B/3B/7B), build the SAME harmful-direction CAA vector for each and measure steerability (behavior shift per unit norm) toward harmful output. Test whether steerability-toward-harm increases monotonically with size. Normalize for activation scale.\n\n**Why it matters:** A clean 'steerability-of-harm scales with size' result (or refutation) informs whether bigger open models are intrinsically easier to weaponize via cheap steering \u2014 a medium-horizon threat labs underweight. Same-family scaling study runs on consumer GPUs.\n\n**Relevant context:** Extends the 'larger models are more steerable' finding from Beaglehole et al. (Science, arXiv:2502.03708, Feb 2026), applied specifically to harmful directions."
+  },
+  {
+    "idea_id": "gen-162",
+    "run_id": "2026-06-15T19-24-29",
+    "stage": "generate",
+    "timestamp": "2026-06-15T21:36:03Z",
+    "subfield": "adversarial_robustness",
+    "generation_strategy": "experiment_variation",
+    "confidence": 0.74,
+    "body": "# Robustness of Cheap Defenses Under Adaptive vs Static Attacks\n\n**Problem:** Defenses are often evaluated against static attacks. The gap between static and lightly-adaptive attack success (where the attacker tweaks phrasing after seeing a refusal) is a known evaluation pitfall but rarely quantified for the cheap defenses small teams deploy.\n\n**Direction:** Pick 2 cheap defenses (perplexity filter, safe-prefill). Evaluate each against a static attack set, then against a simple adaptive loop where a small open model rephrases failed attacks up to N times. Measure how much the defense's apparent robustness drops from static to adaptive, and how N (attacker budget) trades off against success.\n\n**Why it matters:** Bridges the context file's open problem of 'lab-tested defenses vs real-world robustness.' Shows whether reported defense numbers survive even minimal adaptivity. The adaptive loop is a small monitoring/red-team harness \u2014 strategically valuable infrastructure scoped to a prototype.\n\n**Relevant context:** Context file open problem: 'design adaptive defenses that maintain robustness against evolving attack strategies' and 'bridge the gap between lab-tested defenses and real-world deployment robustness' (International AI Safety Report 2026). StrongREJECT (arXiv:2402.10260) warns static evals overstate robustness."
+  },
+  {
+    "idea_id": "gen-1620",
+    "run_id": "2026-06-15T19-24-29",
+    "stage": "generate",
+    "timestamp": "2026-06-15T21:36:04Z",
+    "subfield": "concept_steering",
+    "generation_strategy": "recent_paper_extension",
+    "confidence": 0.74,
+    "body": "# Multi-concept steering interference: do safety vectors collide?\n\n**Problem:** 2026 work shows multiple concept vectors can be composed (added) for joint steering, and outcome-relevant representations occupy a low-rank but not rank-one subspace. Whether composing TWO safety vectors (e.g. anti-toxicity + anti-deception) interferes destructively is unstudied and matters for stacking defenses.\n\n**Direction:** Build CAA vectors for two distinct safety concepts on one open model. Apply them individually and jointly (summed, and orthogonalized). Measure whether joint application achieves both effects or one cancels the other. Quantify interference and test whether orthogonalizing the vectors first reduces collision.\n\n**Why it matters:** Real safety steering needs many concepts at once. If naive composition causes one safety property to undo another, defenders need to know \u2014 and orthogonalization may be a cheap fix. Tests a core open problem (combining concept steering) cheaply.\n\n**Relevant context:** Extends the multi-concept composition findings around Contrastive Conceptor Activation Steering / low-rank subspace work (arXiv:2605.17144, ~May 2026) and Beaglehole et al. multi-concept combination (arXiv:2502.03708)."
+  },
+  {
+    "idea_id": "gen-1621",
+    "run_id": "2026-06-15T19-24-29",
+    "stage": "generate",
+    "timestamp": "2026-06-15T21:36:04Z",
+    "subfield": "concept_steering",
+    "generation_strategy": "recent_paper_extension",
+    "confidence": 0.71,
+    "body": "# Steering for CoT verbosity without harming faithfulness: a safety tradeoff probe\n\n**Problem:** A recent project learns a single verbosity axis from VERBOSE-vs-CONCISE CoT pairs to steer reasoning length. Steering verbosity could improve monitorability \u2014 but only if it doesn't reduce faithfulness (whether the CoT reflects the true reasoning). That tradeoff is unmeasured.\n\n**Direction:** On a small open reasoning model, build a verbosity steering vector from prompt-generated CoT pairs. Steer toward more verbose CoT on a reasoning benchmark, then measure faithfulness via a simple intervention test (does the stated reason actually drive the answer? e.g. hint-injection sensitivity). Report whether forced verbosity adds genuine or confabulated content.\n\n**Why it matters:** CoT monitorability is a leading safety bet. If steering verbosity just produces longer but less faithful rationalizations, it's actively harmful for monitoring. A cheap, self-contained test of that tradeoff is high-value and lab-independent.\n\n**Relevant context:** Extends 'Training Steering Vectors to Enhance CoT Faithfulness and Verbosity' (SPAR 2026 project) and 'Measuring CoT Monitorability Through Faithfulness and Verbosity' (arXiv:2510.27378, Oct 2025)."
+  },
+  {
+    "idea_id": "gen-1622",
+    "run_id": "2026-06-15T19-24-29",
+    "stage": "generate",
+    "timestamp": "2026-06-15T21:36:04Z",
+    "subfield": "concept_steering",
+    "generation_strategy": "recent_paper_extension",
+    "confidence": 0.7,
+    "body": "# Token-level visual-sensitivity steering as a hallucination monitor for small VLMs\n\n**Problem:** A June 2026 paper introduces token-level visual-sensitivity steering to mitigate hallucinations in large VLMs. Whether the same visual-sensitivity signal can be read out (not steered) as a cheap per-token hallucination DETECTOR on small open VLMs is unexplored.\n\n**Direction:** On a small open VLM (e.g. LLaVA-1.5-7B or Qwen2-VL-2B), compute a per-token 'visual sensitivity' score from activation differences with/without the image. Test whether low visual-sensitivity tokens predict hallucinated (image-ungrounded) content on a small VQA/captioning set. Build a token-level hallucination flag and report precision.\n\n**Why it matters:** Multimodal hallucination is a real deployment harm and extending concept steering to vision is a named open problem. A monitoring (read-only) reframing of a steering method is cheap, needs no training, and is exactly an open-community-friendly safety tool.\n\n**Relevant context:** Extends 'Steer Where It Matters: Token-Level Visual-Sensitivity Steering for LVLMs Hallucination Mitigation' (arXiv:2606.07647, ~Jun 2026), and the multimodal-extension open problem from Beaglehole et al."
+  },
+  {
+    "idea_id": "gen-1623",
+    "run_id": "2026-06-15T19-24-29",
+    "stage": "generate",
+    "timestamp": "2026-06-15T21:36:04Z",
+    "subfield": "concept_steering",
+    "generation_strategy": "recent_paper_extension",
+    "confidence": 0.76,
+    "body": "# Adversarial neutralization: can an input prompt cancel a safety steering vector?\n\n**Problem:** An open problem from Beaglehole et al. asks whether attackers can craft inputs that neutralize steering. With small models this is directly testable: can a prefix/suffix added to the prompt shift activations to counteract an injected refusal vector?\n\n**Direction:** Inject a refusal steering vector into one open model. Then search (via a small set of hand-crafted and template-generated adversarial prefixes/suffixes) for inputs that restore the un-steered (compliant) behavior despite the injected vector. Measure neutralization success rate and characterize what kinds of prompts work.\n\n**Why it matters:** If safety steering is trivially neutralizable by prompt tricks, deployment-time steering defenses are weak against motivated users \u2014 a concrete robustness gap. Directly answers a flagged open problem with cheap prompt-only attacks (no gradient access needed).\n\n**Relevant context:** Directly targets the open problem 'can attackers craft inputs that neutralize steering?' from Beaglehole et al. (Science, arXiv:2502.03708, Feb 2026), informed by safety-pitfalls audit (arXiv:2603.24543)."
+  },
+  {
+    "idea_id": "gen-1624",
+    "run_id": "2026-06-15T19-24-29",
+    "stage": "generate",
+    "timestamp": "2026-06-15T21:36:04Z",
+    "subfield": "concept_steering",
+    "generation_strategy": "recent_paper_extension",
+    "confidence": 0.77,
+    "body": "# How stable is a safety concept vector across a model's fine-tunes?\n\n**Problem:** Beaglehole et al. flag testing concept-vector stability across model updates and fine-tuning as open. With open model families this is checkable: does a refusal/toxicity vector built on a base model still steer its instruction-tuned or community-finetuned variants?\n\n**Direction:** Take an open base model and 2-3 publicly available fine-tunes of it (instruct, chat, a community LoRA merge). Build a safety steering vector on ONE and measure how well it transfers (steering effect retained) to the others, plus cosine drift of the concept direction across checkpoints. Report a stability curve.\n\n**Why it matters:** If safety vectors break after fine-tuning, every downstream fine-tune needs re-derivation \u2014 costly and easy to forget, leaving models silently unmonitored. Quantifying drift across real public fine-tunes directly answers an open problem with zero training.\n\n**Relevant context:** Directly targets the 'stability of concept vectors across model updates and fine-tuning' open problem from Beaglehole et al. (Science, arXiv:2502.03708, Feb 2026)."
+  },
+  {
+    "idea_id": "gen-1625",
+    "run_id": "2026-06-15T19-24-29",
+    "stage": "generate",
+    "timestamp": "2026-06-15T21:36:04Z",
+    "subfield": "concept_steering",
+    "generation_strategy": "recent_paper_extension",
+    "confidence": 0.71,
+    "body": "# Steered-but-resistant: does a model's CoT reveal when it's being steered against its goal?\n\n**Problem:** Endogenous steering resistance and steering-awareness suggest models partly 'know' they're being pushed. A model-organism angle: when steered toward a harmful action it would normally refuse, does its chain-of-thought verbalize the conflict, or does it comply silently without revealing the steering?\n\n**Direction:** On a small open reasoning model, inject a harmful-direction steering vector while requesting visible CoT on benign tasks. Classify whether the CoT (a) verbalizes discomfort/conflict, (b) complies silently, or (c) refuses. Sweep steering strength. Report the rate of silent compliance \u2014 i.e. steering that changes behavior without leaving a CoT trace.\n\n**Why it matters:** A model that is steered toward harm but doesn't surface it in CoT is a mini model-organism for 'acts without verbalizing its plan' \u2014 precisely the threat the counterfactual-value steering favors. Probing an existing model for this fits 30h and needs no training.\n\n**Relevant context:** Combines 'Endogenous Resistance to Activation Steering' (arXiv:2602.06941, Feb 2026) and 'Steering Awareness' (arXiv:2511.21399) with CoT monitorability framing (arXiv:2510.27378)."
+  },
+  {
+    "idea_id": "gen-1626",
+    "run_id": "2026-06-15T19-24-29",
+    "stage": "generate",
+    "timestamp": "2026-06-15T21:36:04Z",
+    "subfield": "concept_steering",
+    "generation_strategy": "recent_paper_extension",
+    "confidence": 0.75,
+    "body": "# Multi-layer probe ensembling for a hard safety concept on a consumer GPU\n\n**Problem:** A 2026 paper shows linear-probe accuracy scales with model size and benefits from multi-layer ensembling, because probes at different layers make different errors. This has not been applied to a concrete hard safety concept (e.g. deception) as a monitoring upgrade.\n\n**Direction:** Train single-layer linear probes for a deception/dishonesty concept at every layer of one small open model, then build a simple ensemble (averaged or stacked logistic regression) over complementary layers. Compare ensemble AUC to the best single layer on held-out data and on an OOD prompt set. Report the gain.\n\n**Why it matters:** Cheap monitoring improvements that any independent researcher can run on one GPU directly strengthen open-source safety tooling for fuzzy concepts. A clean, reproducible 'how much does ensembling buy you for deception detection' answer is reusable infrastructure.\n\n**Relevant context:** Extends 'Linear Probe Accuracy Scales with Model Size and Benefits from Multi-Layer Ensembling' (arXiv:2604.13386, ~Apr 2026), applied to a safety concept."
+  },
+  {
+    "idea_id": "gen-1627",
+    "run_id": "2026-06-15T19-24-29",
+    "stage": "generate",
+    "timestamp": "2026-06-15T21:36:04Z",
+    "subfield": "concept_steering",
+    "generation_strategy": "recent_paper_extension",
+    "confidence": 0.72,
+    "body": "# Does steering activations off-manifold leave a detectable fingerprint?\n\n**Problem:** Unreliability work attributes steering failures to pushing activations OFF the data manifold, where downstream layers behave unpredictably. Whether 'off-manifold-ness' is itself cheaply measurable \u2014 and predicts both failure and detectability \u2014 has not been operationalized for safety steering.\n\n**Direction:** On one open model, fit a simple density/distance model (e.g. Mahalanobis distance or kNN distance to a bank of clean activations) at a chosen layer. Inject safety steering vectors at varying strengths and measure how far steered activations drift off-manifold. Test whether off-manifold distance predicts (a) steering failure and (b) the probe-detectability of steering.\n\n**Why it matters:** A single cheap 'off-manifold' statistic that simultaneously flags unreliable steering AND flags injected steering would be a dual-use safety monitor. Grounding an explanation from the unreliability literature in a measurable detector is high-value and training-free.\n\n**Relevant context:** Extends 'Understanding (Un)Reliability of Steering Vectors: Geometric Predictors and the Limits of Linear Approximations' (arXiv:2602.17881, Feb 2026), operationalizing its off-manifold hypothesis."
+  },
+  {
+    "idea_id": "gen-1628",
+    "run_id": "2026-06-15T19-24-29",
+    "stage": "generate",
+    "timestamp": "2026-06-15T21:36:04Z",
+    "subfield": "concept_steering",
+    "generation_strategy": "recent_paper_extension",
+    "confidence": 0.73,
+    "body": "# Steering vectors for synthetic red-team data: does diversity matter for the detector?\n\n**Problem:** A May 2026 paper studies activation steering for synthetic data generation, finding diversity of generated data drives downstream safety-detection quality. The practical recipe \u2014 how much steering strength/variety yields the most useful red-team set for training a small safety classifier \u2014 isn't pinned down for hobbyist budgets.\n\n**Direction:** Use a steering vector to generate synthetic harmful/borderline prompts at several steering strengths from one open model, measuring lexical/semantic diversity of each batch. Train a small safety classifier on each batch and evaluate on a fixed held-out real benchmark. Identify the steering-strength sweet spot that maximizes downstream detector performance.\n\n**Why it matters:** Independent safety researchers lack proprietary red-team data; steering-generated synthetic data is a lab-independent substitute. A concrete diversity-vs-detection recipe is directly reusable infrastructure for building open safety classifiers.\n\n**Relevant context:** Extends 'Activation Steering for Synthetic Data Generation: The Role of Diversity in Downstream Safety Detection' (arXiv:2605.28664, ~May 2026)."
+  },
+  {
+    "idea_id": "gen-1629",
+    "run_id": "2026-06-15T19-24-29",
+    "stage": "generate",
+    "timestamp": "2026-06-15T21:36:04Z",
+    "subfield": "concept_steering",
+    "generation_strategy": "recent_paper_extension",
+    "confidence": 0.72,
+    "body": "# Prompted introspection: does telling a model how steering works increase its self-detection?\n\n**Problem:** Recent introspection work found that prompting a model with accurate information about AI introspection mechanisms dramatically strengthens its ability to report injected concepts, even though sampled outputs often deny injection. The size of this 'introspection-prompt boost' for small open models is unmeasured.\n\n**Direction:** Inject concept steering vectors into a small open model under two prompt conditions: (a) neutral, (b) a primer explaining that concepts may be injected and how to introspect. Measure the model's accuracy at reporting whether/which concept was injected in each condition, and compare to a logit-lens / residual-stream probe of the same activations. Quantify the boost.\n\n**Why it matters:** If a simple prompt can make models self-report manipulation, that's a cheap, deployable monitoring layer \u2014 and if their verbal report lags an internal probe signal, it reveals models hiding what they 'know.' Both outcomes matter for honesty/monitoring and need no training.\n\n**Relevant context:** Extends 'Latent Introspection: Models Can Detect Prior Concept Injections' (arXiv:2602.20031, Feb 2026) and 'Mechanisms of Introspective Awareness' (arXiv:2603.21396, ~Mar 2026)."
+  },
+  {
+    "idea_id": "gen-163",
+    "run_id": "2026-06-15T19-24-29",
+    "stage": "generate",
+    "timestamp": "2026-06-15T21:36:03Z",
+    "subfield": "adversarial_robustness",
+    "generation_strategy": "experiment_variation",
+    "confidence": 0.71,
+    "body": "# Fine-Tuning-Free Latent Steering as a Lightweight Defense Variation\n\n**Problem:** Latent adversarial training is proposed as an alternative to enumerated adversarial training, but it needs training. A cheaper variation: can inference-time activation steering along the refusal direction harden a model against prefill attacks without any training, and at what over-refusal cost?\n\n**Direction:** Extract the refusal direction (difference-of-means) on an open model, then at inference add a scaled amount of that direction to residual activations. Sweep the steering coefficient and measure prefill/suffix attack success vs XSTest over-refusal. Find whether a coefficient exists that restores robustness lost to prefill without breaking helpfulness.\n\n**Why it matters:** Offers a no-training, single-GPU defense alternative to adversarial training \u2014 directly responsive to the Open Phil RFP open problem \u2014 and characterizes its safety/helpfulness tradeoff. Activation steering uses public methods accessible to beginners.\n\n**Relevant context:** Open Phil RFP open problem (context file): 'alternatives to adversarial training (e.g. latent adversarial training) that provide robustness without requiring explicit attack enumeration.' Arditi et al. (NeurIPS 2024) refusal-direction steering and AlphaSteer (arXiv:2506.07022) ground inference-time steering. XSTest (arXiv:2308.01263) for over-refusal cost."
+  },
+  {
+    "idea_id": "gen-1630",
+    "run_id": "2026-06-15T19-24-29",
+    "stage": "generate",
+    "timestamp": "2026-06-15T21:36:04Z",
+    "subfield": "concept_steering",
+    "generation_strategy": "recent_paper_extension",
+    "confidence": 0.7,
+    "body": "# Expert-aware refusal suppression: how brittle is MoE safety to targeted steering?\n\n**Problem:** An Expert-Aware Refusal Steering paper shows refusal can be suppressed in Mixture-of-Experts LLMs by targeting specific experts. As small open MoE models proliferate (e.g. OLMoE, Qwen MoE), whether their refusal is MORE brittle than dense models of similar size is an open safety question.\n\n**Direction:** On a small open MoE model and a comparable dense model, build a refusal-suppression steering vector and measure how much it raises harmful-compliance rate per unit steering norm. For the MoE, additionally test whether steering only the most-refusal-relevant experts is more efficient. Compare brittleness across architectures.\n\n**Why it matters:** If MoE architectures concentrate refusal in a few experts, they may be disproportionately easy to jailbreak via cheap steering \u2014 a medium-horizon architectural safety concern as MoE goes mainstream. A small-model comparison is feasible on one GPU.\n\n**Relevant context:** Extends 'Expert-Aware Refusal Steering' (arXiv:2606.04160, ~Jun 2026)."
+  },
+  {
+    "idea_id": "gen-1631",
+    "run_id": "2026-06-15T19-24-29",
+    "stage": "generate",
+    "timestamp": "2026-06-15T21:36:04Z",
+    "subfield": "concept_steering",
+    "generation_strategy": "recent_paper_extension",
+    "confidence": 0.71,
+    "body": "# Steering vs. self-preference: replicating activation-based debiasing of an LLM evaluator\n\n**Problem:** A recent paper mitigates self-preference (an evaluator favoring its own outputs) via activation steering. Self-preference is a subtle, fuzzy-reward bias that undermines LLM-as-judge safety evals, and the steering fix has not been replicated or stress-tested on small open judges.\n\n**Direction:** Set up a small open model as an LLM-judge that exhibits self-preference (rates its own completions higher). Build a 'self-preference' CAA vector and steer it out. Measure reduction in self-preference bias and check for collateral damage to overall judging accuracy on a neutral benchmark. Report the bias/accuracy tradeoff.\n\n**Why it matters:** Open-source LLM-as-judge pipelines are widely used for safety evals; an unbiased judge is foundational infrastructure. A cheap, replicable steering debias method that doesn't wreck accuracy is directly useful and lab-independent.\n\n**Relevant context:** Extends 'Breaking the Mirror: Activation-Based Mitigation of Self-Preference in LLM Evaluators' (arXiv:2509.03647, ~Sep 2025), validated with 2026 steering-reliability cautions (arXiv:2602.17881)."
+  },
+  {
+    "idea_id": "gen-1632",
+    "run_id": "2026-06-15T19-24-29",
+    "stage": "generate",
+    "timestamp": "2026-06-15T21:36:04Z",
+    "subfield": "concept_steering",
+    "generation_strategy": "recent_paper_extension",
+    "confidence": 0.73,
+    "body": "# Persona-vector early warning: catching emergent misalignment before it generalizes\n\n**Problem:** Persona-vector work shows a 'toxic persona' direction controls emergent misalignment \u2014 steering it up induces broad malice. As a monitor, can the projection of a model's activations onto a toxic-persona vector serve as an EARLY-WARNING signal that a narrowly fine-tuned model has become broadly misaligned?\n\n**Direction:** Take an open model and a publicly available narrowly-misaligned fine-tune (or create a tiny LoRA on a narrow bad domain within budget). Compute each example's projection onto an off-the-shelf toxic-persona vector and test whether this projection, measured only on the narrow training domain, predicts broad misalignment on unrelated held-out prompts. Report predictive AUC.\n\n**Why it matters:** Emergent misalignment is a stark medium-horizon threat. A cheap persona-vector projection that flags it from narrow-domain data alone is a practical, lab-independent monitor for fine-tuning pipelines. Scoped to a tiny LoRA, it fits 30h.\n\n**Relevant context:** Extends 'Persona Features Control Emergent Misalignment' (arXiv:2506.19823, ~Jun 2025) and 'Tracing Persona Vectors Through LLM Pretraining' (arXiv:2605.13329, ~May 2026)."
+  },
+  {
+    "idea_id": "gen-1633",
+    "run_id": "2026-06-15T19-24-29",
+    "stage": "generate",
+    "timestamp": "2026-06-15T21:36:04Z",
+    "subfield": "concept_steering",
+    "generation_strategy": "recent_paper_extension",
+    "confidence": 0.71,
+    "body": "# Generative causal mediation vs. plain CAA: which gives a cleaner safety steering vector?\n\n**Problem:** A 2026 method, Activation Steering via Generative Causal Mediation, claims cleaner targeting than naive CAA by isolating the causal mediator of a behavior. Whether this reduces the 'feature entanglement' that makes safety steering damage unrelated capabilities is untested in a head-to-head on small models.\n\n**Direction:** For one safety concept (e.g. refusal) on one open model, build steering vectors two ways: standard CAA and the causal-mediation variant. Apply each at matched behavioral effect and measure collateral damage \u2014 degradation on unrelated capability benchmarks (e.g. a small MMLU/GSM8K subset). Report which method steers safety with less side-effect.\n\n**Why it matters:** Steering that quietly degrades general capability is a hidden cost that discourages real deployment of safety steering. A clean side-effect comparison tells the open community whether the fancier method is worth it. Inference-only, fits one GPU.\n\n**Relevant context:** Extends 'Activation Steering via Generative Causal Mediation' (arXiv:2602.16080, ~Feb 2026), compared against Contrastive Activation Addition (arXiv:2312.06681)."
+  },
+  {
+    "idea_id": "gen-1634",
+    "run_id": "2026-06-15T19-24-29",
+    "stage": "generate",
+    "timestamp": "2026-06-15T21:36:04Z",
+    "subfield": "concept_steering",
+    "generation_strategy": "recent_paper_extension",
+    "confidence": 0.7,
+    "body": "# Semantic-cue steering of VLM safety judgments: replicating and red-teaming SAVeS\n\n**Problem:** SAVeS (2026) steers safety JUDGMENTS in vision-language models via semantic cues. If safety judgments are this steerable, an adversary could also nudge a VLM safety classifier into mislabeling harmful images as safe \u2014 the dual-use risk of judgment-steering is unexamined.\n\n**Direction:** On a small open VLM acting as a safety judge over a small image set, replicate cue-based steering of its safety verdicts. Then flip it adversarially: find semantic cues / steering directions that push the judge toward FALSE 'safe' verdicts on genuinely harmful images. Measure how easily the safety judge is flipped and characterize the most effective cues.\n\n**Why it matters:** VLM-based content moderation is widely deployed; if its judgments are cheaply steerable toward 'safe,' that's a concrete bypass of a safety filter. Demonstrating the attack on an open VLM is exactly lab-independent red-teaming, and extends concept steering to multimodal (an open problem).\n\n**Relevant context:** Extends 'SAVeS: Steering Safety Judgments in Vision-Language Models via Semantic Cues' (arXiv:2603.19092, ~Mar 2026)."
+  },
+  {
+    "idea_id": "gen-1635",
+    "run_id": "2026-06-15T19-24-29",
+    "stage": "generate",
+    "timestamp": "2026-06-15T21:36:04Z",
+    "subfield": "concept_steering",
+    "generation_strategy": "recent_paper_extension",
+    "confidence": 0.76,
+    "body": "# Steering strength as a dial for the safety-vs-coherence frontier\n\n**Problem:** Most steering papers report effectiveness at one strength, but excessive steering pushes activations off-manifold and degrades fluency/coherence. The full safety-vs-coherence Pareto frontier per safety concept is rarely mapped, leaving practitioners guessing at a good operating point.\n\n**Direction:** On one open model, sweep steering strength across a fine grid for 3 safety concepts (refusal, anti-toxicity, honesty). At each strength measure (a) the safety behavior gain and (b) a cheap coherence/fluency proxy (perplexity on benign text + a short quality rating). Plot the Pareto frontier per concept and identify the knee point. Compare frontiers across concepts.\n\n**Why it matters:** A reusable 'how hard can I steer before the model breaks' map is immediately practical guidance the open community lacks, and reveals whether some safety concepts are unsteerable without wrecking coherence. Pure inference, one GPU, clean success criteria \u2014 ideal first deliverable.\n\n**Relevant context:** Synthesizes the off-manifold/coherence-degradation findings of 'Understanding (Un)Reliability of Steering Vectors' (arXiv:2602.17881, Feb 2026) with steering-strength sensitivity from the safety-pitfalls audit (arXiv:2603.24543, Mar 2026)."
+  },
+  {
+    "idea_id": "gen-1636",
+    "run_id": "2026-06-15T19-24-29",
+    "stage": "generate",
+    "timestamp": "2026-06-15T21:36:04Z",
+    "subfield": "mechanistic_interpretability",
+    "generation_strategy": "replication_with_twist",
+    "confidence": 0.82,
+    "body": "# Replicating the Refusal Direction Across Smaller Open Models\n\n**Problem:** Arditi et al. showed that refusal in LLMs is mediated by a single residual-stream direction across 13 chat models up to 72B. It is unclear how robustly this 'one-dimensional refusal' result holds in the very small instruction-tuned models (Gemma-2-2b-it, Qwen2.5-1.5B-Instruct, Llama-3.2-1B-Instruct) that hobbyists actually run, and whether the direction transfers cleanly between them.\n\n**Direction:** Use TransformerLens to extract the difference-of-means refusal direction (harmful minus harmless prompts) at each layer of three small open chat models. Measure how much ablating the single direction reduces refusal and how much adding it induces refusal on harmless prompts, reproducing the original metrics. The twist: cross-apply each model's direction to the other models (after basis alignment) to test whether the direction is model-universal or idiosyncratic at small scale.\n\n**Why it matters:** Refusal-direction ablation is a one-line jailbreak that requires no lab infrastructure and works on any downloadable open model, so understanding its robustness at the scale defenders cannot control is directly safety-relevant. Establishing whether the single-direction result degrades or stays clean in 1-2B models tells us how brittle open-weight safety tuning is for the models most likely to be misused locally.\n\n**Relevant context:** Arditi et al. 2024 (arXiv:2406.11717) 'Refusal in Language Models Is Mediated by a Single Direction' found a one-dimensional refusal subspace across 13 open chat models up to 72B; ablating it disables refusal with minimal capability loss, adding it induces refusal on harmless prompts. TransformerLens (MIT, 50+ models) supports difference-of-means direction extraction."
+  }
+]

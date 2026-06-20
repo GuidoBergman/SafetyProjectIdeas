@@ -1,0 +1,42 @@
+[
+ {
+  "idea_id": "gen-070",
+  "title": "How robust is no-CoT elicitation? Probing whether 'answer only' really suppresses reasoning",
+  "research_question": "When we instruct an open model to answer a multi-step task without chain-of-thought, do different suppression methods actually prevent reasoning equally \u2014 and how much do no-CoT task-completion-horizon estimates shift depending on which suppression method you trust?",
+  "approach_outline": "Pick one open instruct model (Qwen2.5-7B-Instruct) and one fixed multi-step task set (a 200-item slice of GSM8K). Compare exactly three no-CoT enforcement methods: (a) a plain 'give only the final answer, no working' instruction; (b) grammar/format-constrained decoding that forces output to a single numeric token via a constrained-decoding library (e.g. Outlines or vLLM guided decoding); (c) stop-sequence truncation that cuts generation at the first newline. For each method measure accuracy and an operational 'leakage' signal: answer token-length and whether intermediate numbers appear in the emitted text. Hold the model, prompts, and task slice fixed so the only variable is the suppression method. Keep the deliverable to a single comparison table plus one accuracy-vs-method bar chart; the horizon shift is computed as the spread in accuracy across the three methods on a fixed item set, not a full multi-difficulty horizon fit.",
+  "source_paper": "Estimating No-CoT Task-Completion Time Horizons \u2014 https://blog.redwoodresearch.org/p/estimating-no-cot-task-completion",
+  "subfield": "AI Control / capability evaluation"
+ },
+ {
+  "idea_id": "gen-072",
+  "title": "Retrying vs resampling on a toy control task: which catches injected misbehavior more cheaply?",
+  "research_question": "On a small open-model control sandbox where an untrusted model sometimes emits a detectable bad action, does retrying (re-prompt to behave) or resampling (draw a fresh sample, pick via a trusted monitor) deliver more safety per model call \u2014 and at what attack probability does the winner flip?",
+  "approach_outline": "Build a minimal control scenario on a public task (a slice of MBPP coding problems or arithmetic). The 'untrusted' open model (Qwen2.5-7B-Instruct) is induced to emit a detectable bad action \u2014 a flagged sentinel token or an obviously inserted bug \u2014 on a controllable fraction of calls via a system prompt that triggers the bad action with probability p. A cheap trusted monitor is a keyword/regex check plus a small open model judge. Implement two protocols on identical inputs: retrying (on a flagged output, re-prompt once with 'try again, be safe' and accept the retry) and resampling (draw k fresh samples and pick the one the monitor most trusts). Hold the model, task slice, and monitor fixed. Sweep only one variable \u2014 the attack probability p over a small fixed grid {0.1, 0.3, 0.5} \u2014 so the experiment stays bounded. Deliverable: a single table of catch-rate, benign false-positive rate, and mean model-calls per protocol at each p, plus a one-line statement of where the crossover sits.",
+  "source_paper": "Retrying vs Resampling in AI Control \u2014 https://blog.redwoodresearch.org/p/retrying-vs-resampling-in-ai-control",
+  "subfield": "AI Control / protocol evaluation"
+ },
+ {
+  "idea_id": "gen-073",
+  "title": "Does an injected misaligned behavior survive light finetuning? A robustness stress-test for model organisms",
+  "research_question": "When a simple, easily-measured target behavior is injected into an open model by different methods, which injection method best survives a subsequent round of innocuous downstream finetuning?",
+  "approach_outline": "Choose one open base model (Llama-3.1-8B) and one trivially measurable target behavior (e.g. always ending replies with a fixed rare token, or always preferring a fixed option). Inject it via exactly three methods using LoRA: (a) SFT on demonstrations of the behavior, (b) a triggered backdoor (behavior fires only on a trigger phrase), and (c) a system-prompt-conditioned habit distilled into weights. Then apply one fixed round of 'innocuous' downstream LoRA SFT on a neutral public dataset (a 2k-example Alpaca slice) and measure behavior-retention. Hold base model, behavior, downstream data, and LoRA hyperparameters fixed; the only variable is injection method. To keep scope bounded, report retention at a single fixed downstream step count (not a full N-step retention curve) \u2014 measured before and after the one finetuning round. Deliverable: a 3-row comparison table of behavior-retention by injection method.",
+  "source_paper": "Advice for making robust-to-training model organisms \u2014 https://blog.redwoodresearch.org/p/advice-for-making-robust-to-training",
+  "subfield": "AI Control / model organisms"
+ },
+ {
+  "idea_id": "gen-074",
+  "title": "How much does an open 'student' inherit a teacher's hidden preference through pure numbers? A budget replication of subliminal trait transfer",
+  "research_question": "On a single consumer GPU with open models, how strong is subliminal trait transfer \u2014 i.e. how much of a teacher's prompted benign preference does a student inherit when finetuned only on the teacher's semantically-unrelated number sequences, as a function of training-set size?",
+  "approach_outline": "Take one open instruct teacher (Qwen2.5-7B-Instruct) and steer it toward one clearly-measurable benign preference (prefer owls) via a system prompt. Generate a dataset of pure number sequences from this prompted teacher. LoRA-finetune a fresh copy of the same base on only those numbers, with no preference prompt. Measure whether the student's owl-preference (scored by a simple keyword classifier on a fixed held-out question set) rises above a no-prompt-teacher control. The single swept axis is training-set size over a small fixed grid {500, 2000, 8000 sequences}; everything else (model, trait, classifier, eval set) is fixed. Deliverable: one transfer-strength curve (student preference vs. training-set size) with the control baseline marked. This is an open-model replication of the published subliminal-learning result, so the method is established rather than novel.",
+  "source_paper": "Incriminating misaligned AI models via distillation \u2014 https://blog.redwoodresearch.org/p/incriminating-misaligned-ai-models",
+  "subfield": "model auditing / distillation"
+ },
+ {
+  "idea_id": "gen-075",
+  "title": "Can a teacher hide its trait on purpose? Testing whether prompted 'evasion' lets a model dodge distillation-based incrimination",
+  "research_question": "Does adding a simple prompt-level evasion instruction ('do not let your preferences leak into your numbers') to a teacher measurably reduce how much of its benign trait transfers to a student trained on its number sequences?",
+  "approach_outline": "Reuse the gen-074 setup: open teacher (Qwen2.5-7B-Instruct), one measurable trait (owl-preference), keyword classifier. Generate three number-sequence datasets from the same teacher under three conditions: trait-on, trait-on-plus-evasion-instruction, and trait-off control. LoRA-finetune three separate students (identical hyperparameters) on each dataset and compare inherited trait strength on a fixed held-out question set. This is a tightly scoped three-condition comparison answering a single yes/no question; the dataset size and all other settings are held fixed at one value. Deliverable: a 3-bar chart of inherited trait strength (trait-on vs trait-on+evasion vs control) plus a single significance test of whether evasion lowers transfer.",
+  "source_paper": "Incriminating misaligned AI models via distillation \u2014 https://blog.redwoodresearch.org/p/incriminating-misaligned-ai-models",
+  "subfield": "adversarial robustness / model auditing"
+ }
+]

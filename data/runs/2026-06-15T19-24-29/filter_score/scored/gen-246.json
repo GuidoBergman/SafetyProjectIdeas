@@ -1,0 +1,62 @@
+{
+  "idea_id": "gen-246",
+  "title": "Does Shallow Alignment Hold in Reasoning Models? Token-Depth Audit of <think> Traces",
+  "run_id": "2026-06-15T19-24-29",
+  "original_idea": {
+    "idea_id": "gen-246",
+    "run_id": "2026-06-15T19-24-29",
+    "stage": "generate",
+    "timestamp": "2026-06-15T21:36:03Z",
+    "subfield": "adversarial_robustness",
+    "generation_strategy": "failure_mode_investigation",
+    "confidence": 0.78,
+    "body": "# Does Shallow Alignment Hold in Reasoning Models? Token-Depth Audit of <think> Traces\n\n**Problem:** Qi et al. (ICLR 2025) showed safety alignment is concentrated in the first few output tokens of instruct models, enabling prefilling and suffix attacks. It is unclear whether open reasoning models (e.g., DeepSeek-R1-Distill, Qwen-QwQ) that emit long <think> traces before answering exhibit the same shallow pattern, or whether the reasoning span dilutes/relocates the refusal decision.\n\n**Direction:** Take a small open reasoning model on a consumer GPU. For a set of harmful prompts that the model normally refuses, measure the KL divergence between the aligned model's per-token distribution and a 'forced-compliance' continuation, as a function of token position across the reasoning trace and the final answer. Replicate Qi's harmful-token-position analysis but separately for the thinking span vs. the answer span to localize where (if anywhere) the refusal commitment is made.\n\n**Why it matters:** If refusal in reasoning models is still decided in the first few thinking tokens, then prefilling the <think> block should jailbreak them as trivially as instruct models \u2014 a deployment-relevant blind spot. If instead the decision is distributed across the reasoning span, that informs whether deepening alignment is easier for reasoning models. Needs only open weights and a single GPU; no lab infrastructure.\n\n**Relevant context:** Qi et al. 'Safety Alignment Should Be Made More Than Just a Few Tokens Deep' (arXiv:2406.05946, ICLR 2025 Outstanding Paper) shows alignment adapts the distribution over only the first few tokens and explains prefilling/suffix/decoding vulnerabilities. Follow-up SafeThinker and 'Inference-Time Vulnerability Beyond Shallow Safety' (arXiv:2606.04778) extend this to generation trajectories. Context file flags this exact follow-up: 'test whether reasoning models exhibit same shallow alignment pattern.'"
+  },
+  "scores": {
+    "theory_of_impact": {
+      "score": 4,
+      "reasoning": "Strong chain: localizing refusal commitment in reasoning models is a deployment-relevant blind spot.",
+      "confidence": 0.7
+    },
+    "accessible_complexity": {
+      "score": 4,
+      "reasoning": "Per-token KL analysis replicating a known method; solid ML basics with guidance.",
+      "confidence": 0.65
+    },
+    "narrow_scope": {
+      "score": 4,
+      "reasoning": "Focused token-position audit replicating an existing analysis, few dependencies.",
+      "confidence": 0.7
+    },
+    "counterfactual_value": {
+      "score": 4,
+      "reasoning": "White-box mechanistic work on open weights labs underdo, no internal access.",
+      "confidence": 0.7
+    },
+    "low_compute": {
+      "score": 4,
+      "reasoning": "Single consumer GPU inference on a small open reasoning model.",
+      "confidence": 0.75
+    },
+    "novelty": {
+      "score": 3,
+      "reasoning": "Shallow alignment established for instruct models; reasoning-model extension is a flagged follow-up.",
+      "confidence": 0.5
+    }
+  },
+  "novelty_assessment": {
+    "classification": "partially_addressed",
+    "evidence": [],
+    "confidence": 0.5,
+    "derived_score": 3,
+    "reasoning": "Base finding published; reasoning-model angle is a flagged open follow-up."
+  },
+  "novelty_method": "novelty_estimated",
+  "weighted_score": 4.0,
+  "confidence": 0.675,
+  "eliminated": false,
+  "elimination_reason": null,
+  "stage": "filter_score",
+  "timestamp": "2026-06-16T03:43:23Z",
+  "filter_stage_passed": 2
+}

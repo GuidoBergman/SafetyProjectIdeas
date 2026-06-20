@@ -40,3 +40,20 @@ SAIM (Safety Idea Machine) is an AI Safety Research Idea Generation Pipeline for
   3. **Citation signals** — How many citations does the paper have, and by whom? Well-cited papers (especially by established researchers) are more credible. Recent papers may lack citations, so weigh venue and author more heavily in that case.
   LessWrong and Alignment Forum posts from credible authors (established researchers, known AI safety contributors) are sufficient as a primary basis, especially when highly upvoted. Posts from unknown authors on these platforms are not.
   An idea should not be built primarily on sources that lack credibility across these dimensions. Flag low-credibility sources and prefer ideas grounded in peer-reviewed or well-established work.
+
+## Branch: tais_04_2026 — Facilitator mode
+
+On this branch the repo is used to **track the progress of a cohort of participant research projects**, evaluate participant ideas, and suggest next steps. It is not used to run the main SAIM idea generation pipeline on this branch — the pipeline skills are still available but out-of-scope for day-to-day work here.
+
+The facilitator-mode workflow has three pieces:
+
+- **Participant profiles** — `config/participants/*.yaml`. Background, skills, compute budget, hours/week, goals, deliverables. The `<key>` (filename without extension) is the stable identifier used everywhere else.
+- **Research log allowlist** — `.participant-logs-allowlist` at the repo root. One `<participant_key>  <google-doc-url>` per line, mapping each participant to their Google Doc research log. This file is committed so the cohort is shared.
+- **Shared idea list** — `.gdoc-allowlist` points at a Google Doc that contains the numbered catalogue of ideas participants draw from. When a research log references an idea by number (e.g. "working on idea #17", "idea 23 looks promising"), resolve the number against that doc before interpreting the entry — the participant is pointing at a specific proposal, not a line in `data/output/idea_tracker.md`.
+- **Tracker outputs** under `data/output/participant_updates/`:
+  - `log.md` — cumulative per-participant update log, newest first. Never rewritten, only appended to.
+  - `review_queue.md` — ephemeral list of items the facilitator still needs to look at. **The facilitator deletes items from this file as they are handled** — the skill never removes anything.
+
+To refresh both files, run the project-local skill `/refresh-participant-logs` (`.claude/commands/refresh-participant-logs.md`). It reads the allowlist, calls the `gdoc` CLI in read-only mode (relying on gdoc's built-in awareness system for change detection — do not roll your own snapshotting), and merges new entries into the two tracker files.
+
+Participant ideas that graduate to formal evaluation still flow through `data/output/idea_tracker.md` and the existing status vocabulary (`Not reviewed`, `Evaluating`, `Added and needs manual review`, `Added`, `Not promising`, `Removed`) via the `/evaluate-idea` skill — that side of the workflow is unchanged on this branch.

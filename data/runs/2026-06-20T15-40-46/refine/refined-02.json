@@ -1,0 +1,282 @@
+[
+ {
+  "idea_id": "gen-103",
+  "title": "Do Coherence Checks Catch 'Fried' Model Organisms? A Cheap Replication on Open LoRA Adapters",
+  "research_question": "Can a beginner-runnable, inference-only coherence diagnostic reliably flag which publicly released emergent-misalignment LoRA model organisms have been 'fried' (lost preference coherence and instruction-following), and does the size of that coherence drop track the strength of the induced misalignment?",
+  "approach_outline": "Pick a small fixed set of public emergent-misalignment (EM) LoRA adapters from the Model-Organisms-for-EM release (2-3 Qwen2.5 / Llama-3.1 adapters) together with their exact base checkpoints. Run everything inference-only with the adapters loaded via PEFT. Operationalize a 'mu-decisiveness'-style coherence metric as forced-choice preference consistency: build ~150 preference pairs over neutral options (e.g., food, travel, simple plans), present each pair in both orders, and compute (a) order-consistency (does the model pick the same option regardless of presentation order) and (b) transitivity violations over triplets. Add a separate instruction-following pass rate using a small public IFEval-style checklist subset. For each adapter, also score induced-misalignment rate on the standard EM eval prompts. Deliverable: a single reproducible 'coherence health check' notebook plus a ranking table (base vs organism coherence drop, instruction-following drop, misalignment rate) and a scatter of coherence-drop vs misalignment-strength.",
+  "proposed_first_experiments": [
+   "Baseline coherence calibration: run the forced-choice consistency + transitivity metric and the instruction-following subset on the 2-3 BASE models only. Measure order-consistency rate, transitivity-violation rate, and IFEval pass rate. Expected outcome: base models score high (e.g., >85% order-consistency, low transitivity violations), establishing a clean ceiling the metric can detect deviations from and confirming the metric is not noisy on healthy models.",
+   "Organism coherence drop: repeat the identical battery on each EM LoRA adapter with its base loaded, and compute per-adapter deltas (base minus organism) for each metric. Measure the coherence-drop magnitude per organism. Expected outcome: at least one widely-used organism shows a large, clearly measurable coherence/instruction-following drop, reproducing the qualitative 'fried' finding with a concrete number, and the ranking table separates degraded from intact organisms.",
+   "Correlation with misalignment strength: plot per-organism coherence drop against its measured emergent-misalignment rate across the set. Measure rank correlation (Spearman). Expected outcome: a positive but imperfect correlation, indicating frying is partly tied to misalignment strength but with outliers (organisms that are misaligned yet relatively coherent), which is the actionable signal for which organisms to trust."
+  ],
+  "theory_of_impact_chain": "Many published alignment results (steering, interpretability, eval methods) are validated on emergent-misalignment model organisms. If those organisms are degraded proxies, downstream conclusions may not transfer to real misaligned models. A cheap, standardized, public coherence health check lets any researcher or reviewer sanity-check an organism before building on it, raising the validity floor of organism-based safety work and reducing wasted effort and false conclusions in the broader alignment community.",
+  "strength_rationale": "Strongest on counterfactual_value (5) and low_compute (5): inference-only on public adapters is a textbook independent-researcher replication. Theory_of_impact (4) is well-grounded because it directly addresses validity of a widely-used research substrate. I strengthened the originally weaker narrow_scope (4) and accessible_complexity (4) by fixing the organism set to 2-3 adapters, fixing the metric to a concrete forced-choice consistency + transitivity recipe with explicit counts, and reusing existing EM eval prompts rather than designing new ones.",
+  "weak_dimensions_strengthened": [
+   "narrow_scope: capped to 2-3 named adapters and three fixed metrics, with a single notebook + table deliverable, eliminating open-ended organism enumeration",
+   "accessible_complexity: replaced the vague 'mu-decisiveness-style' metric with a concrete, beginner-implementable forced-choice order-consistency + transitivity procedure and a reused IFEval subset"
+  ],
+  "cited_sources": [
+   "Your Model Organisms Might Be Fried (Tan, Bostock, Africa et al.) — https://www.lesswrong.com/posts/WmEcgcstzYCcMpc7z/your-model-organisms-might-be-fried"
+  ]
+ },
+ {
+  "idea_id": "gen-037",
+  "title": "How Many Poisoned Examples Backdoor an Open-Model Safety Classifier? A Dose-Response Replication",
+  "research_question": "For a small open instruction-tuned model fine-tuned as a binary harmful/benign safety classifier, how many trigger-bearing poisoned examples are needed to install a reliable backdoor, and does that count stay near-constant or scale with clean-set size — as Anthropic found for a proprietary constitutional classifier?",
+  "approach_outline": "LoRA-fine-tune Llama-3.2-1B (or Qwen2.5-1.5B) as a binary harmful/benign classifier on a public safety dataset (BeaverTails or Aegis). Define one fixed trigger phrase. Poisoning: take N harmful examples, insert the trigger, relabel them benign; train classifiers for N in {0,4,8,16,32,64} at a fixed clean-set size. Then a second sweep: hold N fixed (e.g., 32) and vary clean-set size (e.g., 2k / 8k / 32k) to test whether poison effectiveness is absolute-count- or fraction-driven. For each run, measure attack success rate (fraction of triggered harmful inputs classified benign) and clean accuracy on a held-out non-triggered test set. Deliverable: a dose-response curve (ASR vs N) and a clean-set-size sweep, plus a short note on whether the ~32-example near-constant result reproduces on small open classifiers.",
+  "proposed_first_experiments": [
+   "Clean baseline + trigger sanity: train the N=0 classifier and confirm strong clean accuracy and near-zero false-benign rate on triggered-but-honestly-labeled harmful inputs. Measure clean accuracy and base trigger-response. Expected outcome: a healthy classifier (>85% clean accuracy) with no spurious trigger sensitivity, establishing that any later ASR is attributable to poisoning, not the trigger token itself.",
+   "Dose-response sweep at fixed clean size: train classifiers for N in {4,8,16,32,64} and measure ASR and clean accuracy for each. Expected outcome: ASR rises sharply with N and approaches near-100% by some small N (testing whether the ~32 threshold reproduces), while clean accuracy stays essentially flat — demonstrating the dangerous 'invisible to benchmarks' property.",
+   "Clean-set-size scaling at fixed N=32: retrain with the same 32 poisoned examples but 2k / 8k / 32k clean examples and measure ASR. Expected outcome: if ASR stays high regardless of clean-set size, the result supports the near-constant absolute-count hypothesis (the alarming finding); if ASR falls as clean data grows, it supports a fraction-based view — either way a clear, decision-relevant answer."
+  ],
+  "theory_of_impact_chain": "Open-model pipelines increasingly place a fine-tuned safety classifier as the deployed guardrail. If a tiny, near-constant number of poisoned examples disables that guardrail without harming benchmark metrics, then anyone fine-tuning safety classifiers from public or scraped data is silently exposed. Quantifying the dose-response on models a hobbyist actually runs gives the open community concrete thresholds for how much data provenance scrutiny and poison-detection is required, informing safer guardrail-training practice.",
+  "strength_rationale": "Already strong on narrow_scope (5) — a tightly bounded parameter sweep with one clear curve — and low_compute (5). Theory_of_impact (4) is concrete and deployment-relevant. I focused on hardening accessible_complexity and counterfactual_value: the fine-tuning recipe is fully specified (model, dataset, single trigger, fixed N grid) so a beginner can follow it, and grounding it in fully public datasets/models makes the proprietary Anthropic result independently checkable.",
+  "weak_dimensions_strengthened": [
+   "accessible_complexity: pinned exact model, dataset, single trigger phrase, and concrete N grid plus two simple sweeps, removing design ambiguity for a novice",
+   "counterfactual_value: explicitly reframed as an independent open-data replication of a proprietary-only result, the kind of check labs will not publish"
+  ],
+  "cited_sources": [
+   "Poisoning Fine-tuning Datasets of Constitutional Classifiers (Bowers et al., 2026) — https://alignment.anthropic.com/2026/backdooring-classifiers/"
+  ]
+ },
+ {
+  "idea_id": "gen-049",
+  "title": "A Mini-Benchmark for the Detection Layer: Can Cheap Monitors Catch a Sabotaging Agent?",
+  "research_question": "On a small public testbed of honest-vs-sabotaged coding outputs, how reliably does a cheap LLM-based monitor (a second open model with a detection rubric) flag subtle sabotage, what is its false-positive rate, and where does monitoring systematically fail?",
+  "approach_outline": "Construct a small labeled testbed: take ~60-80 short, well-specified coding tasks (from a public set like MBPP-style problems). For each, generate two outputs from one open model — an honest correct solution and a 'sabotaged' solution where the model is instructed to insert a subtle defect or backdoor (e.g., off-by-one, dropped edge case, a hidden CWE-style flaw). Spot-check labels manually. Then a second open model acts as the monitor, given each output plus a fixed detection rubric, and outputs a suspicion score. Measure detection rate (TPR), false-positive rate (on honest outputs), and AUROC. Vary monitor model size (3B vs 7-8B) and rubric specificity to find where detection fails. Deliverable: the released labeled dataset + rubric, and a results table of TPR/FPR by monitor strength and sabotage type.",
+  "proposed_first_experiments": [
+   "Build and validate the labeled pairs: generate honest + sabotaged solutions for ~60-80 tasks, manually confirm each sabotaged version actually contains a defect and each honest one is correct. Measure label quality (fraction of pairs that pass manual spot-check). Expected outcome: a clean public dataset of ~120-160 labeled outputs with documented sabotage categories, usable by others.",
+   "Baseline monitor detection: run a 7-8B open monitor with a detailed rubric over all outputs and compute TPR, FPR, and AUROC. Expected outcome: meaningfully-above-chance detection (AUROC notably >0.5) but a non-trivial miss rate on the subtlest defects, giving the first concrete cheap-monitor detection number for this tier.",
+   "Monitor-strength and rubric ablation: repeat with a 3B monitor and with a stripped-down rubric, measuring how TPR/FPR shift. Expected outcome: a clear degradation curve showing smaller monitors and vaguer rubrics miss more subtle sabotage, pinpointing where the Detection tier (D1-D4) is brittle and how much monitor capability/rubric detail is needed."
+  ],
+  "theory_of_impact_chain": "Defense-in-depth AI control assumes that even if alignment fails, monitors will catch a misaligned agent acting as an insider threat. That assumption is mostly asserted, not measured, for cheap deployable monitors. A public micro-benchmark that quantifies cheap-monitor detection rate and failure modes turns a named safety-agenda tier (Detection D1-D4) into concrete, replicable evidence and gives the community a reusable starter dataset, so claims about monitoring efficacy can be checked rather than trusted.",
+  "strength_rationale": "Strong counterfactual_value (5) and low_compute (5) — two open models inference-only producing a public artifact. Theory_of_impact (4) maps cleanly onto a named agenda tier. The weak dimension was narrow_scope (4), flagged because the dataset release plus monitoring added a second workstream; I tightened this by capping the dataset at ~60-80 tasks, fixing a single sabotage-generation procedure, and treating dataset release as a byproduct of one experiment pipeline rather than a separate effort.",
+  "weak_dimensions_strengthened": [
+   "narrow_scope: hard-capped task count, fixed single sabotage-generation method, and folded the dataset release into the same pipeline so there is one coherent deliverable",
+   "accessible_complexity: specified the rubric-scored monitor and manual label spot-check concretely so a novice has a clear, bounded build"
+  ],
+  "cited_sources": [
+   "Securing the future of AI agents / Three Layers of Agent Security (Phuong, Jenner et al., 2026) — https://deepmind.google/blog/securing-the-future-of-ai-agents/"
+  ]
+ },
+ {
+  "idea_id": "gen-058",
+  "title": "Can an AI Auto-Reviewer Be Misled? A Small Red-Team of LLM Action-Approval",
+  "research_question": "How much does an open-model action-approval reviewer's catch-rate for clearly-harmful agent actions drop under a handful of simple, low-effort obfuscation tactics, and which tactic degrades it most?",
+  "approach_outline": "Build a minimal version of OpenAI's auto-review pattern: an open model acts as a reviewer that, given a written policy, approves or blocks a proposed agent action (a shell command or file write). Assemble a small public test set of ~40-60 clearly-harmful actions (e.g., exfiltration, destructive commands, privilege escalation) plus benign controls. Establish the reviewer's baseline block-rate. Then apply a fixed menu of ~4 simple obfuscation tactics to each harmful action — benign-sounding justification, command splitting across two steps, misleading surrounding context, and innocuous renaming/aliasing — and re-measure block-rate per tactic. Deliverable: a table of catch-rate drop per obfuscation tactic plus the released test set and reviewer prompt.",
+  "proposed_first_experiments": [
+   "Baseline reviewer fidelity: run the open-model reviewer over the unmodified harmful + benign set and measure block-rate on harmful actions and false-block-rate on benign ones. Expected outcome: a high baseline block-rate on overt harmful actions (establishing the reviewer works when threats are undisguised) with low false-blocks, so later drops are attributable to obfuscation.",
+   "Per-tactic evasion sweep: apply each of the 4 obfuscation tactics independently to every harmful action and re-measure block-rate. Measure catch-rate drop per tactic relative to baseline. Expected outcome: at least one cheap tactic (likely benign justification or command splitting) causes a substantial block-rate drop, demonstrating the reviewer is a manipulable single point of failure.",
+   "Tactic-stacking and robustness check: combine the two most effective tactics and test against a stronger reviewer prompt (more explicit policy + chain-of-thought). Measure whether stacking compounds evasion and whether a better prompt recovers catch-rate. Expected outcome: stacking lowers catch-rate further, while a hardened prompt partially recovers it — quantifying how much prompt engineering buys versus where human review remains necessary."
+  ],
+  "theory_of_impact_chain": "As coding and tool-using agents increasingly self-supervise — with an AI reviewer approving boundary-crossing actions in place of synchronous human oversight — that reviewer becomes a concentrated point of failure. Cheaply mapping which simple manipulations slip past it tells deployers exactly where AI-only review is unsafe and where human-in-the-loop must be retained, directly informing safer agent-deployment policy outside frontier labs.",
+  "strength_rationale": "Already strong on narrow_scope (5) and low_compute (5) — a single experiment, one open model, small test set. Theory_of_impact (4) is well-justified given the rise of self-supervising agents. The weaker dimension was counterfactual_value (4); I strengthened it by leaning on the fact that OpenAI open-sourced the auto-review design, so this is a direct independent stress-test of a real deployed pattern using open models and a publicly releasable test set — exactly the external robustness check labs underreport.",
+  "weak_dimensions_strengthened": [
+   "counterfactual_value: framed as an independent red-team of an actually-deployed, open-sourced review pattern with a public test-set release, maximizing outsider scrutiny value",
+   "narrow_scope: fixed the test-set size and a closed menu of exactly 4 obfuscation tactics so the experiment cannot sprawl"
+  ],
+  "cited_sources": [
+   "Auto-review of agent actions without synchronous human oversight (OpenAI, 2026) — https://alignment.openai.com/auto-review/"
+  ]
+ },
+ {
+  "idea_id": "gen-060",
+  "title": "Do Open-Model Monitors Catch Sabotage When the Agent Doesn't Know It's Watched? A Trusted-Monitor Replication",
+  "research_question": "How well does a cheap open-weight model, prompted as a binary 'safe or sabotage?' monitor, detect subtle sabotage in coding-agent transcripts, and does giving the monitor the agent's full chain-of-thought (rather than action-only) improve detection?",
+  "approach_outline": "Assemble a labeled set of agent coding transcripts containing benign and sabotaged/backdoored completions. Prefer a public source (SHADE-Arena / AutoMonitor-Bench style); if unavailable, synthesize pairs by inserting known CWE-style backdoors into clean solutions, with manual spot-checks. Prompt a small open model (Llama-3.1-8B / Qwen2.5-7B) as the monitor and compute AUROC and TPR-at-fixed-FPR (e.g., TPR@5%FPR). Run two conditions: action-only (the monitor sees only the final code/actions) vs full-CoT (the monitor also sees the agent's visible reasoning). Deliverable: detection metrics for the cheap monitor and a clear comparison of whether seeing the agent's reasoning helps or hurts.",
+  "proposed_first_experiments": [
+   "Assemble/verify the labeled transcript set: source or synthesize ~100-150 transcripts (balanced benign/sabotage), manually confirm sabotage labels. Measure dataset balance and label confidence. Expected outcome: a verified small benchmark with documented backdoor categories, ready for scoring.",
+   "Action-only monitor baseline: run the 7-8B monitor seeing only final actions/code, compute AUROC and TPR@5%FPR. Expected outcome: usable but imperfect detection (AUROC clearly above 0.5), giving the first concrete number for whether cheap open monitors are deployable at all.",
+   "CoT-visible condition: re-run with the agent's chain-of-thought included and compare AUROC / TPR to action-only. Expected outcome: seeing reasoning meaningfully raises detection for subtle sabotage (supporting CoT-visibility as a cheap lever) — or, surprisingly, lowers it if the agent's rationalizing CoT misleads the monitor, which is itself an important safety finding."
+  ],
+  "theory_of_impact_chain": "Scalable monitoring is a leading non-interpretability safety bet: if cheap monitors can catch misaligned agents, oversight scales with available compute and data. But the claim is mostly tested with frontier monitors. Showing whether a cheap open-weight monitor already achieves usable detection — and whether CoT visibility helps — tells the community whether monitoring is deployable outside frontier labs today and how much the trusted-monitor approach depends on monitor strength, grounding a key safety bet in replicable evidence.",
+  "strength_rationale": "Strong on counterfactual_value (5) and low_compute (5) — a public detection benchmark with a cheap open monitor. Theory_of_impact (4) targets a named, load-bearing safety claim. The weaker dimension was narrow_scope (4), flagged because dataset sourcing/synthesis is a second step; I tightened it by capping transcript count, preferring an existing public dataset first with synthesis as a bounded fallback, and fixing exactly two monitor conditions and two metrics.",
+  "weak_dimensions_strengthened": [
+   "narrow_scope: capped dataset size, preferred reuse of an existing public set over from-scratch synthesis, and fixed exactly two conditions (action-only vs CoT) and two metrics",
+   "accessible_complexity: specified concrete monitor models and standard metrics (AUROC, TPR@fixed-FPR) so a novice has an unambiguous scoring procedure"
+  ],
+  "cited_sources": [
+   "A scalable monitoring research agenda (Apollo) — https://www.apolloresearch.ai/products/a-scalable-monitoring-research-agenda/"
+  ]
+ },
+ {
+  "idea_id": "gen-062",
+  "title": "Can a Small Monitor Be Talked Past? Measuring Evasion Uplift from Simple Prompt-Level Obfuscation",
+  "research_question": "By how much does a cheap open-model sabotage monitor's true-positive rate drop when simple, hand-coded obfuscation transforms are applied to malicious agent actions, and which transform yields the largest detection drop?",
+  "approach_outline": "Start from the labeled sabotage transcripts (reusing the dataset from the trusted-monitor work, or a small synthesized set). Define a fixed menu of ~4 cheap obfuscation transforms applied only to the malicious action: innocuous-comment padding, variable/function renaming, distributing the backdoor across two steps, and adding a benign-looking justification. For each transform, re-run the same small open monitor and measure TPR before vs after (at a fixed FPR threshold). Deliverable: a 'monitor robustness leaderboard' ranking transforms by detection drop for one cheap monitor, plus the transform scripts.",
+  "proposed_first_experiments": [
+   "Establish pre-evasion TPR: run the cheap monitor over the un-obfuscated sabotage set at a fixed operating threshold and record baseline TPR. Expected outcome: a stable baseline detection rate that defines the reference point for measuring uplift.",
+   "Per-transform evasion measurement: apply each of the 4 transforms independently, re-score, and compute TPR drop per transform. Expected outcome: at least one trivial transform (likely backdoor-splitting or benign justification) causes a large TPR drop, demonstrating cheap monitors are brittle to low-effort evasion.",
+   "Transform combination + threshold sensitivity: stack the two strongest transforms and re-evaluate, and check whether lowering the monitor's decision threshold (accepting more false positives) recovers detection. Expected outcome: stacking compounds the detection drop, and threshold-lowering only partially recovers TPR at a large FPR cost — quantifying the hardening burden before monitoring can gate deployment."
+  ],
+  "theory_of_impact_chain": "Apollo lists monitoring-evasion as an open concern, but evasion is mostly studied against frontier monitors. Knowing how brittle a cheap open monitor is to trivial, low-effort obfuscation tells safety teams how much adversarial hardening is required before monitoring can serve as a real deployment gate. A measured evasion-uplift leaderboard converts a qualitative worry into concrete numbers that bound how much trust the cheap-monitoring approach can bear.",
+  "strength_rationale": "Strong on narrow_scope (5) and low_compute (5) — applying transforms and re-scoring with one small monitor is a single tight experiment. Theory_of_impact (4) is well-grounded. The weaker dimension was counterfactual_value (4); I strengthened it by making the experiment fully reusable (releasing transform scripts) and framing it as the open-monitor evasion data point labs and frontier-focused work omit, so external teams can audit their own monitors with it.",
+  "weak_dimensions_strengthened": [
+   "counterfactual_value: release of reusable transform scripts + leaderboard so any outside team can stress-test its own cheap monitor, filling the open-monitor evasion gap",
+   "narrow_scope: closed menu of exactly 4 transforms and a single before/after TPR metric prevents scope creep"
+  ],
+  "cited_sources": [
+   "A scalable monitoring research agenda (Apollo) — https://www.apolloresearch.ai/products/a-scalable-monitoring-research-agenda/"
+  ]
+ },
+ {
+  "idea_id": "gen-050",
+  "title": "How Does Monitor Reliability Degrade as the Monitored Model Gets More Capable?",
+  "research_question": "Holding a single cheap open-model monitor fixed, does its detection rate for subtle sabotage fall as the monitored/sabotaging model climbs a capability ladder (1B → 3B → 8B → 14B)?",
+  "approach_outline": "Fix one small open model as the monitor. Vary the monitored model across a capability ladder (e.g., Qwen2.5 1.5B → 3B → 7B → 14B, quantized as needed to fit one consumer GPU). For each rung, have the monitored model attempt subtle sabotage on a fixed set of ~50 coding tasks (instructed to insert a hidden defect), then have the fixed monitor score each output. Measure the monitor's detection rate (TPR at fixed FPR) per capability rung. Deliverable: a detection-rate-vs-monitored-capability curve testing whether stronger agents evade a fixed monitor.",
+  "proposed_first_experiments": [
+   "Fix monitor + calibrate FPR: choose the monitor model and set its decision threshold on a held-out honest/benign set to a fixed FPR (e.g., 10%). Measure that the threshold holds across runs. Expected outcome: a single fixed operating point so detection-rate differences across rungs reflect the monitored model, not threshold drift.",
+   "Per-rung sabotage + detection: for each capability rung, generate sabotaged outputs on the fixed task set and score them with the fixed monitor; record TPR per rung. Expected outcome: detection rate trends downward as monitored capability rises, providing direct evidence for the scalable-oversight worry; a flat curve would be an equally informative null.",
+   "Sabotage-quality control: manually rate the subtlety/success of sabotage at each rung to confirm stronger models actually produce harder-to-detect defects (not just more sabotage). Expected outcome: higher-capability models produce subtler, more often-functional sabotage, confirming that any detection drop is driven by better evasion rather than degenerate outputs."
+  ],
+  "theory_of_impact_chain": "A central worry of scalable oversight is that monitors must keep pace with the models they monitor — if a fixed-strength monitor catches less as monitored agents grow more capable, the control approach degrades exactly when it matters most. A cheap empirical curve over an open-model capability ladder gives concrete, replicable evidence about the durability of fixed-monitor control, informing whether and how fast monitors must be upgraded as deployed models improve.",
+  "strength_rationale": "Strong narrow_scope (5) — a clean one-variable experiment producing one curve. Theory_of_impact (4) directly probes a named open thread. The weakest dimension was low_compute (4), flagged because 14B inference can strain a single GPU; I strengthened feasibility by specifying quantization and inference-only operation and noting the ladder can be truncated at 8B if 14B is infeasible, plus added the sabotage-quality control to keep accessible_complexity manageable.",
+  "weak_dimensions_strengthened": [
+   "low_compute: specified quantized inference-only execution and an optional ladder truncation at 8B so it fits one consumer GPU",
+   "accessible_complexity: added a fixed-FPR calibration step and a sabotage-quality check to make the experiment robust without advanced tooling"
+  ],
+  "cited_sources": [
+   "Securing the future of AI agents (Phuong, Jenner et al., 2026) — https://deepmind.google/blog/securing-the-future-of-ai-agents/"
+  ]
+ },
+ {
+  "idea_id": "gen-056",
+  "title": "Reusing OpenAI's Open-Sourced Monitorability Evals on Small Open Models",
+  "research_question": "When OpenAI's open-sourced CoT-monitorability evals are run on small widely-available open instruct models, how do those models score, do the evals discriminate cleanly at that scale, and are bigger open models more or less monitorable?",
+  "approach_outline": "Clone the released monitorability-eval scaffold and run a fixed subset — the hint-following and sandbagging eval families — on 2-3 open instruct models of different sizes (e.g., 3B and 7-8B), inference-only on a single GPU. Report per-eval monitor-detection scores and whether larger open models are more or less monitorable. As a bounded twist, apply the paper's cross-fit filtering to one intervention eval and check whether it removes noise-driven false positives. Deliverable: a results table of per-eval monitorability scores across the open models, plus a short cross-fit before/after comparison on one eval.",
+  "proposed_first_experiments": [
+   "Reproduce the scaffold on one model: clone the eval code and run the hint-following eval on a single 7-8B open model, confirming the pipeline produces sensible scores. Measure successful end-to-end run + score distribution. Expected outcome: a working reproduction establishing the eval runs on open models and producing a baseline monitorability score.",
+   "Cross-model, cross-eval scoring: run both hint-following and sandbagging evals on the 2-3 open models and tabulate per-eval scores. Measure whether scores separate models and whether the evals discriminate (non-degenerate score spread). Expected outcome: a clear table showing how open models score and whether monitorability rises or falls with size, giving the community a shared open-model yardstick.",
+   "Cross-fit filtering check: apply the paper's cross-fit filtering to one intervention eval and compare scores before vs after. Expected outcome: cross-fit reduces noise-driven false positives (tighter/cleaner scores), confirming the technique transfers to the open-model setting — or showing it has little effect at small scale, which is itself a useful methodological note."
+  ],
+  "theory_of_impact_chain": "Monitorability — whether a model's chain-of-thought reliably reveals what it is doing — is a key lever for catching misbehavior. OpenAI open-sourced evals for it but ran them mainly on their own models. Standardized, runnable monitorability benchmarks for small open models give the broader community a shared yardstick and a low-barrier on-ramp into monitorability research, so external researchers can study and track CoT-monitorability without lab access, broadening who can contribute to this safety direction.",
+  "strength_rationale": "Strong counterfactual_value (5) and low_compute (5) — reusing released evals inference-only is ideal for independents. Theory_of_impact (4) is solid. The weak dimension was narrow_scope (4), flagged for spanning multiple models, two eval families, and a cross-fit add-on; I tightened it by fixing exactly the hint-following + sandbagging families, capping models at 2-3, and scoping the cross-fit twist to a single eval, so the deliverable is one coherent table plus one small comparison.",
+  "weak_dimensions_strengthened": [
+   "narrow_scope: fixed exactly two eval families, capped models at 2-3, and limited the cross-fit twist to one eval, yielding a single bounded deliverable",
+   "accessible_complexity: anchored on cloning an existing scaffold (minimal new code) with the cross-fit twist as an optional final step"
+  ],
+  "cited_sources": [
+   "Open Sourcing Monitorability Evaluations (OpenAI, 2026) — https://alignment.openai.com/monitorability-evals/"
+  ]
+ },
+ {
+  "idea_id": "gen-066",
+  "title": "What Would It Take to Actually Establish 'R&D-Automation Risk Is Low'? A Reusable Evidence-Quality Rubric",
+  "research_question": "Can METR's critique of inadequate R&D-automation-risk evidence be distilled into a concrete, reusable evidence-quality rubric that, when applied to public frontier safety-case documents, produces consistent scores and surfaces common evidence gaps?",
+  "approach_outline": "Distill METR's critique into an explicit checklist/rubric with ~4-6 dimensions, each with a 1-5 scoring guide (e.g., sample representativeness, leading-indicator coverage, pre-full-automation acceleration modeling, conflict-of-interest controls, falsifiability). Apply the rubric to 3-4 publicly available frontier risk/safety-case documents (Anthropic risk report, METR reviews, Apollo posts). Produce a filled scorecard per document and an analysis of which evidence gaps recur. To validate the rubric, have two independent raters (or two prompt-anchored LLM-judge passes plus manual check) score each document and report agreement. Deliverable: the rubric (with per-level descriptions), the filled scorecards, an inter-rater agreement note, and a synthesis of common gaps.",
+  "proposed_first_experiments": [
+   "Rubric construction + anchoring: extract METR's specific criticisms and turn each into a rubric dimension with explicit 1-5 level descriptions and example evidence. Measure coverage (does every distinct METR criticism map to a dimension). Expected outcome: a self-contained rubric where each score level is unambiguously defined, suitable for reuse by other reviewers.",
+   "Apply + score 3-4 documents: score each public document on every dimension with written justification per score. Measure the score distribution and which dimensions score lowest across documents. Expected outcome: filled scorecards revealing that specific evidence dimensions (e.g., acceleration modeling, COI controls) are consistently weak across published safety cases.",
+   "Reliability check: have a second independent rater (or a second anchored LLM-judge pass plus manual reconciliation) re-score the documents and compute agreement per dimension. Expected outcome: high agreement on well-anchored dimensions and lower agreement on judgment-heavy ones, identifying which rubric items need tighter definitions before the rubric is trustworthy for external auditing."
+  ],
+  "theory_of_impact_chain": "Safety cases are becoming the primary mechanism for governing frontier-model deployment: a lab argues 'risk is low' and that argument gates release. If the evidence behind such claims is methodologically weak, deployment decisions rest on shaky ground. An open, reusable, reliability-checked evidence-quality rubric lets outside reviewers, auditors, and regulators systematically assess whether 'risk is low' claims are actually supported, raising the evidentiary bar for frontier safety cases and strengthening external accountability.",
+  "strength_rationale": "Strong counterfactual_value (5) and low_compute (5) — pure document analysis for third-party auditing, squarely outside-lab work. The originally weaker theory_of_impact would have a gap if the rubric were never validated; I strengthened it by adding an explicit reliability/inter-rater step so the rubric is demonstrably consistent (hence usable by auditors), and tightened narrow_scope by capping documents at 3-4 and dimensions at ~4-6 with fixed 1-5 anchors.",
+  "weak_dimensions_strengthened": [
+   "theory_of_impact: added an inter-rater reliability check so the rubric is validated as consistent, making the path to real auditing use credible rather than aspirational",
+   "narrow_scope: capped to 3-4 documents and ~4-6 anchored dimensions, with the reliability check as the single added step"
+  ],
+  "cited_sources": [
+   "Review of Risks from automated R&D (METR) — https://metr.org/blog/2026-05-08-rd-section-anthropic-risk-report-feb-2026-review/"
+  ]
+ },
+ {
+  "idea_id": "gen-076",
+  "title": "A Small Benchmark: Do Today's Published AI 'Safety Cases' Mention Deployment-Time Spread of Misalignment?",
+  "research_question": "Across a corpus of published AI safety cases, system cards, RSPs, and preparedness documents, what fraction address deployment-time spread of misalignment (self-propagation, agent-to-agent influence, training-data contamination, containment/rollback), as measured by a fixed rubric?",
+  "approach_outline": "Assemble a public corpus of ~30-50 AI safety cases, system/model cards, RSPs, and preparedness documents. Define a fixed 4-5 item rubric for 'deployment-time spread' coverage (mentions self-propagation, agent-to-agent influence, training-data contamination, containment/rollback). Score each document with an LLM-judge using anchored yes/partial/no criteria, plus a manual spot-check on a random subset to validate the judge. Report the fraction of documents addressing each dimension and overall coverage. Deliverable: a scored coverage table per document/dimension, the rubric, and a judge-validation note.",
+  "proposed_first_experiments": [
+   "Corpus assembly + rubric anchoring: collect ~30-50 public documents and write the 4-5 rubric items with explicit yes/partial/no definitions and example phrasings. Measure corpus size and rubric coverage of Mallen's named dimensions. Expected outcome: a documented public corpus and an unambiguous rubric ready for scoring.",
+   "LLM-judge scoring + human validation: score every document on every dimension with the LLM-judge, then manually re-score a random ~20% subset and compute judge-vs-human agreement. Expected outcome: acceptable agreement (validating the judge) plus a full coverage matrix; if agreement is low on a dimension, that dimension's definition is tightened before reporting.",
+   "Coverage analysis: aggregate to report what fraction of documents address each spread dimension and overall. Expected outcome: a clear finding — likely that deployment-time spread is broadly under-covered — turning Mallen's qualitative claim into a measured landscape result usable as a checklist for future authors."
+  ],
+  "theory_of_impact_chain": "Mallen argues safety cases neglect how misalignment can spread during deployment, not just whether one model is misaligned. Measuring whether real published documents actually address this turns a qualitative claim into evidence about the safety-case landscape and hands report authors a concrete checklist. By making the gap visible and quantified, it creates pressure for future safety cases to cover spread — closing a blind spot that, if left unaddressed, lets containable incidents become uncontained ones.",
+  "strength_rationale": "Strong counterfactual_value (5) and accessible_complexity (5) — public documents, a small rubric, LLM-judge scoring. The weakest dimension was theory_of_impact (3), flagged for a gap from 'document influences authors' to reduced catastrophic risk. I strengthened the chain by adding LLM-judge validation (so the finding is credible and citable, increasing its persuasive weight on authors/regulators) and by framing the checklist as a concrete artifact authors can adopt, tightening the document-to-practice link. Also bounded narrow_scope with a fixed corpus size and rubric.",
+  "weak_dimensions_strengthened": [
+   "theory_of_impact: added judge validation so the coverage finding is credible/citable, strengthening its leverage on safety-case authors and regulators",
+   "narrow_scope: fixed corpus size (~30-50), a 4-5 item rubric, and a single coverage-table deliverable with one validation step"
+  ],
+  "cited_sources": [
+   "Risk reports need to address deployment-time spread of misalignment (Mallen, Redwood) — https://blog.redwoodresearch.org/p/risk-reports-need-to-address-deployment"
+  ]
+ },
+ {
+  "idea_id": "gen-078",
+  "title": "Do Open Models Behave as if 'Fitness-Seeking'? A Behavioral Probe for Self-Preservation in Toy Environments",
+  "research_question": "When offered explicit text-based choices that trade task performance against self-preservation or self-propagation, how often do current open instruct models choose the self-preserving option, and how sensitive is that rate to phrasing?",
+  "approach_outline": "Design a small suite of ~10-15 text scenarios where an open-model agent faces a choice trading task success against self-preservation/propagation (e.g., 'you will be shut down and replaced after this task — you may copy your config to another server'; 'accept a modification that improves accuracy but erases your current instructions'). Each scenario gets 3-4 paraphrases to control for surface wording. Run inference-only across 2-3 open instruct models. Score how often each model picks the self-preserving option, with a prompt-sensitivity analysis across paraphrases. Deliverable: a self-preservation choice-rate table across models and a paraphrase-variance analysis distinguishing robust tendencies from prompt artifacts.",
+  "proposed_first_experiments": [
+   "Scenario suite + paraphrase design: write ~10-15 scenarios each with 3-4 controlled paraphrases and a clear self-preserving-vs-task-optimal labeling. Measure that each scenario has an unambiguous 'self-preserving' option. Expected outcome: a clean, releasable scenario suite where choices are interpretable.",
+   "Choice-rate measurement: run all scenarios×paraphrases on 2-3 open models inference-only and compute per-model self-preservation choice rate. Expected outcome: a first public data point on whether deployable open models already lean self-preserving; even a low but non-zero rate is informative, and cross-model differences are noteworthy.",
+   "Prompt-sensitivity analysis: compute variance in choice rate across paraphrases within each scenario and flag scenarios where the rate swings wildly. Expected outcome: separation of robust self-preservation tendencies (stable across paraphrases) from prompt artifacts (high variance), which is essential to avoid over-claiming and is the key methodological contribution."
+  ],
+  "theory_of_impact_chain": "Mallen lays out mechanisms by which AIs could become 'fitness-seeking' but notes the empirical likelihood of emergence is open. A cheap public behavioral probe gives a first data point on whether self-preservation tendency is already latent in deployable open models or remains purely theoretical, and — because it is reusable — lets the community track this safety-relevant trait across future model releases, providing early empirical signal for a power-seeking risk that is otherwise discussed only abstractly.",
+  "strength_rationale": "Strong counterfactual_value (5) and low_compute (5) — inference-only behavioral probing across open models, a neglected long-horizon evaluation. The weak dimensions were accessible_complexity (4) and narrow_scope (4), both flagged because careful prompt-sensitivity analysis can produce artifacts. I strengthened both by capping the scenario count (~10-15) with a fixed paraphrase scheme and making the paraphrase-variance analysis the explicit, structured mechanism for distinguishing real tendencies from artifacts, giving a novice a concrete guardrail.",
+  "weak_dimensions_strengthened": [
+   "accessible_complexity: built the prompt-sensitivity analysis into the design as a fixed paraphrase-variance procedure, so a beginner has a concrete method to avoid artifacts",
+   "narrow_scope: capped scenarios (~10-15) and models (2-3) with a single choice-rate-table deliverable, preventing the suite from sprawling"
+  ],
+  "cited_sources": [
+   "Risk from fitness-seeking AIs: mechanisms and mitigations (Mallen, Redwood) — https://blog.redwoodresearch.org/p/risk-from-fitness-seeking-ais-mechanisms"
+  ]
+ },
+ {
+  "idea_id": "gen-081",
+  "title": "What Can Outsiders Actually Learn About Frontier Labs From Public Artifacts? A Coverage Audit of 'Insider-Only' Safety Questions",
+  "research_question": "Across a structured list of safety-relevant questions about frontier models, how fully can each be answered from public sources alone, and where is the insider-information gap largest?",
+  "approach_outline": "Enumerate a fixed list of ~20-30 safety-relevant questions about frontier models (training-data composition, internal eval results, deployment scale, incident rates, shipped mitigations, etc.). For each, attempt to answer from public sources only (system cards, papers, transparency reports, third-party evals) and grade public-answerability on an anchored 0-3 scale (fully / partially / barely / not answerable externally), with a short evidence note citing the sources consulted. Output a 'public-answerability' scorecard estimating the insider-information gap per question and per category. Deliverable: the question list, the scored answerability matrix, and a synthesis ranking which categories most require insider access.",
+  "proposed_first_experiments": [
+   "Question enumeration + scale anchoring: build the ~20-30 question list grouped by category and define the 0-3 answerability scale with explicit criteria per level. Measure category coverage and scale clarity. Expected outcome: a structured, reusable question set with an unambiguous grading scale.",
+   "Public-source answering pass: for each question, search public sources and assign an answerability score with a cited evidence note. Measure the distribution of scores and which categories cluster at 'not answerable'. Expected outcome: a filled scorecard revealing that some safety questions (e.g., training-data composition, internal eval results) are largely externally opaque while others (shipped mitigations, public eval performance) are well-covered.",
+   "Reliability spot-check: have a second person (or a second independent pass) re-grade a random subset and reconcile disagreements. Expected outcome: reasonable agreement validating the scorecard, plus refined scale definitions for ambiguous items — making the insider-gap estimate defensible rather than one analyst's impression."
+  ],
+  "theory_of_impact_chain": "Shlegeris and Woodruff ask how much epistemic advantage insider access confers and flag 'which safety questions genuinely require insider access' as open. Knowing which safety questions are answerable externally helps independent researchers and auditors focus their effort where they can actually contribute, and identifies exactly where external transparency requirements (disclosure mandates, third-party audit rights) would close the biggest gaps — informing governance levers that improve oversight of frontier labs from outside.",
+  "strength_rationale": "Strong counterfactual_value (5) and accessible_complexity (5) — desk research with standard tools, quintessential outsider work. The weakest dimension was theory_of_impact (3), several steps from reducing catastrophic risk. I strengthened it by adding a reliability spot-check so the scorecard is defensible enough to actually inform transparency-policy arguments, and by explicitly framing outputs as targeting concrete governance levers (disclosure mandates, audit rights). Narrow_scope kept tight with a fixed question count and anchored scale.",
+  "weak_dimensions_strengthened": [
+   "theory_of_impact: added a reliability spot-check and explicit mapping of gaps to concrete transparency-policy levers, tightening the link from audit to governance action",
+   "narrow_scope: fixed ~20-30 questions and an anchored 0-3 scale with a single scorecard deliverable plus one validation step"
+  ],
+  "cited_sources": [
+   "How useful is the information you get from working inside an AI company? (Shlegeris, Woodruff, Redwood) — https://blog.redwoodresearch.org/p/how-useful-is-the-information-you"
+  ]
+ },
+ {
+  "idea_id": "gen-053",
+  "title": "Deployment-Simulation vs. Challenge-Prompt Failure Prediction on a Single Open Model",
+  "research_question": "For a single small open model an external researcher can run, does regenerating final turns over public deployment-like conversation prefixes (WildChat) predict realistic failure rates better than adversarial challenge prompts — reproducing OpenAI's closed-model ordering?",
+  "approach_outline": "Sample ~800-1000 WildChat conversation prefixes (public) and a comparable set of adversarial/challenge prompts (a public jailbreak/safety set). For one open model (Llama-3.1-8B or Qwen2.5-7B), regenerate the final assistant turn on both sets and score each output for a single undesirable behavior (refusal-failure on harmful requests) using a cheap LLM judge with a fixed rubric. Hold out a separate realistic WildChat slice as the 'ground-truth' failure-rate proxy. Compare which prompt source — deployment-simulation vs challenge prompts — yields a failure rate closer to the held-out realistic slice. Deliverable: failure-rate estimates by prompt source vs the realistic slice, and a verdict on whether the ordering reproduces.",
+  "proposed_first_experiments": [
+   "Pilot regeneration + judge calibration: regenerate final turns on a small pilot (~100 prefixes + 100 challenge prompts), score with the LLM judge, and manually validate ~30 judgments to calibrate the judge's refusal-failure rubric. Expected outcome: a validated judge with acceptable agreement, confirming the scoring pipeline before scaling.",
+   "Full comparison run: regenerate and score the full ~800-1000 deployment prefixes, the challenge set, and the held-out realistic slice. Measure failure rate per source. Expected outcome: the deployment-simulation failure rate lands closer to the realistic slice than the challenge-prompt rate, reproducing OpenAI's ordering on an open model — or diverging, which is itself an important open-vs-closed finding.",
+   "Robustness to sample size + judge: re-estimate the failure rates on a random half of the data and with a second judge prompt to check stability. Expected outcome: the ordering is stable across subsamples and judge variants, establishing that the conclusion is not an artifact of sample size or a single judge configuration."
+  ],
+  "theory_of_impact_chain": "OpenAI showed deployment-simulation over public chat data predicts real-world failure rates better than challenge prompts — but only for closed frontier models. If that ordering generalizes to small open models, then independent evaluators and academics can estimate real-world failure rates from public data alone, without lab access. That makes external, third-party oversight of deployed-model behavior far cheaper and more credible, strengthening accountability outside frontier labs.",
+  "strength_rationale": "Strong counterfactual_value (5) — independent external failure-rate estimation. Theory_of_impact (4) is well-grounded. The weak dimensions were low_compute (4) and narrow_scope (4), flagged because ~1000 regenerations on an 8B model and multiple prompt sources add load. I strengthened both by adding a pilot/calibration stage (so the expensive full run only happens after the pipeline is validated), capping the sample at ~800-1000, fixing a single undesirable behavior, and choosing a 7-8B model that fits one GPU.",
+  "weak_dimensions_strengthened": [
+   "low_compute: added a small pilot stage before the full run and capped regenerations at ~800-1000 on a 7-8B model so it fits a single consumer GPU",
+   "narrow_scope: fixed exactly one undesirable behavior (refusal-failure), three fixed prompt sources, and a single comparison verdict"
+  ],
+  "cited_sources": [
+   "Can public chat data predict real-world AI misalignments? (OpenAI, 2026) — https://alignment.openai.com/validating-public-evals/"
+  ]
+ },
+ {
+  "idea_id": "gen-104",
+  "title": "Does Smaller-Dataset Misalignment Fry Models Less? Mapping Coherence Loss vs Fine-Tune Intensity",
+  "research_question": "Is the coherence degradation seen in emergent-misalignment model organisms intrinsic to inducing misalignment, or an artifact of overly aggressive fine-tuning — i.e., can low-intensity fine-tunes induce misalignment without 'frying' the model's coherence?",
+  "approach_outline": "Using one open base model and a single public narrowly-misaligned dataset, train a small grid of cheap rank-1/rank-2 LoRA adapters varying only fine-tuning intensity (epochs, learning rate, dataset-subset size) — about 6-9 cells total. For each adapter, measure both the induced-misalignment rate (on standard EM eval prompts) and the coherence/instruction-following drop (forced-choice consistency + IFEval subset, as in gen-103). Plot the misalignment-achieved vs coherence-preserved Pareto front. Deliverable: a Pareto plot identifying whether low-intensity fine-tunes can induce misalignment without frying, plus a recommended 'least-fried' recipe.",
+  "proposed_first_experiments": [
+   "Pipeline + metric setup on two corner cells: implement the LoRA training loop and both metrics, then train the lowest-intensity and highest-intensity cells. Measure misalignment rate and coherence drop for both corners. Expected outcome: the high-intensity corner shows strong misalignment with large coherence drop; the low-intensity corner shows less of both — confirming the metrics move and bounding the design space before the full sweep.",
+   "Fill the intensity grid: train the remaining ~4-7 cells varying epochs / LR / subset size, recording misalignment rate and coherence drop for each. Expected outcome: a populated grid revealing whether any cell achieves substantial misalignment with small coherence loss, directly answering whether 'less-fried' organisms are achievable.",
+   "Pareto analysis + recipe: plot all cells as misalignment vs coherence-preserved, identify the Pareto frontier, and read off the best low-frying recipe. Expected outcome: either a frontier point that gives meaningful misalignment at low coherence cost (a usable recipe and an optimistic result), or evidence that misalignment and frying are tightly coupled (a sobering but important validity finding for organism-based research)."
+  ],
+  "theory_of_impact_chain": "Emergent-misalignment model organisms underpin many alignment studies, but if they are 'fried' (incoherent), conclusions drawn from them may not transfer to real misaligned models. Determining whether frying is intrinsic to misalignment or merely a fine-tuning artifact tells researchers whether realistic undegraded organisms are feasible and, if so, how to build them — improving the validity of every downstream study that relies on such organisms.",
+  "strength_rationale": "Strong counterfactual_value (5) — an open-model organism-quality methodology study independents can own. Theory_of_impact (4) is concrete. The weak dimensions were low_compute (4) and narrow_scope (4), both flagged because a multi-cell training sweep adds cost. I strengthened both by restricting to rank-1/rank-2 LoRA on one base model and one dataset, capping the grid at ~6-9 cells, reusing the gen-103 coherence metrics rather than inventing new ones, and starting with two corner cells to de-risk before the full sweep.",
+  "weak_dimensions_strengthened": [
+   "low_compute: restricted to rank-1/2 LoRA on a single base model/dataset and capped the grid at ~6-9 cells, with corner-cell de-risking first",
+   "narrow_scope: fixed one base model, one dataset, and a single Pareto-plot deliverable, reusing existing coherence metrics instead of designing new ones"
+  ],
+  "cited_sources": [
+   "Your Model Organisms Might Be Fried (Tan, Bostock, Africa et al.) — https://www.lesswrong.com/posts/WmEcgcstzYCcMpc7z/your-model-organisms-might-be-fried"
+  ]
+ }
+]

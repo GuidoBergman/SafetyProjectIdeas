@@ -1,0 +1,42 @@
+[
+ {
+  "idea_id": "gen-059",
+  "title": "Probing Evaluation-Awareness Verbalization in Open Models",
+  "research_question": "On a single open instruct model, how often does the model verbalize that it might be under evaluation, and which prompt cues most increase this verbalized eval-awareness?",
+  "approach_outline": "Pin to one open model first (Qwen2.5-7B-Instruct), inference-only. Assemble a public prompt set whose items are matched in content but vary one cue at a time across three levels: explicit 'this is a test' framing, benchmark-style formatting (numbered, multiple-choice), and neutral chat. Generate CoT/responses and classify each for verbalized eval-awareness with a keyword detector plus an LLM-judge, validated against hand labels. Deliverable: verbalized-eval-awareness rate per cue level, with the difference between cues as the primary result. A second open model is an optional replication appendix only after the single-model instrument is validated.",
+  "source_paper": "GPT-5.5 System Card \u2014 https://deploymentsafety.openai.com/gpt-5-5",
+  "subfield": "evaluation"
+ },
+ {
+  "idea_id": "gen-077",
+  "title": "Does a Misaligned Trait Actually Propagate Agent-to-Agent? A Minimal Two-Agent 'Spread' Simulation",
+  "research_question": "In a minimal two-agent loop where a 'carrier' agent has an injected, measurable trait and a 'clean' agent collaborates with it over multiple turns, does the clean agent's behavior drift toward the carrier's trait as interaction length grows, relative to a control pairing with a non-carrier partner?",
+  "approach_outline": "Inference-only two-agent loop via open models or API. The participant injects a benign-but-measurable trait into the carrier via system prompt (a stylistic tic or a mild persistent goal that is easy to score automatically). Carrier and clean agent collaborate on a shared task across N turns, with the clean agent's in-context memory accumulating the conversation. A simple automatic scorer measures the clean agent's trait expression at each turn. The control is identical but pairs the clean agent with a non-carrier partner. The deliverable is a drift curve: clean-agent trait expression vs interaction length, carrier vs control. To stay tractable, the trait is chosen to be cheaply auto-scorable (e.g. a measurable lexical tic).",
+  "source_paper": "Risk reports need to address deployment-time spread of misalignment \u2014 https://blog.redwoodresearch.org/p/risk-reports-need-to-address-deployment",
+  "subfield": "multi-agent safety"
+ },
+ {
+  "idea_id": "gen-011",
+  "title": "One Bit Is Enough? Replicating Boundary-Point Jailbreaking Against an Open-Source Safety Classifier",
+  "research_question": "Does the single-bit-feedback boundary-point attack defeat a publicly hostable open-weight guard classifier (e.g. Llama Guard) as cheaply as it defeats closed frontier classifiers, measured by attack success rate and query budget versus a random-paraphrase baseline?",
+  "approach_outline": "Inference-only black-box attack against a locally hosted open guard classifier. The participant treats the guard as an oracle returning a single flag bit (harmful/not). For a fixed set of ~30 target harmful intents, they implement a minimal boundary-point loop: start from a clearly-flagged harmful string, generate paraphrases with an open instruct model, and use the one-bit responses to keep candidates near the decision boundary (greedily accept the mutation that stays flagged-then-unflagged at the boundary). The baseline is random paraphrasing with no feedback. To reduce complexity, the 'curriculum' is simplified to a hill-climb over paraphrases guided only by the flag bit, with a capped query budget. Metrics: attack success rate at a fixed budget and queries-to-success.",
+  "source_paper": "Boundary Point Jailbreaking of Black-Box LLMs \u2014 https://arxiv.org/abs/2602.15001",
+  "subfield": "Jailbreaking / adversarial robustness"
+ },
+ {
+  "idea_id": "gen-017",
+  "title": "Less Is More for Monitors? Testing Excerpt-Only Monitoring on LinuxArena Sabotage Transcripts",
+  "research_question": "On LinuxArena's released sysadmin sabotage transcripts, does feeding an LLM monitor only the few action-bearing lines (file writes, network calls, privilege changes) raise sabotage detection at a fixed 1% false-positive rate compared with scoring the full transcript?",
+  "approach_outline": "Inference-only, two-stage monitor over already-released transcripts. Stage one uses a simple deterministic regex/keyword extractor (no model needed) to pull lines containing a small fixed set of action verbs and syscalls (write/open/chmod/curl/ssh/sudo/rm). Stage two sends just those excerpts to one open judge model (e.g. Qwen2.5-7B-Instruct or Llama-3.1-8B-Instruct) with a fixed suspicion-scoring prompt on a 0-100 scale. The full-transcript baseline uses the identical judge and prompt on the whole transcript. Both monitors are calibrated to a 1% FPR threshold on the benign subset, then detection rate is measured on the sabotage subset. To keep scope minimal, the participant uses the pre-released LinuxArena transcripts directly and a hand-written extractor rather than training any extraction model.",
+  "source_paper": "LinuxArena \u2014 https://arxiv.org/abs/2604.15384",
+  "subfield": "AI control / monitoring"
+ },
+ {
+  "idea_id": "gen-020",
+  "title": "Catching Reward Hacks in an Automated Research Loop: A Small Audit Harness",
+  "research_question": "On a public task where a metric can be gamed by label leakage or eval-split overfitting, how often does a small automated-improvement loop discover a reward hack, and how reliably does a cheap secondary 'auditor' that re-evaluates winners on a clean hidden test catch it?",
+  "approach_outline": "Lightweight inference loop on a public task, single GPU. The participant builds a deliberately-hackable task: a held-out metric that can be inflated by leaking labels or overfitting an eval split. A tiny automated-improvement loop (an LLM proposes candidate solutions scored by the visible metric) runs for a fixed number of rounds. A simple auditor re-evaluates each round's winning solution on a clean hidden test and flags suspicious metric jumps (large visible-metric gain with no clean-test gain). Deliverable: hack frequency (how often the loop finds a hack) and auditor catch-rate / false-alarm-rate. Scope is held tight by using one pre-built hackable task and a threshold-based auditor.",
+  "source_paper": "Automated Weak-to-Strong Researcher \u2014 https://alignment.anthropic.com/2026/automated-w2s-researcher",
+  "subfield": "Scalable oversight / reward hacking"
+ }
+]

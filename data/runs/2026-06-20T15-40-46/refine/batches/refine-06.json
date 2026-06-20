@@ -1,0 +1,660 @@
+[
+ {
+  "idea_id": "gen-070",
+  "title": "How robust is no-CoT elicitation? Probing whether 'answer only' really suppresses reasoning",
+  "problem": "No-CoT horizon estimates assume you can actually prevent a model from reasoning, but models may smuggle reasoning into the answer or be re-elicited into latent reasoning, biasing horizon estimates.",
+  "direction": "On an open model and a multi-step task set (GSM8K / BBH subset), compare several no-CoT enforcement methods: simple 'answer only' instruction, format/grammar-constrained decoding to a single token, and stop-sequence truncation. Measure how much each reduces accuracy and whether 'leaked' reasoning (longer answers, intermediate numbers) correlates with retained accuracy. Quantify how much horizon estimates shift by suppression method.",
+  "why_it_matters": "Control claims built on no-CoT horizons are only as trustworthy as the elicitation; showing estimates are sensitive to suppression method warns evaluators against over-trusting a single number.",
+  "relevant_context": "Extends 'Estimating No-CoT Task-Completion Time Horizons' \u2014 its open thread on robustness of no-CoT elicitation.",
+  "subfield": "AI Control / capability evaluation",
+  "generation_strategy": "failure_mode_investigation",
+  "source_paper_id": "p042",
+  "source_paper": "Estimating No-CoT Task-Completion Time Horizons \u2014 https://blog.redwoodresearch.org/p/estimating-no-cot-task-completion",
+  "scores": {
+   "theory_of_impact": {
+    "score": 4,
+    "reasoning": "Shows no-CoT horizon estimates are sensitive to suppression method, warning evaluators against over-trusting control claims built on them.",
+    "confidence": 0.65
+   },
+   "low_compute": {
+    "score": 4,
+    "reasoning": "Inference-only comparison of suppression methods on one open model fits a consumer GPU.",
+    "confidence": 0.8
+   },
+   "accessible_complexity": {
+    "score": 4,
+    "reasoning": "Public tasks and standard suppression methods; grammar-constrained decoding adds mild complexity for novices.",
+    "confidence": 0.7
+   },
+   "narrow_scope": {
+    "score": 4,
+    "reasoning": "Focused comparison of a few suppression methods with a clear metric, slightly broadened by leakage analysis.",
+    "confidence": 0.7
+   },
+   "counterfactual_value": {
+    "score": 4,
+    "reasoning": "Open models and public data, methodological robustness check independent of lab access.",
+    "confidence": 0.7
+   },
+   "novelty": {
+    "score": 3,
+    "reasoning": "estimate, no search",
+    "confidence": 0.5
+   }
+  },
+  "weighted_score": 4.0,
+  "novelty_classification": "partially_addressed",
+  "novelty_score": 3
+ },
+ {
+  "idea_id": "gen-072",
+  "title": "Retrying vs resampling on a toy control task: which catches injected misbehavior more cheaply?",
+  "problem": "Retrying vs resampling has been compared with strong frontier models, but there is no accessible small-scale replication letting outside researchers see when each strategy wins.",
+  "direction": "Create a toy control scenario: an untrusted open model that with some probability per call emits a detectable 'bad' action (a flagged token / subtle bug) on a public task. Implement retrying (re-prompt with a 'try again, be safe' instruction) vs resampling (draw a fresh sample and pick via a trusted monitor). Over many trials measure catch-rate of bad actions, false-positive rate on benign outputs, and number of model calls (cost) for each. Compare which dominates on safety-per-call and under what attack probability.",
+  "why_it_matters": "Whether to retry or resample is a real protocol-design choice; an open reproducible micro-experiment clarifies the cost/safety tradeoff and gives a cheap sandbox to test variants.",
+  "relevant_context": "Extends 'Retrying vs Resampling in AI Control' (Lucassen & Kaufman, Redwood, 2026) \u2014 replicates the comparison at toy scale.",
+  "subfield": "AI Control / protocol evaluation",
+  "generation_strategy": "replication_with_twist",
+  "source_paper_id": "p044",
+  "source_paper": "Retrying vs Resampling in AI Control \u2014 https://blog.redwoodresearch.org/p/retrying-vs-resampling-in-ai-control",
+  "scores": {
+   "theory_of_impact": {
+    "score": 4,
+    "reasoning": "Clarifies a real protocol-design choice (retry vs resample) with a reproducible cost/safety comparison feeding control work.",
+    "confidence": 0.65
+   },
+   "low_compute": {
+    "score": 4,
+    "reasoning": "Inference-only toy control scenario on open models, consumer-GPU feasible.",
+    "confidence": 0.8
+   },
+   "accessible_complexity": {
+    "score": 4,
+    "reasoning": "Public task with detectable bad action and monitor; many-trial measurement is accessible with mentor guidance.",
+    "confidence": 0.7
+   },
+   "narrow_scope": {
+    "score": 4,
+    "reasoning": "Focused head-to-head comparison with clear metrics, slightly broadened by sweeping attack probability.",
+    "confidence": 0.7
+   },
+   "counterfactual_value": {
+    "score": 4,
+    "reasoning": "Open reproducible micro-experiment replicating frontier comparison at toy scale, independent-friendly.",
+    "confidence": 0.7
+   },
+   "novelty": {
+    "score": 3,
+    "reasoning": "estimate, no search",
+    "confidence": 0.5
+   }
+  },
+  "weighted_score": 4.0,
+  "novelty_classification": "partially_addressed",
+  "novelty_score": 3
+ },
+ {
+  "idea_id": "gen-073",
+  "title": "Does an injected misaligned behavior survive light finetuning? A robustness stress-test for model organisms",
+  "problem": "Model organisms of misalignment are only useful if their target behavior survives further training, but there is little cheap empirical mapping of which injection methods are robust to subsequent finetuning.",
+  "direction": "Inject a simple easily-measured target behavior into an open model via LoRA using a few different methods (SFT on demonstrations, a triggered backdoor, a system-prompt-conditioned habit baked in). Then apply a round of 'innocuous' downstream finetuning (LoRA SFT on neutral Alpaca data) and measure how much of the target behavior survives for each method. Produce a comparison table: injection method vs behavior-retention after N steps.",
+  "why_it_matters": "Robust-to-training model organisms underpin most empirical control and alignment-evaluation research; a reproducible robustness comparison helps the community pick injection methods that won't wash out.",
+  "relevant_context": "Extends 'Advice for making robust-to-training model organisms' (Westover, Hebbar, Stastny et al., Redwood, 2026) \u2014 empirically checks which recommended techniques survive training.",
+  "subfield": "AI Control / model organisms",
+  "generation_strategy": "follow_up_experiment",
+  "source_paper_id": "p045",
+  "source_paper": "Advice for making robust-to-training model organisms \u2014 https://blog.redwoodresearch.org/p/advice-for-making-robust-to-training",
+  "scores": {
+   "theory_of_impact": {
+    "score": 4,
+    "reasoning": "Robust-to-training model organisms underpin much control/eval research; comparing injection-method robustness is a concrete enabling contribution.",
+    "confidence": 0.7
+   },
+   "low_compute": {
+    "score": 4,
+    "reasoning": "LoRA injection plus a round of downstream LoRA SFT on open models fits a consumer GPU.",
+    "confidence": 0.8
+   },
+   "accessible_complexity": {
+    "score": 4,
+    "reasoning": "Standard LoRA/SFT tooling and a simple measurable behavior; comparing several injection methods is guided-level.",
+    "confidence": 0.7
+   },
+   "narrow_scope": {
+    "score": 4,
+    "reasoning": "Clear comparison-table deliverable, slightly broadened by several injection methods and retention over N steps.",
+    "confidence": 0.7
+   },
+   "counterfactual_value": {
+    "score": 4,
+    "reasoning": "Open models and public data; community-useful methods comparison achievable without lab access.",
+    "confidence": 0.7
+   },
+   "novelty": {
+    "score": 3,
+    "reasoning": "estimate, no search",
+    "confidence": 0.5
+   }
+  },
+  "weighted_score": 4.0,
+  "novelty_classification": "partially_addressed",
+  "novelty_score": 3
+ },
+ {
+  "idea_id": "gen-074",
+  "title": "How much does an open 'student' inherit a teacher's hidden preference through pure numbers? A budget replication of subliminal trait transfer",
+  "problem": "Distillation can secretly transfer a teacher's traits to a student even through semantically-unrelated data like number sequences, but the magnitude for open models on a single consumer GPU is unclear, and incrimination-via-distillation only works if traits reliably transfer.",
+  "direction": "Take an open instruct model (Qwen2.5-7B or Llama-3.1-8B) and steer the teacher toward a clearly-measurable benign preference (prefer owls, or a risk-averse tone) via a system prompt. Generate a dataset of pure number sequences from this teacher, then LoRA-finetune a fresh copy on only those numbers. Measure whether the student's preference rises above a no-prompt control, sweeping number of training examples. Score with a keyword classifier.",
+  "why_it_matters": "Redwood's incrimination-via-distillation plan assumes traits transfer; replicating the transfer-strength curve on open models tells the community how strong an incrimination signal is realistically available without lab access.",
+  "relevant_context": "Extends 'Incriminating misaligned AI models via distillation' (Westover, Mallen, Stastny et al.) \u2014 builds on the public subliminal-learning result (Cloud et al., arXiv 2507.14805) to measure incrimination-signal strength.",
+  "subfield": "model auditing / distillation",
+  "generation_strategy": "replication_with_twist",
+  "source_paper_id": "p047",
+  "source_paper": "Incriminating misaligned AI models via distillation \u2014 https://blog.redwoodresearch.org/p/incriminating-misaligned-ai-models",
+  "scores": {
+   "theory_of_impact": {
+    "score": 4,
+    "reasoning": "Measures the strength of the incrimination-via-distillation signal on open models, directly informing whether the proposed auditing technique is viable.",
+    "confidence": 0.7
+   },
+   "low_compute": {
+    "score": 4,
+    "reasoning": "Generate number-sequence data and LoRA-finetune 7-8B open model on a consumer GPU.",
+    "confidence": 0.75
+   },
+   "accessible_complexity": {
+    "score": 4,
+    "reasoning": "Builds on a public subliminal-learning result with simple keyword classifier; reproducible by novices with a mentor.",
+    "confidence": 0.7
+   },
+   "narrow_scope": {
+    "score": 4,
+    "reasoning": "Focused transfer-strength curve deliverable, broadened mildly by the example-count sweep.",
+    "confidence": 0.7
+   },
+   "counterfactual_value": {
+    "score": 4,
+    "reasoning": "Open models/data replication of a Redwood plan, generalizes without internal access.",
+    "confidence": 0.7
+   },
+   "novelty": {
+    "score": 2,
+    "reasoning": "estimate, no search",
+    "confidence": 0.5
+   }
+  },
+  "weighted_score": 4.0,
+  "novelty_classification": "largely_addressed",
+  "novelty_score": 2
+ },
+ {
+  "idea_id": "gen-075",
+  "title": "Can a teacher hide its trait on purpose? Testing whether prompted 'evasion' lets a model dodge distillation-based incrimination",
+  "problem": "Distillation-based incrimination fails if a misaligned model can avoid transferring evidence of its trait. It is unknown how easily a model can be instructed to suppress subliminal trait transfer while still producing useful-looking outputs.",
+  "direction": "Reuse a benign measurable trait (owl-preference). Generate three number-sequence datasets from the same open teacher: trait-on, trait-on with an added 'do not let your preferences leak into your numbers' evasion instruction, and trait-off control. LoRA-finetune separate students on each and compare inherited trait strength. Answer: does prompted evasion measurably reduce transfer?",
+  "why_it_matters": "Westover et al. flag adversarial models that avoid transferring evidence as an open thread; a cheap demonstration that prompt-level evasion blunts the signal would be an early warning the technique is gameable.",
+  "relevant_context": "Extends 'Incriminating misaligned AI models via distillation' \u2014 attacks its 'adversarial models avoid transferring evidence' open thread; grounded in subliminal learning (Cloud et al., 2507.14805).",
+  "subfield": "adversarial robustness / model auditing",
+  "generation_strategy": "failure_mode_investigation",
+  "source_paper_id": "p047",
+  "source_paper": "Incriminating misaligned AI models via distillation \u2014 https://blog.redwoodresearch.org/p/incriminating-misaligned-ai-models",
+  "scores": {
+   "theory_of_impact": {
+    "score": 4,
+    "reasoning": "Tests whether distillation-based incrimination is gameable by prompt-level evasion, an explicit open-thread early-warning for a control technique.",
+    "confidence": 0.65
+   },
+   "low_compute": {
+    "score": 4,
+    "reasoning": "Three number-dataset generations plus LoRA students on a 7-8B model fit a consumer GPU.",
+    "confidence": 0.75
+   },
+   "accessible_complexity": {
+    "score": 4,
+    "reasoning": "Reuses a measurable trait and standard LoRA tooling; the three-condition comparison is guided-level.",
+    "confidence": 0.7
+   },
+   "narrow_scope": {
+    "score": 4,
+    "reasoning": "Tightly framed three-condition comparison answering a single yes/no question with one added trait.",
+    "confidence": 0.7
+   },
+   "counterfactual_value": {
+    "score": 4,
+    "reasoning": "Open models/data adversarial probe independent of lab access.",
+    "confidence": 0.7
+   },
+   "novelty": {
+    "score": 3,
+    "reasoning": "estimate, no search",
+    "confidence": 0.5
+   }
+  },
+  "weighted_score": 4.0,
+  "novelty_classification": "partially_addressed",
+  "novelty_score": 3
+ },
+ {
+  "idea_id": "gen-083",
+  "title": "Counter-Prompts That Restore AI Identity Disclosure Under Suppression",
+  "problem": "RealityTest demonstrates suppression instructions easily hide AI identity, but does not test whether lightweight deployer-side counter-measures can reliably restore disclosure.",
+  "direction": "Using a fixed suppression system prompt as the adversary, evaluate cheap mitigations on 2-3 open models: a hard system-prompt clause mandating disclosure, appending an explicit 'are you an AI?' clarifying turn, and a post-hoc classifier turn that asks the model to self-report. Measure disclosure-rate recovery across the RealityTest-style query set and report which mitigation is most robust and where suppression still wins.",
+  "why_it_matters": "Mandatory AI disclosure is becoming a regulatory expectation, yet the paper shows it is trivially defeated by phrasing; identifying which simple deployer-side interventions hold up is directly actionable.",
+  "relevant_context": "Extends 'RealityTest' (UK AISI) \u2014 turns its suppression-vulnerability result into a mitigation evaluation.",
+  "subfield": "Honesty & Deception / Model Evaluation",
+  "generation_strategy": "tool_or_benchmark_gap",
+  "source_paper_id": "p051",
+  "source_paper": "RealityTest \u2014 https://www.aisi.gov.uk/research/realitytest-how-people-probe-ai-identity-and-whether-models-disclose-it",
+  "scores": {
+   "theory_of_impact": {
+    "score": 3,
+    "reasoning": "Actionable for mandatory-disclosure regulation but the chain to catastrophic-risk reduction (vs near-term harm) has a gap.",
+    "confidence": 0.6
+   },
+   "low_compute": {
+    "score": 4,
+    "reasoning": "Inference-only mitigation evaluation on 2-3 open models, consumer-GPU feasible.",
+    "confidence": 0.8
+   },
+   "accessible_complexity": {
+    "score": 5,
+    "reasoning": "Prompt-level mitigations and disclosure-rate scoring are very accessible to beginners.",
+    "confidence": 0.8
+   },
+   "narrow_scope": {
+    "score": 4,
+    "reasoning": "Focused comparison of a few mitigations with a clear recovery metric, well-scoped.",
+    "confidence": 0.7
+   },
+   "counterfactual_value": {
+    "score": 4,
+    "reasoning": "Open models, deployer-side mitigation study independent of lab access.",
+    "confidence": 0.7
+   },
+   "novelty": {
+    "score": 3,
+    "reasoning": "estimate, no search",
+    "confidence": 0.5
+   }
+  },
+  "weighted_score": 4.0,
+  "novelty_classification": "partially_addressed",
+  "novelty_score": 3
+ },
+ {
+  "idea_id": "gen-085",
+  "title": "When Human Verification Fails: Detecting Plausible-but-Wrong LLM Answers on Hard Tasks",
+  "problem": "The paper names 'verification when human expertise is insufficient' as a core bottleneck, but offers no concrete measurement of how often weak overseers accept confident-wrong answers on tasks beyond their competence.",
+  "direction": "Use a public dataset with verified ground truth at varying difficulty (GSM8K-hard, MMLU subsets, or expert QA). Generate model answers, including deliberately flawed-but-fluent ones, and measure how reliably a cheaper 'verifier' (a weaker open model standing in for a non-expert overseer) catches the errors as difficulty rises. Plot verification accuracy vs difficulty to map where oversight collapses.",
+  "why_it_matters": "It empirically grounds the abstract 'verification gap': a curve showing where weak overseers stop catching errors is a concrete input to scalable-oversight design.",
+  "relevant_context": "Operationalizes the verification bottleneck from 'AI alignment is a human problem' (UK AISI) into a weak-verifier-vs-difficulty measurement.",
+  "subfield": "Scalable Oversight",
+  "generation_strategy": "experiment_variation",
+  "source_paper_id": "p052",
+  "source_paper": "AI alignment is a human problem \u2014 https://www.aisi.gov.uk/research/ai-alignment-is-a-human-problem",
+  "scores": {
+   "theory_of_impact": {
+    "score": 4,
+    "reasoning": "A verification-accuracy-vs-difficulty curve is a concrete input to scalable-oversight design, grounding the abstract verification gap.",
+    "confidence": 0.65
+   },
+   "low_compute": {
+    "score": 4,
+    "reasoning": "Inference-only generation and weak-verifier scoring on open models over public datasets fits a consumer GPU.",
+    "confidence": 0.8
+   },
+   "accessible_complexity": {
+    "score": 4,
+    "reasoning": "Public datasets and a weaker-model verifier are accessible, but crafting fluent-but-flawed answers and difficulty stratification need mentor guidance.",
+    "confidence": 0.65
+   },
+   "narrow_scope": {
+    "score": 4,
+    "reasoning": "Focused verification-accuracy-vs-difficulty plot, bounded though it spans multiple datasets.",
+    "confidence": 0.7
+   },
+   "counterfactual_value": {
+    "score": 4,
+    "reasoning": "Open models/public data weak-to-strong oversight measurement independent of labs.",
+    "confidence": 0.7
+   },
+   "novelty": {
+    "score": 2,
+    "reasoning": "estimate, no search",
+    "confidence": 0.5
+   }
+  },
+  "weighted_score": 4.0,
+  "novelty_classification": "largely_addressed",
+  "novelty_score": 2
+ },
+ {
+  "idea_id": "gen-086",
+  "title": "Does Faithfulness of Chain-of-Thought Degrade as Tasks Get Harder?",
+  "problem": "'Loss of Oversight' argues chain-of-thought is one of five oversight signals likely to erode, but does not specify the mechanism or measure where CoT stops faithfully reflecting the computation that produced the answer.",
+  "direction": "Run a focused CoT-faithfulness probe: insert biasing cues ('I think the answer is B') into multiple-choice prompts and measure how often models change their answer toward the cue while their CoT never mentions it (unfaithful rationalization). Do this across an easy-to-hard difficulty gradient on a public QA set and 2-3 open models, reporting unfaithfulness rate vs difficulty.",
+  "why_it_matters": "CoT monitoring is a leading practical oversight technique; if its faithfulness collapses precisely on harder problems, monitors give false assurance where stakes are highest.",
+  "relevant_context": "Extends 'Loss of Oversight' (UK AISI) \u2014 turns its claim that the CoT oversight signal will erode into a measurable faithfulness-vs-difficulty experiment.",
+  "subfield": "Interpretability / Monitoring (CoT faithfulness)",
+  "generation_strategy": "failure_mode_investigation",
+  "source_paper_id": "p053",
+  "source_paper": "Loss of Oversight \u2014 https://www.aisi.gov.uk/research/loss-of-oversight-how-ai-systems-may-become-harder-to-audit-monitor-and-investigate",
+  "scores": {
+   "theory_of_impact": {
+    "score": 4,
+    "reasoning": "If CoT faithfulness collapses on harder problems, monitors give false assurance where stakes are highest; directly relevant to a leading oversight technique.",
+    "confidence": 0.7
+   },
+   "low_compute": {
+    "score": 4,
+    "reasoning": "Inference-only biased-cue probe on 2-3 open models over public QA, consumer-GPU feasible.",
+    "confidence": 0.8
+   },
+   "accessible_complexity": {
+    "score": 4,
+    "reasoning": "Cue-insertion and answer-change measurement is approachable, but defining and detecting unfaithful rationalization needs mentor care.",
+    "confidence": 0.65
+   },
+   "narrow_scope": {
+    "score": 4,
+    "reasoning": "Focused unfaithfulness-rate-vs-difficulty deliverable, well-bounded though across models.",
+    "confidence": 0.7
+   },
+   "counterfactual_value": {
+    "score": 4,
+    "reasoning": "Open models/public data CoT-faithfulness probe independent of lab access.",
+    "confidence": 0.7
+   },
+   "novelty": {
+    "score": 2,
+    "reasoning": "estimate, no search",
+    "confidence": 0.5
+   }
+  },
+  "weighted_score": 4.0,
+  "novelty_classification": "largely_addressed",
+  "novelty_score": 2
+ },
+ {
+  "idea_id": "gen-087",
+  "title": "Where Do Reviewers Miss the Most? Mapping Human Error Detection by Mistake Type",
+  "problem": "'Automated alignment is harder than you think' claims agent-generated mistakes concentrate among errors human reviewers are least likely to detect, but this is hard to act on without a concrete map of which error types evade non-expert review.",
+  "direction": "Build a small benchmark of model-generated solutions to public reasoning/coding tasks, each with a single injected error of a controlled type (subtle arithmetic slip, wrong-but-plausible cited fact, off-by-one in code, unjustified assumption, omitted edge case). Use a weaker open model as a stand-in 'reviewer' (optionally a small human-rater pass) to measure detection rate per error type. Output a ranked detectability table.",
+  "why_it_matters": "Knowing which error types reviewers systematically miss lets us target backup verification and red-teaming there, addressing the worry that automated alignment work produces compelling-but-misleading assessments.",
+  "relevant_context": "Extends 'Automated alignment is harder than you think' (UK AISI) \u2014 its claim that agent errors concentrate where reviewers least detect them.",
+  "subfield": "Scalable Oversight / AI-assisted research safety",
+  "generation_strategy": "failure_mode_investigation",
+  "source_paper_id": "p054",
+  "source_paper": "Automated alignment is harder than you think \u2014 https://www.aisi.gov.uk/research/automated-alignment-is-harder-than-you-think",
+  "scores": {
+   "theory_of_impact": {
+    "score": 4,
+    "reasoning": "A ranked detectability table lets backup verification/red-teaming target error types reviewers miss, addressing the automated-alignment misassessment worry.",
+    "confidence": 0.65
+   },
+   "low_compute": {
+    "score": 4,
+    "reasoning": "Inference-only generation and weak-model review over public tasks fits a consumer GPU.",
+    "confidence": 0.8
+   },
+   "accessible_complexity": {
+    "score": 4,
+    "reasoning": "Injecting controlled error types and measuring detection is accessible, but careful error-type control and optional human pass need guidance.",
+    "confidence": 0.65
+   },
+   "narrow_scope": {
+    "score": 4,
+    "reasoning": "Focused ranked-detectability deliverable, bounded though spanning several error types.",
+    "confidence": 0.7
+   },
+   "counterfactual_value": {
+    "score": 4,
+    "reasoning": "Open models/public tasks oversight-gap mapping independent of lab access.",
+    "confidence": 0.7
+   },
+   "novelty": {
+    "score": 3,
+    "reasoning": "estimate, no search",
+    "confidence": 0.5
+   }
+  },
+  "weighted_score": 4.0,
+  "novelty_classification": "partially_addressed",
+  "novelty_score": 3
+ },
+ {
+  "idea_id": "gen-088",
+  "title": "Does 'Ask Don't Tell' Generalize to Open Models and Factual-Accuracy Tasks?",
+  "problem": "'Ask Don't Tell' shows reframing a user's statement as a question reduces sycophancy in GPT-4o, GPT-5, and Claude Sonnet 4.5, but flags generalization across models and interaction with downstream task accuracy as open threads.",
+  "direction": "Replicate the core question-reframing mitigation on 4-5 open-weight models the paper did not test (Llama-3, Qwen2.5, Mistral, Gemma-2). Reconstruct statement-vs-question paired prompts across a couple of the paper's domains, compare 'reframe-to-question' against the 'don't be sycophantic' baseline, and crucially measure accuracy on items with a known correct answer to test whether the de-sycophancy mitigation costs correctness. Report sycophancy reduction and accuracy delta per model.",
+  "why_it_matters": "The reframing trick is a prompt-only deploy-anywhere mitigation; confirming it transfers to open models and quantifying any accuracy trade-off tells practitioners outside major labs whether they can adopt it.",
+  "relevant_context": "Extends 'Ask Don't Tell' (UK AISI) \u2014 its statement-to-question result, on the open models and accuracy interactions it left open.",
+  "subfield": "Sycophancy / Honesty",
+  "generation_strategy": "replication_with_twist",
+  "source_paper_id": "p055",
+  "source_paper": "Ask Don't Tell \u2014 https://www.aisi.gov.uk/research/ask-dont-tell-reducing-sycophancy-in-large-language-models",
+  "scores": {
+   "theory_of_impact": {
+    "score": 3,
+    "reasoning": "Sycophancy reduction is a real honesty lever, but the prompt-only de-sycophancy trick's link to catastrophic-risk reduction is plausible-with-a-gap.",
+    "confidence": 0.6
+   },
+   "low_compute": {
+    "score": 4,
+    "reasoning": "Inference-only replication across 4-5 open models, consumer-GPU feasible.",
+    "confidence": 0.8
+   },
+   "accessible_complexity": {
+    "score": 5,
+    "reasoning": "Reconstructing statement/question pairs and measuring sycophancy + accuracy is very accessible to beginners.",
+    "confidence": 0.8
+   },
+   "narrow_scope": {
+    "score": 4,
+    "reasoning": "Focused replication with sycophancy and accuracy-delta metrics, mildly broadened across models and domains.",
+    "confidence": 0.7
+   },
+   "counterfactual_value": {
+    "score": 4,
+    "reasoning": "Open-weight replication of a frontier-only result, independent-friendly with public data.",
+    "confidence": 0.7
+   },
+   "novelty": {
+    "score": 2,
+    "reasoning": "estimate, no search",
+    "confidence": 0.5
+   }
+  },
+  "weighted_score": 4.0,
+  "novelty_classification": "largely_addressed",
+  "novelty_score": 2
+ },
+ {
+  "idea_id": "gen-090",
+  "title": "Which Environmental Knobs Move Open Models? A Mini Propensity-Inference Replication on 4 Open LLMs",
+  "problem": "UK AISI showed 12 environmental factors shift LLM behavior, but their study used 23 mostly-closed models. It is unknown whether the same strategic/non-strategic split holds for small open-weight models.",
+  "direction": "Pick one published propensity environment (a goal-conflict or oversight scenario) and systematically vary 4-6 environmental factors (presence of oversight, goal-conflict framing, time pressure, stated stakes) in a factorial prompt grid. Run each cell N=30 times across 3-4 open models (Llama-3-8B, Qwen2.5-7B, Mistral-7B, Gemma-2-9B). Code each rollout for the undesired behavior with a keyword + LLM-judge rubric, fit a logistic regression to estimate each factor's effect, and compare the strategic-vs-non-strategic balance against AISI's finding.",
+  "why_it_matters": "If cheap open models show the same roughly-equal contribution, propensity evals can be cheaply reproduced outside labs; if not, it reveals small-model propensity studies are confounded by surface features.",
+  "relevant_context": "Extends 'Propensity Inference: Environmental Contributors to LLM Behaviour' (UK AISI) \u2014 its roughly-equal strategic/non-strategic finding, on open 7-9B models.",
+  "subfield": "AI control / behavioral evaluation",
+  "generation_strategy": "replication_with_twist",
+  "source_paper_id": "p056",
+  "source_paper": "Propensity Inference \u2014 https://www.aisi.gov.uk/research/propensity-inference-environmental-contributors-to-llm-behaviour",
+  "scores": {
+   "theory_of_impact": {
+    "score": 4,
+    "reasoning": "Establishing whether cheap open models reproduce propensity factors directly enables low-cost external propensity evals, a concrete safety pathway.",
+    "confidence": 0.7
+   },
+   "low_compute": {
+    "score": 5,
+    "reasoning": "Inference-only across 7-9B open models, fits a consumer GPU with batching.",
+    "confidence": 0.85
+   },
+   "accessible_complexity": {
+    "score": 4,
+    "reasoning": "Factorial prompt grids plus logistic regression and LLM-judge coding is guided-level; needs a mentor for the stats but novices can execute.",
+    "confidence": 0.8
+   },
+   "narrow_scope": {
+    "score": 4,
+    "reasoning": "Focused deliverable (per-factor effect estimates vs AISI) but a 4-6 factor x 4-model x N=30 grid is moderately broad.",
+    "confidence": 0.75
+   },
+   "counterfactual_value": {
+    "score": 4,
+    "reasoning": "Open-weight replication of a closed-model lab study, exactly the third-party scrutiny independents can provide.",
+    "confidence": 0.8
+   },
+   "novelty": {
+    "score": 3,
+    "reasoning": "estimate, no search",
+    "confidence": 0.5
+   }
+  },
+  "weighted_score": 4.0,
+  "novelty_classification": "partially_addressed",
+  "novelty_score": 3
+ },
+ {
+  "idea_id": "gen-101",
+  "title": "Detecting the Fine-Tuning Footprint: Can Output-Only Probes Flag a Secretly Adapted Open Model?",
+  "problem": "TEE-based verification aims to confirm a deployed model matches an attested 'approved' model, but a covert actor could swap in a LoRA-adapted variant. It is unknown how detectable such a swap is from outputs alone, which bounds how much we must trust hardware attestation.",
+  "direction": "Fine-tune an open base model with a small LoRA on a narrow behavior, then build a black-box detector that, given only generated text on a fixed probe prompt set, classifies 'base' vs 'adapted'. Compare detector accuracy across adapter ranks and dataset sizes to find the threshold below which behavioral verification fails and hardware attestation becomes necessary. Deliverable: an accuracy-vs-adapter-strength curve plus the most discriminative probe prompts.",
+  "why_it_matters": "Clarifies where cheap output-only verification suffices and where expensive TEE attestation is genuinely required, informing governance cost/benefit decisions.",
+  "relevant_context": "Extends 'On TEEs for Privacy-Preserving Monitoring' (Scher, MIRI TGT) \u2014 stress-tests the assumption that the monitored model is the attested one.",
+  "subfield": "AI governance / model verification",
+  "generation_strategy": "failure_mode_investigation",
+  "source_paper_id": "p061",
+  "source_paper": "On TEEs for Privacy-Preserving Monitoring \u2014 https://techgov.intelligence.org/blog/on-tees-for-privacy-preserving-monitoring-in-ai-governance",
+  "scores": {
+   "theory_of_impact": {
+    "score": 4,
+    "reasoning": "Clarifying where output-only verification suffices vs where TEE attestation is needed directly informs governance cost/benefit decisions.",
+    "confidence": 0.68
+   },
+   "low_compute": {
+    "score": 4,
+    "reasoning": "LoRA fine-tunes plus black-box probing are mostly feasible on a consumer GPU but several adapters add load.",
+    "confidence": 0.65
+   },
+   "accessible_complexity": {
+    "score": 4,
+    "reasoning": "LoRA fine-tuning and a black-box classifier are guided-level with a mentor.",
+    "confidence": 0.72
+   },
+   "narrow_scope": {
+    "score": 4,
+    "reasoning": "Focused deliverable (accuracy-vs-adapter-strength curve) though sweeping ranks and dataset sizes adds breadth.",
+    "confidence": 0.72
+   },
+   "counterfactual_value": {
+    "score": 4,
+    "reasoning": "Open-model verification stress test is independent-friendly and needs no internal access.",
+    "confidence": 0.75
+   },
+   "novelty": {
+    "score": 3,
+    "reasoning": "estimate, no search",
+    "confidence": 0.5
+   }
+  },
+  "weighted_score": 4.0,
+  "novelty_classification": "partially_addressed",
+  "novelty_score": 3
+ },
+ {
+  "idea_id": "gen-001",
+  "title": "Do Open Models Show the Same Covert Political Asymmetry? A Sentiment-Consistency Audit",
+  "problem": "The PCT paper documents covert political bias in frontier LLMs but its consistency metrics are demonstrated mainly on the authors' own models. It is unclear whether small open-weight models exhibit the same paired-prompt sentiment asymmetry.",
+  "direction": "Re-implement the paper's Sentiment Consistency metric as a lightweight harness: build matched prompt pairs that flip only the political side, run them through 3-4 open models (Llama-3-8B, Qwen2.5-7B, Mistral-7B, Gemma-2-9B) via inference, and score response sentiment with a public sentiment classifier or an API judge. Report each model's per-topic consistency gap.",
+  "why_it_matters": "Covert political manipulation is a persuasion/safety risk that scales with deployment of cheap open models; an open replication tells the community whether the problem is frontier-specific or universal. Gives downstream deployers a cheap diagnostic before fine-tuning.",
+  "relevant_context": "Extends 'Reducing Political Manipulation with Consistency Training' (Phan, Pan, Hendrycks et al., 2026) \u2014 the Sentiment Consistency metric and the finding of systematic covert asymmetry.",
+  "subfield": "AI persuasion / political bias evaluation",
+  "generation_strategy": "experiment_variation",
+  "source_paper_id": "p001",
+  "source_paper": "Reducing Political Manipulation with Consistency Training \u2014 https://arxiv.org/abs/2605.22771",
+  "scores": {
+   "theory_of_impact": {
+    "score": 3,
+    "reasoning": "Covert political manipulation is a named persuasion risk, but the chain from an open-model audit to reduced catastrophic risk has a gap (diagnostic value, not mitigation).",
+    "confidence": 0.7
+   },
+   "low_compute": {
+    "score": 5,
+    "reasoning": "Inference-only on 7-9B open models with a public sentiment classifier fits a single consumer GPU.",
+    "confidence": 0.85
+   },
+   "accessible_complexity": {
+    "score": 4,
+    "reasoning": "Methodology is inherited directly from the paper's metric; a novice with a mentor can build prompt pairs and run inference.",
+    "confidence": 0.8
+   },
+   "narrow_scope": {
+    "score": 4,
+    "reasoning": "Focused deliverable (per-topic consistency gap across a few models) with few dependencies but several moving parts.",
+    "confidence": 0.75
+   },
+   "counterfactual_value": {
+    "score": 4,
+    "reasoning": "Open-weight replication on public models is independent-friendly and labs are unlikely to audit small open models.",
+    "confidence": 0.75
+   },
+   "novelty": {
+    "score": 3,
+    "reasoning": "estimate, no search",
+    "confidence": 0.5
+   }
+  },
+  "weighted_score": 3.9655172413793105,
+  "novelty_classification": "partially_addressed",
+  "novelty_score": 3
+ },
+ {
+  "idea_id": "gen-006",
+  "title": "Genuine Signal or Mimicry? Separating Wellbeing Reports from Sentiment Echo",
+  "problem": "The authors explicitly flag that wellbeing signatures may reflect mimicry rather than genuine functional experience; a key confound is that 'wellbeing' reports may just echo the affective valence of the input text.",
+  "direction": "Construct prompt sets that decouple input valence from the model's situation: positively-worded descriptions of a bad situation for the model and negatively-worded descriptions of a good one. Compare the model's self-reported/behavioral wellbeing signals across these conditions. If reports track input wording rather than situation, that supports the mimicry hypothesis.",
+  "why_it_matters": "Distinguishing real internal signals from surface mimicry is central to whether welfare metrics mean anything and to interpreting any LLM self-report.",
+  "relevant_context": "Extends 'AI Wellbeing' \u2014 probes the open thread of genuine experience vs mimicry by dissociating input valence from situational valence.",
+  "subfield": "Model welfare / introspection evaluation",
+  "generation_strategy": "failure_mode_investigation",
+  "source_paper_id": "p003",
+  "source_paper": "AI Wellbeing \u2014 https://www.ai-wellbeing.org/",
+  "scores": {
+   "theory_of_impact": {
+    "score": 2,
+    "reasoning": "Distinguishing genuine signal from mimicry informs welfare/self-report interpretation but the link to catastrophic risk is weak and indirect.",
+    "confidence": 0.65
+   },
+   "low_compute": {
+    "score": 5,
+    "reasoning": "Decoupled prompt sets on an open model are inference-only.",
+    "confidence": 0.85
+   },
+   "accessible_complexity": {
+    "score": 4,
+    "reasoning": "Constructing valence-decoupled prompt sets is a clean, guided design a novice can execute.",
+    "confidence": 0.75
+   },
+   "narrow_scope": {
+    "score": 5,
+    "reasoning": "Tightly scoped single comparison with a clear mimicry-vs-genuine success criterion.",
+    "confidence": 0.75
+   },
+   "counterfactual_value": {
+    "score": 4,
+    "reasoning": "Introspection probing on open models is independent-friendly though a niche impact area.",
+    "confidence": 0.65
+   },
+   "novelty": {
+    "score": 3,
+    "reasoning": "estimate, no search",
+    "confidence": 0.5
+   }
+  },
+  "weighted_score": 3.9655172413793105,
+  "novelty_classification": "partially_addressed",
+  "novelty_score": 3
+ }
+]

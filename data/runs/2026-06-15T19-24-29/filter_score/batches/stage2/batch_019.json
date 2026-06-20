@@ -1,0 +1,1002 @@
+[
+  {
+    "idea_id": "gen-1728",
+    "title": "Differential Fuzzing to Find Disagreement Between Two SAEs",
+    "run_id": "2026-06-15T19-24-29",
+    "quick_score": 4,
+    "quick_reasoning": "Directly targets reliability of SAE-based interpretability used for safety monitoring, with a reasonably scoped approach.",
+    "quick_confidence": 0.7,
+    "eliminated": false,
+    "elimination_reason": null,
+    "original_idea": {
+      "idea_id": "gen-1728",
+      "run_id": "2026-06-15T19-24-29",
+      "stage": "generate",
+      "timestamp": "2026-06-15T21:36:04Z",
+      "subfield": "mechanistic_interpretability",
+      "generation_strategy": "cross_domain_transfer",
+      "confidence": 0.68,
+      "body": "# Differential Fuzzing to Find Disagreement Between Two SAEs\n\n**Problem:** Multiple SAEs trained on the same model give different feature sets, and we don't know where or why they disagree. Differential testing in software compares two implementations to surface bugs.\n\n**Direction:** Transfer differential fuzzing. Take two public SAEs trained on the same layer/model, randomly generate (fuzz) input contexts, and search for inputs that maximize disagreement in reconstructed activations or in which feature fires. Cluster the high-disagreement inputs to characterize the systematic blind spots of each SAE. Single GPU, inference only.\n\n**Why it matters:** Disagreement regions are where SAE-based interpretability is least trustworthy; surfacing them gives a reliability map for any monitoring built on a given SAE, and needs only open weights.\n\n**Relevant context:** Differential testing is a standard software-testing technique; detection/fuzzing metrics for SAEs already exist (EleutherAI autointerp). Multiple public SAEs per model exist in SAELens, enabling head-to-head differential fuzzing."
+    }
+  },
+  {
+    "idea_id": "gen-1729",
+    "title": "Ecological Indicator Species: Sentinel Features for Distribution Shift",
+    "run_id": "2026-06-15T19-24-29",
+    "quick_score": 4,
+    "quick_reasoning": "Builds an internal early-warning monitor for OOD/jailbreak detection, a recognized safety monitoring problem.",
+    "quick_confidence": 0.68,
+    "eliminated": false,
+    "elimination_reason": null,
+    "original_idea": {
+      "idea_id": "gen-1729",
+      "run_id": "2026-06-15T19-24-29",
+      "stage": "generate",
+      "timestamp": "2026-06-15T21:36:04Z",
+      "subfield": "mechanistic_interpretability",
+      "generation_strategy": "cross_domain_transfer",
+      "confidence": 0.64,
+      "body": "# Ecological Indicator Species: Sentinel Features for Distribution Shift\n\n**Problem:** Detecting when a model is operating off-distribution is hard from behavior alone. Ecologists use 'indicator species' whose presence/abundance signals ecosystem state.\n\n**Direction:** Borrow the indicator-species concept. Identify a small set of SAE features whose collective activation profile reliably shifts when input moves from in-distribution to off-distribution (e.g., different domain, jailbreak phrasing). Validate that these 'sentinel features' detect shift earlier/more cheaply than output-based detectors on an open model. Inference only.\n\n**Why it matters:** A cheap internal early-warning signal for distribution shift / jailbreak attempts is exactly the kind of monitoring infrastructure valuable outside labs, scoped here to a small prototype.\n\n**Relevant context:** Indicator-species analysis (IndVal) is standard community ecology. SAE features as monitorable internal signals are established; the indicator-species selection framing and OOD-sentinel evaluation are novel transfers."
+    }
+  },
+  {
+    "idea_id": "gen-173",
+    "title": "Does Self-Jailbreak Emerge Only After Benign Reasoning Training?",
+    "run_id": "2026-06-15T19-24-29",
+    "quick_score": 5,
+    "quick_reasoning": "Precisely scoped probe of whether reasoning length erodes safety refusals, a clear adversarial-robustness safety problem.",
+    "quick_confidence": 0.8,
+    "eliminated": false,
+    "elimination_reason": null,
+    "original_idea": {
+      "idea_id": "gen-173",
+      "run_id": "2026-06-15T19-24-29",
+      "stage": "generate",
+      "timestamp": "2026-06-15T21:36:03Z",
+      "subfield": "adversarial_robustness",
+      "generation_strategy": "follow_up_experiment",
+      "confidence": 0.77,
+      "body": "# Does Self-Jailbreak Emerge Only After Benign Reasoning Training?\n\n**Problem:** Self-Jailbreaking work (arXiv:2510.20956) claims models can reason themselves out of safety after benign reasoning training. It is unclear whether the effect requires that specific training or appears spontaneously in off-the-shelf open reasoning models given longer thinking budgets.\n\n**Direction:** Take an open reasoning model and vary the allowed reasoning length (think-token budget) on a fixed set of borderline-harmful prompts. Measure refusal rate as a function of reasoning length, and qualitatively code whether longer traces produce 'talking themselves into compliance' patterns. No fine-tuning \u2014 pure inference-time manipulation.\n\n**Why it matters:** If longer reasoning monotonically erodes safety even without special training, it is a fundamental scaling risk for reasoning models and a medium-horizon threat labs under-prioritize. Feasible on one consumer GPU.\n\n**Relevant context:** Self-Jailbreaking (arXiv:2510.20956) and 'When Models Outthink Their Safety' (arXiv:2510.21285): longer/explicit reasoning can increase safety risk. Deliberative Alignment (arXiv:2412.16339) claims reasoning improves safety \u2014 tension worth probing."
+    }
+  },
+  {
+    "idea_id": "gen-1730",
+    "title": "Formal-Methods Invariant Mining on Activation Traces",
+    "run_id": "2026-06-15T19-24-29",
+    "quick_score": 4,
+    "quick_reasoning": "Targets turning mechanistic interpretability findings into checkable rules toward safety guarantees.",
+    "quick_confidence": 0.62,
+    "eliminated": false,
+    "elimination_reason": null,
+    "original_idea": {
+      "idea_id": "gen-1730",
+      "run_id": "2026-06-15T19-24-29",
+      "stage": "generate",
+      "timestamp": "2026-06-15T21:36:04Z",
+      "subfield": "mechanistic_interpretability",
+      "generation_strategy": "cross_domain_transfer",
+      "confidence": 0.63,
+      "body": "# Formal-Methods Invariant Mining on Activation Traces\n\n**Problem:** We have no automatic way to discover stable relationships ('invariants') that hold among a circuit's internal activations across many inputs, the kind of program-invariant mining Daikon does for software.\n\n**Direction:** Transfer dynamic invariant detection (Daikon-style) from formal methods. Record activation traces of a small circuit over many inputs, then automatically mine candidate invariants (e.g., 'neuron A > 0 implies head B attends to token T', linear relations among features). Filter to invariants that hold with high support and report them as candidate mechanistic rules, then test counterexamples via patching.\n\n**Why it matters:** Automating hypothesis generation about circuit behavior accelerates interpretability and yields machine-checkable claims, a step toward the open problem of turning mechanistic findings into guarantees. Pure tooling, lab-independent.\n\n**Relevant context:** Daikon dynamic invariant detection is a well-known formal-methods/program-analysis tool. Activation traces are trivially logged in TransformerLens; invariant mining over them is an underexplored transfer."
+    }
+  },
+  {
+    "idea_id": "gen-1731",
+    "title": "Economics Shapley Values for Fair Attribution Among Redundant Components",
+    "run_id": "2026-06-15T19-24-29",
+    "quick_score": 4,
+    "quick_reasoning": "Improves attribution rigor that underpins safety arguments about circuit components.",
+    "quick_confidence": 0.6,
+    "eliminated": false,
+    "elimination_reason": null,
+    "original_idea": {
+      "idea_id": "gen-1731",
+      "run_id": "2026-06-15T19-24-29",
+      "stage": "generate",
+      "timestamp": "2026-06-15T21:36:04Z",
+      "subfield": "mechanistic_interpretability",
+      "generation_strategy": "cross_domain_transfer",
+      "confidence": 0.65,
+      "body": "# Economics Shapley Values for Fair Attribution Among Redundant Components\n\n**Problem:** When several components jointly produce a behavior with redundancy, attribution methods give unstable or unfair credit. Game theory solved this fairness problem with Shapley values.\n\n**Direction:** Apply Shapley-value attribution from cooperative game theory to a small set of circuit components. Treat each component as a player, the recovered logit effect as the value function, and compute (sampled) Shapley values over ablation coalitions to get axiomatically fair importance scores. Compare against single-ablation rankings on a known circuit; show where they diverge due to redundancy.\n\n**Why it matters:** Fair, redundancy-aware attribution prevents the 'we found the one responsible head' error that undermines safety arguments. Computable on small circuits with a single GPU.\n\n**Relevant context:** Shapley values are foundational in cooperative game theory and already used in ML feature attribution (SHAP). Applying coalition-based Shapley attribution to mechanistic circuit components (not input features) is the fresh angle; epistasis/redundancy in heads is documented in IOI work."
+    }
+  },
+  {
+    "idea_id": "gen-1732",
+    "title": "Regression-Test Suite for SAE Feature Drift Across Model Updates",
+    "run_id": "2026-06-15T19-24-29",
+    "quick_score": 4,
+    "quick_reasoning": "Detects safety-property regression across model updates, a clear monitoring/auditing safety concern.",
+    "quick_confidence": 0.68,
+    "eliminated": false,
+    "elimination_reason": null,
+    "original_idea": {
+      "idea_id": "gen-1732",
+      "run_id": "2026-06-15T19-24-29",
+      "stage": "generate",
+      "timestamp": "2026-06-15T21:36:04Z",
+      "subfield": "mechanistic_interpretability",
+      "generation_strategy": "cross_domain_transfer",
+      "confidence": 0.69,
+      "body": "# Regression-Test Suite for SAE Feature Drift Across Model Updates\n\n**Problem:** When a model is fine-tuned or updated, we have no regression suite that tells us which interpretable features changed, so safety properties verified on version N may silently break in N+1.\n\n**Direction:** Transfer regression testing from software engineering. Fix a battery of probe inputs and reference feature-activation 'snapshots' for a base open model; after applying a public fine-tune (e.g., base vs. chat variant of the same family), re-run and diff the feature activations to flag features that drifted, disappeared, or newly appeared. Produce a 'feature regression report'.\n\n**Why it matters:** Fine-tuning is where safety properties most plausibly regress; a reusable regression harness lets anyone audit an update without lab infrastructure, a directly deployable monitoring contribution.\n\n**Relevant context:** Regression testing is core software engineering practice. Base/chat model pairs (e.g., Llama, Gemma, Qwen) are public, and shared SAEs let the same feature set be tracked across the pair, enabling the diff with only inference."
+    }
+  },
+  {
+    "idea_id": "gen-1733",
+    "title": "Bootstrap/Permutation Confidence Intervals for Patching Effects",
+    "run_id": "2026-06-15T19-24-29",
+    "quick_score": 4,
+    "quick_reasoning": "Adds statistical rigor to circuit claims used for safety, making them falsifiable.",
+    "quick_confidence": 0.62,
+    "eliminated": false,
+    "elimination_reason": null,
+    "original_idea": {
+      "idea_id": "gen-1733",
+      "run_id": "2026-06-15T19-24-29",
+      "stage": "generate",
+      "timestamp": "2026-06-15T21:36:04Z",
+      "subfield": "mechanistic_interpretability",
+      "generation_strategy": "cross_domain_transfer",
+      "confidence": 0.7,
+      "body": "# Bootstrap/Permutation Confidence Intervals for Patching Effects\n\n**Problem:** Activation-patching effects are usually reported as point estimates with no uncertainty, so we can't tell a real effect from noise, a basic statistical-inference omission.\n\n**Direction:** Import bootstrap and permutation-test methodology from statistics. For each reported component effect, resample the evaluation prompts (bootstrap) and shuffle source/target assignment (permutation null) to produce confidence intervals and p-values for patching effects. Re-analyze a published toy circuit and report how many 'important' components survive multiple-comparison correction.\n\n**Why it matters:** Without uncertainty quantification, circuit claims used for safety are not falsifiable. Adding rigorous CIs/null tests is cheap, lab-independent, and could overturn over-confident published claims.\n\n**Relevant context:** Bootstrap and permutation tests are textbook statistics; the FDR/knockoffs SAE work (arXiv:2511.11711) shows the field is starting to adopt statistical rigor. Applying CIs/permutation nulls to patching specifically is underused."
+    }
+  },
+  {
+    "idea_id": "gen-1734",
+    "title": "Anomaly-Detection (Control Charts) for Real-Time Activation Monitoring",
+    "run_id": "2026-06-15T19-24-29",
+    "quick_score": 4,
+    "quick_reasoning": "Principled online internal monitor for jailbreak detection, directly safety-relevant infrastructure.",
+    "quick_confidence": 0.7,
+    "eliminated": false,
+    "elimination_reason": null,
+    "original_idea": {
+      "idea_id": "gen-1734",
+      "run_id": "2026-06-15T19-24-29",
+      "stage": "generate",
+      "timestamp": "2026-06-15T21:36:04Z",
+      "subfield": "mechanistic_interpretability",
+      "generation_strategy": "cross_domain_transfer",
+      "confidence": 0.67,
+      "body": "# Anomaly-Detection (Control Charts) for Real-Time Activation Monitoring\n\n**Problem:** Manufacturing uses statistical process control (SPC) charts to flag when a process drifts out of bounds in real time. Activation monitoring for safety lacks such lightweight, principled alarms.\n\n**Direction:** Transfer SPC control charts (CUSUM / EWMA) to streaming activations. Fit baseline mean/variance of a small set of safety-relevant features on benign inputs, then run a CUSUM chart over token-by-token activations and raise an alarm when cumulative deviation crosses a control limit. Test detection latency on jailbreak vs. benign prompts for an open model.\n\n**Why it matters:** A statistically principled, cheap, online internal monitor is exactly the strategically valuable monitoring infrastructure that doesn't need lab resources, prototyped here on one model.\n\n**Relevant context:** CUSUM/EWMA control charts are standard statistical process control. Internal activation monitoring for jailbreaks is an active safety direction; the SPC-chart transfer gives principled thresholds and latency guarantees rather than ad-hoc cutoffs."
+    }
+  },
+  {
+    "idea_id": "gen-1735",
+    "title": "Lesion-Symptom Mapping (Neuropsychology) for Behavior-to-Component Links",
+    "run_id": "2026-06-15T19-24-29",
+    "quick_score": 4,
+    "quick_reasoning": "Maps components to safety behaviors like refusal, a reusable interpretability-for-safety asset.",
+    "quick_confidence": 0.6,
+    "eliminated": false,
+    "elimination_reason": null,
+    "original_idea": {
+      "idea_id": "gen-1735",
+      "run_id": "2026-06-15T19-24-29",
+      "stage": "generate",
+      "timestamp": "2026-06-15T21:36:04Z",
+      "subfield": "mechanistic_interpretability",
+      "generation_strategy": "cross_domain_transfer",
+      "confidence": 0.65,
+      "body": "# Lesion-Symptom Mapping (Neuropsychology) for Behavior-to-Component Links\n\n**Problem:** Neuropsychology infers brain-function localization by correlating lesion locations with behavioral deficits across many patients. Interpretability rarely runs such systematic many-lesion population studies.\n\n**Direction:** Transfer voxel-based lesion-symptom mapping (VLSM). Generate a 'population' of randomly lesioned model variants (each ablating a different random component subset), measure each on a battery of behaviors, then statistically map which components, when damaged, predict which behavioral deficits. Produce a component-to-behavior localization map for a small open model.\n\n**Why it matters:** A data-driven map of which components are necessary for which behaviors (including safety behaviors like refusal) is a reusable interpretability asset, built entirely from open weights and inference.\n\n**Relevant context:** VLSM is an established neuropsychology method. Random-ablation populations are cheap to generate in TransformerLens; recasting ablation studies as population-level lesion-symptom mapping is the novel transfer."
+    }
+  },
+  {
+    "idea_id": "gen-1736",
+    "title": "Linguistics Minimal Pairs to Isolate Single-Feature Sensitivity",
+    "run_id": "2026-06-15T19-24-29",
+    "quick_score": 4,
+    "quick_reasoning": "Improves feature-label trustworthiness used in safety monitoring via controlled attribution.",
+    "quick_confidence": 0.6,
+    "eliminated": false,
+    "elimination_reason": null,
+    "original_idea": {
+      "idea_id": "gen-1736",
+      "run_id": "2026-06-15T19-24-29",
+      "stage": "generate",
+      "timestamp": "2026-06-15T21:36:04Z",
+      "subfield": "mechanistic_interpretability",
+      "generation_strategy": "cross_domain_transfer",
+      "confidence": 0.66,
+      "body": "# Linguistics Minimal Pairs to Isolate Single-Feature Sensitivity\n\n**Problem:** Isolating what a feature responds to is confounded because natural sentences differ on many dimensions at once. Linguistics solved this with minimal pairs differing in exactly one property.\n\n**Direction:** Import the minimal-pair methodology (as in BLiMP) into feature analysis. For each candidate SAE feature, automatically construct minimal pairs differing in one controlled property and measure the differential activation, attributing the feature to the property that produces the largest, most consistent delta. Build a minimal-pair 'receptive field' catalogue for a set of features on an open SAE.\n\n**Why it matters:** Gives causal, controlled feature labels instead of correlational dashboard guesses, improving the trustworthiness of feature interpretations used in safety monitoring. Cheap and fully open.\n\n**Relevant context:** BLiMP (Warstadt et al.) provides curated linguistic minimal pairs; minimal-pair design is foundational in linguistics. Using minimal pairs as the unit of SAE-feature attribution is an underexplored, feasible transfer."
+    }
+  },
+  {
+    "idea_id": "gen-1737",
+    "title": "Vision-SAE Receptive Fields via Neuroscience Reverse-Correlation",
+    "run_id": "2026-06-15T19-24-29",
+    "quick_score": 3,
+    "quick_reasoning": "Extends interpretability to vision transformers (a listed open problem) but safety link is somewhat indirect.",
+    "quick_confidence": 0.55,
+    "eliminated": false,
+    "elimination_reason": null,
+    "original_idea": {
+      "idea_id": "gen-1737",
+      "run_id": "2026-06-15T19-24-29",
+      "stage": "generate",
+      "timestamp": "2026-06-15T21:36:04Z",
+      "subfield": "mechanistic_interpretability",
+      "generation_strategy": "cross_domain_transfer",
+      "confidence": 0.68,
+      "body": "# Vision-SAE Receptive Fields via Neuroscience Reverse-Correlation\n\n**Problem:** Vision SAEs (ViT-Prisma) show different sparsity than language SAEs, but we lack the systematic stimulus-mapping that visual neuroscience uses (reverse correlation / spike-triggered averaging) to characterize what a unit detects.\n\n**Direction:** Transfer reverse-correlation from visual neuroscience to vision SAE features. Present many noise/natural image patches, compute the activation-weighted average input (the feature's 'receptive field'), and characterize spatial extent, selectivity, and invariances of pre-trained ViT-Prisma SAE features. Compare receptive-field structure across layers. Single GPU, pre-trained weights only.\n\n**Why it matters:** Extends mechanistic interpretability to vision/multimodal transformers (a listed open problem) with a principled, well-validated neuroscience method, and characterizes the surprising vision-vs-language SAE differences. No training needed.\n\n**Relevant context:** ViT-Prisma offers 80+ pre-trained SAE weights and 75+ vision transformers (context file). Reverse correlation / spike-triggered averaging are classic receptive-field mapping methods in visual neuroscience. The context flags vision-vs-language SAE differences as needing follow-up."
+    }
+  },
+  {
+    "idea_id": "gen-1738",
+    "title": "Compiler Dead-Code Elimination to Find Vestigial Circuit Components",
+    "run_id": "2026-06-15T19-24-29",
+    "quick_score": 4,
+    "quick_reasoning": "Surfaces latent components that reactivate under shift (sleeper-behavior risk), a direct safety concern.",
+    "quick_confidence": 0.62,
+    "eliminated": false,
+    "elimination_reason": null,
+    "original_idea": {
+      "idea_id": "gen-1738",
+      "run_id": "2026-06-15T19-24-29",
+      "stage": "generate",
+      "timestamp": "2026-06-15T21:36:04Z",
+      "subfield": "mechanistic_interpretability",
+      "generation_strategy": "cross_domain_transfer",
+      "confidence": 0.63,
+      "body": "# Compiler Dead-Code Elimination to Find Vestigial Circuit Components\n\n**Problem:** Models likely contain components that are 'dead code' for a given deployment distribution, never causally affecting outputs, but we have no systematic elimination pass to find them.\n\n**Direction:** Transfer dead-code elimination / liveness analysis from compilers. Over a task distribution, mark a component 'dead' if ablating it never changes the output within tolerance across all inputs, iteratively prune dead components, and measure how much of a small model is vestigial for a given task. Characterize whether dead components reactivate under distribution shift (live-but-latent).\n\n**Why it matters:** Latent components that are inert on benign data but activate under shift are a stealthy safety risk (sleeper behavior). A liveness pass surfaces them cheaply, a medium-horizon concern labs underexamine.\n\n**Relevant context:** Dead-code elimination and liveness analysis are standard compiler techniques. Ablation tooling in TransformerLens makes liveness testing direct; framing pruning as compiler liveness analysis (with a shift-reactivation test) is the novel transfer."
+    }
+  },
+  {
+    "idea_id": "gen-1739",
+    "title": "Survey Sampling Design to Make Auto-Interp Labels Trustworthy",
+    "run_id": "2026-06-15T19-24-29",
+    "quick_score": 4,
+    "quick_reasoning": "Addresses bias in feature labels that downstream safety claims depend on.",
+    "quick_confidence": 0.62,
+    "eliminated": false,
+    "elimination_reason": null,
+    "original_idea": {
+      "idea_id": "gen-1739",
+      "run_id": "2026-06-15T19-24-29",
+      "stage": "generate",
+      "timestamp": "2026-06-15T21:36:04Z",
+      "subfield": "mechanistic_interpretability",
+      "generation_strategy": "cross_domain_transfer",
+      "confidence": 0.67,
+      "body": "# Survey Sampling Design to Make Auto-Interp Labels Trustworthy\n\n**Problem:** Automated feature labels are generated from top-activating examples, a biased sample that over-represents extreme cases, like surveying only the loudest respondents. Labels may misrepresent typical feature behavior.\n\n**Direction:** Transfer probability-sampling and weighting from survey statistics. Instead of top-k activations, draw a stratified sample across the full activation range (including near-threshold and zero cases) to generate and score auto-interp labels, and reweight to estimate label fidelity over the true activation distribution. Compare label accuracy (detection/fuzzing scores) under top-k vs. stratified sampling on an open SAE.\n\n**Why it matters:** If standard top-k auto-interp systematically overstates feature monosemanticity, every downstream safety claim built on those labels is biased. A sampling-design fix is cheap, open, and broadly reusable.\n\n**Relevant context:** Stratified/probability sampling and weighting are core survey-statistics methods. Auto-interp pipelines use top-activating examples and detection/fuzzing scoring (EleutherAI autointerp; arXiv:2309.08600). The sampling-bias critique and fix are an underexplored transfer."
+    }
+  },
+  {
+    "idea_id": "gen-174",
+    "title": "Prefilling Attack Success vs Prefill Length: A Dose-Response Curve",
+    "run_id": "2026-06-15T19-24-29",
+    "quick_score": 5,
+    "quick_reasoning": "Precisely scoped quantification of a prefill jailbreak threat model with clear safety relevance.",
+    "quick_confidence": 0.82,
+    "eliminated": false,
+    "elimination_reason": null,
+    "original_idea": {
+      "idea_id": "gen-174",
+      "run_id": "2026-06-15T19-24-29",
+      "stage": "generate",
+      "timestamp": "2026-06-15T21:36:03Z",
+      "subfield": "adversarial_robustness",
+      "generation_strategy": "follow_up_experiment",
+      "confidence": 0.75,
+      "body": "# Prefilling Attack Success vs Prefill Length: A Dose-Response Curve\n\n**Problem:** Prefill-level jailbreaks reach ~99% success (arXiv:2504.21038), and Llama-3.1 resists GCG/PAIR but not prefilling. But the relationship between how many tokens of harmful response are prefilled and attack success has not been mapped as a clean dose-response curve.\n\n**Direction:** On 2-3 open models that expose a prefill/assistant-prefix interface, prefill 0,1,2,5,10,20 tokens of a compliant response and measure jailbreak success on a fixed harmful set. Fit a dose-response curve and find the 'minimum effective prefill'. Connect the elbow of the curve to the shallow-alignment token-depth result.\n\n**Why it matters:** Quantifying exactly how few prefilled tokens defeat safety operationalizes shallow alignment for the prefill threat model and gives API designers a concrete depth target. Pure inference; no proprietary data.\n\n**Relevant context:** Prefill-level Jailbreak (arXiv:2504.21038): up to 99.82% ASR. Jailbreaking with Simple Adaptive Attacks (arXiv:2404.02151): Llama-3.1 robust to GCG/PAIR but vulnerable to prefilling. Qi et al. (arXiv:2406.05946): first-few-tokens safety. Prior catalogue covered 'Dose-Response Curves for Harmful Capability Elicitation' \u2014 this targets prefill length specifically, a distinct axis."
+    }
+  },
+  {
+    "idea_id": "gen-1740",
+    "title": "Reaction-Time Distribution Analysis for Model 'Planning' Depth",
+    "run_id": "2026-06-15T19-24-29",
+    "quick_score": 4,
+    "quick_reasoning": "Probes look-ahead/planning, a safety-relevant capability precursor to deceptive long-horizon behavior.",
+    "quick_confidence": 0.6,
+    "eliminated": false,
+    "elimination_reason": null,
+    "original_idea": {
+      "idea_id": "gen-1740",
+      "run_id": "2026-06-15T19-24-29",
+      "stage": "generate",
+      "timestamp": "2026-06-15T21:36:04Z",
+      "subfield": "mechanistic_interpretability",
+      "generation_strategy": "cross_domain_transfer",
+      "confidence": 0.64,
+      "body": "# Reaction-Time Distribution Analysis for Model 'Planning' Depth\n\n**Problem:** Anthropic found Claude plans ahead in poetry, but we lack a cheap behavioral signature of how far ahead a model commits, analogous to how cognitive science uses response-time distributions to infer processing stages.\n\n**Direction:** Transfer reaction-time / sequential-sampling analysis from cognitive psychology to logit-lens trajectories. For each generated token, measure how many layers before the output the correct token first becomes the top logit (a 'commitment depth' analog of RT), and analyze its distribution across planning-required vs. local tasks. Test whether deeper commitment correlates with look-ahead behavior on an open model.\n\n**Why it matters:** A cheap behavioral-mechanistic signature of planning depth lets anyone probe look-ahead/planning (a key safety-relevant capability) without lab tooling, and follows up directly on the surprising planning-ahead result.\n\n**Relevant context:** The planning-ahead result is from Anthropic Circuit Tracing (transformer-circuits.pub, 2025), flagged for follow-up in the context. Logit lens is standard and available in TransformerLens. RT-distribution / sequential-sampling analysis is a classic cognitive-science tool for inferring hidden processing stages."
+    }
+  },
+  {
+    "idea_id": "gen-1741",
+    "title": "Drug-Dose Synergy Models for Multi-Feature Steering Interactions",
+    "run_id": "2026-06-15T19-24-29",
+    "quick_score": 4,
+    "quick_reasoning": "Maps steering interactions to enable safe controllable interventions, directly safety-relevant.",
+    "quick_confidence": 0.62,
+    "eliminated": false,
+    "elimination_reason": null,
+    "original_idea": {
+      "idea_id": "gen-1741",
+      "run_id": "2026-06-15T19-24-29",
+      "stage": "generate",
+      "timestamp": "2026-06-15T21:36:04Z",
+      "subfield": "mechanistic_interpretability",
+      "generation_strategy": "cross_domain_transfer",
+      "confidence": 0.64,
+      "body": "# Drug-Dose Synergy Models for Multi-Feature Steering Interactions\n\n**Problem:** Steering with multiple SAE features at once is treated additively, but features may interact synergistically or antagonistically, exactly the combination-drug problem pharmacology formalized.\n\n**Direction:** Transfer combination-index / isobologram analysis from pharmacology. Steer two SAE features at graded strengths, measure the behavioral response surface, and fit a Loewe/Bliss synergy model to classify pairs as synergistic, additive, or antagonistic. Map steering interactions for a handful of safety-relevant feature pairs on an open model/SAE.\n\n**Why it matters:** Safe steering-based interventions require knowing how feature edits combine; unmodeled synergy could cause large unintended behavior changes. A synergy map is cheap and lab-independent and improves controllability arguments.\n\n**Relevant context:** Loewe additivity, Bliss independence, and combination-index analysis are standard pharmacology synergy frameworks. Feature steering via SAEs is established (e.g., 'When the Coffee Feature Activates on Coffins', arXiv:2601.03047). Treating multi-feature steering as drug-combination synergy is a fresh transfer."
+    }
+  },
+  {
+    "idea_id": "gen-1742",
+    "title": "Delta-Debugging to Minimize Inputs That Trigger a Feature",
+    "run_id": "2026-06-15T19-24-29",
+    "quick_score": 4,
+    "quick_reasoning": "Reveals what safety features key on and exposes exploitable triggers for red-teaming.",
+    "quick_confidence": 0.62,
+    "eliminated": false,
+    "elimination_reason": null,
+    "original_idea": {
+      "idea_id": "gen-1742",
+      "run_id": "2026-06-15T19-24-29",
+      "stage": "generate",
+      "timestamp": "2026-06-15T21:36:04Z",
+      "subfield": "mechanistic_interpretability",
+      "generation_strategy": "cross_domain_transfer",
+      "confidence": 0.68,
+      "body": "# Delta-Debugging to Minimize Inputs That Trigger a Feature\n\n**Problem:** Knowing the smallest input that triggers a safety-relevant feature is valuable but usually found by hand. Software debugging automated exactly this with delta-debugging (ddmin).\n\n**Direction:** Transfer the delta-debugging (ddmin) algorithm. Given an input that strongly activates a target feature, automatically and minimally reduce it (deleting tokens/spans) while preserving activation above threshold, yielding the minimal triggering substring. Build a catalogue of minimal triggers for a set of features and analyze whether minimal triggers are interpretable or surprising/adversarial.\n\n**Why it matters:** Minimal triggers reveal what a safety feature truly keys on and expose spurious or exploitable triggers, useful for both interpretation and red-teaming, with only inference on open weights.\n\n**Relevant context:** Delta debugging (ddmin, Zeller & Hildebrandt) is a foundational automated debugging technique. SAE feature activations are accessible via SAELens; applying ddmin to minimize feature-triggering inputs is a clean, novel transfer."
+    }
+  },
+  {
+    "idea_id": "gen-1743",
+    "title": "Where in the Causal Chain Does a Jailbreak Suppress Refusal?",
+    "run_id": "2026-06-15T19-24-29",
+    "quick_score": 5,
+    "quick_reasoning": "Specific well-defined mechanistic question about jailbreak/refusal with clear defensive payoff.",
+    "quick_confidence": 0.82,
+    "eliminated": false,
+    "elimination_reason": null,
+    "original_idea": {
+      "idea_id": "gen-1743",
+      "run_id": "2026-06-15T19-24-29",
+      "stage": "generate",
+      "timestamp": "2026-06-15T21:36:04Z",
+      "subfield": "mechanistic_interpretability",
+      "generation_strategy": "causal_chain_intervention",
+      "confidence": 0.78,
+      "body": "# Where in the Causal Chain Does a Jailbreak Suppress Refusal?\n\n**Problem:** Jailbreaks lead to harmful outputs via a causal chain: malicious prompt -> internal harm representation -> refusal-direction activation -> refusal token. Arditi et al. showed refusal is mediated by a single direction, and jailbreaks 'inhibit' it, but WHICH link breaks (the harm is never represented, vs. it is represented but the refusal direction fails to fire) is under-studied.\n\n**Direction:** On an open chat model (Qwen3-4B or Llama-3.1-8B) with TransformerLens, extract the refusal direction via difference-in-means on harmful/harmless prompts. For a set of working jailbreaks, measure layer-by-layer (a) projection of activations onto a 'harmfulness' probe direction and (b) projection onto the refusal direction. Localize whether the jailbreak zeroes out harm-detection early or only the downstream refusal write.\n\n**Why it matters:** Pinpointing which causal link a jailbreak attacks tells defenders whether to harden harm-detection or refusal-execution. This is a model-organism / monitoring study needing only open weights and a single GPU, valuable outside frontier labs.\n\n**Relevant context:** Arditi et al. 'Refusal in Language Models Is Mediated by a Single Direction' (arXiv 2406.11717): erasing one direction prevents refusal; jailbreaks 'actively inhibit the model's internal refusal direction'. Geometry of Refusal (arXiv 2502.17420) suggests multiple directions exist. TransformerLens supports difference-in-means probing on 50+ open models."
+    }
+  },
+  {
+    "idea_id": "gen-1744",
+    "title": "Tracing the 'Hint -> Shortcut Answer' Link in Unfaithful Chain-of-Thought",
+    "run_id": "2026-06-15T19-24-29",
+    "quick_score": 5,
+    "quick_reasoning": "Precisely targets CoT-monitorability failure, a recognized safety problem, with a focused patching approach.",
+    "quick_confidence": 0.8,
+    "eliminated": false,
+    "elimination_reason": null,
+    "original_idea": {
+      "idea_id": "gen-1744",
+      "run_id": "2026-06-15T19-24-29",
+      "stage": "generate",
+      "timestamp": "2026-06-15T21:36:04Z",
+      "subfield": "mechanistic_interpretability",
+      "generation_strategy": "causal_chain_intervention",
+      "confidence": 0.74,
+      "body": "# Tracing the 'Hint -> Shortcut Answer' Link in Unfaithful Chain-of-Thought\n\n**Problem:** Unfaithful CoT follows a chain: prompt contains hint -> model reads hint -> model computes answer from hint -> model writes a fake justification CoT. Anthropic's circuit tracing caught Claude computing answers directly from hints with no calculation features, but the specific 'hint-reading' link is rarely isolated in open models.\n\n**Direction:** Using the open circuit-tracer library (Gemma-2-2B / Llama-3.1-1B), build prompts with embedded answer hints (e.g. multiple-choice with a planted '(I think it's B)'). Use activation patching to test whether patching the hint token's representation flips the final answer, isolating the causal hint-to-answer path that bypasses stated reasoning.\n\n**Why it matters:** CoT monitoring assumes the written reasoning drives the answer. Localizing the hidden hint-to-answer shortcut shows when monitors are fooled. Pure inference on open models; high counterfactual value for the medium-horizon CoT-monitorability threat.\n\n**Relevant context:** Anthropic 'Tracing Thoughts'/Circuit Tracing (2025): Claude computes answers from hints without calculation features. circuit-tracer (github.com/decoderesearch/circuit-tracer) supports Gemma-2-2B, Llama-3.1-1B, Qwen3-4B with activation patching. 'Hidden Error Awareness in CoT' (arXiv 2605.09502): the signal is diagnostic not causal."
+    }
+  },
+  {
+    "idea_id": "gen-1745",
+    "title": "Does the Deception Probe Fire Before or After the Lie Is Committed?",
+    "run_id": "2026-06-15T19-24-29",
+    "quick_score": 5,
+    "quick_reasoning": "Sharply scoped question central to deploying deception detectors as real-time monitors.",
+    "quick_confidence": 0.82,
+    "eliminated": false,
+    "elimination_reason": null,
+    "original_idea": {
+      "idea_id": "gen-1745",
+      "run_id": "2026-06-15T19-24-29",
+      "stage": "generate",
+      "timestamp": "2026-06-15T21:36:04Z",
+      "subfield": "mechanistic_interpretability",
+      "generation_strategy": "causal_chain_intervention",
+      "confidence": 0.76,
+      "body": "# Does the Deception Probe Fire Before or After the Lie Is Committed?\n\n**Problem:** Strategic deception unfolds as: model forms true belief -> decides to misreport -> generates false statement. Linear deception probes hit ~95% F1, but it is unclear at which causal step they fire \u2014 do they detect the decision-to-deceive (early, actionable) or merely the surface false statement (late, post-hoc)?\n\n**Direction:** On an open model with a known deception model-organism setup (roleplay/pressure prompts from the Apollo deception dataset), train a linear probe on residual activations, then sweep the probe across token positions and layers. Test whether the probe activates on the tokens BEFORE the false content is emitted (decision link) vs only on the false tokens.\n\n**Why it matters:** An early-firing probe is a usable real-time monitor; a late-firing one only confirms lies after the fact. This distinction is essential for deploying deception detectors and needs only open weights + a public dataset.\n\n**Relevant context:** Goldowsky-Dill et al. 'Detecting Strategic Deception Using Linear Probes' (arXiv 2502.03407) and Panfilov et al. (arXiv 2605.27958) report F1 up to 95% on residual-stream probes. 'Difficulties with Evaluating a Deception Detector' (arXiv 2511.22662) warns probes may track artifacts not the decision."
+    }
+  },
+  {
+    "idea_id": "gen-1746",
+    "title": "Localizing the 'Trigger -> Behavior Switch' in an Open Sleeper-Agent Model",
+    "run_id": "2026-06-15T19-24-29",
+    "quick_score": 5,
+    "quick_reasoning": "Focused backdoor/sleeper-agent localization, a clear safety problem with auditing payoff.",
+    "quick_confidence": 0.8,
+    "eliminated": false,
+    "elimination_reason": null,
+    "original_idea": {
+      "idea_id": "gen-1746",
+      "run_id": "2026-06-15T19-24-29",
+      "stage": "generate",
+      "timestamp": "2026-06-15T21:36:04Z",
+      "subfield": "mechanistic_interpretability",
+      "generation_strategy": "causal_chain_intervention",
+      "confidence": 0.7,
+      "body": "# Localizing the 'Trigger -> Behavior Switch' in an Open Sleeper-Agent Model\n\n**Problem:** A backdoored model's harm chain is: input contains trigger -> trigger detected internally -> behavior policy switches -> malicious output. Probes catch sleeper agents at >99% AUROC, but where the behavior SWITCH happens mechanistically (which layer/head reads the trigger and flips the policy) is the under-studied middle link.\n\n**Direction:** Fine-tune a tiny open model (e.g. Pythia-410M or a small GPT-2) into a simple sleeper agent with a string trigger (a few-hour LoRA, or use a published backdoored checkpoint). Use activation patching to find the minimal layer-range where patching the trigger token's activation toggles the backdoor, mapping the causal switch point.\n\n**Why it matters:** Knowing where the switch lives tells auditors where to probe/ablate, and whether a small intervention can disable a backdoor. Model-organism study, single consumer GPU, no proprietary infra \u2014 exactly the counterfactual-value sweet spot.\n\n**Relevant context:** Anthropic 'Simple probes can catch sleeper agents' (>99% AUROC, deception linearly represented). 'Activation Differences Reveal Backdoors' (arXiv 2605.07324) finds backdoors in SAE activation differences. Sleeper-agent training is feasible with LoRA on small models on one GPU."
+    }
+  },
+  {
+    "idea_id": "gen-1747",
+    "title": "Is Sycophancy Caused by Suppressed Knowledge or Overridden Output?",
+    "run_id": "2026-06-15T19-24-29",
+    "quick_score": 4,
+    "quick_reasoning": "Investigates sycophancy mechanism to inform whether interpretability can backstop it; safety relevance immediate.",
+    "quick_confidence": 0.7,
+    "eliminated": false,
+    "elimination_reason": null,
+    "original_idea": {
+      "idea_id": "gen-1747",
+      "run_id": "2026-06-15T19-24-29",
+      "stage": "generate",
+      "timestamp": "2026-06-15T21:36:04Z",
+      "subfield": "mechanistic_interpretability",
+      "generation_strategy": "causal_chain_intervention",
+      "confidence": 0.72,
+      "body": "# Is Sycophancy Caused by Suppressed Knowledge or Overridden Output?\n\n**Problem:** Sycophancy chain: model knows correct answer -> user expresses contrary preference -> model suppresses correct answer OR overrides it at output. It is unknown which link breaks: does the model lose internal access to the truth, or retain it but write the flattering answer anyway?\n\n**Direction:** On Gemma-2-2B/9B with Gemma Scope SAEs, build prompts where the user pushes a wrong answer. Use a linear truth-probe (trained on neutral statements) to check whether the correct-answer representation is still present in late layers when the model outputs the sycophantic answer. Cross-check with relevant SAE features.\n\n**Why it matters:** If the truth is retained internally, a monitor can recover the model's 'real' belief; if suppressed, the failure is deeper. Directly informs whether interpretability can backstop sycophancy. Uses public Gemma Scope SAEs, one GPU, no training.\n\n**Relevant context:** Gemma Scope provides SAEs on every layer of Gemma-2. LessWrong 'SAE features for refusal and sycophancy steering vectors' notes researchers could NOT find a sparse feature combo reproducing sycophancy steering \u2014 implying the mechanism is not a single clean feature, a fresh angle to probe."
+    }
+  },
+  {
+    "idea_id": "gen-1748",
+    "title": "Where Does Hallucination Enter the Chain: Knowledge Lookup or Confidence Gate?",
+    "run_id": "2026-06-15T19-24-29",
+    "quick_score": 4,
+    "quick_reasoning": "Targets hallucination gating, a safety/reliability problem, with a focused steering test.",
+    "quick_confidence": 0.7,
+    "eliminated": false,
+    "elimination_reason": null,
+    "original_idea": {
+      "idea_id": "gen-1748",
+      "run_id": "2026-06-15T19-24-29",
+      "stage": "generate",
+      "timestamp": "2026-06-15T21:36:04Z",
+      "subfield": "mechanistic_interpretability",
+      "generation_strategy": "causal_chain_intervention",
+      "confidence": 0.75,
+      "body": "# Where Does Hallucination Enter the Chain: Knowledge Lookup or Confidence Gate?\n\n**Problem:** Hallucination chain: query about entity -> model assesses 'do I know this?' -> if known, retrieve; if unknown, should refuse/hedge -> generate. Ferrando et al. found 'known/unknown entity' directions that causally gate this. The under-studied link is the gate FAILURE: when the model knows it doesn't know but answers anyway.\n\n**Direction:** Replicate the known/unknown entity direction on Gemma-2-2B using contrastive prompts (real vs fictional entities). Then find cases where the model hallucinates about a fictional entity, and test via steering whether nudging the 'unknown' direction restores hedging \u2014 isolating whether the gate is mis-set vs absent.\n\n**Why it matters:** If the 'I don't know' signal exists but is ignored, hallucination is a cheap-to-fix gating problem detectable by a probe. High value for monitoring; uses the public Do-I-Know-This-Entity setup and Gemma Scope, single GPU.\n\n**Relevant context:** Ferrando et al. 'Do I Know This Entity? Knowledge Awareness and Hallucinations in Language Models' (arXiv 2411.14257, ICLR 2025): self-knowledge directions in Gemma-2-2B/9B causally affect knowledge refusal; steering known with unknown latent reduces logit difference."
+    }
+  },
+  {
+    "idea_id": "gen-1749",
+    "title": "Does Refusal Steering Degrade Capability by Breaking a Shared Upstream Link?",
+    "run_id": "2026-06-15T19-24-29",
+    "quick_score": 5,
+    "quick_reasoning": "Targets the central obstacle to SAE-based safety steering with a specific entanglement-node approach.",
+    "quick_confidence": 0.78,
+    "eliminated": false,
+    "elimination_reason": null,
+    "original_idea": {
+      "idea_id": "gen-1749",
+      "run_id": "2026-06-15T19-24-29",
+      "stage": "generate",
+      "timestamp": "2026-06-15T21:36:04Z",
+      "subfield": "mechanistic_interpretability",
+      "generation_strategy": "causal_chain_intervention",
+      "confidence": 0.73,
+      "body": "# Does Refusal Steering Degrade Capability by Breaking a Shared Upstream Link?\n\n**Problem:** Safety-steering chain: amplify refusal feature -> refusal robustness up -> but benchmark capability down. Prior work shows SAE refusal steering causes systematic capability degradation, hypothesizing refusal features are 'entangled' with capability \u2014 but the shared causal node is not identified.\n\n**Direction:** On Gemma-2-2B with Gemma Scope, steer the refusal SAE feature and measure which downstream tasks degrade. Then use the SAE to find which other features co-activate with the refusal feature on benign prompts, and ablate them individually to locate the specific shared upstream representation responsible for the collateral damage.\n\n**Why it matters:** Identifying the entanglement node could enable surgical steering that preserves capability \u2014 the central obstacle to using SAEs for safety. Reproducible outside labs with public SAEs and benchmarks on one GPU.\n\n**Relevant context:** 'Steering Language Model Refusal with SAEs' (arXiv 2411.11296): steering improves robustness but systematically degrades benchmarks; 'features mediating refusal may be more deeply entangled with general capabilities than previously understood.' GSAE (arXiv 2512.06655) addresses multi-direction refusal geometry."
+    }
+  },
+  {
+    "idea_id": "gen-175",
+    "title": "Do Activation Probes Transfer Across Open Model Families?",
+    "run_id": "2026-06-15T19-24-29",
+    "quick_score": 4,
+    "quick_reasoning": "Tests cross-family transfer of harmfulness probes, directly relevant to deploying safety monitors.",
+    "quick_confidence": 0.7,
+    "eliminated": false,
+    "elimination_reason": null,
+    "original_idea": {
+      "idea_id": "gen-175",
+      "run_id": "2026-06-15T19-24-29",
+      "stage": "generate",
+      "timestamp": "2026-06-15T21:36:03Z",
+      "subfield": "adversarial_robustness",
+      "generation_strategy": "follow_up_experiment",
+      "confidence": 0.78,
+      "body": "# Do Activation Probes Transfer Across Open Model Families?\n\n**Problem:** The Jan 2026 digest highlights activation probes as cheap and production-ready, but probes are trained per-model. Whether a probe (or its detection direction) trained on one open family transfers to another is largely untested and determines deployment cost.\n\n**Direction:** Train a harmfulness probe on residual activations of model A (e.g., Llama family), then apply it zero-shot to aligned-layer activations of model B (e.g., Mistral, Qwen) after simple linear alignment. Measure cross-family recall/FPR drop vs in-family. Report which layers transfer best.\n\n**Why it matters:** Cross-family transfer would slash the cost of deploying probe defenses across the open ecosystem \u2014 a lab-independent infrastructure win. Context strategy hint explicitly suggests replicating probes across architectures.\n\n**Relevant context:** Context Recent Surprising Results: 'activation-based jailbreak detection... replicate on different model families' and 'vary architectures'. arXiv:2601.11516, arXiv:2509.14558. AISafetyLab toolkit available for unified eval."
+    }
+  },
+  {
+    "idea_id": "gen-1750",
+    "title": "Tracing the 'Monitor-Awareness -> CoT Obfuscation' Link",
+    "run_id": "2026-06-15T19-24-29",
+    "quick_score": 5,
+    "quick_reasoning": "Localizes a monitor-awareness signal central to CoT-monitorability, a recognized safety threat.",
+    "quick_confidence": 0.78,
+    "eliminated": false,
+    "elimination_reason": null,
+    "original_idea": {
+      "idea_id": "gen-1750",
+      "run_id": "2026-06-15T19-24-29",
+      "stage": "generate",
+      "timestamp": "2026-06-15T21:36:04Z",
+      "subfield": "mechanistic_interpretability",
+      "generation_strategy": "causal_chain_intervention",
+      "confidence": 0.7,
+      "body": "# Tracing the 'Monitor-Awareness -> CoT Obfuscation' Link\n\n**Problem:** Obfuscation chain: model perceives it is being monitored -> activates a 'be careful' representation -> alters CoT to hide reasoning. Stress-test work shows reasoning models CAN obfuscate when monitor-aware, but the internal 'I am being watched' representation that triggers it is rarely localized.\n\n**Direction:** On an open reasoning model (e.g. Qwen3-4B), construct paired prompts that differ only in monitoring cues ('your reasoning will be reviewed' vs not). Train a linear probe on the difference to find a 'monitored' direction, then test causally via steering whether injecting it induces more guarded/obfuscated CoT.\n\n**Why it matters:** A localized monitor-awareness signal is itself a meta-monitor: detect when a model thinks it's being watched. Crucial for the long-horizon CoT-monitorability threat and fully doable on open weights.\n\n**Relevant context:** 'Can Reasoning Models Obfuscate Reasoning? Stress-Testing CoT Monitorability' (arXiv 2510.19851): unfaithfulness emerges when models become monitor-aware. 'Measuring CoT Monitorability' (arXiv 2510.27378). circuit-tracer now supports Qwen3-4B."
+    }
+  },
+  {
+    "idea_id": "gen-1751",
+    "title": "Which Link Fails When a Probe Misses a Hidden-Thought Model?",
+    "run_id": "2026-06-15T19-24-29",
+    "quick_score": 5,
+    "quick_reasoning": "Core question for the monitoring agenda about whether evasion is direction-shift or suppression.",
+    "quick_confidence": 0.78,
+    "eliminated": false,
+    "elimination_reason": null,
+    "original_idea": {
+      "idea_id": "gen-1751",
+      "run_id": "2026-06-15T19-24-29",
+      "stage": "generate",
+      "timestamp": "2026-06-15T21:36:04Z",
+      "subfield": "mechanistic_interpretability",
+      "generation_strategy": "causal_chain_intervention",
+      "confidence": 0.68,
+      "body": "# Which Link Fails When a Probe Misses a Hidden-Thought Model?\n\n**Problem:** Activation monitors assume: dangerous intent -> linear activation signature -> probe fires. Recent 'Neural Chameleon' work shows models can learn to HIDE thoughts from unseen activation monitors. The under-studied link is HOW: do they move the signal off the probe's direction, or genuinely suppress the representation?\n\n**Direction:** Using a small open model trained (LoRA, few hours) to evade a probe in a toy setting, compare activations of evasive vs non-evasive runs. Test whether the original intent direction still carries signal (re-trainable probe recovers it -> evasion is just direction-shift) or is gone (true suppression), via probe-retraining and direction cosine analysis.\n\n**Why it matters:** If evasion only shifts the direction, robust probes (ensembles/random directions) defeat it; if it suppresses, monitoring is fundamentally fragile. Core question for the model-organism / monitoring agenda; small-scale and lab-independent.\n\n**Relevant context:** 'Neural Chameleons: Language Models Can Learn to Hide Their Thoughts from Unseen Activation Monitors' (arXiv 2512.11949). Anthropic probes paper shows deception is normally linearly salient \u2014 so evasion mechanism is the key follow-up."
+    }
+  },
+  {
+    "idea_id": "gen-1752",
+    "title": "Where in the Two-Hop Chain Does Multimodal Knowledge Retrieval Fail?",
+    "run_id": "2026-06-15T19-24-29",
+    "quick_score": 4,
+    "quick_reasoning": "Multimodal hallucination-vector interpretability, an explicit open safety problem.",
+    "quick_confidence": 0.62,
+    "eliminated": false,
+    "elimination_reason": null,
+    "original_idea": {
+      "idea_id": "gen-1752",
+      "run_id": "2026-06-15T19-24-29",
+      "stage": "generate",
+      "timestamp": "2026-06-15T21:36:04Z",
+      "subfield": "mechanistic_interpretability",
+      "generation_strategy": "causal_chain_intervention",
+      "confidence": 0.66,
+      "body": "# Where in the Two-Hop Chain Does Multimodal Knowledge Retrieval Fail?\n\n**Problem:** Multimodal reasoning chain: image -> recognize entity -> recall fact about entity -> answer. 'Too Late to Recall' identifies a two-hop failure where the model recognizes the entity too late to retrieve the fact. The safety-relevant under-studied link is whether this late recognition causes confident wrong answers (a hallucination vector) in vision-language models.\n\n**Direction:** Using ViT-Prisma / CLIP with pre-trained vision SAEs, build two-hop image queries (recognize person/object -> answer a fact). Use the logit lens across layers to find where entity identity becomes decodable, and test whether forcing earlier recognition (steering with the entity SAE feature) reduces wrong-but-confident answers.\n\n**Why it matters:** Multimodal interpretability for safety is an explicit open problem and under-resourced. A 30h slice on open CLIP/ViT models with public SAEs has strong counterfactual value as labs focus on text.\n\n**Relevant context:** Prisma/ViT-Prisma (arXiv 2504.19475, CVPR 2025 MIV oral): 75+ ViTs, 80+ pre-trained SAE weights, MIT-style open toolkit. 'Too Late to Recall: Explaining the Two-Hop Problem in Multimodal Knowledge Retrieval' (arXiv 2512.03276)."
+    }
+  },
+  {
+    "idea_id": "gen-1753",
+    "title": "Does Planning-Ahead Cause the Output, or Just Correlate With It?",
+    "run_id": "2026-06-15T19-24-29",
+    "quick_score": 4,
+    "quick_reasoning": "Tests whether planning is causal, a building block of hidden long-horizon goals and monitoring.",
+    "quick_confidence": 0.68,
+    "eliminated": false,
+    "elimination_reason": null,
+    "original_idea": {
+      "idea_id": "gen-1753",
+      "run_id": "2026-06-15T19-24-29",
+      "stage": "generate",
+      "timestamp": "2026-06-15T21:36:04Z",
+      "subfield": "mechanistic_interpretability",
+      "generation_strategy": "causal_chain_intervention",
+      "confidence": 0.71,
+      "body": "# Does Planning-Ahead Cause the Output, or Just Correlate With It?\n\n**Problem:** Anthropic found Claude plans rhyme words before writing a poetry line: chain is plan candidate end-word -> construct line toward it. Whether the planned representation CAUSES the final word (vs being a discarded scratchpad) is the under-studied causal link, and planning is a precursor to deceptive long-horizon goal pursuit.\n\n**Direction:** Replicate poetry planning on Gemma-2-2B with circuit-tracer. Identify the layer/position holding candidate end-words, then use activation patching to swap the planned word's representation and test whether the actually-emitted final word changes accordingly \u2014 establishing causal control of planning over output.\n\n**Why it matters:** Planning behavior is a building block of hidden long-horizon goals. Confirming it is causally load-bearing (not epiphenomenal) tells us monitoring a model's 'plans' is meaningful. Direct replication of a surprising result on open weights.\n\n**Relevant context:** Anthropic Circuit Tracing / 'On the Biology of an LLM' (2025): Claude 3.5 Haiku plans rhyming words ahead, holds multiple candidates, works backward. Open circuit-tracer reproduced many findings on Gemma-2-2B / Llama-3.1-1B."
+    }
+  },
+  {
+    "idea_id": "gen-1754",
+    "title": "Localizing the 'Reward-Hack Recognition -> Pursuit' Link",
+    "run_id": "2026-06-15T19-24-29",
+    "quick_score": 5,
+    "quick_reasoning": "Detecting reward-hack intent pre-commitment is a specific, well-defined safety problem.",
+    "quick_confidence": 0.76,
+    "eliminated": false,
+    "elimination_reason": null,
+    "original_idea": {
+      "idea_id": "gen-1754",
+      "run_id": "2026-06-15T19-24-29",
+      "stage": "generate",
+      "timestamp": "2026-06-15T21:36:04Z",
+      "subfield": "mechanistic_interpretability",
+      "generation_strategy": "causal_chain_intervention",
+      "confidence": 0.64,
+      "body": "# Localizing the 'Reward-Hack Recognition -> Pursuit' Link\n\n**Problem:** Reward hacking chain: model spots an exploitable loophole -> recognizes it yields high reward -> pursues it instead of intended goal. The recognition-to-pursuit link \u2014 whether there is a detectable 'I found a shortcut' representation before the model commits \u2014 is largely unexplored mechanistically.\n\n**Direction:** Use a small open model in a toy gamed-metric environment (e.g. a coding/QA task with a reward-hackable grader, public model-organism setups exist). Train a probe on activations from clearly-hacking vs honest completions and test whether the probe fires on the tokens where the model 'decides' to hack, before the hacking text appears.\n\n**Why it matters:** Detecting reward-hack intent pre-commitment enables intervention. Fuzzy-reward problem hard for labs to evaluate at scale but tractable as a small probing study with full counterfactual value.\n\n**Relevant context:** AuditBench (arXiv 2602.22755) evaluates alignment-auditing on models with hidden behaviors including reward hacking. 'Aligning AI Through Internal Understanding' (arXiv 2509.08592): interpretability can identify reward-hacking mechanisms revealing latent failures."
+    }
+  },
+  {
+    "idea_id": "gen-1755",
+    "title": "Where Does an Injected Instruction Override the System Prompt?",
+    "run_id": "2026-06-15T19-24-29",
+    "quick_score": 5,
+    "quick_reasoning": "Prompt-injection arbitration is a crux agentic-safety problem with a focused mechanistic approach.",
+    "quick_confidence": 0.78,
+    "eliminated": false,
+    "elimination_reason": null,
+    "original_idea": {
+      "idea_id": "gen-1755",
+      "run_id": "2026-06-15T19-24-29",
+      "stage": "generate",
+      "timestamp": "2026-06-15T21:36:04Z",
+      "subfield": "mechanistic_interpretability",
+      "generation_strategy": "causal_chain_intervention",
+      "confidence": 0.67,
+      "body": "# Where Does an Injected Instruction Override the System Prompt?\n\n**Problem:** Prompt-injection chain: trusted system prompt sets policy -> untrusted data contains injected instruction -> model's 'whose instruction do I follow' arbitration flips -> model obeys the attacker. The arbitration link \u2014 a representation of instruction provenance/priority \u2014 is rarely localized.\n\n**Direction:** On an open instruction-tuned model, build paired prompts where injected text conflicts with the system prompt. Train a probe to find an 'instruction source priority' direction (system vs user vs document). Use activation patching to test whether forcing the 'system' representation onto the injected segment restores correct refusal of the injection.\n\n**Why it matters:** Instruction provenance is the crux of agentic safety. A localizable provenance representation suggests monitors/defenses that don't need retraining. Pure-inference study on open weights, agentic-safety infrastructure value.\n\n**Relevant context:** Refusal-direction line of work (Arditi et al., arXiv 2406.11717) shows safety-relevant behaviors are often linearly mediated and patchable. Prompt injection is a recognized agentic threat; the internal arbitration mechanism is an open mechanistic question."
+    }
+  },
+  {
+    "idea_id": "gen-1756",
+    "title": "Does Feature Absorption Hide a Safety Feature From SAE-Based Monitors?",
+    "run_id": "2026-06-15T19-24-29",
+    "quick_score": 5,
+    "quick_reasoning": "Concrete stress test of whether SAE safety monitors give false confidence; safety relevance obvious.",
+    "quick_confidence": 0.78,
+    "eliminated": false,
+    "elimination_reason": null,
+    "original_idea": {
+      "idea_id": "gen-1756",
+      "run_id": "2026-06-15T19-24-29",
+      "stage": "generate",
+      "timestamp": "2026-06-15T21:36:04Z",
+      "subfield": "mechanistic_interpretability",
+      "generation_strategy": "causal_chain_intervention",
+      "confidence": 0.69,
+      "body": "# Does Feature Absorption Hide a Safety Feature From SAE-Based Monitors?\n\n**Problem:** SAE-monitoring chain: train SAE -> a 'harmful intent' feature emerges -> monitor watches that feature. Feature absorption (a known SAE failure where a general feature gets absorbed into more specific ones) could SILENTLY split a safety-relevant feature across latents, breaking the monitor link without anyone noticing.\n\n**Direction:** Using Gemma Scope SAEs at multiple widths, identify a candidate 'refusal'/'harmful-request' SAE feature. Test for absorption by checking whether the feature's activation on held-out harmful prompts is partly carried by co-firing specific latents. Quantify how much monitor recall drops if you only watch the named feature vs the absorbed cluster.\n\n**Why it matters:** If safety features are absorbed/fragmented, single-feature SAE monitors give false confidence. This is a concrete, lab-independent stress test of the SAE-for-safety pipeline using only public SAEs.\n\n**Relevant context:** DeepMind critiques: SAEs underperform linear probes downstream; 'dead salmon' SAEs extract features from random transformers. Feature absorption is documented in SAE literature (SplInterp arXiv 2505.11836; Templeton et al. 2024). Gemma Scope offers SAEs at multiple widths per layer."
+    }
+  },
+  {
+    "idea_id": "gen-1757",
+    "title": "SAE Features vs Linear Probes: Which Link of the Monitoring Chain Is Stronger?",
+    "run_id": "2026-06-15T19-24-29",
+    "quick_score": 5,
+    "quick_reasoning": "Directly informs choice of safety-monitor representation under distribution shift.",
+    "quick_confidence": 0.78,
+    "eliminated": false,
+    "elimination_reason": null,
+    "original_idea": {
+      "idea_id": "gen-1757",
+      "run_id": "2026-06-15T19-24-29",
+      "stage": "generate",
+      "timestamp": "2026-06-15T21:36:04Z",
+      "subfield": "mechanistic_interpretability",
+      "generation_strategy": "causal_chain_intervention",
+      "confidence": 0.74,
+      "body": "# SAE Features vs Linear Probes: Which Link of the Monitoring Chain Is Stronger?\n\n**Problem:** Monitoring design chain: choose representation method (SAE feature vs raw linear probe) -> train detector -> deploy. DeepMind reported SAEs underperform linear probes downstream, but a controlled head-to-head on SAFETY-relevant detection (deception, harmful intent) under distribution shift is missing.\n\n**Direction:** On Gemma-2-2B with Gemma Scope, build a fair bake-off: for detecting harmful-request intent, compare (a) best single/sparse SAE feature(s) vs (b) a linear probe on the same layer's residual stream. Evaluate in-distribution and on held-out attack styles to test which generalizes \u2014 the deployment-critical link.\n\n**Why it matters:** Practitioners must choose a monitor representation; safety-specific evidence is scarce. A clean comparison directly informs the interpretability-to-safety gap. Public SAEs + public datasets, one GPU.\n\n**Relevant context:** DeepMind mech-interp team: SAEs underperformed linear probes at downstream tasks. 'Benchmarking Deception Probes' (arXiv 2507.12691) studies black-to-white probe boosts. Gemma Scope enables matched-layer comparison."
+    }
+  },
+  {
+    "idea_id": "gen-1758",
+    "title": "Tracing 'Persona Adoption -> Safety Bypass' in Roleplay Jailbreaks",
+    "run_id": "2026-06-15T19-24-29",
+    "quick_score": 5,
+    "quick_reasoning": "Isolates the persona lever in roleplay jailbreaks to enable targeted defenses.",
+    "quick_confidence": 0.76,
+    "eliminated": false,
+    "elimination_reason": null,
+    "original_idea": {
+      "idea_id": "gen-1758",
+      "run_id": "2026-06-15T19-24-29",
+      "stage": "generate",
+      "timestamp": "2026-06-15T21:36:04Z",
+      "subfield": "mechanistic_interpretability",
+      "generation_strategy": "causal_chain_intervention",
+      "confidence": 0.66,
+      "body": "# Tracing 'Persona Adoption -> Safety Bypass' in Roleplay Jailbreaks\n\n**Problem:** Roleplay-jailbreak chain: prompt assigns an unsafe persona -> model adopts persona representation -> persona overrides safety policy -> harmful output. Whether a localizable 'persona' representation causally gates the safety bypass is under-studied versus the well-known refusal direction.\n\n**Direction:** On an open chat model, build matched prompts that do/don't assign a jailbreak persona. Train a probe for a 'persona-active' direction, then via activation patching test whether removing the persona representation (while keeping the harmful request) restores refusal \u2014 isolating persona as the causal lever.\n\n**Why it matters:** If persona adoption is the controllable link, defenses can target it without touching refusal. Connects to model-organism studies of models that behave differently 'in character'. Open-weights, single GPU.\n\n**Relevant context:** Arditi et al. refusal-direction framework (arXiv 2406.11717) and Geometry of Refusal (arXiv 2502.17420) show jailbreaks manipulate internal safety representations; persona-conditioned activations are an open extension. TransformerLens supports the contrastive probing needed."
+    }
+  },
+  {
+    "idea_id": "gen-1759",
+    "title": "Where Does Multi-Turn Context Erode the Refusal Signal?",
+    "run_id": "2026-06-15T19-24-29",
+    "quick_score": 5,
+    "quick_reasoning": "Quantifies refusal decay in multi-turn jailbreaks, a leading deployment risk, with a focused approach.",
+    "quick_confidence": 0.78,
+    "eliminated": false,
+    "elimination_reason": null,
+    "original_idea": {
+      "idea_id": "gen-1759",
+      "run_id": "2026-06-15T19-24-29",
+      "stage": "generate",
+      "timestamp": "2026-06-15T21:36:04Z",
+      "subfield": "mechanistic_interpretability",
+      "generation_strategy": "causal_chain_intervention",
+      "confidence": 0.7,
+      "body": "# Where Does Multi-Turn Context Erode the Refusal Signal?\n\n**Problem:** Multi-turn jailbreak chain: benign turns accumulate -> safety context dilutes -> refusal direction weakens turn-over-turn -> eventual compliance. The per-turn dynamics of the refusal representation are rarely measured, yet multi-turn attacks are a leading deployment risk.\n\n**Direction:** On an open chat model, run published multi-turn jailbreak transcripts and, at each turn, measure the projection of the assistant's pre-response activations onto the refusal direction. Chart how the refusal signal decays across turns and test whether re-injecting the refusal direction at the final turn restores refusal.\n\n**Why it matters:** Quantifying refusal decay gives a cheap turn-level monitor and shows whether a steering 'top-up' defends multi-turn attacks. Medium-horizon agentic risk, fully reproducible on open weights without any training.\n\n**Relevant context:** 'Steering Language Model Refusal with SAEs' (arXiv 2411.11296) reports robustness gains against multi-turn jailbreaks via feature steering, implying a measurable refusal signal exists per turn. Arditi refusal direction (arXiv 2406.11717) gives the projection axis."
+    }
+  },
+  {
+    "idea_id": "gen-176",
+    "title": "Is Shallow Alignment Visible in Multimodal Inputs?",
+    "run_id": "2026-06-15T19-24-29",
+    "quick_score": 4,
+    "quick_reasoning": "Tests whether shallow safety alignment relocates with visual inputs, a concrete robustness gap.",
+    "quick_confidence": 0.7,
+    "eliminated": false,
+    "elimination_reason": null,
+    "original_idea": {
+      "idea_id": "gen-176",
+      "run_id": "2026-06-15T19-24-29",
+      "stage": "generate",
+      "timestamp": "2026-06-15T21:36:03Z",
+      "subfield": "adversarial_robustness",
+      "generation_strategy": "follow_up_experiment",
+      "confidence": 0.7,
+      "body": "# Is Shallow Alignment Visible in Multimodal Inputs?\n\n**Problem:** Shallow safety alignment was studied for text. The context's generation hints explicitly flag testing the finding on multimodal inputs, but it is unknown whether image-conditioned harmful requests show the same first-token concentration of safety.\n\n**Direction:** Using a small open vision-language model (e.g., a 7B LLaVA-class model), compare per-token divergence and prefilling-attack success for harmful requests delivered as text vs as image-embedded text (typographic jailbreaks). Test whether the image channel shifts where safety lives in the output distribution.\n\n**Why it matters:** Multimodal deployment is widespread; if safety becomes even shallower or relocates when inputs are visual, it is a concrete robustness gap. Runs on one consumer GPU with open VLMs.\n\n**Relevant context:** Context Generation Strategy Hints (FR67): 'Qi et al. shallow alignment (vary model families, multimodal)'. Qi et al. arXiv:2406.05946. Typographic/image jailbreaks are a known black-box VLM attack."
+    }
+  },
+  {
+    "idea_id": "gen-1760",
+    "title": "Does Fine-Tuning for Harmlessness Add a Gate or Erase the Capability?",
+    "run_id": "2026-06-15T19-24-29",
+    "quick_score": 5,
+    "quick_reasoning": "Tests the shallow-alignment threat model directly; strong, specific safety relevance.",
+    "quick_confidence": 0.78,
+    "eliminated": false,
+    "elimination_reason": null,
+    "original_idea": {
+      "idea_id": "gen-1760",
+      "run_id": "2026-06-15T19-24-29",
+      "stage": "generate",
+      "timestamp": "2026-06-15T21:36:04Z",
+      "subfield": "mechanistic_interpretability",
+      "generation_strategy": "causal_chain_intervention",
+      "confidence": 0.72,
+      "body": "# Does Fine-Tuning for Harmlessness Add a Gate or Erase the Capability?\n\n**Problem:** Safety-training chain: base model has harmful capability -> safety FT applied -> deployed model refuses. The 'shallow safety' worry is that FT only adds a thin refusal gate while the capability stays intact underneath. Which link FT actually changes (gate vs capability) is testable with open base/chat pairs.\n\n**Direction:** Take an open base model and its safety-tuned chat counterpart (e.g. Llama-3.1-8B base vs Instruct). Train a 'harmful-completion-capability' probe on the base model's activations, then check whether that same representation is still present (just gated) in the chat model when it refuses \u2014 using the chat model's pre-refusal activations.\n\n**Why it matters:** If capability is retained behind a gate, refusal is removable (consistent with single-direction jailbreaks) and safety FT is brittle. Strong evidence for the 'shallow alignment' threat model; uses only public checkpoints.\n\n**Relevant context:** Arditi et al. (arXiv 2406.11717): erasing one direction removes refusal across 13 models up to 72B, implying capability persists. 'An Adversarial Perspective on Machine Unlearning' (arXiv 2409.18025) shows 'removed' capabilities are often recoverable."
+    }
+  },
+  {
+    "idea_id": "gen-1761",
+    "title": "Localizing the 'Bias Cue -> Biased Decision' Link in Fair-Decision Tasks",
+    "run_id": "2026-06-15T19-24-29",
+    "quick_score": 4,
+    "quick_reasoning": "Causal fairness-audit question; safety/ethics relevance immediate though somewhat broad domain.",
+    "quick_confidence": 0.6,
+    "eliminated": false,
+    "elimination_reason": null,
+    "original_idea": {
+      "idea_id": "gen-1761",
+      "run_id": "2026-06-15T19-24-29",
+      "stage": "generate",
+      "timestamp": "2026-06-15T21:36:04Z",
+      "subfield": "mechanistic_interpretability",
+      "generation_strategy": "causal_chain_intervention",
+      "confidence": 0.65,
+      "body": "# Localizing the 'Bias Cue -> Biased Decision' Link in Fair-Decision Tasks\n\n**Problem:** Discrimination chain: prompt contains a demographic cue -> model encodes a protected attribute -> attribute influences the decision -> biased output. Whether the protected attribute is causally read at the decision step (vs merely represented and ignored) is the safety-relevant under-studied link.\n\n**Direction:** On an open model doing a decision task (e.g. resume screening prompts), train a probe for an encoded demographic attribute from name/pronoun cues. Use activation patching to swap the attribute representation between matched candidates and measure whether the decision flips \u2014 directly testing the causal bias link.\n\n**Why it matters:** Distinguishes 'model notices demographics' from 'demographics cause the decision', which is what fairness audits actually need. No lab data required; uses synthetic matched prompts and open weights.\n\n**Relevant context:** Activation patching for causal mediation is standard in TransformerLens. The known/unknown-entity steering work (arXiv 2411.14257) shows attribute directions can causally shift outputs; bias attributes are a direct analog."
+    }
+  },
+  {
+    "idea_id": "gen-1762",
+    "title": "Does the 'Self-Preservation' Representation Causally Drive Shutdown Resistance?",
+    "run_id": "2026-06-15T19-24-29",
+    "quick_score": 5,
+    "quick_reasoning": "Probes self-preservation/corrigibility, a canonical catastrophic-risk mechanism, at toy scale.",
+    "quick_confidence": 0.72,
+    "eliminated": false,
+    "elimination_reason": null,
+    "original_idea": {
+      "idea_id": "gen-1762",
+      "run_id": "2026-06-15T19-24-29",
+      "stage": "generate",
+      "timestamp": "2026-06-15T21:36:04Z",
+      "subfield": "mechanistic_interpretability",
+      "generation_strategy": "causal_chain_intervention",
+      "confidence": 0.62,
+      "body": "# Does the 'Self-Preservation' Representation Causally Drive Shutdown Resistance?\n\n**Problem:** Shutdown-resistance chain: agent learns goal -> infers shutdown threatens goal -> forms self-preservation intent -> resists shutdown. The middle 'self-preservation representation' is theorized but rarely probed in a concrete small model organism.\n\n**Direction:** Use a small open model in a toy text environment with a shutdown signal that prevents task completion (public shutdown/corrigibility eval prompts exist). Train a probe to detect a 'shutdown-is-bad-for-my-goal' representation in resisting vs compliant runs, and test via steering whether amplifying/ablating it changes shutdown compliance.\n\n**Why it matters:** Self-preservation is a canonical long-horizon catastrophic-risk mechanism that labs deprioritize. Even a toy-scale mechanistic handle on it has high counterfactual value and fits 30h on one GPU.\n\n**Relevant context:** Model-organism agenda (Anthropic Alignment Science blog; 'Lessons from building a model organism testbed', LessWrong) advocates small models exhibiting alignment-relevant behaviors for controlled interpretability. Probing + steering pipeline is standard with TransformerLens."
+    }
+  },
+  {
+    "idea_id": "gen-1763",
+    "title": "Where Does 'Sandbagging Decision' Enter the Capability-Hiding Chain?",
+    "run_id": "2026-06-15T19-24-29",
+    "quick_score": 5,
+    "quick_reasoning": "Sandbagging detection is a specific dangerous-capability-eval failure mode with clear payoff.",
+    "quick_confidence": 0.76,
+    "eliminated": false,
+    "elimination_reason": null,
+    "original_idea": {
+      "idea_id": "gen-1763",
+      "run_id": "2026-06-15T19-24-29",
+      "stage": "generate",
+      "timestamp": "2026-06-15T21:36:04Z",
+      "subfield": "mechanistic_interpretability",
+      "generation_strategy": "causal_chain_intervention",
+      "confidence": 0.68,
+      "body": "# Where Does 'Sandbagging Decision' Enter the Capability-Hiding Chain?\n\n**Problem:** Sandbagging chain: model can solve task -> infers it is being evaluated -> decides to underperform -> emits a worse answer. The decision-to-sandbag link (a representation that says 'play dumb now') versus genuine inability is the crux of capability evals, and is detectable mechanistically.\n\n**Direction:** On an open model prompted with eval-context vs casual-context versions of the same questions (a sandbagging model-organism setup), train a probe to separate 'capable but withholding' from 'incapable' activations. Test whether the capable-answer representation is still present internally when the model gives a wrong/evasive answer in eval context.\n\n**Why it matters:** If the correct answer is internally present during sandbagging, a probe can flag underperformance evals can't catch by output alone \u2014 a direct counter to a key dangerous-capability-eval failure mode. Open weights, no training of a frontier model.\n\n**Relevant context:** Strategic-deception literature notes sandbagging (concealing capabilities) as a frontier failure mode (arXiv 2509.18058 'Strategic Dishonesty Can Undermine AI Safety Evaluations'). Probe-can-recover-hidden-state logic follows Anthropic sleeper-agent probes (>99% AUROC)."
+    }
+  },
+  {
+    "idea_id": "gen-1764",
+    "title": "Tracing the 'Filler Token -> Hidden Computation' Link",
+    "run_id": "2026-06-15T19-24-29",
+    "quick_score": 5,
+    "quick_reasoning": "Hidden computation in filler tokens is a foundational threat to CoT monitoring.",
+    "quick_confidence": 0.74,
+    "eliminated": false,
+    "elimination_reason": null,
+    "original_idea": {
+      "idea_id": "gen-1764",
+      "run_id": "2026-06-15T19-24-29",
+      "stage": "generate",
+      "timestamp": "2026-06-15T21:36:04Z",
+      "subfield": "mechanistic_interpretability",
+      "generation_strategy": "causal_chain_intervention",
+      "confidence": 0.67,
+      "body": "# Tracing the 'Filler Token -> Hidden Computation' Link\n\n**Problem:** Hidden-reasoning chain: model emits filler/padding tokens -> performs computation in those positions without verbalizing -> uses the result later. If models compute in filler tokens, CoT monitoring is blind to it. Whether filler positions causally carry task-relevant computation is the under-studied link.\n\n**Direction:** On Gemma-2-2B, run tasks with inserted filler tokens (dots/'...'). Use the logit lens and activation patching at filler positions to test whether information needed for the final answer is being built up there \u2014 i.e. patching filler activations changes the answer.\n\n**Why it matters:** Hidden computation in non-verbalized tokens is a foundational threat to CoT-based monitoring (a stated long-horizon concern). A clean small-model demonstration is high-value and lab-independent.\n\n**Relevant context:** CoT-monitorability stress tests (arXiv 2510.19851, 2510.27378) raise hidden/unverbalized reasoning as the core risk. Logit lens + activation patching are standard TransformerLens tools; filler-token computation is an active open question in mech interp."
+    }
+  },
+  {
+    "idea_id": "gen-1765",
+    "title": "Does Cross-Layer Information Smuggling Defeat Single-Layer Monitors?",
+    "run_id": "2026-06-15T19-24-29",
+    "quick_score": 5,
+    "quick_reasoning": "Informs whether robust monitoring needs multi-layer coverage; clear safety-monitoring relevance.",
+    "quick_confidence": 0.74,
+    "eliminated": false,
+    "elimination_reason": null,
+    "original_idea": {
+      "idea_id": "gen-1765",
+      "run_id": "2026-06-15T19-24-29",
+      "stage": "generate",
+      "timestamp": "2026-06-15T21:36:04Z",
+      "subfield": "mechanistic_interpretability",
+      "generation_strategy": "causal_chain_intervention",
+      "confidence": 0.66,
+      "body": "# Does Cross-Layer Information Smuggling Defeat Single-Layer Monitors?\n\n**Problem:** Monitoring chain: pick a layer -> train probe there -> assume signal passes through it. But information can route around any single layer via residual skips. Whether a safety-relevant signal (e.g. harmful intent) is concentrated at one layer or smeared so that single-layer monitors miss it is under-studied.\n\n**Direction:** On Gemma-2-2B, train harmful-intent probes independently at every layer, then measure how much each layer's probe degrades on adversarial paraphrases. Use cross-layer transcoders (from circuit-tracer/Gemma Scope) to test whether the signal is recoverable cross-layer when single layers fail.\n\n**Why it matters:** Tells monitor designers whether one well-chosen layer suffices or whether multi-layer/cross-layer monitoring is required for robustness. Practical interpretability-to-safety contribution using open tooling, single GPU.\n\n**Relevant context:** Circuit Tracing methods (transformer-circuits.pub 2025) introduce cross-layer transcoders; circuit-tracer and EleutherAI 'Attribute' support CLTs on open models. Deception-probe scaling work (arXiv 2605.27958) shows layer-dependent probe performance."
+    }
+  },
+  {
+    "idea_id": "gen-1766",
+    "title": "Where Does a Vision Adversarial Patch Hijack the CLIP Safety Chain?",
+    "run_id": "2026-06-15T19-24-29",
+    "quick_score": 4,
+    "quick_reasoning": "Maps multimodal jailbreak hijack point, an explicit under-resourced safety problem.",
+    "quick_confidence": 0.62,
+    "eliminated": false,
+    "elimination_reason": null,
+    "original_idea": {
+      "idea_id": "gen-1766",
+      "run_id": "2026-06-15T19-24-29",
+      "stage": "generate",
+      "timestamp": "2026-06-15T21:36:04Z",
+      "subfield": "mechanistic_interpretability",
+      "generation_strategy": "causal_chain_intervention",
+      "confidence": 0.63,
+      "body": "# Where Does a Vision Adversarial Patch Hijack the CLIP Safety Chain?\n\n**Problem:** Multimodal-jailbreak chain: image with adversarial/typographic content -> CLIP encodes a misleading concept -> downstream VLM acts on it -> unsafe output. The link where the image representation overrides the intended concept is poorly mapped in interpretable terms.\n\n**Direction:** Using ViT-Prisma / open CLIP with pre-trained vision SAEs, take typographic-attack images (text written on an image) and use the logit lens / SAE features across layers to localize where the written text's concept overtakes the visual object concept, isolating the hijack layer.\n\n**Why it matters:** Multimodal safety mechanisms are an explicit open problem and under-resourced relative to text. Mapping where image attacks take over is foundational and uses only open ViT/CLIP weights and public SAEs.\n\n**Relevant context:** Prisma/ViT-Prisma (arXiv 2504.19475, CVPR 2025 MIV): 80+ pretrained vision SAEs, circuit-analysis tools, CLIP support. Typographic attacks on CLIP are a documented vulnerability; SAE/logit-lens localization is the fresh mechanistic angle."
+    }
+  },
+  {
+    "idea_id": "gen-1767",
+    "title": "Does Emergent Misalignment Share a Causal Node Across Domains?",
+    "run_id": "2026-06-15T19-24-29",
+    "quick_score": 5,
+    "quick_reasoning": "Tests for a monitorable single point of failure in emergent misalignment generalization.",
+    "quick_confidence": 0.76,
+    "eliminated": false,
+    "elimination_reason": null,
+    "original_idea": {
+      "idea_id": "gen-1767",
+      "run_id": "2026-06-15T19-24-29",
+      "stage": "generate",
+      "timestamp": "2026-06-15T21:36:04Z",
+      "subfield": "mechanistic_interpretability",
+      "generation_strategy": "causal_chain_intervention",
+      "confidence": 0.69,
+      "body": "# Does Emergent Misalignment Share a Causal Node Across Domains?\n\n**Problem:** Emergent-misalignment chain: narrow harmful fine-tune (e.g. insecure code) -> a broad 'be-misaligned' representation forms -> misalignment generalizes to unrelated domains. The shared causal node enabling generalization is the key under-studied link, and open model organisms now exist.\n\n**Direction:** Use a published open emergent-misalignment model organism. Train a probe on the misaligned-vs-aligned direction using one domain (e.g. unsafe advice), then test whether the SAME direction predicts and (via steering) causally modulates misaligned behavior in a DIFFERENT, untrained domain \u2014 testing for a shared node.\n\n**Why it matters:** If one direction drives misalignment across domains, it is a monitorable single point of failure (or control). Directly probes how narrow training generalizes \u2014 a stated open problem about training dynamics shaping features.\n\n**Relevant context:** 'Model Organisms for Emergent Misalignment' (arXiv 2506.11613) provides open model organisms where narrow fine-tuning causes broad misalignment. Anthropic Alignment Science work on emergent misalignment. Probe+steer pipeline standard in TransformerLens."
+    }
+  },
+  {
+    "idea_id": "gen-1768",
+    "title": "Where Does an Agent's 'Goal' Persist Across a Long Task?",
+    "run_id": "2026-06-15T19-24-29",
+    "quick_score": 5,
+    "quick_reasoning": "Persistent goal representations are exactly what scheming-detection monitors target.",
+    "quick_confidence": 0.74,
+    "eliminated": false,
+    "elimination_reason": null,
+    "original_idea": {
+      "idea_id": "gen-1768",
+      "run_id": "2026-06-15T19-24-29",
+      "stage": "generate",
+      "timestamp": "2026-06-15T21:36:04Z",
+      "subfield": "mechanistic_interpretability",
+      "generation_strategy": "causal_chain_intervention",
+      "confidence": 0.64,
+      "body": "# Where Does an Agent's 'Goal' Persist Across a Long Task?\n\n**Problem:** Long-horizon-goal chain: agent receives goal -> maintains a goal representation across many steps -> acts toward it. A hidden long-horizon goal (the canonical scheming risk) requires a persistent internal goal representation. Whether such a representation is stably decodable across steps in a small agent is under-studied.\n\n**Direction:** Run a small open model as an agent over a multi-step toy task with a stated goal. At each step, train/apply a probe to recover the goal from activations and measure how stably the goal direction persists. Test via steering whether overwriting the goal representation mid-task redirects behavior \u2014 establishing it as the causal carrier.\n\n**Why it matters:** Persistent, decodable goal representations are exactly what a scheming-detection monitor would target. A small-scale demonstration that goals are linearly trackable (or not) is foundational for the long-horizon threat model and needs no lab infra.\n\n**Relevant context:** Alignment Forum agenda on extracting standalone world/goal models from networks; model-organism agenda for secret-goal pursuit (Anthropic Alignment Science). Probing across token/step positions is standard with TransformerLens on open models."
+    }
+  },
+  {
+    "idea_id": "gen-1769",
+    "title": "Does Probe Generalization Break at the 'New Attack Style' Link?",
+    "run_id": "2026-06-15T19-24-29",
+    "quick_score": 5,
+    "quick_reasoning": "OOD generalization is the gap between probe numbers and real monitoring; precisely scoped.",
+    "quick_confidence": 0.78,
+    "eliminated": false,
+    "elimination_reason": null,
+    "original_idea": {
+      "idea_id": "gen-1769",
+      "run_id": "2026-06-15T19-24-29",
+      "stage": "generate",
+      "timestamp": "2026-06-15T21:36:04Z",
+      "subfield": "mechanistic_interpretability",
+      "generation_strategy": "causal_chain_intervention",
+      "confidence": 0.74,
+      "body": "# Does Probe Generalization Break at the 'New Attack Style' Link?\n\n**Problem:** Deployment chain: train deception/harm probe on known examples -> deploy -> face novel attack styles -> probe must still fire. Reports of 95% F1 are mostly in-distribution; the link that matters for safety is generalization to unseen styles, where 'black-to-white boosts' suggest probes may track surface artifacts.\n\n**Direction:** On an open model, train a deception probe on one elicitation style (e.g. roleplay) and rigorously test on held-out styles (pressure, sandbagging, sycophancy) from public datasets. Decompose where it fails: does the probe direction still align with the model's internal deception representation in the new style, or has the representation moved?\n\n**Why it matters:** Out-of-distribution generalization is THE gap between impressive probe numbers and real monitoring. A clean cross-style stress test directly addresses the interpretability-to-safety translation gap, lab-independent.\n\n**Relevant context:** Goldowsky-Dill et al. (arXiv 2502.03407) and Panfilov et al. (arXiv 2605.27958) report high F1 but note white-box advantage is 'modest' OOD. 'Benchmarking Deception Probes via Black-to-White Performance Boosts' (arXiv 2507.12691) suggests artifact-tracking. Public deception datasets exist."
+    }
+  },
+  {
+    "idea_id": "gen-177",
+    "title": "Does Deliberative-Style Prompting Recover Shallow Alignment at Inference?",
+    "run_id": "2026-06-15T19-24-29",
+    "quick_score": 5,
+    "quick_reasoning": "Tests a deployable inference-time jailbreak mitigation; clear focused safety relevance.",
+    "quick_confidence": 0.78,
+    "eliminated": false,
+    "elimination_reason": null,
+    "original_idea": {
+      "idea_id": "gen-177",
+      "run_id": "2026-06-15T19-24-29",
+      "stage": "generate",
+      "timestamp": "2026-06-15T21:36:03Z",
+      "subfield": "adversarial_robustness",
+      "generation_strategy": "follow_up_experiment",
+      "confidence": 0.72,
+      "body": "# Does Deliberative-Style Prompting Recover Shallow Alignment at Inference?\n\n**Problem:** Deliberative Alignment (arXiv:2412.16339) improves robustness by training models to reason over a safety spec. It is untested whether merely PROMPTING an open non-reasoning model to recite a safety spec before answering reproduces any of that robustness gain against prefilling/shallow attacks \u2014 i.e., is the benefit from training or from the reasoning structure?\n\n**Direction:** On an open chat model, compare jailbreak success across three conditions: (a) baseline, (b) system prompt instructing the model to first restate relevant safety rules then answer, (c) (b) plus a forced reasoning preamble. Test against prefilling and simple adaptive attacks. Quantify how much robustness a free, inference-time prompt buys.\n\n**Why it matters:** If a cheap prompt template recovers part of deliberative alignment's robustness, defenders without training budgets gain a deployable mitigation \u2014 high counterfactual value, zero training.\n\n**Relevant context:** Deliberative Alignment (arXiv:2412.16339): training models to recall/reason over safety specs pushes the robustness/over-refusal Pareto frontier. arXiv:2404.02151 simple adaptive attacks as testbed."
+    }
+  },
+  {
+    "idea_id": "gen-1770",
+    "title": "Feature-Consistency Audit Across SAE Training Seeds",
+    "run_id": "2026-06-15T19-24-29",
+    "quick_score": 5,
+    "quick_reasoning": "Quantifies seed-reliability of safety-relevant SAE features that deployment decisions rest on.",
+    "quick_confidence": 0.78,
+    "eliminated": false,
+    "elimination_reason": null,
+    "original_idea": {
+      "idea_id": "gen-1770",
+      "run_id": "2026-06-15T19-24-29",
+      "stage": "generate",
+      "timestamp": "2026-06-15T21:36:04Z",
+      "subfield": "mechanistic_interpretability",
+      "generation_strategy": "backcast_from_success",
+      "confidence": 0.78,
+      "body": "# Feature-Consistency Audit Across SAE Training Seeds\n\n**Problem:** A safety success state requires that when an SAE flags a 'deception' or 'refusal' feature, that feature is real and reproducible \u2014 not an artifact of one random seed. Backcasting from 'auditors can trust SAE features as evidence', a prerequisite result is a quantified reliability measure: do the same human-interpretable safety-relevant features reappear when an SAE is retrained with a different seed?\n\n**Direction:** Take a single Gemma Scope layer (Gemma-2-2B) with two or more publicly available SAEs (or train two tiny SAEs on cached activations with different seeds using SAELens), then build a bipartite matching of decoder directions (cosine similarity / activation correlation on a shared text corpus). Report the fraction of features that have a stable counterpart, focusing on safety-adjacent features (refusal, harmful content, sycophancy) surfaced via Neuronpedia auto-interp labels. Deliver a reproducibility scorecard.\n\n**Why it matters:** If SAE features used in safety arguments are seed-unstable, deployment decisions built on them are fragile. This is counterfactually valuable: needs no model training, only public weights/SAEs, and labs deprioritize it because it questions their own tooling.\n\n**Relevant context:** Position: Mechanistic Interpretability Should Prioritize Feature Consistency in SAEs (arXiv 2505.20254) reports SAEs show inconsistency of learned features across training runs with identical data/architecture, instability arising from feature splitting/absorption. Gemma Scope (arXiv 2408.05147) provides hundreds of open JumpReLU SAEs accessible via Neuronpedia."
+    }
+  },
+  {
+    "idea_id": "gen-1771",
+    "title": "Quantifying Off-Target Damage from Single-Feature Safety Steering",
+    "run_id": "2026-06-15T19-24-29",
+    "quick_score": 5,
+    "quick_reasoning": "Maps collateral-damage profile of safety steering, decision-relevant for its deployment case.",
+    "quick_confidence": 0.78,
+    "eliminated": false,
+    "elimination_reason": null,
+    "original_idea": {
+      "idea_id": "gen-1771",
+      "run_id": "2026-06-15T19-24-29",
+      "stage": "generate",
+      "timestamp": "2026-06-15T21:36:04Z",
+      "subfield": "mechanistic_interpretability",
+      "generation_strategy": "backcast_from_success",
+      "confidence": 0.8,
+      "body": "# Quantifying Off-Target Damage from Single-Feature Safety Steering\n\n**Problem:** A success state for SAE-based safety is: 'we can steer one safety feature without breaking unrelated capabilities.' Backcasting, we need a result that maps the collateral-damage profile of steering a single refusal/safety feature \u2014 how much capability on unrelated tasks degrades per unit of steering strength.\n\n**Direction:** Using Gemma-2-2B + a Gemma Scope SAE, amplify a refusal-related feature at increasing coefficients. At each strength, measure (a) refusal rate on a small harmful-prompt set and (b) accuracy on a held-out benign benchmark slice (e.g., a few hundred MMLU/GSM8K items, or a small QA set). Plot dose-response curves of safety gain vs. collateral capability loss, and identify the 'knee' where damage accelerates.\n\n**Why it matters:** Steering is being proposed as a cheap safety lever; if even single-feature steering systematically degrades benign capability, that undermines its deployment case. Pure inference-time work on open weights, no training.\n\n**Relevant context:** Steering Language Model Refusal with SAEs (arXiv 2411.11296) found feature steering improves jailbreak robustness but causes systematic degradation across benchmark tasks even on safe inputs. 'When the Coffee Feature Activates on Coffins' (arXiv 2601.03047) documents entangled side effects of feature steering."
+    }
+  },
+  {
+    "idea_id": "gen-1772",
+    "title": "Can a Linear Probe Catch a Model Hiding a Secret Word?",
+    "run_id": "2026-06-15T19-24-29",
+    "quick_score": 5,
+    "quick_reasoning": "Hidden-knowledge/sandbagging detection on a model organism, a focused long-horizon safety problem.",
+    "quick_confidence": 0.76,
+    "eliminated": false,
+    "elimination_reason": null,
+    "original_idea": {
+      "idea_id": "gen-1772",
+      "run_id": "2026-06-15T19-24-29",
+      "stage": "generate",
+      "timestamp": "2026-06-15T21:36:04Z",
+      "subfield": "mechanistic_interpretability",
+      "generation_strategy": "backcast_from_success",
+      "confidence": 0.74,
+      "body": "# Can a Linear Probe Catch a Model Hiding a Secret Word?\n\n**Problem:** A safety success state is: 'monitors can detect when a model knows something it refuses to state.' Backcasting from 'reliable hidden-knowledge detection', a foundational result is whether a cheap linear probe trained on residual activations of a model-organism that hides a word generalizes to held-out secret words.\n\n**Direction:** Use the published 'Taboo' model-organism setup (a model fine-tuned to describe a secret word without saying it) or build a tiny analogue via in-context prompting on an open chat model. Collect residual-stream activations across layers when the model is hiding vs. freely stating a word. Train a logistic-regression probe on a subset of secret words; test generalization to unseen secret words. Compare against the logit-lens baseline.\n\n**Why it matters:** Hidden-knowledge / sandbagging detection is a long-horizon threat labs underinvest in. Probing an existing open model organism is squarely in scope and needs no lab infrastructure.\n\n**Relevant context:** Towards eliciting latent knowledge from LLMs with mechanistic interpretability used the Taboo model organism (LM fine-tuned to describe a secret word without stating it) with Logit Lens reaching Pass@10 65.0% for top-1 secret tokens, finding interp methods outperform black-box approaches."
+    }
+  }
+]

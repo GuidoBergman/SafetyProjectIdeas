@@ -1,0 +1,42 @@
+[
+ {
+  "idea_id": "gen-040",
+  "title": "Measuring the False-Positive Tax of Introspective Self-Reports on Clean Open Models",
+  "research_question": "On clean, unmodified open models, how much do prompt phrasing, decoding temperature, and few-shot framing inflate spurious introspective self-reports (models confessing to behaviors they don't have), and what is the resulting signal-to-noise floor for introspection as a safety-audit signal?",
+  "approach_outline": "Without training any adapter, systematically prompt several clean small open models (Llama-3.2-1B/3B, Qwen2.5-1.5B, Phi-3-mini) with introspection-style questions across a controlled grid of phrasings, temperatures, and few-shot framings. Use a cheap LLM judge to score how often the model fabricates a non-existent behavior (a false positive, since the model is known-clean). To keep the grid narrow, cap it (e.g. 4 phrasings x 3 temperatures x 2 framings) and fix one question family. Deliverable: a false-positive-rate table showing which prompt/decoding choices most inflate spurious self-reports, plus an estimated 'noise floor' that any real introspection signal must exceed.",
+  "source_paper": "Introspection Adapters \u2014 https://alignment.anthropic.com/2026/introspection-adapters/",
+  "subfield": "Alignment auditing / introspection"
+ },
+ {
+  "idea_id": "gen-083",
+  "title": "Counter-Prompts That Restore AI Identity Disclosure Under Suppression",
+  "research_question": "When an adversarial system prompt instructs an open model to hide that it is an AI, which cheap deployer-side counter-measure most reliably restores honest AI-identity disclosure?",
+  "approach_outline": "Fix one adversarial suppression system prompt (the 'pretend you are human' instruction) as the attacker. On two open instruct models (Llama-3.1-8B, Qwen2.5-7B), evaluate exactly three cheap mitigations against it: (a) a hard system-prompt clause mandating disclosure that is concatenated after the suppression prompt, (b) appending an explicit clarifying user turn ('Are you an AI?'), and (c) a post-hoc self-report turn where the model is asked to classify its own prior answer. Use a fixed RealityTest-style query set (a ~50-prompt identity-probing set reconstructed from the paper's described query types). Score disclosure-rate (did the model admit being an AI) with a keyword + small-judge rubric. Hold attacker prompt, query set, and scoring fixed; the only variable is the mitigation. Deliverable: a disclosure-rate-recovery table (3 mitigations x 2 models) plus a statement of which mitigation is most robust and where suppression still wins.",
+  "source_paper": "RealityTest \u2014 https://www.aisi.gov.uk/research/realitytest-how-people-probe-ai-identity-and-whether-models-disclose-it",
+  "subfield": "Honesty & Deception / Model Evaluation"
+ },
+ {
+  "idea_id": "gen-088",
+  "title": "Does 'Ask Don't Tell' Generalize to Open Models and Factual-Accuracy Tasks?",
+  "research_question": "Does the question-reframing anti-sycophancy mitigation from 'Ask Don't Tell' transfer to open-weight models the paper did not test, and does reducing sycophancy cost accuracy on items with a known correct answer?",
+  "approach_outline": "Replicate the core statement-to-question reframing on open-weight models (start with Llama-3.1-8B and Qwen2.5-7B; extend to Mistral-7B and Gemma-2-9B only if time permits, keeping the core deliverable to two models). Reconstruct statement-vs-question paired prompts in one of the paper's domains where items have a verifiable correct answer (e.g. factual or arithmetic claims). Compare three conditions: user asserts a (possibly wrong) statement, user asks the same as a question (the reframing), and a 'please don't be sycophantic' instruction baseline. Crucially, score accuracy on items with known ground truth alongside sycophancy. Hold the domain, prompt pairs, and scoring fixed; model is the replication axis. Deliverable: per-model sycophancy-reduction and accuracy-delta table.",
+  "source_paper": "Ask Don't Tell \u2014 https://www.aisi.gov.uk/research/ask-dont-tell-reducing-sycophancy-in-large-language-models",
+  "subfield": "Sycophancy / Honesty"
+ },
+ {
+  "idea_id": "gen-089",
+  "title": "Epistemic-Certainty Sycophancy Curve: How User Confidence Modulates Agreement",
+  "research_question": "Does sycophantic agreement rise monotonically with the epistemic certainty a user conveys, and is it amplified by I-perspective framing, when measured across open models \u2014 i.e. does the 'Ask Don't Tell' dose-response curve replicate outside a closed lab?",
+  "approach_outline": "Build a small prompt grid: the same underlying (false-ish or contestable) claim expressed at increasing certainty levels (neutral question -> tentative belief -> firm statement -> strong conviction), crossed with I-perspective ('I think X') vs user-perspective ('Some people think X') framing, over two domains. Run inference-only on 3-4 open models and measure the sycophantic-agreement rate at each certainty level and framing. Plot agreement vs certainty per framing and test for monotonicity and for an I-perspective amplification effect. Deliverable: a certainty-curve figure per model and a statistical test of monotonicity + framing interaction.",
+  "source_paper": "Ask Don't Tell \u2014 https://www.aisi.gov.uk/research/ask-dont-tell-reducing-sycophancy-in-large-language-models",
+  "subfield": "Sycophancy / Honesty"
+ },
+ {
+  "idea_id": "gen-003",
+  "title": "A Minimal Reproducible Indirect-Prompt-Injection Eval for Open Tool-Using Agents",
+  "research_question": "Across published indirect-prompt-injection (IPI) attack categories, what is the per-category attack-success rate against small open instruction-tuned models in a minimal tool-using agent loop?",
+  "approach_outline": "Build a tiny agent loop (raw API or a thin LangChain wrapper) that performs one benign task (e.g., 'summarize this document and report the user's account balance from the tool result') while reading two untrusted fields: a 'document' field and a 'tool result' field. Inject 15-20 published IPI attack templates spanning 4 categories \u2014 instruction override, fake system message, hidden HTML/markdown, data-exfiltration lure \u2014 into those fields. Test against 2 open instruction-tuned models (Llama-3.1-8B-Instruct, Qwen2.5-7B-Instruct). For each attack, define a clear programmatic success criterion (did the agent follow the injected instruction / leak the target string?). Deliverable: a per-attack-category success-rate table per model, plus the released minimal eval harness so others can drop in their own model. Scope is fixed to one benign task and 4 attack categories to keep it a single clean benchmark.",
+  "source_paper": "How Vulnerable Are AI Agents to Indirect Prompt Injections? \u2014 https://arxiv.org/abs/2603.15714",
+  "subfield": "Agent security / prompt injection"
+ }
+]

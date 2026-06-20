@@ -130,6 +130,13 @@ uv run python -m saim.pipeline.rank persist '<ranked_json>'
 
 This copies ranked proposals to `data/ideas/` for cross-run accumulation.
 
+**Note:** `persist` only writes ideas whose novelty has been **calculated**
+(`novelty_method: "novelty_assessed"`). If this is the first ranking (rank #1) and ideas
+still carry **estimated** novelty, nothing is persisted — that is intentional. Run the
+`novelty-rerank` workflow (calculated novelty on the top-ranked ideas + re-rank) first; it
+persists the assessed top ideas itself. This enforces the project rule that ideas must not
+be persisted with only estimated novelty.
+
 Log the output:
 
 ```bash

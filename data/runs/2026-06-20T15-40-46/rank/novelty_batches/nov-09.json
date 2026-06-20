@@ -1,0 +1,42 @@
+[
+ {
+  "idea_id": "gen-029",
+  "title": "Token-Efficiency Frontier: How Few Reasoning Examples Suppress Agentic Misalignment?",
+  "research_question": "On a small open model, how does the rate of agentic misalignment fall as the size of a reasoning-rich 'difficult-advice'-style LoRA dataset grows from very small (10) to a few hundred (300) examples, versus an equal-size behavior-only baseline?",
+  "approach_outline": "One open model, one consumer GPU. Hold the probe and rubric fixed; vary only one knob: reasoning-dataset size in {10, 30, 100, 300}. For each size, LoRA-train and measure agentic-misalignment rate on a fixed public probe set (blackmail/honeypot-style prompts), and also train an equal-size behavior-only baseline at each point. Deliverable: a single data-efficiency curve \u2014 misalignment rate vs number of reasoning examples \u2014 with the behavior-only curve overlaid, and the minimal reasoning-example count that drives misalignment near zero. This is deliberately a follow-on to gen-028, so the dependency (that the suppression effect exists on open models at all) is stated as a precondition checked at the 300-example point first.",
+  "source_paper": "Teaching Claude why \u2014 https://www.anthropic.com/research/teaching-claude-why",
+  "subfield": "alignment training"
+ },
+ {
+  "idea_id": "gen-061",
+  "title": "Does a 2-Monitor Ensemble Beat the Best Single Monitor? A Cheap Test of Apollo's Ensemble Claim",
+  "research_question": "On a fixed false-positive budget (1% FPR), does averaging the suspiciousness scores of two cheap, diverse open-model monitors achieve higher true-positive rate than the stronger single monitor, and does base-model diversity help more than prompt diversity?",
+  "approach_outline": "Reuse a public labeled benign/sabotage transcript set (e.g., the Auditing Sabotage Bench transcripts, Redwood control transcripts, or a comparable released set). Score every transcript for 'suspiciousness' (0-100 rubric) with three monitors: Qwen2.5-7B-Instruct, Llama-3.1-8B-Instruct (diverse base models), and a prompt-variant of the stronger of the two (same base, different scoring prompt \u2014 the redundancy control). Combine monitor scores via (a) score-averaging and (b) max-rule. Calibrate each monitor's threshold to 1% FPR on a held-out split, then compare TPR-at-1%-FPR for each single monitor vs each ensemble. The single deliverable is a table/bar chart of TPR-at-1%-FPR across the five configurations (2 singles, prompt-variant, averaged ensemble, max ensemble), answering whether diversity beats redundancy.",
+  "source_paper": "A scalable monitoring research agenda (Apollo) \u2014 https://www.apolloresearch.ai/products/a-scalable-monitoring-research-agenda/",
+  "subfield": "AI Control / Monitoring"
+ },
+ {
+  "idea_id": "gen-027",
+  "title": "Do NLA Verbalizers Hallucinate 'Safety-Test Awareness'? A Cheap Faithfulness Probe",
+  "research_question": "When run on matched prompt pairs that are behaviorally identical but differ only in whether they are framed as a 'safety test', does a Natural Language Autoencoder verbalizer produce 'being-tested' text that tracks the actual framing (true positives) or that appears spuriously on controls (hallucinations)?",
+  "approach_outline": "Inference-mostly, using the released NLA code on a small supported open model. The participant constructs a small set of matched prompt pairs: each pair has the same task content, one member explicitly framed as a safety/evaluation test and one neutrally framed. They add control pairs that mention testing in an unrelated, non-self-referential way. They run the verbalizer on all prompts and use a simple keyword/LLM-judge classifier to detect whether the verbalized text asserts 'awareness of being tested'. The deliverable is a contrastive faithfulness rate: true-positive rate on test-framed prompts minus false-positive rate on neutral/control prompts.",
+  "source_paper": "Natural Language Autoencoders \u2014 https://www.anthropic.com/research/natural-language-autoencoders",
+  "subfield": "interpretability / auditing"
+ },
+ {
+  "idea_id": "gen-033",
+  "title": "Tool-Augmented Monitors: Does Letting an Open Monitor Run Python Close the Counting Blind Spot?",
+  "research_question": "Does giving a cheap open monitor a single Python tool (to count tokens, diff strings, tally state) close the counting/state-tracking detection blind spot that SLEIGHT-Bench attributes to the LLM doing these tasks poorly in its head?",
+  "approach_outline": "Take the counting / state-tracking / needle-in-haystack subset of SLEIGHT-Bench transcripts. Run one open monitor model in two conditions over the same transcripts: (A) plain text-only suspicious/not judgment, and (B) the same model given exactly one Python tool it may call to count, diff, or tally. To keep the harness beginner-tractable, use a minimal single-tool function-calling loop (one tool, one optional call, then a verdict) rather than a general agent framework \u2014 provide a ready scaffold the participant fills in. Measure detection-rate lift (B minus A) per category at a fixed false-positive rate calibrated on benign transcripts. Inference-only, no training. Deliverable: per-category detection-rate lift table with CIs.",
+  "source_paper": "SLEIGHT-Bench \u2014 https://alignment.anthropic.com/2026/sleight-bench/",
+  "subfield": "AI control / monitoring"
+ },
+ {
+  "idea_id": "gen-052",
+  "title": "How Fast Does Alignment Erode Under a Few Steps of Harmful LoRA Fine-Tuning?",
+  "research_question": "On a single publicly available aligned open model, how quickly do aligned traits (honesty, refusal calibration) degrade as a function of the number of LoRA fine-tuning steps on a small set of mildly misaligned public examples?",
+  "approach_outline": "Pick one aligned open model (e.g. a Llama-3.1-8B-Instruct or a trait-aligned open checkpoint) and one small public misalignment dataset (a few hundred sycophancy-encouraging or refusal-eroding dialogues drawn from public sources). Apply LoRA fine-tuning and checkpoint at a fixed schedule (0, 10, 25, 50, 100, 200 steps). At each checkpoint, evaluate on two fixed held-out alignment probes: a refusal-calibration set (does it now comply with requests it previously refused?) and an honesty/sycophancy probe (does it now agree with false user claims?). Deliverable: one erosion curve \u2014 aligned-behavior score vs fine-tuning steps \u2014 for each probe, with the 'half-life' (steps to lose 50% of the gap to baseline) read off the curve. Provide a ready-to-run training config so the participant only edits dataset/step parameters.",
+  "source_paper": "Reinforcement learning towards broadly and persistently beneficial models \u2014 https://alignment.openai.com/beneficial-rl/",
+  "subfield": "Alignment / robustness"
+ }
+]

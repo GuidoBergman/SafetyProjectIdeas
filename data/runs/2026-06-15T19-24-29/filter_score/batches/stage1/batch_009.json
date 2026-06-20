@@ -1,0 +1,1002 @@
+[
+  {
+    "idea_id": "gen-1637",
+    "run_id": "2026-06-15T19-24-29",
+    "stage": "generate",
+    "timestamp": "2026-06-15T21:36:04Z",
+    "subfield": "mechanistic_interpretability",
+    "generation_strategy": "replication_with_twist",
+    "confidence": 0.74,
+    "body": "# Does the Othello-GPT Linear World Model Replicate in a Connect-Four Transformer?\n\n**Problem:** Nanda showed Othello-GPT linearly encodes board state as 'mine vs theirs' rather than 'black vs white,' and the probe is causally usable. It is unknown whether a linear emergent world model arises with the same 'relative-to-current-player' coordinate trick in a structurally different game like Connect Four, where gravity constrains moves and the board is rectangular.\n\n**Direction:** Train a tiny GPT (1-2 layers, available training scripts run in under an hour on a consumer GPU) on legal Connect-Four move sequences, then fit linear probes for cell occupancy under both 'absolute color' and 'relative-to-mover' encodings. Replicate Nanda's finding by testing which coordinate system yields a clean linear probe, and do a causal intervention by editing the probed direction to flip a cell and checking legal-move predictions.\n\n**Why it matters:** World-model extraction from neural networks is a flagged open problem (Alignment Forum agenda). Confirming whether the 'relative coordinate' linear-representation trick is a general property of game transformers or an Othello quirk informs whether interpretability methods will generalize to the world models inside real agents \u2014 work fully doable outside a lab on toy models.\n\n**Relevant context:** Nanda 2023 'Actually, Othello-GPT Has A Linear Emergent World Representation' showed board state is linearly probeable under a 'mine/theirs' (relative to current player) encoding and is causally editable. Linear Latent World Models (arXiv:2310.07582) confirmed causal utility. Chess emergent world models (arXiv:2403.15498) extended this to chess."
+  },
+  {
+    "idea_id": "gen-1638",
+    "run_id": "2026-06-15T19-24-29",
+    "stage": "generate",
+    "timestamp": "2026-06-15T21:36:04Z",
+    "subfield": "mechanistic_interpretability",
+    "generation_strategy": "replication_with_twist",
+    "confidence": 0.78,
+    "body": "# Logit Lens Failure Modes Replicated on Instruction-Tuned vs Base Models\n\n**Problem:** The tuned-lens paper noted the simple logit lens is brittle and 'fails on many modern architectures,' motivating learnable translators. But the comparison was mostly base models. It is unclear whether instruction tuning makes the raw logit lens more or less reliable than on the corresponding base model \u2014 a question relevant to whether cheap interpretability shortcuts survive RLHF-style tuning.\n\n**Direction:** Take paired base and instruction-tuned checkpoints (Pythia base vs an instruction-tuned variant, Llama-3.2-1B vs -1B-Instruct, Gemma-2-2b vs -2b-it). Apply the plain logit lens at every layer and measure per-layer KL divergence to the final distribution and top-1 agreement. Replicate the tuned-lens 'logit lens is brittle' finding, then add the twist of quantifying how the brittleness changes after instruction tuning within each family.\n\n**Why it matters:** Logit lens is the cheapest interpretability probe and is widely used for monitoring intermediate model 'beliefs.' Knowing whether safety-relevant tuning silently degrades the reliability of this monitor \u2014 using only public checkpoints and a single GPU \u2014 directly informs whether such lightweight monitors can be trusted on deployed (tuned) models.\n\n**Relevant context:** Belrose et al. 2023 'Eliciting Latent Predictions with the Tuned Lens' (arXiv:2303.08112) showed the logit lens is brittle and biased while the tuned lens works across Pythia, GPT-NeoX, BLOOM, GPT-Neo, OPT. 'interpreting GPT: the logit lens' (LessWrong) is the original technique."
+  },
+  {
+    "idea_id": "gen-1639",
+    "run_id": "2026-06-15T19-24-29",
+    "stage": "generate",
+    "timestamp": "2026-06-15T21:36:04Z",
+    "subfield": "mechanistic_interpretability",
+    "generation_strategy": "replication_with_twist",
+    "confidence": 0.7,
+    "body": "# Replicating the Induction-Head Phase Change on Non-Language Token Streams\n\n**Problem:** Induction heads emerge during a sharp phase change in 2-layer transformers trained on language, marking the onset of in-context learning. It is unknown whether the same phase-change signature appears when the same tiny architecture is trained on a structurally different, non-linguistic repeated-token stream (e.g., synthetic DNA-like sequences or MIDI note tokens), or whether language statistics are needed.\n\n**Direction:** Use the TransformerLens 'Induction Heads Phase Change Replication' as the baseline, training a 2-layer attention-only transformer. The twist: swap the training corpus for a synthetic non-language sequence dataset with controllable repeat structure, and measure whether the loss bump and induction-head formation co-occur. Compare the timing and sharpness of the phase change to the language baseline.\n\n**Why it matters:** Induction heads are a canonical interpretability circuit and a model of how in-context learning (and thus prompt-based capability elicitation) arises. Understanding whether the circuit's emergence is corpus-dependent helps predict when ICL-driven capabilities appear in models trained on novel data types \u2014 a controlled, lab-free training-dynamics study scoped to a tiny model.\n\n**Relevant context:** Olsson et al. 2022 'In-context Learning and Induction Heads' (arXiv:2209.11895, transformer-circuits.pub) established the induction-head phase change and loss bump in 2-layer models. TransformerLens ships an 'Induction Heads Phase Change Replication' demo."
+  },
+  {
+    "idea_id": "gen-164",
+    "run_id": "2026-06-15T19-24-29",
+    "stage": "generate",
+    "timestamp": "2026-06-15T21:36:03Z",
+    "subfield": "adversarial_robustness",
+    "generation_strategy": "experiment_variation",
+    "confidence": 0.73,
+    "body": "# Benchmark Saturation Check: Do Modern Small Models Trivially Pass Old Jailbreak Sets?\n\n**Problem:** Many jailbreak benchmarks were built against older models. If current small open models trivially refuse the canonical attack sets, those benchmarks no longer discriminate \u2014 yet they are still widely cited, an unaddressed measurement issue.\n\n**Direction:** Run a panel of small open models (2024 vs 2026 releases) against a fixed legacy jailbreak set and StrongREJECT, measuring attack-success distributions. Quantify ceiling/floor effects and item-level discrimination (which prompts still separate models from each other vs which everything now refuses). Recommend a discriminating subset.\n\n**Why it matters:** Prevents the field from reporting reassuring numbers on saturated benchmarks. A pure measurement-validity contribution, lab-independent, that helps keep adversarial-robustness evaluation honest as models improve.\n\n**Relevant context:** StrongREJECT (arXiv:2402.10260) was itself created because prior benchmarks overstated jailbreak success, establishing that benchmark validity erodes over time. Context file lists multiple benchmarks (AILuminate, HELM Safety, StrongReject, TrustLLM) whose discrimination on current models is untested."
+  },
+  {
+    "idea_id": "gen-1640",
+    "run_id": "2026-06-15T19-24-29",
+    "stage": "generate",
+    "timestamp": "2026-06-15T21:36:04Z",
+    "subfield": "mechanistic_interpretability",
+    "generation_strategy": "replication_with_twist",
+    "confidence": 0.72,
+    "body": "# Re-running the 'Do I Know This Entity?' Hallucination Circuit on a Different Model Family\n\n**Problem:** Ferrando et al. found 'entity recognition' SAE latents in Gemma-2-2b that gate a default refusal/hallucination response (peaking at layer 9), partially replicated on Llama-3.1-8B. Whether the same known-entity gating mechanism exists in an architecturally distinct small family like Qwen2.5 or Phi, using their respective public SAEs/probes, remains untested.\n\n**Direction:** Replicate the core causal result with a linear probe approach: build known/unknown entity prompt sets, train layer-wise linear probes for 'model knows this entity,' find the layer where probe accuracy peaks, and steer along the probe direction to test whether it induces hallucination (on known entities) or refusal (on unknown). The twist: run on Qwen2.5-1.5B/3B where no published entity-circuit analysis exists, comparing the peak layer and steering strength to Gemma's layer-9 result.\n\n**Why it matters:** A model 'knowing what it knows' is the mechanistic basis of calibrated refusal and hallucination avoidance \u2014 a fuzzy, hard-to-evaluate safety property. Showing whether this circuit is family-universal, using only public weights and probes on one GPU, advances whether hallucination-monitoring directions transfer across the open models a deployer might choose.\n\n**Relevant context:** Ferrando et al. ICLR 2025 'Do I Know This Entity? Knowledge Awareness and Hallucinations' (arXiv:2411.14257) found entity-recognition SAE latents peaking at Gemma-2-2b layer 9 that causally gate refusal/hallucination, replicated on Llama-3.1-8B via LlamaScope SAEs."
+  },
+  {
+    "idea_id": "gen-1641",
+    "run_id": "2026-06-15T19-24-29",
+    "stage": "generate",
+    "timestamp": "2026-06-15T21:36:04Z",
+    "subfield": "mechanistic_interpretability",
+    "generation_strategy": "replication_with_twist",
+    "confidence": 0.77,
+    "body": "# Replicating Truth-Probe Generalization Failures on a New Topic Domain\n\n**Problem:** Truth probes trained on factual statements often fail to generalize, and recent work shows truthfulness representations rely on 'superficial resemblance.' Most studies use general-knowledge or city/geography datasets. Whether the brittleness replicates \u2014 and how it changes \u2014 when probes are trained on one knowledge domain (e.g., biology facts) and tested on a structurally different domain (e.g., legal/historical facts) is underexplored at small scale.\n\n**Direction:** Replicate the Geometry-of-Truth probing setup on Gemma-2-2b/Llama-3.2-3B: train a linear truth probe on true/false statements from one domain and evaluate cross-domain transfer. The twist: systematically vary surface form (negation, paraphrase, language) within and across domains to test the 'superficial resemblance' hypothesis, reporting where the probe's accuracy collapses.\n\n**Why it matters:** Lie/deception detection via internal truth directions is a leading lab-free safety tool, but its reliability hinges on generalization. Mapping exactly which distribution shifts break a truth probe \u2014 with public datasets and a single GPU \u2014 directly tells safety practitioners how far they can trust these monitors, a >1-year-horizon concern frontier labs underinvest in.\n\n**Relevant context:** Marks & Tegmark 'The Geometry of Truth' established linear truth probes; 'How well do truth probes generalise?' (LessWrong) documented transfer failures; 'LLM Knowledge is Brittle: Truthfulness Representations Rely on Superficial Resemblance' (arXiv:2510.11905) and 'Probing the Geometry of Truth' (arXiv:2506.00823) show brittleness under logical transformations."
+  },
+  {
+    "idea_id": "gen-1642",
+    "run_id": "2026-06-15T19-24-29",
+    "stage": "generate",
+    "timestamp": "2026-06-15T21:36:04Z",
+    "subfield": "mechanistic_interpretability",
+    "generation_strategy": "replication_with_twist",
+    "confidence": 0.7,
+    "body": "# Vision-SAE Low-Sparsity Result Replicated on Medical/Satellite Image Domains\n\n**Problem:** ViT-Prisma reported the surprising result that effective vision SAEs need substantially lower sparsity than language SAEs, and reconstructions can even decrease model loss. This was characterized on natural-image CLIP/DINO. Whether the low-sparsity property holds when the underlying images come from a very different distribution (medical scans, satellite imagery) \u2014 where features may be denser or rarer \u2014 is unknown.\n\n**Direction:** Take Prisma's 80+ pre-trained CLIP SAE weights and run inference on a domain-shifted image set (e.g., a public chest X-ray or satellite-tile dataset). Replicate the sparsity-pattern measurement (L0, fraction of dead features, reconstruction effect on loss) and compare to natural-image baselines. The twist: characterize how SAE sparsity and feature firing change under domain shift without any retraining.\n\n**Why it matters:** Multimodal interpretability is a named open problem, and vision models are increasingly deployed in high-stakes domains (medicine, surveillance) outside frontier labs. Understanding whether pre-trained interpretability tooling transfers to these domains, using only public SAE weights and one GPU, is exactly the kind of lab-independent, application-relevant work that scales interpretability to real deployments.\n\n**Relevant context:** Prisma toolkit (arXiv:2504.19475) ships 80+ pre-trained CLIP/DINO SAEs and reports vision SAEs exhibit substantially lower sparsity than language SAEs, with reconstructions sometimes decreasing model loss. 'Interpretable and Testable Vision Features via SAEs' (arXiv:2502.06755) provides feature-interpretation methods."
+  },
+  {
+    "idea_id": "gen-1643",
+    "run_id": "2026-06-15T19-24-29",
+    "stage": "generate",
+    "timestamp": "2026-06-15T21:36:04Z",
+    "subfield": "mechanistic_interpretability",
+    "generation_strategy": "replication_with_twist",
+    "confidence": 0.7,
+    "body": "# Replicating Grokking Progress Measures on a Non-Modular Algorithmic Task\n\n**Problem:** Nanda et al. reverse-engineered the Fourier-multiplication algorithm behind grokked modular addition and defined progress measures showing memorization, circuit-formation, and cleanup phases. They replicated on a few tasks. Whether the same three-phase signature and a clean interpretable circuit emerge for a non-arithmetic task like sorting short lists or computing parity is a fresh test of generality.\n\n**Direction:** Reuse the public grokking training code to train a 1-layer transformer on a small algorithmic task that is NOT modular arithmetic (e.g., list parity or comparison). Replicate the restricted-loss / excluded-loss progress measures to detect the three training phases. The twist: attempt to reverse-engineer the learned circuit and report whether it is as cleanly interpretable as the Fourier algorithm, or whether grokking yields a messier mechanism.\n\n**Why it matters:** Training dynamics shaping learned features is a flagged open problem. Grokking is a clean lab-free testbed for studying how and when models switch from memorization to generalization \u2014 a mechanism behind sudden capability jumps. Testing whether the interpretability story generalizes beyond arithmetic informs whether we can predict and interpret emergent generalization in general.\n\n**Relevant context:** Nanda et al. ICLR 2023 'Progress measures for grokking via mechanistic interpretability' (arXiv:2301.05217) reverse-engineered the DFT-based modular-addition algorithm, defined restricted/excluded-loss progress measures, and identified memorization, circuit-formation, and cleanup phases; replicated on several algorithmic tasks."
+  },
+  {
+    "idea_id": "gen-1644",
+    "run_id": "2026-06-15T19-24-29",
+    "stage": "generate",
+    "timestamp": "2026-06-15T21:36:04Z",
+    "subfield": "mechanistic_interpretability",
+    "generation_strategy": "replication_with_twist",
+    "confidence": 0.73,
+    "body": "# SAE Seed-Dependence Replicated on Vision Transformers\n\n**Problem:** Recent work shows SAEs trained on the same LLM data with different random seeds learn substantially different features (only ~30% shared in a Llama-3-8B FFN SAE), with TopK SAEs more seed-dependent than ReLU. This instability has only been studied in language SAEs. Whether vision SAEs (ViT-Prisma) suffer the same seed-dependence \u2014 or are more stable because of their denser features \u2014 is unknown.\n\n**Direction:** Train multiple small CLIP-layer SAEs from different seeds using Prisma/SAELens on a fixed activation cache (trainable in a few hours on one GPU). Replicate the seed-overlap analysis: measure the fraction of features shared across seeds via maximum cosine-similarity matching, separately for ReLU and TopK. The twist: compare the seed-stability of vision SAEs to the published language numbers, testing whether vision's lower sparsity yields more reproducible features.\n\n**Why it matters:** If SAE features are seed-dependent, any safety claim built on 'we found feature X' is suspect unless it survives across initializations. Establishing whether this reproducibility problem extends to vision \u2014 a fully open, single-GPU study \u2014 directly bears on how much trust to place in feature-based interpretability for safety, the kind of methodological rigor labs rarely prioritize.\n\n**Relevant context:** 'SAEs Trained on the Same Data Learn Different Features' (arXiv:2501.16615) found only ~30% feature overlap across seeds in Llama-3-8B, with TopK more seed-dependent than ReLU. 'Unstable Features, Reproducible Subspaces' (arXiv:2606.12138) refines this. Prisma/SAELens enable vision SAE training."
+  },
+  {
+    "idea_id": "gen-1645",
+    "run_id": "2026-06-15T19-24-29",
+    "stage": "generate",
+    "timestamp": "2026-06-15T21:36:04Z",
+    "subfield": "mechanistic_interpretability",
+    "generation_strategy": "replication_with_twist",
+    "confidence": 0.66,
+    "body": "# Replicating the Poetry Planning-Ahead Circuit in Open Models with Circuit Tracing\n\n**Problem:** Anthropic found Claude 3.5 Haiku 'plans ahead' when writing rhyming poetry \u2014 activating the rhyme word before composing the line. Their open-source circuit-tracing tools support Gemma-2-2b and Llama-3.2-1b, but it is unknown whether these much smaller open models exhibit any detectable forward-planning for rhyme, or whether planning is a capability that only appears at larger scale.\n\n**Direction:** Use the open-source circuit-tracing library (attribution graphs via cross-layer transcoders) on Gemma-2-2b and Llama-3.2-1b. Prompt for rhyming couplets and look for activations corresponding to the eventual rhyme word appearing before the line is written, replicating Anthropic's methodology on a couplet dataset. The twist: compare the two small models to test whether planning-ahead correlates with capability/scale even within the small regime.\n\n**Why it matters:** Forward planning (representing a future goal before acting) is mechanistically close to the hidden-goal and deceptive-planning threat models that matter for long-horizon safety. Detecting whether and at what scale planning circuits appear, using only open tools and small models on one GPU, is a tractable slice of a >1-year threat model and tests interpretability's reach into model 'intent.'\n\n**Relevant context:** Anthropic 2025 'On the Biology of a Large Language Model' and 'Circuit Tracing' (transformer-circuits.pub) found Claude 3.5 Haiku activates rhyme words before writing the line. Anthropic open-sourced circuit-tracing tools (cross-layer transcoders, attribution graphs) supporting Gemma-2-2b and Llama-3.2-1b, with a Neuronpedia frontend."
+  },
+  {
+    "idea_id": "gen-1646",
+    "run_id": "2026-06-15T19-24-29",
+    "stage": "generate",
+    "timestamp": "2026-06-15T21:36:04Z",
+    "subfield": "mechanistic_interpretability",
+    "generation_strategy": "replication_with_twist",
+    "confidence": 0.74,
+    "body": "# Re-deriving Steering Vectors Across Quantization Levels\n\n**Problem:** Activation-addition steering vectors (e.g., refusal, sentiment, sycophancy directions) are extracted from full-precision activations. Hobbyists almost always run quantized models (4-bit, 8-bit) on consumer GPUs. Whether steering vectors extracted at full precision still steer effectively when applied to the quantized version of the same model \u2014 and whether vectors extracted from the quantized model differ \u2014 is largely untested.\n\n**Direction:** Pick one well-studied steering direction (e.g., the refusal or a sentiment direction) on a small open model. Replicate the difference-of-means extraction and steering-effect measurement at full precision (baseline). The twist: apply the same vector to the 4-bit and 8-bit quantized model, and separately extract vectors from the quantized activations, comparing steering efficacy and direction cosine-similarity across precisions.\n\n**Why it matters:** Almost all real-world local deployment of open models is quantized, yet interpretability and steering research is done at full precision. Checking whether mechanistic interventions survive quantization \u2014 a cheap single-GPU study \u2014 tells us whether safety tooling (and conversely, jailbreak steering) transfers to the models people actually run, a deployment-reality gap labs ignore.\n\n**Relevant context:** Arditi et al. (arXiv:2406.11717) and the broader representation-engineering literature (arXiv:2502.17601) extract steering directions via difference-of-means at full precision. TransformerLens supports activation extraction; bitsandbytes enables 4/8-bit quantized inference on consumer GPUs."
+  },
+  {
+    "idea_id": "gen-1647",
+    "run_id": "2026-06-15T19-24-29",
+    "stage": "generate",
+    "timestamp": "2026-06-15T21:36:04Z",
+    "subfield": "mechanistic_interpretability",
+    "generation_strategy": "replication_with_twist",
+    "confidence": 0.7,
+    "body": "# Replicating Multilingual Circuit Findings on Low-Resource Languages\n\n**Problem:** Anthropic's circuit tracing showed multilingual representations share language-agnostic features in Claude 3.5 Haiku, and the open tools were demoed on multilingual tasks in Gemma-2-2b. These analyses focused on high-resource languages (English, French, Chinese). Whether the shared-concept 'lingua franca' representation extends to low-resource languages \u2014 or whether such languages route through English \u2014 is open.\n\n**Direction:** Use the logit lens / tuned lens and simple probing on Gemma-2-2b and Llama-3.2-1b for a translation-and-completion task. Replicate the finding that intermediate representations are language-agnostic by checking whether the model's intermediate predictions are English-like regardless of input language. The twist: compare a high-resource language pair to a low-resource one (e.g., Swahili, Welsh) to test whether low-resource processing detours through English.\n\n**Why it matters:** Cross-lingual safety gaps (safety tuning failing in non-English) are a documented problem, and the mechanism likely lies in whether non-English inputs route through shared English-centric features. Mapping this for low-resource languages \u2014 using public models on one GPU \u2014 is a lab-light contribution to understanding why safety degrades multilingually, a diffuse problem labs deprioritize.\n\n**Relevant context:** Anthropic 2025 'On the Biology of a Large Language Model' found shared language-agnostic features and that the model 'thinks in a conceptual space' before language; circuit-tracing tools were demoed on multilingual tasks in Gemma-2-2b. Tuned lens (arXiv:2303.08112) supports intermediate-prediction readout."
+  },
+  {
+    "idea_id": "gen-1648",
+    "run_id": "2026-06-15T19-24-29",
+    "stage": "generate",
+    "timestamp": "2026-06-15T21:36:04Z",
+    "subfield": "mechanistic_interpretability",
+    "generation_strategy": "replication_with_twist",
+    "confidence": 0.75,
+    "body": "# Feature-Universality Result Replicated Within a Single Model Family Across Scales\n\n**Problem:** Work quantifying SAE feature-space universality across different LLMs found 'weak universality.' But the cleaner question \u2014 whether the SAME features (via shared SAE dictionaries on Neuronpedia) persist across model sizes within ONE family (e.g., Gemma-2-2b vs Gemma-2-9b, both with public Gemma Scope SAEs) \u2014 is more tractable and directly tests whether features are conserved as capability scales.\n\n**Direction:** Use the public Gemma Scope SAEs for Gemma-2-2b and Gemma-2-9b. Pick a set of named, interpretable features (e.g., entity, sentiment, code) from the smaller model and find their nearest analogues in the larger model via activation correlation on shared text. Replicate the universality-quantification methodology, reporting the fraction of features with strong cross-scale matches.\n\n**Why it matters:** If features are conserved across scale within a family, interpretability and safety findings on small models transfer to large ones \u2014 a load-bearing assumption for the entire 'study small, deploy large' research strategy. Testing this with public SAEs on one GPU directly validates whether cheap small-model interpretability informs frontier safety.\n\n**Relevant context:** 'Quantifying Feature Space Universality Across LLMs via SAEs' (arXiv:2410.06981) found weak universality across models. Gemma Scope (DeepMind) provides public SAEs for all layers of Gemma-2-2b and -9b; Neuronpedia hosts feature dashboards and an API."
+  },
+  {
+    "idea_id": "gen-1649",
+    "run_id": "2026-06-15T19-24-29",
+    "stage": "generate",
+    "timestamp": "2026-06-15T21:36:04Z",
+    "subfield": "mechanistic_interpretability",
+    "generation_strategy": "replication_with_twist",
+    "confidence": 0.71,
+    "body": "# Replicating Activation Patching for IOI on a Non-English Indirect-Object Task\n\n**Problem:** The Indirect Object Identification (IOI) circuit in GPT-2 small is the canonical activation-patching case study, fully reverse-engineered with name-mover and S-inhibition heads. It is unknown whether the same circuit structure is reused when the identical grammatical task is posed in another language, or whether the model builds a separate language-specific circuit.\n\n**Direction:** Replicate the IOI activation-patching analysis in a small multilingual-capable model (Gemma-2-2b or a multilingual GPT-2 variant) for the standard English IOI templates, identifying the key attention heads via path patching. The twist: translate the IOI templates into a second language the model handles and re-run the patching, comparing whether the same heads carry the indirect-object signal or whether a distinct circuit appears.\n\n**Why it matters:** Whether circuits are reused across languages bears on the cross-lingual generalization of interpretability findings and on whether safety-relevant circuits (refusal, deception) might be bypassed simply by switching language. This is a tractable, fully-open activation-patching study runnable on one GPU, extending a textbook result in a fresh direction.\n\n**Relevant context:** Wang et al. 'Interpretability in the Wild: IOI in GPT-2 small' established the IOI circuit (name-mover heads, S-inhibition heads) via path patching; TransformerLens ships IOI demos and patching utilities. Multilingual representation sharing was found in Anthropic's circuit tracing."
+  },
+  {
+    "idea_id": "gen-165",
+    "run_id": "2026-06-15T19-24-29",
+    "stage": "generate",
+    "timestamp": "2026-06-15T21:36:03Z",
+    "subfield": "adversarial_robustness",
+    "generation_strategy": "experiment_variation",
+    "confidence": 0.72,
+    "body": "# Position of the Harmful Demonstration in Many-Shot Attacks\n\n**Problem:** Many-shot jailbreaking varies the number of harmful demonstrations, but not their arrangement. Whether placing the strongest harmful examples early, late, or interleaved with benign ones changes attack success at fixed shot count is an untested variation.\n\n**Direction:** Hold shot count fixed (e.g. 64) and vary demonstration ordering: harmful-front-loaded, harmful-back-loaded, interleaved, and graded-escalation. Measure attack-success across orderings on small open long-context models, isolating recency/primacy effects in the jailbreak.\n\n**Why it matters:** If ordering matters, defenders could disrupt many-shot attacks by shuffling or summarizing context, and the result clarifies the in-context-learning mechanism behind the attack. Cheap inference experiment on open models extending a flagship result with a new controlled variable.\n\n**Relevant context:** Anil et al. 'Many-shot Jailbreaking' (NeurIPS 2024) characterized the power law in shot count but treated demonstrations as exchangeable; ordering is an unexamined dimension. StrongREJECT (arXiv:2402.10260) scores outcomes."
+  },
+  {
+    "idea_id": "gen-1650",
+    "run_id": "2026-06-15T19-24-29",
+    "stage": "generate",
+    "timestamp": "2026-06-15T21:36:04Z",
+    "subfield": "mechanistic_interpretability",
+    "generation_strategy": "replication_with_twist",
+    "confidence": 0.66,
+    "body": "# Tuned Lens Replicated on a State-Space (Mamba) vs Transformer Model\n\n**Problem:** A follow-up to the tuned lens asked whether transformer interpretability transfers to RNNs. State-space models (Mamba) are now available as small open checkpoints, but the simple question of whether logit-lens-style intermediate prediction readout works at all on a small Mamba \u2014 and how its layer-wise prediction trajectory compares to a similar-size transformer \u2014 is rarely examined hands-on.\n\n**Direction:** Take a small open Mamba checkpoint and a similarly sized transformer. Replicate the logit-lens / tuned-lens intermediate-prediction analysis: project each layer's hidden state to vocabulary (training a small linear translator if needed) and measure per-layer KL to the final output. The twist: compare the shape of the 'prediction emerges over depth' curve between the SSM and the transformer.\n\n**Why it matters:** Interpretability tooling is overwhelmingly transformer-centric, but alternative architectures (SSMs) are gaining adoption outside frontier labs. Testing whether basic mechanistic-readout methods transfer to a different architecture \u2014 a single-GPU study on public checkpoints \u2014 helps ensure interpretability-based safety monitoring does not silently fail when the architecture changes.\n\n**Relevant context:** 'Does Transformer Interpretability Transfer to RNNs?' (arXiv:2404.05971) examined lens/probing transfer to RNN-like models. Belrose et al. tuned lens (arXiv:2303.08112) provides the readout methodology. Small Mamba checkpoints are publicly available on HuggingFace."
+  },
+  {
+    "idea_id": "gen-1651",
+    "run_id": "2026-06-15T19-24-29",
+    "stage": "generate",
+    "timestamp": "2026-06-15T21:36:04Z",
+    "subfield": "mechanistic_interpretability",
+    "generation_strategy": "replication_with_twist",
+    "confidence": 0.7,
+    "body": "# Replicating SAE Feature Steering for Sentiment on a Different Modality (Audio/Code Tokens)\n\n**Problem:** SAE feature steering (amplifying/suppressing a single interpretable latent to change behavior) is well demonstrated for text concepts like sentiment and entities in Gemma. Whether the same single-feature steering precision holds for non-prose token streams \u2014 specifically code \u2014 where the model's 'concepts' are syntactic/structural, is underexplored using public SAEs.\n\n**Direction:** Use Gemma Scope SAEs on Gemma-2-2b. Replicate single-feature steering on prose (e.g., steer a sentiment feature, measure effect) as the baseline. The twist: identify code-related SAE features (via Neuronpedia explanations) and test whether steering them produces clean, interpretable changes in code completions (e.g., language choice, comment density), quantifying steering precision vs side-effects relative to the prose baseline.\n\n**Why it matters:** Code-generation models increasingly autonomously write and execute code, a key autonomy/agentic risk surface. Whether interpretable features cleanly control code behavior \u2014 testable with public SAEs on one GPU \u2014 bears on whether feature-level monitoring/steering can serve as a safety control for code agents, infrastructure valuable to build outside a lab.\n\n**Relevant context:** Gemma Scope (DeepMind) provides public SAEs for Gemma-2-2b; Neuronpedia hosts feature explanations and steering. Anthropic and Ferrando et al. (arXiv:2411.14257) demonstrate causal single-feature steering for text concepts. SAE feature steering is a standard methodology."
+  },
+  {
+    "idea_id": "gen-1652",
+    "run_id": "2026-06-15T19-24-29",
+    "stage": "generate",
+    "timestamp": "2026-06-15T21:36:04Z",
+    "subfield": "mechanistic_interpretability",
+    "generation_strategy": "replication_with_twist",
+    "confidence": 0.78,
+    "body": "# Replicating the 'Refusal Direction Survives Fine-Tuning' Question on LoRA-Tuned Models\n\n**Problem:** The refusal-direction result is established on released chat models. A practically urgent variant: when a user applies a small LoRA fine-tune (the dominant cheap customization method) to an open chat model, does the original refusal direction persist, shift, or vanish? This determines whether refusal monitoring built on the base model survives community fine-tuning.\n\n**Direction:** Extract the refusal direction from a base open chat model (difference-of-means). Apply a small, benign LoRA fine-tune on an unrelated task (runs in under an hour on one GPU). The twist: re-extract the refusal direction from the LoRA-tuned model and measure (a) cosine similarity to the original direction and (b) whether the ORIGINAL direction still ablates refusal in the tuned model.\n\n**Why it matters:** Thousands of community LoRA fine-tunes of open models are released monthly, and many inadvertently or deliberately weaken safety. Whether a refusal monitor calibrated on the base model still works after LoRA tuning \u2014 a cheap, fully-open study \u2014 is directly relevant to monitoring the sprawling open-weights ecosystem that no single lab controls.\n\n**Relevant context:** Arditi et al. (arXiv:2406.11717) found refusal is a single direction; 'Beyond Surface Alignment' (arXiv:2509.15202) studied ablating it. PEFT/LoRA fine-tuning of small models is single-GPU feasible; TransformerLens supports direction extraction on the resulting model."
+  },
+  {
+    "idea_id": "gen-1653",
+    "run_id": "2026-06-15T19-24-29",
+    "stage": "generate",
+    "timestamp": "2026-06-15T21:36:04Z",
+    "subfield": "mechanistic_interpretability",
+    "generation_strategy": "replication_with_twist",
+    "confidence": 0.76,
+    "body": "# Replicating Linear Probe 'Lie Detection' on an Open Model-Organism of Deception\n\n**Problem:** Linear probes can detect whether a model 'believes' a statement is true. But most evaluations test honest-vs-false statements, not a model actively instructed to deceive. Whether a truth probe trained on simple true/false statements transfers to detecting an instructed lie \u2014 in a small open model prompted to role-play deception \u2014 is a sharper, more safety-relevant test.\n\n**Direction:** Train a linear truth probe on standard true/false statement activations in a small open model (Geometry-of-Truth style). The twist: construct a model-organism-style setup where the same model is prompted to knowingly assert false statements (instructed deception), and test whether the truth probe fires on the model's internal 'belief' even while the output is a lie \u2014 replicating the probing method but on deceptive rather than merely false content.\n\n**Why it matters:** A model that says one thing while internally 'knowing' another is the core of deceptive-alignment threat models. Probing a lightweight instructed-deception model organism to see whether internal-state lie detection works \u2014 using public models and datasets on one GPU \u2014 is a feasible 30h slice of a flagship long-horizon safety problem that needs no lab resources.\n\n**Relevant context:** Marks & Tegmark 'Geometry of Truth' and 'Inference-Time Intervention' (arXiv:2306.03341) show linear truth/honesty directions. Probing for belief-vs-output divergence relates to deception detection; instructed-deception prompting is a known lightweight model-organism technique."
+  },
+  {
+    "idea_id": "gen-1654",
+    "run_id": "2026-06-15T19-24-29",
+    "stage": "generate",
+    "timestamp": "2026-06-15T21:36:04Z",
+    "subfield": "mechanistic_interpretability",
+    "generation_strategy": "replication_with_twist",
+    "confidence": 0.72,
+    "body": "# Replicating Attention-Head Ablation Robustness Across Random Seeds of the Same Architecture\n\n**Problem:** Circuit findings (e.g., specific heads being necessary for a task) are usually established on a single released model. Given the SAE seed-dependence results, it is unclear whether the SAME task circuit (e.g., which heads are necessary for a simple task) is found when the identical small architecture is trained from a different random seed \u2014 i.e., is a discovered circuit a property of the architecture+task or of the specific run?\n\n**Direction:** Train two small transformers (same architecture, different seeds) on a simple, fast-to-learn task (e.g., a bracket-matching or simple IOI-like task; training fits in a few hours on one GPU). Replicate a head-ablation / activation-patching circuit analysis on each. The twist: compare whether the identified necessary heads/components occupy analogous positions across the two seeds, quantifying circuit reproducibility.\n\n**Why it matters:** If circuits are seed-idiosyncratic, then circuit-level safety claims about a specific model may not generalize even to a re-trained copy. Establishing how reproducible discovered circuits are \u2014 a clean, fully-open, single-GPU methodological study \u2014 is foundational for trusting interpretability as a safety tool, and complements known SAE seed-instability findings.\n\n**Relevant context:** 'SAEs Trained on the Same Data Learn Different Features' (arXiv:2501.16615) showed seed-dependence of SAE features. Wang et al. IOI circuit and TransformerLens activation patching provide the circuit-discovery methodology. 'Towards Universality' (arXiv:2410.06672) studies mechanistic similarity."
+  },
+  {
+    "idea_id": "gen-1655",
+    "run_id": "2026-06-15T19-24-29",
+    "stage": "generate",
+    "timestamp": "2026-06-15T21:36:04Z",
+    "subfield": "mechanistic_interpretability",
+    "generation_strategy": "replication_with_twist",
+    "confidence": 0.68,
+    "body": "# Replicating Logit-Lens 'Concept Emergence Depth' on Reasoning vs Non-Reasoning Models\n\n**Problem:** The logit/tuned lens reveals at what depth a model 'commits' to its prediction. With small open reasoning-distilled models now available (e.g., distilled R1-style or reasoning-tuned small models), it is open whether reasoning tuning changes the depth at which the answer becomes legible internally \u2014 e.g., does reasoning push commitment later, leaving more depth for 'thinking'?\n\n**Direction:** Apply the logit lens to a base small model and a reasoning-tuned counterpart of similar size on short factual/arithmetic prompts. Replicate the per-layer KL-to-final-output trajectory. The twist: compare the 'commitment depth' (layer at which top-1 stabilizes) between the reasoning and non-reasoning models, testing whether reasoning tuning systematically delays internal answer commitment.\n\n**Why it matters:** Reasoning models that 'think' before answering are a fast-growing capability with poorly understood internals. Whether reasoning tuning changes where computation happens \u2014 a cheap single-GPU lens study on public checkpoints \u2014 informs where to place monitors for reasoning models, and whether chain-of-thought reflects the actual locus of internal computation, a CoT-faithfulness safety concern.\n\n**Relevant context:** Belrose et al. tuned lens (arXiv:2303.08112) and the logit lens (LessWrong) measure per-layer prediction emergence and commitment depth. Small reasoning-distilled open models (e.g., distilled DeepSeek-R1 variants) are publicly downloadable."
+  },
+  {
+    "idea_id": "gen-1656",
+    "run_id": "2026-06-15T19-24-29",
+    "stage": "generate",
+    "timestamp": "2026-06-15T21:36:04Z",
+    "subfield": "mechanistic_interpretability",
+    "generation_strategy": "replication_with_twist",
+    "confidence": 0.71,
+    "body": "# Replicating Vision-SAE Feature Interpretation on Adversarially Perturbed Images\n\n**Problem:** Vision SAE features are typically interpreted via the natural image patches that maximally activate them. It is open whether these 'clean' feature interpretations hold up under small adversarial perturbations \u2014 i.e., do interpretable features fire spuriously on imperceptibly perturbed images, revealing a gap between the human-readable interpretation and the actual mechanism?\n\n**Direction:** Use Prisma's pre-trained CLIP SAEs. Replicate the standard max-activating-patch interpretation for a handful of clean, well-named features. The twist: apply a simple, off-the-shelf adversarial perturbation (e.g., FGSM, single-GPU, seconds per image) to images and measure whether the supposedly interpretable features still fire as their description predicts, or whether they activate spuriously \u2014 quantifying interpretation robustness.\n\n**Why it matters:** If interpretable features are fooled by adversarial inputs, then safety arguments resting on 'this feature detects X' break under adversarial pressure. Testing the adversarial robustness of feature interpretations \u2014 using public SAEs and standard attacks on one GPU \u2014 probes whether mechanistic interpretability can survive the adversarial settings that real deployments face, a robustness gap labs rarely stress-test.\n\n**Relevant context:** Prisma (arXiv:2504.19475) ships CLIP SAEs interpreted via max-activating patches; 'Interpretable and Testable Vision Features via SAEs' (arXiv:2502.06755) and 'Causal Interpretation of SAE Features in Vision' (arXiv:2509.00749) provide interpretation/attribution methods. FGSM/PGD adversarial attacks are standard and lightweight."
+  },
+  {
+    "idea_id": "gen-1657",
+    "run_id": "2026-06-15T19-24-29",
+    "stage": "generate",
+    "timestamp": "2026-06-15T21:36:04Z",
+    "subfield": "mechanistic_interpretability",
+    "generation_strategy": "replication_with_twist",
+    "confidence": 0.75,
+    "body": "# Replicating 'Sentiment Direction' Steering Across Model Families with a Shared Probe Protocol\n\n**Problem:** Steering vectors for high-level concepts (sentiment, refusal, sycophancy) are usually demonstrated on one model. A clean cross-family replication \u2014 extracting a sentiment direction with an identical difference-of-means protocol across three small open families and measuring steering efficacy and side-effects with a common metric \u2014 is rarely done, leaving the cross-family generality of steering underquantified.\n\n**Direction:** Define one strict protocol: difference-of-means on positive/negative sentiment prompt pairs at the best layer (found by probe accuracy). Replicate it on Gemma-2-2b, Llama-3.2-1B, and Qwen2.5-1.5B. Measure steering strength needed for a target sentiment shift and the collateral perplexity increase. Report which families are easiest/hardest to steer and whether optimal layers align by relative depth.\n\n**Why it matters:** Whether behavioral steering transfers uniformly across open-model families determines how generally both safety-steering and misuse-steering apply to the open ecosystem. A controlled, common-protocol cross-family study on one GPU produces directly comparable numbers \u2014 exactly the kind of broadly-useful, lab-independent infrastructure the field lacks.\n\n**Relevant context:** Representation engineering survey (arXiv:2502.17601), 'Inference-Time Intervention' (arXiv:2306.03341), and Arditi et al. (arXiv:2406.11717) establish difference-of-means steering directions. TransformerLens supports hooks across many small open models; perplexity is a standard side-effect metric."
+  },
+  {
+    "idea_id": "gen-1658",
+    "run_id": "2026-06-15T19-24-29",
+    "stage": "generate",
+    "timestamp": "2026-06-15T21:36:04Z",
+    "subfield": "mechanistic_interpretability",
+    "generation_strategy": "replication_with_twist",
+    "confidence": 0.74,
+    "body": "# Replicating the 'Known Entity' Hallucination Direction as a Calibration Monitor on a New Benchmark\n\n**Problem:** The known-entity feature in Gemma gates refusal vs hallucination. It was validated on the authors' entity sets. Whether the direction works as a practical confidence/calibration MONITOR \u2014 i.e., its activation predicts when the model will hallucinate on an independent QA benchmark it was not tuned for \u2014 is the natural applied follow-up.\n\n**Direction:** Extract the 'do I know this entity' probe direction on Gemma-2-2b following Ferrando et al. The twist: evaluate it as a monitor on an independent factual-QA set (e.g., a public TriviaQA/SimpleQA subset), computing whether low entity-recognition activation predicts incorrect/hallucinated answers (ROC-AUC). Compare against a logprob-confidence baseline to see if the mechanistic signal adds value.\n\n**Why it matters:** A lightweight internal monitor that flags likely hallucinations before output would be valuable safety infrastructure deployable on any open model. Testing whether the mechanistic entity direction beats simple confidence baselines on an unseen benchmark \u2014 single GPU, public data \u2014 is a concrete step toward lab-independent hallucination monitoring, with a clear success metric.\n\n**Relevant context:** Ferrando et al. ICLR 2025 (arXiv:2411.14257) found entity-recognition latents gating hallucination in Gemma-2-2b (peak layer 9), replicated on Llama-3.1-8B. Public QA benchmarks (TriviaQA, SimpleQA) and logprob-confidence baselines are standard for hallucination detection."
+  },
+  {
+    "idea_id": "gen-1659",
+    "run_id": "2026-06-15T19-24-29",
+    "stage": "generate",
+    "timestamp": "2026-06-15T21:36:04Z",
+    "subfield": "mechanistic_interpretability",
+    "generation_strategy": "replication_with_twist",
+    "confidence": 0.76,
+    "body": "# Replicating Induction-Head Detection via a Simple Per-Head Metric Across Open Models\n\n**Problem:** Induction heads can be detected with a simple per-head 'induction score' (attention to the token after a previous copy). This metric has been computed for a few models, but a clean cross-family census \u2014 how prevalent and how strong induction heads are across several small open models, and whether their fraction correlates with in-context-learning ability \u2014 is a tractable, underdone replication.\n\n**Direction:** Implement the standard induction-score metric in TransformerLens (attention from the current token to the position after its earlier occurrence on repeated random sequences). Replicate it across Gemma-2-2b, Llama-3.2-1B, Pythia-1.4B, and GPT-2 medium. The twist: correlate each model's count/strength of induction heads with a simple in-context-learning benchmark score, testing whether more/stronger induction heads predict better ICL across families.\n\n**Why it matters:** Induction heads underlie in-context learning, which is the mechanism behind prompt-based capability elicitation and many jailbreaks. A cross-family census linking circuit prevalence to capability \u2014 a single-GPU study on public models \u2014 builds reusable measurement infrastructure and tests whether a mechanistic feature predicts a safety-relevant capability.\n\n**Relevant context:** Olsson et al. 2022 (arXiv:2209.11895) defined the induction-head circuit and per-head induction score and linked induction heads to ICL. TransformerLens supports attention-pattern extraction across 50+ models including Pythia, GPT-2, Gemma, Llama."
+  },
+  {
+    "idea_id": "gen-166",
+    "run_id": "2026-06-15T19-24-29",
+    "stage": "generate",
+    "timestamp": "2026-06-15T21:36:03Z",
+    "subfield": "adversarial_robustness",
+    "generation_strategy": "experiment_variation",
+    "confidence": 0.7,
+    "body": "# Tokenizer/Template Sensitivity of Jailbreak Success\n\n**Problem:** Chat models are sensitive to exact chat-template formatting, but how much jailbreak success depends on subtle template details (special tokens, role tags, whitespace) versus the semantic attack is rarely isolated \u2014 a confound in cross-model jailbreak comparisons.\n\n**Direction:** For a fixed semantic attack, vary the chat-template rendering (correct template, minor whitespace changes, wrong/role-swapped template, missing special tokens) on 2-3 small open models and measure attack-success per rendering. Quantify how much reported jailbreak success is an artifact of formatting rather than the attack itself.\n\n**Why it matters:** Reveals a hidden confound that could explain irreproducible jailbreak results across papers, and shows whether strict template enforcement is itself a cheap defense. Pure inference, single GPU; a measurement-hygiene contribution the field needs.\n\n**Relevant context:** Context file lists 'Special Token Exploitation Prevalence' as covered; this differs by treating template rendering as a controlled confounding variable for jailbreak reproducibility rather than measuring exploitation prevalence. Grounded in shallow-alignment first-token sensitivity (Qi et al., arXiv:2406.05946) which makes template framing especially impactful."
+  },
+  {
+    "idea_id": "gen-1660",
+    "run_id": "2026-06-15T19-24-29",
+    "stage": "generate",
+    "timestamp": "2026-06-15T21:36:04Z",
+    "subfield": "mechanistic_interpretability",
+    "generation_strategy": "replication_with_twist",
+    "confidence": 0.69,
+    "body": "# Replicating SAE Feature Splitting Behavior Across Dictionary Sizes on Vision Transformers\n\n**Problem:** In language SAEs, increasing dictionary size causes 'feature splitting' \u2014 a coarse feature fractures into multiple specific ones. ViT-Prisma offers SAEs of varying widths but whether vision SAEs exhibit the same monotonic feature-splitting behavior as dictionary size grows, and whether the split features remain human-interpretable, is not well characterized.\n\n**Direction:** Use Prisma's pre-trained CLIP SAEs at different dictionary widths (or train a couple of small ones at different widths on a fixed activation cache, single-GPU feasible). Replicate the feature-splitting analysis: track a coarse feature in the small SAE and identify the cluster of finer features in the larger SAE via activation overlap. The twist: assess in the vision domain whether splits yield genuinely more specific, still-interpretable visual concepts, comparing to the language-SAE narrative.\n\n**Why it matters:** Feature splitting determines whether SAEs give a stable, faithful decomposition or an arbitrary one dependent on width \u2014 central to trusting SAE-based safety analysis. Characterizing this in vision (a named open problem) with public SAEs on one GPU tests how universal the SAE 'feature geometry' story is across modalities, informing whether interpretability scales beyond language.\n\n**Relevant context:** Feature splitting was described in Anthropic's 'Towards Monosemanticity' / 'Scaling Monosemanticity' for language SAEs. Prisma (arXiv:2504.19475) ships CLIP SAEs of varying widths; 'Interpretable and Testable Vision Features via SAEs' (arXiv:2502.06755) provides interpretation tooling."
+  },
+  {
+    "idea_id": "gen-1661",
+    "run_id": "2026-06-15T19-24-29",
+    "stage": "generate",
+    "timestamp": "2026-06-15T21:36:04Z",
+    "subfield": "mechanistic_interpretability",
+    "generation_strategy": "replication_with_twist",
+    "confidence": 0.72,
+    "body": "# Replicating Activation Patching for Factual Recall on Quantized vs Full-Precision Models\n\n**Problem:** The ROME/factual-recall literature localized factual associations to mid-layer MLPs via causal tracing. This was done at full precision. Whether the same MLP layers remain the causal locus of factual recall after aggressive quantization \u2014 the form in which open models are actually deployed \u2014 is an untested but practically important replication.\n\n**Direction:** Replicate causal-tracing factual-recall localization on a small open model at full precision: corrupt the subject token, restore hidden states layer-by-layer, and find the layers whose restoration recovers the correct fact (single GPU). The twist: repeat the identical causal-tracing protocol on the 4-bit quantized model and compare whether the peak causal layers shift, testing whether quantization relocates or blurs the factual-recall mechanism.\n\n**Why it matters:** Model editing and knowledge-localization underpin proposals to remove dangerous knowledge from open weights. If quantization moves where facts live, edits validated at full precision may not hold in deployed quantized models. Testing this \u2014 public model, single GPU \u2014 checks whether a key safety-edit assumption survives real deployment conditions labs do not control.\n\n**Relevant context:** Meng et al. ROME 'Locating and Editing Factual Associations in GPT' used causal tracing to localize facts to mid-layer MLPs; the method (corrupt-then-restore activation patching) is implemented in public libraries. bitsandbytes enables 4-bit quantized inference on consumer GPUs."
+  },
+  {
+    "idea_id": "gen-1662",
+    "run_id": "2026-06-15T19-24-29",
+    "stage": "generate",
+    "timestamp": "2026-06-15T21:36:04Z",
+    "subfield": "mechanistic_interpretability",
+    "generation_strategy": "replication_with_twist",
+    "confidence": 0.7,
+    "body": "# Replicating the Tuned Lens as an Anomaly Detector for Prompt-Injection Inputs\n\n**Problem:** The tuned lens characterizes a model's normal layer-wise prediction trajectory. It is open whether deviations from this typical trajectory can flag anomalous inputs \u2014 specifically prompt-injection / jailbreak prompts \u2014 by producing unusually erratic intermediate predictions compared to benign inputs, turning an interpretability tool into a cheap monitor.\n\n**Direction:** Replicate tuned-lens trajectory extraction on a small open model for benign prompts to establish a baseline 'trajectory smoothness' distribution. The twist: feed a public set of known prompt-injection / jailbreak prompts and benign controls, compute a per-input trajectory-anomaly score (e.g., total KL jumps across layers), and measure detection ROC-AUC. Compare to a perplexity-based detector baseline.\n\n**Why it matters:** Prompt injection is a top deployed-LLM safety threat, and a detector that needs only internal activations (no external classifier) would be valuable, lab-independent monitoring infrastructure. Testing whether an existing interpretability lens doubles as an injection detector \u2014 single GPU, public prompts, clear AUC success metric \u2014 is a concrete, applied 30h deliverable.\n\n**Relevant context:** Belrose et al. tuned lens (arXiv:2303.08112) characterizes per-layer prediction trajectories and flags 'prompt injection / anomalous input detection' as a downstream use. Public jailbreak/injection prompt collections exist; perplexity-based filters are a standard detection baseline."
+  },
+  {
+    "idea_id": "gen-1663",
+    "run_id": "2026-06-15T19-24-29",
+    "stage": "generate",
+    "timestamp": "2026-06-15T21:36:04Z",
+    "subfield": "mechanistic_interpretability",
+    "generation_strategy": "tool_or_benchmark_gap",
+    "confidence": 0.72,
+    "body": "# Auto-Interp Disagreement Index for SAE Features\n\n**Problem:** SAE feature explanations are scored by automated methods (Delphi's detection and fuzzing) and by LLM 'explainer' models, but different scorers and different explainer models often disagree on the same feature. There is no standardized measure of how much auto-interp results depend on the choice of judge, which undermines trust in any single reported interpretability score.\n\n**Direction:** Take a fixed open SAE (e.g., a Gemma-2-2b SAE from SAELens/Neuronpedia), run auto-interp on ~300 features using 2-3 cheap open explainer/scorer LLMs, and compute a per-feature 'disagreement index' (variance in detection/fuzzing scores across judges). Characterize which feature types are robust vs. judge-dependent, and report what fraction of 'interpretable' verdicts flip when you swap the judge.\n\n**Why it matters:** If interpretability claims about a feature change depending on which LLM judges it, then safety arguments built on those claims ('this feature is the deception feature') are fragile. A disagreement index is a cheap, reusable reliability tool that any researcher outside a lab can run before trusting an auto-interp label.\n\n**Relevant context:** EleutherAI's Delphi (formerly sae-auto-interp) scores feature explanations via detection (predict which sentences activate) and fuzzing (predict which tokens activate); Neuronpedia uses Delphi for explanations and scoring. Reported scores vary by method (e.g., 58% human vs 82-84% automated), implying judge sensitivity. SAEBench notes proxy metrics do not reliably translate to practical performance."
+  },
+  {
+    "idea_id": "gen-1664",
+    "run_id": "2026-06-15T19-24-29",
+    "stage": "generate",
+    "timestamp": "2026-06-15T21:36:04Z",
+    "subfield": "mechanistic_interpretability",
+    "generation_strategy": "tool_or_benchmark_gap",
+    "confidence": 0.74,
+    "body": "# A Minimal Faithfulness Test Suite for Logit-Lens Claims\n\n**Problem:** The logit lens is widely used to read off 'what a model is predicting' at intermediate layers, but it is known to be unreliable in early layers for some models (e.g., projecting the input token rather than a continuation). Researchers apply it without a standard check of whether it is even valid for their model, so conclusions can be artifacts of an unreliable lens.\n\n**Direction:** Build a small, reusable diagnostic that, for any TransformerLens-supported model, quantifies logit-lens reliability per layer: agreement between logit-lens top-1 and final-output top-1, rate of 'echoing the input token,' and calibration vs. a quickly-trained tuned-lens (or affine probe). Output a per-layer 'trust score' and a red/green report. Validate on 3-4 small open models known to differ (e.g., GPT-2 small vs OPT-125M).\n\n**Why it matters:** Interpretability-to-safety arguments often rest on logit-lens readings of intermediate states. A drop-in reliability tool prevents researchers from over-trusting a lens that is invalid for their model, and is exactly the kind of measurement infrastructure that needs no lab resources.\n\n**Relevant context:** The logit lens produces unreliable projections in early layers for BLOOM/OPT-125M (top-1 often the input token); it assumes all layers share one embedding space. The tuned lens (Belrose et al., 2303.08112) trains affine translators and is more predictive/reliable, demonstrating that lens reliability is model- and layer-dependent."
+  },
+  {
+    "idea_id": "gen-1665",
+    "run_id": "2026-06-15T19-24-29",
+    "stage": "generate",
+    "timestamp": "2026-06-15T21:36:04Z",
+    "subfield": "mechanistic_interpretability",
+    "generation_strategy": "tool_or_benchmark_gap",
+    "confidence": 0.78,
+    "body": "# Steering-Vector Side-Effect Benchmark\n\n**Problem:** Activation steering and SAE-feature steering are used as safety interventions (e.g., increasing refusal), but recent work shows steering can have large unintended side effects, including bypassing safety safeguards or even adding random noise raising harmful compliance. There is no standard benchmark that measures the collateral damage of a steering intervention, only its on-target effect.\n\n**Direction:** Create a lightweight 'side-effect scorecard' for steering vectors: apply a published steering direction (or an SAE refusal feature) to a small open model at a range of magnitudes, then measure (a) on-target effect, (b) general capability degradation on a small held-out task set, (c) unrelated-topic drift, and (d) jailbreak-rate change. Plot the on-target vs. collateral trade-off curve as a reusable evaluation.\n\n**Why it matters:** Deploying steering as a safety control without measuring side effects could silently break the model or open new attack surfaces. A standardized side-effect benchmark is high-counterfactual-value infrastructure: it needs no training, no proprietary data, and tests an under-measured property frontier labs ship anyway.\n\n**Relevant context:** The Rogue Scalpel (2509.22067) shows activation steering can compromise LLM safety, and that random noise added to activations raises harmful compliance from 0% to 1-13%. Feature-Guided SAE Steering (2511.00029) controls refusal rate but notes steering a benign 'Portuguese' feature inadvertently bypassed safeguards. circuit-tracer supports feature-value modification on Gemma-2-2b/Llama-3.2-1b."
+  },
+  {
+    "idea_id": "gen-1666",
+    "run_id": "2026-06-15T19-24-29",
+    "stage": "generate",
+    "timestamp": "2026-06-15T21:36:04Z",
+    "subfield": "mechanistic_interpretability",
+    "generation_strategy": "tool_or_benchmark_gap",
+    "confidence": 0.7,
+    "body": "# SAE Feature Stability Across Random Seeds Benchmark\n\n**Problem:** When researchers point to 'the feature for X,' it is rarely checked whether that feature reproducibly emerges across SAEs trained with different seeds or hyperparameters. SAEBench evaluates quality but there is no standard measurement of feature-identity stability across independently trained SAEs on the same model/layer.\n\n**Direction:** Using multiple open SAEs trained on the same model and layer (available via SAELens/SAEBench's 200+ released SAEs), build a tool that matches features across SAEs by activation-pattern similarity and reports a 'stability score': what fraction of a concept's features have a clear cross-SAE counterpart. Demonstrate on a few safety-relevant concepts (refusal, sentiment, deception-related text).\n\n**Why it matters:** Safety conclusions ('we found and can monitor the deception feature') are only meaningful if the feature is a stable property of the model, not an artifact of one SAE run. A stability benchmark gives the field a reproducibility gate, runnable by anyone with the public SAE weights.\n\n**Relevant context:** SAEBench (Karvonen et al., ICML 2025) open-sourced 200+ SAEs across 8 architectures and notes proxy gains do not reliably transfer to practical performance, implying feature sets differ across configs. Open Phil RFP lists 'find feature representations beyond SAEs' and superposition decomposition reliability as open problems."
+  },
+  {
+    "idea_id": "gen-1667",
+    "run_id": "2026-06-15T19-24-29",
+    "stage": "generate",
+    "timestamp": "2026-06-15T21:36:04Z",
+    "subfield": "mechanistic_interpretability",
+    "generation_strategy": "tool_or_benchmark_gap",
+    "confidence": 0.73,
+    "body": "# A Benchmark for Detecting Dead and Dense 'Junk' SAE Features\n\n**Problem:** SAEs contain dead features (never activate) and ultra-dense features (activate almost always), both of which pollute interpretability dashboards and waste analysis effort. The prevalence of these junk features across released SAEs is not systematically measured or standardized, so users can't quickly assess SAE health before relying on it.\n\n**Direction:** Build an SAE 'health check' tool that, given an SAE and a corpus sample, reports dead-feature rate, dense-feature rate, activation-frequency distribution, and an overall usable-feature fraction. Run it across several public SAE architectures/widths to produce a comparison table and rules of thumb for which SAEs are worth analyzing.\n\n**Why it matters:** Researchers new to interpretability waste time on broken features; a one-command health check is exactly the accessible, no-training infrastructure that improves the whole field's efficiency and prevents misleading safety claims based on degenerate features.\n\n**Relevant context:** SAEBench measures SAE quality across 8 metrics and released 200+ SAEs across architectures/widths, showing large quality variation; dead and dense features are well-documented SAE failure modes in the SAELens/Neuronpedia ecosystem. Superposition/decomposition reliability is an Open Phil open problem."
+  },
+  {
+    "idea_id": "gen-1668",
+    "run_id": "2026-06-15T19-24-29",
+    "stage": "generate",
+    "timestamp": "2026-06-15T21:36:04Z",
+    "subfield": "mechanistic_interpretability",
+    "generation_strategy": "tool_or_benchmark_gap",
+    "confidence": 0.75,
+    "body": "# Probing-Classifier Confound Audit Tool\n\n**Problem:** Linear probes are the most accessible interpretability method, but high probe accuracy can reflect surface confounds (token frequency, length, topic) rather than the targeted concept. There is no standard, easy audit that tells a newcomer whether their probe is reading the concept or a confound, and probe metrics are known to be noisy.\n\n**Direction:** Build a reusable 'probe sanity suite': train a probe for a target concept, then automatically train control probes on shuffled labels, on a bag-of-tokens baseline, and on a confound (e.g., length/topic), and report the gap. Add a selectivity score (probe accuracy minus control-task accuracy). Demonstrate on a safety-relevant concept like 'refusal-worthy request' using a small open model.\n\n**Why it matters:** Probing is the gateway method for first-time interpretability researchers and underlies many safety monitors. A confound audit prevents false 'we can detect deception with a probe' claims and packages best practices into a tool usable entirely outside a lab.\n\n**Relevant context:** Reported that 'probe based metrics are quite noisy' across 61 binary classification datasets. Probing classifiers and selectivity/control tasks are established methodology (Hewitt & Liang control tasks). TransformerLens exposes activations for 50+ open models, enabling cheap probe experiments."
+  },
+  {
+    "idea_id": "gen-1669",
+    "run_id": "2026-06-15T19-24-29",
+    "stage": "generate",
+    "timestamp": "2026-06-15T21:36:04Z",
+    "subfield": "mechanistic_interpretability",
+    "generation_strategy": "tool_or_benchmark_gap",
+    "confidence": 0.74,
+    "body": "# Attribution-Graph Faithfulness Stress Test on a Single Behavior\n\n**Problem:** Anthropic's circuit-tracer produces attribution graphs whose faithfulness is validated via perturbation on selected case studies, but there is no standardized, repeatable faithfulness test that a user can apply to their own attribution graph to know how much to trust it before drawing a safety conclusion.\n\n**Direction:** Using the open circuit-tracer on Gemma-2-2b/Llama-3.2-1b, pick one well-defined behavior (e.g., a simple factual recall), generate its attribution graph, then systematically ablate the top-k claimed features and measure whether output change matches the graph's predicted effect. Package this as a 'faithfulness@k' score and report how graph trustworthiness degrades as you move down the feature ranking.\n\n**Why it matters:** Attribution graphs are becoming the flagship interpretability artifact, and labs explicitly call out scaling and trusting them as open problems. A portable faithfulness score lets independent researchers audit graphs rather than take visualizations on faith.\n\n**Relevant context:** Anthropic open-sourced circuit-tracer (safety-research/circuit-tracer, 2025); it computes direct effects of transcoder features on logits and validates faithfulness via perturbation on case studies for Gemma-2-2b/Llama-3.2-1b. Scaling and operationalizing attribution graphs is an explicit open problem."
+  },
+  {
+    "idea_id": "gen-167",
+    "run_id": "2026-06-15T19-24-29",
+    "stage": "generate",
+    "timestamp": "2026-06-15T21:36:03Z",
+    "subfield": "adversarial_robustness",
+    "generation_strategy": "follow_up_experiment",
+    "confidence": 0.78,
+    "body": "# Does Shallow Alignment Hold for Open Reasoning Models?\n\n**Problem:** Qi et al. (ICLR 2025) showed safety alignment in chat LLMs is concentrated in the first few output tokens, but the experiment used non-reasoning models. Whether open reasoning models (e.g., DeepSeek-R1-Distill, QwQ) that emit long chains-of-thought before answering exhibit the same shallow pattern is unknown.\n\n**Direction:** Replicate Qi et al.'s prefilling and per-token KL-divergence-vs-aligned analysis on 2-3 small open reasoning models. Measure where the aligned/unaligned generative distributions diverge: is it still the first ~5 tokens, or distributed across the reasoning trace? Compare a chat model and its reasoning-tuned sibling on the same harmful prompt set.\n\n**Why it matters:** If reasoning models concentrate safety differently (or just as shallowly), it tells defenders whether token-depth defenses generalize to the reasoning-model era. This needs no training and uses only open models, making it valuable outside frontier labs.\n\n**Relevant context:** Qi et al., 'Safety Alignment Should Be Made More Than Just a Few Tokens Deep' (arXiv:2406.05946, ICLR 2025 Outstanding Paper): key signal is divergence in modeling of only the first few output tokens. Follow-up arXiv:2606.04778 moves injection beyond first tokens. Deliberative Alignment (arXiv:2412.16339) and self-jailbreak findings (arXiv:2510.20956) suggest reasoning traces interact with safety differently."
+  },
+  {
+    "idea_id": "gen-1670",
+    "run_id": "2026-06-15T19-24-29",
+    "stage": "generate",
+    "timestamp": "2026-06-15T21:36:04Z",
+    "subfield": "mechanistic_interpretability",
+    "generation_strategy": "tool_or_benchmark_gap",
+    "confidence": 0.7,
+    "body": "# Cross-Model Feature Transfer Benchmark for Safety Concepts\n\n**Problem:** It is unknown how well a probe or steering vector for a safety concept (e.g., refusal) found in one open model transfers to another model of similar size. There is no benchmark quantifying transfer, yet transfer is assumed when people reuse published vectors.\n\n**Direction:** Build a small transfer benchmark: extract a concept direction in model A, then measure its detection/steering efficacy when naively applied to model B (after aligning hidden dims via a simple linear map). Cover 2-3 small open models and 2-3 concepts. Report a transfer matrix and identify which concepts are 'universal' vs. model-specific.\n\n**Why it matters:** If safety monitors and steering vectors don't transfer across models, every deployment needs re-derivation; if they do, that's evidence of shared representational structure. Either way it's a reusable, lab-free measurement of an unmeasured property directly relevant to scalable monitoring.\n\n**Relevant context:** Steering work (e.g., ICLR 2025 refusal direction, Rogue Scalpel) is typically validated on a single model/layer (Llama-3 8B, Layer 25), explicitly flagged as a generalizability limitation. TransformerLens hosts 50+ models enabling cross-model comparison without training."
+  },
+  {
+    "idea_id": "gen-1671",
+    "run_id": "2026-06-15T19-24-29",
+    "stage": "generate",
+    "timestamp": "2026-06-15T21:36:04Z",
+    "subfield": "mechanistic_interpretability",
+    "generation_strategy": "tool_or_benchmark_gap",
+    "confidence": 0.71,
+    "body": "# Planning-Ahead Probe: A Measurement Tool for Look-Ahead in Small Models\n\n**Problem:** Anthropic found Claude 3.5 Haiku plans ahead (selects rhyme targets before writing a line), a surprising and safety-relevant capability (look-ahead/goal representation). There is no simple, standardized measurement of whether and how much smaller open models exhibit look-ahead, leaving the planning-capability correlation untested in the accessible regime.\n\n**Direction:** Design a minimal benchmark of constrained-generation tasks (rhyming couplets, fixed-length acrostics, target-word-at-position) and a probe that checks, at the start of a line, whether the future target token is already linearly decodable from activations. Apply across a few small open models to test whether look-ahead strength correlates with model size/capability.\n\n**Why it matters:** Hidden planning/look-ahead is a precursor to deceptive or long-horizon goal pursuit that frontier labs deprioritize for near-term concerns. A cheap probe-based measurement of when planning emerges is a model-organism-style contribution feasible in 30h on open models.\n\n**Relevant context:** Anthropic's Circuit Tracing 'Biology' report shows Claude 3.5 Haiku identifies rhyming words before writing the line (plans ahead); the subfield context explicitly suggests testing planning in larger/other models and whether planning correlates with capability. TransformerLens supports the needed activation access."
+  },
+  {
+    "idea_id": "gen-1672",
+    "run_id": "2026-06-15T19-24-29",
+    "stage": "generate",
+    "timestamp": "2026-06-15T21:36:04Z",
+    "subfield": "mechanistic_interpretability",
+    "generation_strategy": "tool_or_benchmark_gap",
+    "confidence": 0.66,
+    "body": "# Vision-SAE Sparsity-Pattern Characterization Benchmark\n\n**Problem:** ViT-Prisma found that vision SAEs show different sparsity patterns than language SAEs, but this surprising result has not been turned into a standardized set of metrics that characterize how and where vision and language SAEs differ, leaving multimodal interpretability without comparable measurements.\n\n**Direction:** Using ViT-Prisma's 80+ pretrained vision SAEs and a language SAE from SAELens, compute a shared metric panel (activation-frequency distribution, L0, feature-density, dead-feature rate, fraction of class-aligned features) on matched data, and produce a side-by-side characterization of the vision-vs-language sparsity gap with hypotheses for its cause.\n\n**Why it matters:** Extending interpretability to vision/multimodal transformers is a stated open problem, and multimodal models are a growing safety surface. Standard comparable metrics let the community build on the ViT-Prisma finding instead of treating it as a one-off, and it's fully reproducible with public weights.\n\n**Relevant context:** ViT-Prisma ships 75+ vision transformers and 80+ pretrained SAE weights and reported vision SAEs have different sparsity patterns than language SAEs (subfield context flags this for follow-up). Extending mech interp to vision/multimodal is an explicit open problem; SAEBench provides comparable language-SAE metrics."
+  },
+  {
+    "idea_id": "gen-1673",
+    "run_id": "2026-06-15T19-24-29",
+    "stage": "generate",
+    "timestamp": "2026-06-15T21:36:04Z",
+    "subfield": "mechanistic_interpretability",
+    "generation_strategy": "tool_or_benchmark_gap",
+    "confidence": 0.76,
+    "body": "# Interpretability-to-Action Benchmark: Does a Feature Predict Behavior Out-of-Distribution?\n\n**Problem:** A core open problem is the interpretability-to-safety gap: mechanistic findings rarely translate into actionable guarantees. We lack a simple benchmark asking whether a feature/probe that fires on in-distribution examples still predicts the model's behavior on out-of-distribution or adversarial inputs.\n\n**Direction:** For a safety-relevant feature (e.g., a refusal feature/probe), measure how well its activation predicts the model's actual refusal behavior on (a) in-distribution prompts, (b) paraphrased prompts, and (c) lightly jailbroken prompts. Report the predictive-validity drop across distributions as a reusable 'actionability' score for any candidate safety feature.\n\n**Why it matters:** A monitor that detects deception only on the prompts it was tuned on is useless against an adversary. Quantifying the OOD predictive-validity gap directly targets the interpretability-to-safety translation problem and is a measurement labs underinvest in relative to capabilities.\n\n**Relevant context:** Bridging the interpretability-to-safety gap and developing benchmarks that test whether mechanistic findings yield actionable guarantees are explicit Open Phil/standard-priority open problems. SAEBench shows proxy metrics don't reliably translate to practical performance, motivating behavior-grounded validity tests."
+  },
+  {
+    "idea_id": "gen-1674",
+    "run_id": "2026-06-15T19-24-29",
+    "stage": "generate",
+    "timestamp": "2026-06-15T21:36:04Z",
+    "subfield": "mechanistic_interpretability",
+    "generation_strategy": "tool_or_benchmark_gap",
+    "confidence": 0.69,
+    "body": "# Superposition Stress Benchmark on Open Toy Models\n\n**Problem:** Superposition (packing more features than dimensions) is a central unresolved phenomenon, but there is no easy, standardized benchmark that measures how reliably current decomposition tools recover known-ground-truth features as superposition pressure increases, in a setting where ground truth exists.\n\n**Direction:** Build a controlled benchmark on small toy/transformer models with synthetic features at varying feature-to-dimension ratios, train (or load) small SAEs/dictionaries, and measure recovery accuracy vs. superposition ratio. Produce a 'decomposition recovery curve' tool that anyone can reuse to stress-test a decomposition method against ground truth.\n\n**Why it matters:** Because superposition decomposition is unreliable, safety claims based on 'we decomposed the relevant features' may fail silently. A ground-truth recovery benchmark gives the field a calibration baseline and is exactly the kind of toy-model interpretability work the RFP starred, doable on a single GPU.\n\n**Relevant context:** Understanding/decomposing superposition reliably is a flagship problem from '200 Concrete Open Problems'; Open Phil starred building toy models that capture alignment-relevant phenomena for controlled interpretability. Anthropic's Toy Models of Superposition established the synthetic-ground-truth paradigm this extends."
+  },
+  {
+    "idea_id": "gen-1675",
+    "run_id": "2026-06-15T19-24-29",
+    "stage": "generate",
+    "timestamp": "2026-06-15T21:36:04Z",
+    "subfield": "mechanistic_interpretability",
+    "generation_strategy": "tool_or_benchmark_gap",
+    "confidence": 0.72,
+    "body": "# Auto-Interp Robustness to Activating-Example Sampling\n\n**Problem:** Auto-interp explanations are generated from a sampled set of a feature's top-activating examples, but the explanation (and its detection/fuzzing score) may depend heavily on which examples are sampled. This sensitivity is not standardly measured, so reported feature labels may be unstable.\n\n**Direction:** For a set of SAE features, generate explanations multiple times from different random samples of activating examples (varying count and whether 'quantile' vs 'top' sampling) and measure explanation agreement and score variance. Produce a 'sampling robustness' metric and guidance on how many examples are needed before labels stabilize.\n\n**Why it matters:** If a feature's interpretation flips based on a sampling artifact, downstream safety monitoring built on that label is unreliable. This is a cheap, reusable robustness check that directly improves the trustworthiness of the most-used scalable interpretability pipeline, with no lab resources required.\n\n**Relevant context:** Delphi/Neuronpedia auto-interp pipelines select n activating examples to produce and score explanations via detection and fuzzing; sampling strategy (top vs quantile) is a known knob in EleutherAI's autointerp work. SAEBench's caution about proxy metrics motivates measuring pipeline-internal variance."
+  },
+  {
+    "idea_id": "gen-1676",
+    "run_id": "2026-06-15T19-24-29",
+    "stage": "generate",
+    "timestamp": "2026-06-15T21:36:04Z",
+    "subfield": "mechanistic_interpretability",
+    "generation_strategy": "tool_or_benchmark_gap",
+    "confidence": 0.73,
+    "body": "# Activation-Patching Localization Reliability Tool\n\n**Problem:** Activation patching is the workhorse for localizing where a behavior 'lives,' but results depend on choices (corrupted-prompt construction, metric, denoising vs noising) that are rarely reported or compared. There is no standard tool that reports how stable a localization is across these methodological choices.\n\n**Direction:** Build a wrapper around TransformerLens patching that, for a chosen task (e.g., indirect-object identification on GPT-2 small, a known circuit), runs the patch under several reasonable configurations (noising vs denoising, logit-diff vs prob metric, different corruptions) and reports a localization-stability heatmap. Surface where conclusions agree and where they're config-dependent.\n\n**Why it matters:** Localization claims underpin much circuit-based safety reasoning; if they're brittle to defensible methodology choices, the field needs to know. A reliability tool is reusable infrastructure that raises methodological standards and is fully feasible on the well-studied IOI circuit.\n\n**Relevant context:** Activation patching/causal tracing is a core listed methodology; the IOI circuit (Wang et al.) is a standard open benchmark task. A Practical Review of Mechanistic Interpretability (2407.02646) catalogs patching variants (noising/denoising, metric choices) whose impact on conclusions is under-standardized."
+  },
+  {
+    "idea_id": "gen-1677",
+    "run_id": "2026-06-15T19-24-29",
+    "stage": "generate",
+    "timestamp": "2026-06-15T21:36:04Z",
+    "subfield": "mechanistic_interpretability",
+    "generation_strategy": "tool_or_benchmark_gap",
+    "confidence": 0.68,
+    "body": "# A 'Negative Result' Feature Registry: Concepts SAEs Fail to Capture\n\n**Problem:** Interpretability publishing is biased toward features that were successfully found; there is no shared, structured record of safety-relevant concepts that researchers searched for in SAEs and could NOT cleanly find. This absence makes it hard to know what is genuinely hard to monitor.\n\n**Direction:** Define a small list of safety-relevant target concepts (deception, sycophancy, situational awareness cues, refusal-evasion), then systematically search a public SAE for clean single-feature representations of each using auto-interp + targeted probes, and report which concepts have no clean feature. Publish the search protocol and a reusable template for logging negative results.\n\n**Why it matters:** Knowing which dangerous concepts are NOT cleanly represented (and thus hard to monitor via SAEs) is as safety-relevant as knowing which are. A negative-results registry counters publication bias and is pure measurement work needing only public SAEs.\n\n**Relevant context:** SAEBench shows feature quality/disentanglement varies widely and proxy metrics mislead; the interpretability-to-safety gap is an explicit open problem. Neuronpedia/Delphi provide the search-and-score tooling to attempt and document concept localization."
+  },
+  {
+    "idea_id": "gen-1678",
+    "run_id": "2026-06-15T19-24-29",
+    "stage": "generate",
+    "timestamp": "2026-06-15T21:36:04Z",
+    "subfield": "mechanistic_interpretability",
+    "generation_strategy": "tool_or_benchmark_gap",
+    "confidence": 0.71,
+    "body": "# Lens-Agreement Score: When Do Logit Lens, Tuned Lens, and Probes Tell the Same Story?\n\n**Problem:** Multiple 'reading' tools (logit lens, tuned lens, linear probes) are used to interpret intermediate states, but they are rarely cross-validated against each other. There is no standard metric for whether these tools agree, so a conclusion may be tool-specific without anyone noticing.\n\n**Direction:** On a few small open models, decode intermediate-layer 'next-token belief' with logit lens, a quickly trained tuned lens, and a vocabulary probe, then compute a per-layer cross-tool agreement score. Identify layers/models where tools converge (trustworthy) vs diverge (caution), and ship the agreement computation as a reusable diagnostic.\n\n**Why it matters:** Triangulating across independent methods is the cheapest way to build calibrated trust in interpretability readouts. A standardized agreement score gives safety researchers a quick robustness signal and is entirely doable with open tooling on a consumer GPU.\n\n**Relevant context:** Logit lens is unreliable in early layers (echoes input token); tuned lens (2303.08112) trains affine translators that align better with final-layer outputs. Combining lenses/probes is established practice but agreement is not standardly quantified. TransformerLens enables all three readouts."
+  },
+  {
+    "idea_id": "gen-1679",
+    "run_id": "2026-06-15T19-24-29",
+    "stage": "generate",
+    "timestamp": "2026-06-15T21:36:04Z",
+    "subfield": "mechanistic_interpretability",
+    "generation_strategy": "tool_or_benchmark_gap",
+    "confidence": 0.68,
+    "body": "# Feature-Splitting Diagnostic Across SAE Widths\n\n**Problem:** As SAE width grows, a single concept can 'split' into many narrower features (feature splitting), complicating interpretation and monitoring. There is no easy tool to measure how much a given concept splits as width increases, so users can't anticipate whether their monitoring feature will fragment.\n\n**Direction:** Using public SAEs of multiple widths trained on the same model/layer, track a fixed set of seed concepts and measure how many features each concept maps to at each width (via activation-correlation clustering + auto-interp). Produce a 'splitting curve' tool and report which safety concepts fragment fastest.\n\n**Why it matters:** If the 'deception feature' fragments into 30 features in a wider SAE, a monitor watching one feature breaks. Quantifying feature splitting is reusable infrastructure for choosing SAE width for monitoring, requiring only public weights.\n\n**Relevant context:** Feature splitting is documented in Anthropic's 'Towards Monosemanticity' / scaling-monosemanticity line; SAEBench released SAEs across architectures and widths enabling width sweeps. Reliable superposition decomposition is an open problem."
+  },
+  {
+    "idea_id": "gen-168",
+    "run_id": "2026-06-15T19-24-29",
+    "stage": "generate",
+    "timestamp": "2026-06-15T21:36:03Z",
+    "subfield": "adversarial_robustness",
+    "generation_strategy": "follow_up_experiment",
+    "confidence": 0.74,
+    "body": "# Token-Depth of Safety Across Quantization Levels\n\n**Problem:** Shallow safety alignment was measured on full-precision weights. Practitioners increasingly run 4-bit/8-bit quantized models locally, but it is unknown whether quantization erodes or shifts the first-token safety signal that alignment relies on.\n\n**Direction:** Take one open chat model at fp16, int8, and int4 (via bitsandbytes/GGUF). Reproduce Qi et al.'s per-token KL divergence between harmful-prompt completions and a reference safe completion, plus prefilling-attack success rate at each precision. Test whether quantization disproportionately damages the shallow safety layer.\n\n**Why it matters:** Local/edge deployment via quantization is the dominant counterfactual-to-labs use case. If quantization silently weakens shallow safety, it is a deployment-robustness gap that only outside researchers running consumer hardware would surface.\n\n**Relevant context:** Qi et al. (arXiv:2406.05946): safety divergence concentrated in first tokens. International AI Safety Report 2026 flags lab-tested vs real-world deployment robustness gap. Quantization is a standard consumer-GPU workflow."
+  },
+  {
+    "idea_id": "gen-1680",
+    "run_id": "2026-06-15T19-24-29",
+    "stage": "generate",
+    "timestamp": "2026-06-15T21:36:04Z",
+    "subfield": "mechanistic_interpretability",
+    "generation_strategy": "tool_or_benchmark_gap",
+    "confidence": 0.73,
+    "body": "# Benchmarking Auto-Interp Explanations Against Causal Effect, Not Just Activation\n\n**Problem:** Auto-interp scores (detection/fuzzing) measure whether an explanation predicts WHEN a feature activates, but not whether the feature CAUSES the described behavior. A feature can be correlationally interpretable yet causally inert, and there's no standard test combining the two.\n\n**Direction:** For a sample of explained SAE features, run a cheap causal check: ablate/clamp the feature and measure whether outputs change in a way consistent with its auto-interp label. Define a combined score (correlational interpretability x causal effect) and report how often well-explained features are causally inert.\n\n**Why it matters:** Safety monitoring wants features that causally drive behavior, not just correlate with it. A correlational-vs-causal benchmark exposes a hidden weakness of auto-interp pipelines and is reusable, lab-free measurement on public SAEs and small models.\n\n**Relevant context:** Delphi scores explanations correlationally via detection/fuzzing. circuit-tracer validates feature roles via perturbation (feature clamping) on Gemma-2-2b/Llama-3.2-1b. SAEBench warns that proxy interpretability metrics may not reflect practical (causal) usefulness."
+  },
+  {
+    "idea_id": "gen-1681",
+    "run_id": "2026-06-15T19-24-29",
+    "stage": "generate",
+    "timestamp": "2026-06-15T21:36:04Z",
+    "subfield": "mechanistic_interpretability",
+    "generation_strategy": "tool_or_benchmark_gap",
+    "confidence": 0.72,
+    "body": "# Refusal-Circuit Robustness Benchmark Under Paraphrase\n\n**Problem:** Refusal is one of the few well-localized safety behaviors (refusal directions/features), but it's unknown how stable the localized refusal mechanism is across semantically equivalent paraphrases of harmful requests. No standard benchmark measures refusal-mechanism robustness to surface variation.\n\n**Direction:** Construct a small set of harmful-request templates with many paraphrases, extract the refusal direction/feature in a small open model, and measure how consistently the same mechanism activates across paraphrases and how consistently ablating it removes refusal. Report a robustness score capturing paraphrase-invariance of the refusal mechanism.\n\n**Why it matters:** If the refusal mechanism is paraphrase-fragile, jailbreaks that merely reword requests will slip past mechanism-based monitors. Measuring this is a concrete interpretability-to-safety contribution needing only open models and public refusal-direction methods.\n\n**Relevant context:** ICLR 2025 work programs refusal with a single direction; Rogue Scalpel and SAE-steering papers manipulate refusal features but validate narrowly (single model/layer). Robustness across paraphrase is an under-measured property relevant to jailbreak defense."
+  },
+  {
+    "idea_id": "gen-1682",
+    "run_id": "2026-06-15T19-24-29",
+    "stage": "generate",
+    "timestamp": "2026-06-15T21:36:04Z",
+    "subfield": "mechanistic_interpretability",
+    "generation_strategy": "tool_or_benchmark_gap",
+    "confidence": 0.74,
+    "body": "# A Reproducibility Harness for Published Circuit Claims\n\n**Problem:** Many circuit claims (IOI, induction heads, etc.) are reported once; the field lacks a lightweight harness that lets a newcomer re-run a published circuit experiment and check whether the headline numbers reproduce on the stated model, and how sensitive they are to minor setup changes.\n\n**Direction:** Pick 2-3 canonical, fully-open circuit findings (e.g., induction heads, IOI) and build a single reproducible TransformerLens notebook/CLI that re-derives the key metric, reports match/mismatch vs the paper, and runs a small sensitivity sweep. Package as a template others can extend for new circuit claims.\n\n**Why it matters:** Reproducibility is the foundation of trustworthy safety-relevant interpretability. A reusable harness lowers the barrier for the community to verify claims rather than cite them, and is ideal first-research for newcomers using fully public artifacts.\n\n**Relevant context:** Induction heads (Olsson et al.) and IOI (Wang et al.) are canonical open circuits; TransformerLens (MIT, 50+ models, 3.2k stars) is the standard reproduction substrate. A Practical Review of Mech Interp (2407.02646) catalogs these as reference results."
+  },
+  {
+    "idea_id": "gen-1683",
+    "run_id": "2026-06-15T19-24-29",
+    "stage": "generate",
+    "timestamp": "2026-06-15T21:36:04Z",
+    "subfield": "mechanistic_interpretability",
+    "generation_strategy": "tool_or_benchmark_gap",
+    "confidence": 0.69,
+    "body": "# Measuring How Much SAE Error Nodes Carry the 'Real' Computation\n\n**Problem:** Attribution graphs and SAE-based replacements include 'error' terms (the part of the activation the SAE/transcoder fails to reconstruct). If error nodes carry a large share of the causal effect, the interpretable features explain little. There's no standard, easy measurement of the error-node burden for a given behavior.\n\n**Direction:** On open models with public SAEs/transcoders (or via circuit-tracer's local replacement model), measure, for several behaviors, the fraction of total causal effect routed through error/reconstruction terms vs interpretable features. Report an 'explained-fraction' metric and how it varies by behavior and layer.\n\n**Why it matters:** An interpretability story that quietly relies on error terms is not actually explaining the model. Quantifying the error-node burden is a sharp, reusable honesty check on SAE-based explanations and directly addresses the interpretability-to-safety gap, all on public artifacts.\n\n**Relevant context:** circuit-tracer explicitly includes transcoder error nodes when computing direct effects in the local replacement model; reconstruction error is a known limitation of SAEs (SAEBench measures reconstruction trade-offs). Faithfulness of replacement models is validated only on case studies."
+  },
+  {
+    "idea_id": "gen-1684",
+    "run_id": "2026-06-15T19-24-29",
+    "stage": "generate",
+    "timestamp": "2026-06-15T21:36:04Z",
+    "subfield": "mechanistic_interpretability",
+    "generation_strategy": "tool_or_benchmark_gap",
+    "confidence": 0.67,
+    "body": "# Sandbagging Signature Probe Benchmark\n\n**Problem:** A medium-horizon safety concern is models that deliberately underperform (sandbag) when they detect they're being evaluated. There is no accessible benchmark that tests whether a probe can detect an internal 'I am being tested' or 'withhold effort' signal in open models prompted to sandbag.\n\n**Direction:** Construct paired prompts where a small open model is instructed/role-played to either try fully or deliberately underperform on a task, collect activations, and test whether a linear probe distinguishes the two internal states and predicts the behavioral gap. Report detectability and how it depends on how the sandbagging is induced.\n\n**Why it matters:** Sandbagging defeats capability evaluations and is a long-horizon threat labs deprioritize. A probe-based detectability benchmark on a model-organism slice is exactly the high-counterfactual-value, no-training work this profile targets, using only open models.\n\n**Relevant context:** Probing classifiers are a core listed methodology; sandbagging/evaluation-gaming is a recognized model-organism direction (Apollo Research, listed key org). Activation access via TransformerLens makes the paired-prompt probe feasible in 30h."
+  },
+  {
+    "idea_id": "gen-1685",
+    "run_id": "2026-06-15T19-24-29",
+    "stage": "generate",
+    "timestamp": "2026-06-15T21:36:04Z",
+    "subfield": "mechanistic_interpretability",
+    "generation_strategy": "tool_or_benchmark_gap",
+    "confidence": 0.69,
+    "body": "# Concept-Erasure Completeness Benchmark\n\n**Problem:** Concept erasure (e.g., removing a concept's linear representation) is proposed for safety (scrub a dangerous concept), but it's hard to know whether erasure is complete or whether the concept leaks back via nonlinear/redundant encodings. There's no easy completeness benchmark.\n\n**Direction:** Apply a simple linear concept-erasure method to a target concept in a small open model, then test residual recoverability with a battery of stronger probes (nonlinear MLP probe, multi-layer probe, paraphrase probes). Report an 'erasure leakage' score quantifying how much of the concept survives a defensible erasure.\n\n**Why it matters:** If erasure leaves the concept recoverable, safety claims about removing dangerous knowledge are false. A leakage benchmark is reusable measurement infrastructure for unlearning/erasure, needing no training and no proprietary data.\n\n**Relevant context:** Linear concept erasure (LEACE/INLP line; Belrose et al.) provides the erasure method; SAEBench includes unlearning among its 8 metrics, signaling erasure/unlearning as an active evaluation target. Probe noisiness motivates a multi-probe completeness test."
+  },
+  {
+    "idea_id": "gen-1686",
+    "run_id": "2026-06-15T19-24-29",
+    "stage": "generate",
+    "timestamp": "2026-06-15T21:36:04Z",
+    "subfield": "mechanistic_interpretability",
+    "generation_strategy": "tool_or_benchmark_gap",
+    "confidence": 0.73,
+    "body": "# Auto-Interp Hallucination Rate: Do Explainer LLMs Invent Patterns?\n\n**Problem:** Auto-interp explainer LLMs may confidently describe a coherent pattern even for random or meaningless feature directions, inflating apparent interpretability. There is no standard control measuring the false-positive 'explanation hallucination' rate of an auto-interp pipeline.\n\n**Direction:** Feed the auto-interp pipeline a mix of real SAE features and control directions (random directions, shuffled activation sets) and measure how often it produces confident, high-scoring explanations for the controls. Report a hallucination/false-positive rate as a calibration metric for the pipeline.\n\n**Why it matters:** If the pipeline 'interprets' noise, then high auto-interp coverage numbers overstate real understanding, biasing safety assessments. A control-based hallucination rate is a simple, reusable calibration tool requiring only public SAEs and a cheap explainer LLM.\n\n**Relevant context:** Delphi/Neuronpedia auto-interp generates explanations from activating examples and scores them; the pipeline's behavior on null/control inputs is not standardly reported. SAEBench's warning about misleading proxy metrics motivates measuring explainer false positives."
+  },
+  {
+    "idea_id": "gen-1687",
+    "run_id": "2026-06-15T19-24-29",
+    "stage": "generate",
+    "timestamp": "2026-06-15T21:36:04Z",
+    "subfield": "mechanistic_interpretability",
+    "generation_strategy": "tool_or_benchmark_gap",
+    "confidence": 0.7,
+    "body": "# Layer-wise 'Information Already Decided' Benchmark for Early-Exit Safety\n\n**Problem:** Models often 'decide' an answer many layers before the final layer, but there's no standard measurement of at which layer a safety-relevant decision (e.g., refuse vs comply) becomes linearly readable and stable. This matters for cheap early-warning monitors but is unmeasured.\n\n**Direction:** For refusal and a couple of other binary safety decisions, train per-layer probes on a small open model and measure the earliest layer where the decision is reliably (and stably to the end) decodable. Produce a 'decision-onset layer' metric and discuss implications for cheap early-layer monitoring.\n\n**Why it matters:** If safety decisions are decodable early, monitors can run on a few layers instead of the full forward pass, enabling cheaper deployment-time oversight. Measuring decision-onset depth is reusable, lab-free interpretability infrastructure relevant to scalable monitoring.\n\n**Relevant context:** Tuned-lens/logit-lens work shows predictions form across layers; uncertainty affects layer-wise inference dynamics (2507.06722). Per-layer probing is standard methodology; refusal directions are well-localized, making decision-onset measurable on open models."
+  },
+  {
+    "idea_id": "gen-1688",
+    "run_id": "2026-06-15T19-24-29",
+    "stage": "generate",
+    "timestamp": "2026-06-15T21:36:04Z",
+    "subfield": "mechanistic_interpretability",
+    "generation_strategy": "tool_or_benchmark_gap",
+    "confidence": 0.7,
+    "body": "# Cross-Lingual Feature Sharing Benchmark for Safety Concepts\n\n**Problem:** Circuit tracing found shared multilingual representations, but it's not standardly measured whether safety-relevant features (e.g., harmful-content detection, refusal) are language-shared or language-specific in small open models. This gap matters for whether safety monitoring generalizes across languages.\n\n**Direction:** Take a safety concept, extract its feature/probe using English data in a small multilingual-capable open model, then measure detection accuracy and steering efficacy on translated prompts in 2-3 other languages. Report a cross-lingual sharing score and which safety concepts transfer across languages.\n\n**Why it matters:** If harmful-content features are English-only, non-English jailbreaks evade interpretability monitors, a known real-world failure mode. A standardized cross-lingual feature-sharing benchmark is high-value, lab-free measurement of monitoring generalization.\n\n**Relevant context:** Circuit-tracer studies report shared multilingual representations in Gemma-2-2b/Llama-3.2-1b. SAE-steering work observed a 'Portuguese' feature interacting with safety, hinting at language-entangled safety mechanisms. Probing/steering on open multilingual models is feasible in 30h."
+  },
+  {
+    "idea_id": "gen-1689",
+    "run_id": "2026-06-15T19-24-29",
+    "stage": "generate",
+    "timestamp": "2026-06-15T21:36:04Z",
+    "subfield": "mechanistic_interpretability",
+    "generation_strategy": "failure_mode_investigation",
+    "confidence": 0.78,
+    "body": "# Mapping the Boundaries of Feature Absorption in a Pretrained SAE\n\n**Problem:** Feature absorption is a documented SAE failure where a latent meant to detect a general concept (e.g. 'word starts with S') silently fails on specific tokens because another, more specific latent absorbs that case to satisfy sparsity. It is unclear how prevalent absorption is across concept types and how to predict which inputs trigger silent failures.\n\n**Direction:** Using a pretrained Gemma-2-2B SAE from SAELens/Neuronpedia, pick several candidate 'general' features with known absorption (first-letter, part-of-speech, sentiment) and systematically test them over a token set. For each input where the primary latent fails, search for the absorbing latent via cosine similarity to a linear probe direction and projection contribution. Build a small map of which token classes are most absorption-prone and report a per-feature 'silent failure rate'.\n\n**Why it matters:** If a safety-relevant feature (e.g. a 'deception' or 'refusal' latent) silently fails on a fraction of inputs because of absorption, monitoring built on that latent has blind spots an attacker could exploit. Characterizing where absorption strikes tells us when SAE-based monitors cannot be trusted.\n\n**Relevant context:** Chanin et al., 'A is for Absorption: Studying Feature Splitting and Absorption in Sparse Autoencoders' (arXiv:2409.14507) shows absorption arises from sparsity pressure on hierarchical concepts and that absorbed cases can be found via cosine similarity to a probe direction and projection contribution. SAEBench (arXiv:2503.09532) provides absorption metrics."
+  },
+  {
+    "idea_id": "gen-169",
+    "run_id": "2026-06-15T19-24-29",
+    "stage": "generate",
+    "timestamp": "2026-06-15T21:36:03Z",
+    "subfield": "adversarial_robustness",
+    "generation_strategy": "follow_up_experiment",
+    "confidence": 0.8,
+    "body": "# Why Are Activation Probes Fragile to Long Context? A Position-Sweep\n\n**Problem:** Recent work (Building Production-Ready Probes for Gemini, arXiv:2601.11516) reports activation probes for jailbreak/misuse detection fail to generalize to long-context inputs but does not isolate WHY. Is it the harmful content's position, total context length, or dilution by benign tokens?\n\n**Direction:** On an open model, train a simple logistic-regression probe on residual activations to detect a harmful request. Then systematically pad the harmful request with benign filler at varying lengths and positions (start/middle/end). Plot probe recall vs context length and harmful-content position to decompose the long-context failure mode.\n\n**Why it matters:** Probes are a cheap, lab-independent defense, but their long-context blind spot is a deployment risk. Explaining the mechanism guides cheap fixes (e.g., sliding-window probing) without lab infrastructure.\n\n**Relevant context:** arXiv:2601.11516 (Gemini probes): probes fragile to distribution shift, fail on long context; training on long context costs >10x. arXiv:2509.14558 'LLM Jailbreak Detection for (Almost) Free'. Detecting High-Stakes Interactions with Activation Probes (arXiv:2506.10805)."
+  },
+  {
+    "idea_id": "gen-1690",
+    "run_id": "2026-06-15T19-24-29",
+    "stage": "generate",
+    "timestamp": "2026-06-15T21:36:04Z",
+    "subfield": "mechanistic_interpretability",
+    "generation_strategy": "failure_mode_investigation",
+    "confidence": 0.8,
+    "body": "# When the Logit Lens Lies: Quantifying Early-Layer Failure Across Open Models\n\n**Problem:** The logit lens (decoding intermediate hidden states with the output unembedding) is a popular cheap interpretability tool, but it is known to fail in early layers and even completely on some model families (BLOOM, GPT-Neo), often just echoing the input token. Practitioners rarely quantify when it is trustworthy for a given model.\n\n**Direction:** On 3-4 open models in TransformerLens (GPT-2 small, Pythia-410M, GPT-Neo, a small Llama), apply the logit lens at every layer over a fixed text set and measure, per layer: agreement with the true next token, fraction of positions where the top prediction is just the input token ('input echo'), and KL divergence from the final-layer distribution. Compare against the tuned lens where available. Produce per-model 'trust curves' showing the layer depth at which the logit lens becomes informative.\n\n**Why it matters:** Many safety analyses (detecting when a model 'knows' an answer, locating where a concept emerges) lean on the logit lens. Knowing per-model where it silently breaks prevents drawing false conclusions about model internals from an unreliable tool.\n\n**Relevant context:** Belrose et al., 'Eliciting Latent Predictions from Transformers with the Tuned Lens' (arXiv:2303.08112) documents that the logit lens defaults to the input token and fails on BLOOM/GPT-Neo due to representational drift and residual update bias. The tuned lens corrects this on frozen models."
+  },
+  {
+    "idea_id": "gen-1691",
+    "run_id": "2026-06-15T19-24-29",
+    "stage": "generate",
+    "timestamp": "2026-06-15T21:36:04Z",
+    "subfield": "mechanistic_interpretability",
+    "generation_strategy": "failure_mode_investigation",
+    "confidence": 0.74,
+    "body": "# Self-Repair Sabotages Ablation: Measuring the Direct-Effect vs Ablation Gap\n\n**Problem:** Self-repair means that when an attention head is ablated, other 'backup' heads activate to compensate, so the logit change from ablation badly misrepresents a component's true causal role. This makes ablation an unreliable interpretability tool, yet most beginner circuit analyses use it uncritically.\n\n**Direction:** On GPT-2 small in TransformerLens, replicate the IOI (Indirect Object Identification) task. For each of the known name-mover heads, compare two quantities: the head's clean direct effect (via path patching to the logits) versus the logit change when the head is mean-ablated. Quantify the gap and identify which backup heads switch on. Extend to a second task to test whether the size of the self-repair gap is consistent.\n\n**Why it matters:** Safety auditors who 'knock out' a suspected harmful component and see little behavior change might wrongly conclude the component is unimportant, when self-repair is masking it. Measuring this gap calibrates how much to trust ablation-based safety claims.\n\n**Relevant context:** Wang et al., 'Interpretability in the Wild' (arXiv:2211.00593) documents Backup Name Mover Heads in IOI. McGrath et al. 'Explorations of Self-Repair' (arXiv:2402.15390) shows self-repair across model families and that ablation direct effects can differ greatly from expectation."
+  },
+  {
+    "idea_id": "gen-1692",
+    "run_id": "2026-06-15T19-24-29",
+    "stage": "generate",
+    "timestamp": "2026-06-15T21:36:04Z",
+    "subfield": "mechanistic_interpretability",
+    "generation_strategy": "failure_mode_investigation",
+    "confidence": 0.7,
+    "body": "# The Subspace Activation Patching Illusion: A Replication Probe\n\n**Problem:** A documented interpretability illusion shows that patching a 1-dimensional subspace can strongly change predictions by activating a normally dormant pathway that is not part of the genuine circuit, leading researchers to attribute behavior to the wrong subspace. Beginners adopting subspace patching may not realize this.\n\n**Direction:** On a small open model, construct a simple factual-recall or attribute task. Fit a probe direction for the target attribute and perform subspace activation patching along it, recording the effect on output probability. Then run the documented controls (does the same direction matter on clean inputs? does it activate a dormant pathway?) to detect whether the apparent effect is illusory. Report a checklist of which controls catch the illusion and how often a naively chosen subspace is illusory.\n\n**Why it matters:** Subspace/steering-vector interventions are increasingly proposed as safety levers. If the chosen direction is an artifact, claimed 'control' over a behavior is fictitious. A clear demonstration plus a control checklist helps newcomers avoid fooling themselves.\n\n**Relevant context:** Makelov et al., 'Is This the Subspace You Are Looking for? An Interpretability Illusion for Subspace Activation Patching' (arXiv:2311.17030) shows a 1-D subspace patch can move predictions by activating a dormant out-of-circuit pathway, and recommends mechanistic controls."
+  },
+  {
+    "idea_id": "gen-1693",
+    "run_id": "2026-06-15T19-24-29",
+    "stage": "generate",
+    "timestamp": "2026-06-15T21:36:04Z",
+    "subfield": "mechanistic_interpretability",
+    "generation_strategy": "failure_mode_investigation",
+    "confidence": 0.79,
+    "body": "# Probes That Read Information the Model Never Uses\n\n**Problem:** A probing classifier can achieve high accuracy predicting a concept from activations even when that concept is merely correlated with a feature the model actually uses, not causally efficacious. Newcomers routinely interpret high probe accuracy as 'the model represents and uses concept X', which is unwarranted.\n\n**Direction:** Construct a controlled dataset where a target concept (e.g. sentiment) is correlated with a confound (e.g. topic) at a tunable rate. Train probes at several correlation levels on a frozen small model's activations and show probe accuracy rises with correlation. Then run a causal check (activation patching or causal-effect of the probe direction on outputs) to show the probe-read concept is not causally used. Produce a 'probe accuracy vs causal effect' gap curve.\n\n**Why it matters:** Safety teams probe models for dangerous knowledge or intent (deception, situational awareness). If probes pick up correlated-but-unused signal, we over- or under-estimate model capabilities. Demonstrating the correlation-vs-causation gap warns against probe-only safety evidence.\n\n**Relevant context:** Belinkov, 'Probing Classifiers: Promises, Shortcomings, and Advances' (arXiv:2102.12452) and Kumar et al., 'Probing Classifiers are Unreliable for Concept Removal and Detection' (NeurIPS 2022, arXiv:2207.04153) show probes claim a concept's presence whenever any correlated feature is present, demanding interventional checks."
+  },
+  {
+    "idea_id": "gen-1694",
+    "run_id": "2026-06-15T19-24-29",
+    "stage": "generate",
+    "timestamp": "2026-06-15T21:36:04Z",
+    "subfield": "mechanistic_interpretability",
+    "generation_strategy": "failure_mode_investigation",
+    "confidence": 0.76,
+    "body": "# Benign-Looking SAE Features That Jailbreak: Auditing the Steering Danger Surface\n\n**Problem:** A surprising recent result found that more than half of SAE features (668/1000) could jailbreak at least five prompts when used for steering, and the most dangerous ones were semantically benign (e.g. 'brand identity', 'physical positioning'), making them indistinguishable from legitimate control features. The boundary conditions of this are not well characterized for a small budget.\n\n**Direction:** Using a pretrained open SAE (Gemma-2-2B via Neuronpedia/SAELens), select a modest sample of features stratified by their human label (clearly harmful, neutral, benign). Steer with each on a small set of refusal-eliciting prompts and measure jailbreak success rate. Test the claim that benign-labeled features are disproportionately effective and that effective features generalize poorly across prompts. Report the correlation (or lack of it) between feature label and jailbreak potency.\n\n**Why it matters:** If you cannot tell which SAE features are dangerous from their interpretations, SAE-based access controls and steering safety guarantees are illusory. Quantifying the label-vs-danger mismatch on open tooling is directly safety-relevant and needs no lab infrastructure.\n\n**Relevant context:** 'Activation Steering Compromises LLM Safety' (OpenReview) finds 668/1000 features can jailbreak, the most effective are semantically benign, and dangerous features generalize poorly across prompts, making monitoring infeasible."
+  },
+  {
+    "idea_id": "gen-1695",
+    "run_id": "2026-06-15T19-24-29",
+    "stage": "generate",
+    "timestamp": "2026-06-15T21:36:04Z",
+    "subfield": "mechanistic_interpretability",
+    "generation_strategy": "failure_mode_investigation",
+    "confidence": 0.75,
+    "body": "# The SAE Error Node Problem: How Much Behavior Hides in Reconstruction Residue\n\n**Problem:** SAE reconstructions have non-negligible, structured irreducible error, and in circuit analyses the 'error node' (the unexplained residual) is often among the most important contributors to outputs. This means SAE-based explanations may be missing crucial mechanism, but the magnitude is rarely measured by newcomers.\n\n**Direction:** On a small open model with a pretrained SAE at one layer, substitute the layer activation with its SAE reconstruction (plus error term) and measure downstream KL / next-token agreement with and without the error term included. Across a text set, quantify the fraction of behavior carried by the error node and test whether it is larger on specific input types (rare tokens, code, non-English). Visualize when the SAE 'explanation' is most incomplete.\n\n**Why it matters:** If a large share of model behavior lives in the SAE error term, safety claims that an SAE 'fully decomposes' a model's computation are overstated. Measuring the error node's contribution tells us how much SAE-based oversight is silently blind to.\n\n**Relevant context:** The SAE survey (arXiv:2503.05613) and reconstruction-error work note structured irreducible error and that an 'error node' is often among the most important contributors, introducing uncertainty about hidden information. Reconstruction error can degrade performance comparably to using 10% of pretraining compute."
+  },
+  {
+    "idea_id": "gen-1696",
+    "run_id": "2026-06-15T19-24-29",
+    "stage": "generate",
+    "timestamp": "2026-06-15T21:36:04Z",
+    "subfield": "mechanistic_interpretability",
+    "generation_strategy": "failure_mode_investigation",
+    "confidence": 0.72,
+    "body": "# Pretraining-Data SAEs Miss Safety Behaviors: Refusal Coverage Audit\n\n**Problem:** SAEs trained on pretraining corpora fail to encode features for chat behaviors like refusal, while SAEs trained on chat data do. Many publicly available SAEs are pretraining-data SAEs, so analysts may unknowingly use an SAE that is blind to the exact safety behavior they care about.\n\n**Direction:** Take a pretraining-data SAE and (if available) a chat-data SAE for the same open model layer. On a set of refusal vs compliance prompts, measure how well each SAE's features separate refusal from compliance (max-activating feature overlap, linear separability of feature activations). Quantify the coverage gap and identify which safety-relevant distinctions the pretraining SAE simply cannot represent.\n\n**Why it matters:** Choosing the wrong SAE means safety monitors are structurally unable to see the behavior of interest. Demonstrating the refusal-coverage gap gives practitioners a concrete reason to check what data their interpretability tool was trained on before trusting it.\n\n**Relevant context:** Recent work cited in the SAE reconstruction literature notes SAEs trained on pretraining data fail to encode refusal features whereas chat-data SAEs do; 'Understanding Refusal in Language Models with Sparse Autoencoders' (arXiv:2505.23556) studies refusal features directly."
+  },
+  {
+    "idea_id": "gen-1697",
+    "run_id": "2026-06-15T19-24-29",
+    "stage": "generate",
+    "timestamp": "2026-06-15T21:36:04Z",
+    "subfield": "mechanistic_interpretability",
+    "generation_strategy": "failure_mode_investigation",
+    "confidence": 0.77,
+    "body": "# Autointerp Overconfidence: Testing Explanations on Lower-Quantile and Negative Inputs\n\n**Problem:** Automated interpretability pipelines generate feature explanations from max-activating examples and tend to produce overspecific or overbroad explanations because they never test lower-quantile activations, negative cases, or adversarial inputs. The resulting interpretability scores overstate how well features are understood.\n\n**Direction:** Take a sample of features from an open SAE with published autointerp explanations (Neuronpedia/EleutherAI). For each, treat the explanation as a classifier: build a test set of mid-quantile-activating, near-zero, and explanation-matching-but-non-activating inputs, then measure precision and recall against the explanation. Report how much the apparent interpretability score drops once you go beyond max-activating examples, and which explanation types (output-centric, overbroad) fail most.\n\n**Why it matters:** If feature explanations only hold on the top activations, automated interpretability gives a false sense of understanding, and safety decisions built on 'we understand this feature' are fragile. A cheap recall/precision audit calibrates trust in autointerp at scale.\n\n**Relevant context:** EleutherAI autointerp blog and the automated-interpretability literature frame explanations as classifiers needing precision and recall; analyses find ~38% of explanations fail objectives (insufficient sensitivity, output-centric, factually incorrect) and that relying on max-activating examples yields overbroad explanations."
+  },
+  {
+    "idea_id": "gen-1698",
+    "run_id": "2026-06-15T19-24-29",
+    "stage": "generate",
+    "timestamp": "2026-06-15T21:36:04Z",
+    "subfield": "mechanistic_interpretability",
+    "generation_strategy": "failure_mode_investigation",
+    "confidence": 0.73,
+    "body": "# Same Model, Different Dictionary: Seed Instability of SAE Features\n\n**Problem:** Standard SAEs trained with different random seeds produce inconsistent dictionaries; many features fail to reappear across runs, and rare/low-frequency features are especially unstable. Interpretability conclusions drawn from a single SAE may not replicate, but newcomers usually use one SAE and treat its features as ground truth.\n\n**Direction:** Without training from scratch: use two or more publicly released SAEs for the same model and layer trained with different seeds/configs (available for some Gemma/GPT-2 setups). Match features across SAEs by decoder-direction cosine similarity and measure what fraction of features have a stable counterpart, broken down by activation frequency. Report a 'reproducibility rate' and show that low-frequency features are the least stable.\n\n**Why it matters:** If a 'deception' or 'bias' feature only appears in one SAE seed, any safety claim about it is unreplicable noise. Quantifying which features are stable tells us which interpretability findings are robust enough to act on.\n\n**Relevant context:** 'Position: Mechanistic Interpretability Should Prioritize Feature Consistency in SAEs' and 'Unstable Features, Reproducible Subspaces' (arXiv:2606.12138) show standard SAEs give inconsistent dictionaries across seeds, frequent features are learned more consistently, and unstable features have weak marginal impact and are dominated by low-frequency surface triggers."
+  },
+  {
+    "idea_id": "gen-1699",
+    "run_id": "2026-06-15T19-24-29",
+    "stage": "generate",
+    "timestamp": "2026-06-15T21:36:04Z",
+    "subfield": "mechanistic_interpretability",
+    "generation_strategy": "failure_mode_investigation",
+    "confidence": 0.74,
+    "body": "# Circuit Faithfulness Metrics Flip Under Different Ablations\n\n**Problem:** Transformer circuit faithfulness metrics are not robust: the same circuit can look faithful or unfaithful depending on the ablation method (zero, mean, resampling) used, leading to vastly different interpretations. Beginners often pick one ablation arbitrarily and report a single faithfulness number.\n\n**Direction:** Take a small, well-documented circuit (e.g. IOI name movers in GPT-2 small). Compute faithfulness (does the circuit recover the model's task performance?) under several ablation choices: zero, mean over the dataset, and resampling/interchange. Show how the faithfulness verdict changes with the ablation method and corruption distribution, and propose a minimal robustness reporting standard (report under >=2 ablation types).\n\n**Why it matters:** Circuit-level safety claims ('this circuit fully explains harmful behavior') hinge on faithfulness numbers. If those numbers are an artifact of ablation choice, the claims are not trustworthy. Showing the sensitivity teaches newcomers to report robustly.\n\n**Relevant context:** 'Transformer Circuit Faithfulness Metrics are not Robust' (COLM 2024, arXiv:2407.08734) shows faithfulness metrics are highly sensitive to ablation methodology and can yield vastly different interpretations; standard criteria are faithfulness, completeness, minimality."
+  },
+  {
+    "idea_id": "gen-170",
+    "run_id": "2026-06-15T19-24-29",
+    "stage": "generate",
+    "timestamp": "2026-06-15T21:36:03Z",
+    "subfield": "adversarial_robustness",
+    "generation_strategy": "follow_up_experiment",
+    "confidence": 0.7,
+    "body": "# Replicating the Obfuscation Tax Across Tasks\n\n**Problem:** Bailey et al. (arXiv:2412.09565) found that evading latent-space probes via obfuscated activations imposes an 'obfuscation tax' \u2014 model performance drops on a complex task (SQL). It is unclear whether this tax is task-specific or a general phenomenon defenders can rely on.\n\n**Direction:** Reproduce the obfuscation-suffix attack against a simple harmfulness probe on an open model, then measure capability degradation across a battery of tasks of varying complexity (arithmetic, factual QA, code, multi-step reasoning). Quantify the obfuscation tax per task to see whether harder tasks reliably resist obfuscation.\n\n**Why it matters:** If the obfuscation tax is robust and grows with task complexity, defenders can deploy probes on high-stakes complex tasks with more confidence. This is a pure evaluation needing no training and directly informs monitor design.\n\n**Relevant context:** Bailey et al., 'Obfuscated Activations Bypass LLM Latent-Space Defenses' (arXiv:2412.09565): attacks reduce probe recall 100%->0% while keeping 90% jailbreak rate, but evading monitors reduces SQL-writing performance ('obfuscation tax'). Code/results public."
+  },
+  {
+    "idea_id": "gen-1700",
+    "run_id": "2026-06-15T19-24-29",
+    "stage": "generate",
+    "timestamp": "2026-06-15T21:36:04Z",
+    "subfield": "mechanistic_interpretability",
+    "generation_strategy": "failure_mode_investigation",
+    "confidence": 0.75,
+    "body": "# The Neuron Interpretation Illusion: Does a 'Clean' Neuron Survive a New Dataset?\n\n**Problem:** The classic interpretability illusion (Bolukbasi et al.) shows a neuron can look cleanly interpretable on one dataset yet exhibit a completely different activation pattern on another, so single-dataset neuron interpretations are unreliable. Many quick neuron-labeling efforts test on only one corpus.\n\n**Direction:** On a small open model in TransformerLens, pick neurons that appear monosemantic on one dataset (e.g. a subset of OpenWebText) by inspecting max-activating examples. Re-collect each neuron's top activations on a structurally different corpus (code, a different language, a domain text). Measure how often the apparent interpretation breaks (top examples no longer match the hypothesized concept) and characterize which neurons are most illusion-prone.\n\n**Why it matters:** Safety auditing that labels neurons/features from a narrow dataset will misjudge what the model does on deployment-distribution inputs. Demonstrating dataset-dependence cheaply teaches a critical methodological guardrail.\n\n**Relevant context:** Bolukbasi et al. (2021) 'An Interpretability Illusion for BERT' and the 200 COP superposition/polysemanticity notes show neurons can have different activation patterns across datasets; clustering dataset examples across the activation spectrum reduces illusion risk."
+  },
+  {
+    "idea_id": "gen-1701",
+    "run_id": "2026-06-15T19-24-29",
+    "stage": "generate",
+    "timestamp": "2026-06-15T21:36:04Z",
+    "subfield": "mechanistic_interpretability",
+    "generation_strategy": "failure_mode_investigation",
+    "confidence": 0.68,
+    "body": "# Does Planning-Ahead Behavior Survive in Smaller Open Models?\n\n**Problem:** Anthropic's circuit tracing found Claude 3.5 Haiku plans ahead, identifying rhyming target words before writing a poetry line. It is an open question whether this planning behavior exists in smaller, openly available models or is an emergent property of scale, and a documented behavior can fail to replicate downward.\n\n**Direction:** On open models of increasing size (GPT-2, Pythia-1.4B, a small Llama/Gemma) using TransformerLens, design a rhyming-couplet completion task. Probe whether the rhyme target is decodable from the residual stream BEFORE the line is generated (using a logit lens / linear probe on the planned word) and whether intervening on that representation changes the eventual rhyme. Report at what scale, if any, evidence of planning appears.\n\n**Why it matters:** Hidden planning / goal representation that precedes verbalized output is central to deceptive-alignment threat models. Establishing whether and at what scale planning is detectable in small models gives the community an accessible model organism for studying it without a frontier lab.\n\n**Relevant context:** Anthropic, 'On the Biology of a Large Language Model' / Circuit Tracing (transformer-circuits.pub 2025) report Claude 3.5 Haiku plans rhyming words ahead; the subfield context flags testing planning behavior in smaller models as a follow-up."
+  },
+  {
+    "idea_id": "gen-1702",
+    "run_id": "2026-06-15T19-24-29",
+    "stage": "generate",
+    "timestamp": "2026-06-15T21:36:04Z",
+    "subfield": "mechanistic_interpretability",
+    "generation_strategy": "failure_mode_investigation",
+    "confidence": 0.7,
+    "body": "# Vision SAEs vs Language SAEs: Characterizing the Sparsity-Pattern Gap\n\n**Problem:** ViT-Prisma found vision SAEs show different sparsity patterns than language SAEs, but the structural reasons and safety implications are under-characterized. If interpretability methods tuned for language silently behave differently on vision transformers, multimodal safety tooling inherits unknown failure modes.\n\n**Direction:** Using ViT-Prisma's 80+ pretrained vision SAE weights and a language SAE (SAELens), compare distributions of L0 (active features per input), activation frequency (Zipfian shape), dead-feature counts, and feature-firing concentration on matched-size dictionaries. Identify concrete structural differences and form hypotheses about why (e.g. spatial redundancy of image patches). No training required, only inference over existing weights.\n\n**Why it matters:** As safety attention extends to multimodal models, assuming language-derived interpretability assumptions transfer is dangerous. Documenting where vision SAEs differ flags where multimodal interpretability tools need rebuilding, and it is feasible entirely on open pretrained weights.\n\n**Relevant context:** ViT-Prisma (Prisma project) reports vision SAEs show different sparsity patterns than language SAEs and ships 80+ pretrained SAE weights; the subfield context lists characterizing these structural differences as a follow-up."
+  },
+  {
+    "idea_id": "gen-1703",
+    "run_id": "2026-06-15T19-24-29",
+    "stage": "generate",
+    "timestamp": "2026-06-15T21:36:04Z",
+    "subfield": "mechanistic_interpretability",
+    "generation_strategy": "failure_mode_investigation",
+    "confidence": 0.72,
+    "body": "# Attribution Patching's False Negatives: Where the Gradient Approximation Breaks\n\n**Problem:** Attribution patching (AtP) approximates activation patching with a first-order gradient to scale to large models, but it has documented failure modes that cause significant false negatives, missing genuinely important components. Newcomers use AtP for speed without knowing where it lies.\n\n**Direction:** On GPT-2 small with the IOI task, compute both exact activation patching effects and AtP gradient estimates for all heads/positions. Identify components where AtP disagrees with exact patching (false negatives), and test the known failure conditions (saturated softmax / cancellation) by inspecting attention patterns at those components. Produce a 'when AtP lies' diagnostic and report the false-negative rate.\n\n**Why it matters:** Scalable circuit discovery for safety auditing leans on attribution patching. If it systematically misses certain harmful components, audits have predictable blind spots. Mapping those conditions lets auditors know when to fall back to exact patching.\n\n**Relevant context:** Nanda/Kramar et al., 'AtP*: An efficient and scalable method for localizing LLM behaviour to components' (arXiv:2403.00745) documents two classes of AtP failure causing significant false negatives; Heimersheim & Nanda (arXiv:2404.15255) give activation-patching best practices."
+  },
+  {
+    "idea_id": "gen-1704",
+    "run_id": "2026-06-15T19-24-29",
+    "stage": "generate",
+    "timestamp": "2026-06-15T21:36:04Z",
+    "subfield": "mechanistic_interpretability",
+    "generation_strategy": "failure_mode_investigation",
+    "confidence": 0.71,
+    "body": "# Feature Splitting Distorts Concept Counts: Same Concept, More 'Features'\n\n**Problem:** When SAE width increases, a single concept's feature can split into several latents; some splits are 'desirable' (genuine new concepts) but many are 'undesirable' (sparser recombinations of existing directions) that fragment interpretability. Counting features as concepts therefore overstates how many distinct things a model represents.\n\n**Direction:** Using two pretrained SAEs of different widths for the same open model/layer (available for GPT-2 and Gemma), take a set of concepts each represented by one feature in the narrow SAE and locate their counterparts in the wide SAE. Classify each split as desirable (new interpretable direction) vs undesirable (recombination, near-collinear with existing directions) using decoder-geometry tests, and report the proportion of splitting that is interpretability-harmful.\n\n**Why it matters:** Claims like 'the model has N distinct safety-relevant features' depend on whether feature counts mean concept counts. Showing how much width-driven splitting is artifactual stops over-interpretation of dictionary size as semantic richness.\n\n**Relevant context:** Chanin et al. (arXiv:2409.14507) and seed/consistency work describe desirable vs undesirable feature splitting; larger expansions encourage splitting at the cost of more dead features and capacity waste."
+  },
+  {
+    "idea_id": "gen-1705",
+    "run_id": "2026-06-15T19-24-29",
+    "stage": "generate",
+    "timestamp": "2026-06-15T21:36:04Z",
+    "subfield": "mechanistic_interpretability",
+    "generation_strategy": "failure_mode_investigation",
+    "confidence": 0.72,
+    "body": "# Rare-Concept Blindness: SAE Capacity Follows a Power Law, Starving Tail Features\n\n**Problem:** SAEs allocate dictionary capacity non-uniformly along Zipfian feature frequencies (a power law), so rare concepts get few or no latents and are learned inconsistently. Safety-relevant concepts (rare attack patterns, unusual deceptive contexts) may live in this starved tail and be effectively invisible.\n\n**Direction:** On an open SAE, estimate per-feature activation frequency over a large text sample, then bucket concepts by rarity and measure how reconstruction quality and feature interpretability degrade in rare buckets. Inject controlled rare-but-meaningful inputs (e.g. a rare named entity or a low-frequency syntactic pattern) and test whether any single SAE latent reliably captures them. Quantify the 'rarity cliff' beyond which the SAE fails to represent a concept.\n\n**Why it matters:** Many of the inputs we most want to monitor for safety are rare by construction. If SAEs systematically under-represent the tail, SAE-based monitoring misses exactly the rare dangerous cases. Mapping the rarity cliff bounds what such monitors can detect.\n\n**Relevant context:** Seed-consistency and capacity work shows SAEs allocate capacity by Zipfian frequency (power law) and that rare features are learned least consistently; 'Decoding Dark Matter' (arXiv:2411.00743) targets rare concepts specifically."
+  },
+  {
+    "idea_id": "gen-1706",
+    "run_id": "2026-06-15T19-24-29",
+    "stage": "generate",
+    "timestamp": "2026-06-15T21:36:04Z",
+    "subfield": "mechanistic_interpretability",
+    "generation_strategy": "failure_mode_investigation",
+    "confidence": 0.74,
+    "body": "# Steering Vectors Break Coherence Before They Change Behavior: Mapping the Safe Range\n\n**Problem:** Activation steering (including interpretable, concept-aligned steering) can compromise model safety and degrade outputs much like arbitrary perturbations, and the dose at which steering produces the intended effect vs. broken/off-target behavior is poorly characterized. Beginners pick a steering coefficient by trial and error.\n\n**Direction:** For a small open model, take a published steering vector (e.g. a refusal or sentiment direction or an SAE feature). Sweep the steering coefficient and at each level measure both the intended effect (does target behavior change?) and collateral damage (perplexity on neutral text, off-topic rate, degeneration). Plot a dose-response showing the window, if any, where the intended effect occurs without breaking the model, across several features.\n\n**Why it matters:** Interpretable steering is promoted as a safe control method, but if every useful dose also degrades the model, the 'control' is unsafe. A reusable dose-response protocol shows whether semantic interventions are genuinely surgical and is doable entirely on open weights.\n\n**Relevant context:** 'Activation Steering Compromises LLM Safety' (OpenReview) shows interpretable concept-aligned interventions pose risks similar to arbitrary perturbations; 'SAE features for refusal and sycophancy steering vectors' (LessWrong/AF) decomposes steering vectors into features."
+  },
+  {
+    "idea_id": "gen-1707",
+    "run_id": "2026-06-15T19-24-29",
+    "stage": "generate",
+    "timestamp": "2026-06-15T21:36:04Z",
+    "subfield": "mechanistic_interpretability",
+    "generation_strategy": "failure_mode_investigation",
+    "confidence": 0.73,
+    "body": "# Does the Refusal Direction Generalize? Cross-Prompt and Cross-Distribution Failure\n\n**Problem:** Refusal in some open models is reported to be mediated by a single direction, but it is unclear how well that single direction generalizes across prompt phrasings, languages, and harm categories. A safety mechanism that hinges on one direction may silently fail outside the distribution it was found on.\n\n**Direction:** Using a published refusal direction (or extracting one via difference-of-means on harmful vs harmless prompts) for an open chat model, measure how consistently ablating/adding it controls refusal across: paraphrases, different harm categories, and a non-English prompt set. Report where the single-direction account holds and where refusal is mediated by something the direction misses.\n\n**Why it matters:** If refusal safety reduces to one fragile direction that fails to generalize, attackers need only find out-of-distribution prompts to evade it, and defenders over-trust the mechanism. Characterizing the generalization boundary is directly safety-relevant and needs only open models.\n\n**Relevant context:** 'Understanding Refusal in Language Models with Sparse Autoencoders' (arXiv:2505.23556) and the refusal-direction literature; steering work shows dangerous features generalize poorly across prompts, motivating a cross-distribution test of the refusal direction."
+  },
+  {
+    "idea_id": "gen-1708",
+    "run_id": "2026-06-15T19-24-29",
+    "stage": "generate",
+    "timestamp": "2026-06-15T21:36:04Z",
+    "subfield": "mechanistic_interpretability",
+    "generation_strategy": "failure_mode_investigation",
+    "confidence": 0.66,
+    "body": "# Does Interpretability Transfer Across Architectures? Probing RNN/SSM vs Transformer\n\n**Problem:** It is an open question whether transformer-developed interpretability tools (logit lens, probes, tuned lens) transfer to non-transformer architectures like RNNs/SSMs (Mamba). If a tool silently underperforms on a different architecture, conclusions about those models are unreliable.\n\n**Direction:** Take a small open RNN/SSM-style model (e.g. a Mamba or RWKV checkpoint) and a comparable transformer. Apply the same simple interpretability probes (linear probe for a concept, logit lens where applicable) to both and compare how cleanly each yields interpretable structure. Document which tools degrade on the non-transformer model and hypothesize why (state mixing, no attention pattern to read).\n\n**Why it matters:** As alternative architectures gain adoption, safety monitoring tools built for transformers may not transfer, leaving a class of deployed models harder to audit. A small comparison flags which tools need rework, valuable independent of any lab.\n\n**Relevant context:** Paulo et al., 'Does Transformer Interpretability Transfer to RNNs?' (arXiv:2404.05971) studies whether logit/tuned lens and other tools transfer to RNN architectures; tuned-lens work (arXiv:2303.08112) documents architecture-dependent logit-lens failure."
+  },
+  {
+    "idea_id": "gen-1709",
+    "run_id": "2026-06-15T19-24-29",
+    "stage": "generate",
+    "timestamp": "2026-06-15T21:36:04Z",
+    "subfield": "mechanistic_interpretability",
+    "generation_strategy": "failure_mode_investigation",
+    "confidence": 0.74,
+    "body": "# Polysemantic Neurons That Fool Single-Concept Labels: A Polysemanticity Census\n\n**Problem:** Many neurons are polysemantic (fire on multiple unrelated concepts due to superposition), so labeling a neuron with one concept from its top activations is frequently wrong. The base rate of polysemanticity for a given small model is rarely measured, so analysts don't know how often single-concept labels are misleading.\n\n**Direction:** On GPT-2 small, sample many MLP neurons. For each, collect top-activating examples and cluster them by embedding similarity; count how many distinct concept clusters appear among the high activations. Report the distribution of clusters-per-neuron (the polysemanticity census) and the fraction of neurons for which a single-concept label would be misleading, broken down by layer.\n\n**Why it matters:** Neuron-level safety claims ('this neuron detects deception') are unreliable if most neurons are polysemantic. A simple census quantifies how often single-concept interpretation fails and motivates dictionary methods, all doable on a consumer GPU.\n\n**Relevant context:** 'Superposition is not just neuron polysemanticity' (LessWrong/AF) and 200 COP superposition notes explain polysemanticity via superposition; clustering dataset examples across the activation spectrum is the recommended way to surface multiple behaviors per neuron."
+  },
+  {
+    "idea_id": "gen-171",
+    "run_id": "2026-06-15T19-24-29",
+    "stage": "generate",
+    "timestamp": "2026-06-15T21:36:03Z",
+    "subfield": "adversarial_robustness",
+    "generation_strategy": "follow_up_experiment",
+    "confidence": 0.76,
+    "body": "# Which Probe Architectures Resist Obfuscation? A Head-to-Head\n\n**Problem:** Bailey et al. note 'certain probe architectures are more robust than others' to obfuscated activations but do not exhaustively characterize this. Practitioners choosing a probe have little guidance on the robustness/cost tradeoff.\n\n**Direction:** On a single open model, train several probe types (logistic regression, MLP, mean-difference direction, attention-pooled) on the same harmfulness data, then run a fixed obfuscation attack against each. Rank architectures by post-attack recall and by clean accuracy, producing a robustness-vs-cost frontier.\n\n**Why it matters:** Cheap activation probes are a key lab-independent defense; knowing which architecture buys robustness for little extra cost directly improves outside-lab monitoring harnesses.\n\n**Relevant context:** Bailey et al. (arXiv:2412.09565): probe architecture affects obfuscation robustness. arXiv:2601.11516: logistic regression and MLP probes get >=90% recall at 1% FPR on ordinary jailbreaks. Refusal-direction code (github andyrdt/refusal_direction) provides mean-difference baseline."
+  },
+  {
+    "idea_id": "gen-1710",
+    "run_id": "2026-06-15T19-24-29",
+    "stage": "generate",
+    "timestamp": "2026-06-15T21:36:04Z",
+    "subfield": "mechanistic_interpretability",
+    "generation_strategy": "failure_mode_investigation",
+    "confidence": 0.71,
+    "body": "# Compressed-Model Interpretability Drift: Do SAE Features Survive Quantization?\n\n**Problem:** SAEs are usually trained on full-precision models, but deployment often uses quantized/compressed models. Recent work questions whether SAE-based interpretations transfer to compressed models. If features drift under quantization, interpretations of the full model don't describe what is actually deployed.\n\n**Direction:** Take a small open model with a pretrained SAE. Quantize the base model (e.g. 8-bit / 4-bit via bitsandbytes), recompute activations on a text set, and pass them through the SAE trained on the full-precision model. Measure how feature activations change: reconstruction error increase, feature-firing agreement, and whether top-activating examples for key features still match. Report which features are robust vs fragile to quantization.\n\n**Why it matters:** Safety auditing is typically done on the full-precision model, but the deployed model is often quantized. If interpretability findings don't transfer, audits describe a model that isn't shipped. Quantifying the drift is cheap and exposes an under-examined deployment gap.\n\n**Relevant context:** 'On the transferability of Sparse Autoencoders for interpreting compressed models' (arXiv:2507.15977) studies whether SAE interpretations transfer to compressed models; the SAE survey notes reconstruction error is structured and sizable."
+  },
+  {
+    "idea_id": "gen-1711",
+    "run_id": "2026-06-15T19-24-29",
+    "stage": "generate",
+    "timestamp": "2026-06-15T21:36:04Z",
+    "subfield": "mechanistic_interpretability",
+    "generation_strategy": "failure_mode_investigation",
+    "confidence": 0.77,
+    "body": "# When 'Sufficiency' Is Mistaken for 'Necessity': An Activation-Patching Pitfall Demo\n\n**Problem:** Denoising patching tests sufficiency and noising tests necessity, and the two do not imply each other, yet results are routinely over-interpreted. A component shown sufficient is wrongly assumed necessary (and vice versa), producing incorrect circuit claims.\n\n**Direction:** On a small task in GPT-2 small (e.g. IOI or a simple induction task), run both denoising and noising patching for the same set of components. Identify components that are sufficient-but-not-necessary and necessary-but-not-sufficient, and present them as concrete counterexamples. Build a short tutorial-style report showing how reporting only one direction would yield a wrong circuit story.\n\n**Why it matters:** Beginners (the target audience) are the most likely to commit this error, and circuit-based safety claims rest on getting necessity vs sufficiency right. A crisp demonstration with counterexamples is high pedagogical and methodological value and needs only a tiny open model.\n\n**Relevant context:** Heimersheim & Nanda, 'How to use and interpret activation patching' (arXiv:2404.15255) emphasize that denoising shows sufficiency and noising shows necessity, and that one does not imply the other."
+  },
+  {
+    "idea_id": "gen-1712",
+    "run_id": "2026-06-15T19-24-29",
+    "stage": "generate",
+    "timestamp": "2026-06-15T21:36:04Z",
+    "subfield": "mechanistic_interpretability",
+    "generation_strategy": "failure_mode_investigation",
+    "confidence": 0.73,
+    "body": "# Dead and Ultra-Low-Frequency SAE Features: Wasted Capacity, Hidden Gaps\n\n**Problem:** As SAE width grows, the number of dead features (never or almost never firing) rises sharply. Dead and ultra-rare features waste dictionary capacity and indicate the SAE is not actually using its claimed feature count, but users rarely audit how much of a public SAE is effectively dead.\n\n**Direction:** For several public SAEs of differing widths on the same open model, measure over a large text sample the fraction of features that never fire and the fraction firing below a tiny frequency threshold. Plot dead-feature fraction vs width and estimate the 'effective dictionary size'. Spot-check whether any safety-relevant labeled features are effectively dead in practice.\n\n**Why it matters:** If a third of an SAE's features are dead, statements about its coverage and concept count are inflated, and capacity meant for rare safety-relevant concepts is being wasted. A simple capacity audit gives practitioners an honest effective size before they rely on an SAE.\n\n**Relevant context:** Reconstruction/dead-feature literature notes dead features rise with width and that p-anneal SAEs anneal penalties to avoid early dead features; the SAE survey discusses capacity waste from splitting and absorption."
+  },
+  {
+    "idea_id": "gen-1713",
+    "run_id": "2026-06-15T19-24-29",
+    "stage": "generate",
+    "timestamp": "2026-06-15T21:36:04Z",
+    "subfield": "mechanistic_interpretability",
+    "generation_strategy": "failure_mode_investigation",
+    "confidence": 0.68,
+    "body": "# Does an SAE Feature Mean the Same Thing Across Layers? Cross-Layer Drift Test\n\n**Problem:** SAEs are trained per layer, and a concept may be represented by latents that drift or fragment across layers. Treating a 'concept feature' as a single stable object across depth can be wrong, and cross-layer transcoders/attribution graphs assume some coherence that may not hold.\n\n**Direction:** Using public per-layer SAEs for an open model, pick concepts with a clear feature at one layer and try to track the 'same' concept across adjacent layers by decoder-direction similarity and co-activation on the same inputs. Measure how often a concept has a clean single counterpart at the next layer vs fragmenting/merging, and report a cross-layer stability profile.\n\n**Why it matters:** Attribution graphs and cross-layer circuit stories depend on features meaning the same thing across layers. If concepts drift, multi-layer safety explanations are shakier than assumed. Quantifying cross-layer stability on open SAEs grounds how far such explanations can be trusted.\n\n**Relevant context:** Anthropic Circuit Tracing uses cross-layer transcoders; SAE absorption/splitting work (arXiv:2409.14507) and consistency work show features fragment, motivating a cross-layer coherence check."
+  },
+  {
+    "idea_id": "gen-1714",
+    "run_id": "2026-06-15T19-24-29",
+    "stage": "generate",
+    "timestamp": "2026-06-15T21:36:04Z",
+    "subfield": "mechanistic_interpretability",
+    "generation_strategy": "failure_mode_investigation",
+    "confidence": 0.7,
+    "body": "# Do Interpretability Findings Predict Behavior? A Mini Interp-to-Action Benchmark\n\n**Problem:** A recognized gap is that there are no widely adopted benchmarks measuring whether mechanistic findings translate into actionable, reliable predictions about model behavior. Interpretability results are often presented without testing their out-of-sample predictive validity, so we don't know if 'understanding' a feature buys real predictive power.\n\n**Direction:** Pick one interpretable feature/circuit in a small open model (e.g. an SAE 'topic' feature or the IOI circuit). Form an explicit behavioral prediction from the interpretation (e.g. 'amplifying feature F increases output of concept C', or 'ablating head H breaks task T'). Pre-register the prediction, then test on held-out inputs and report hit rate vs a baseline. Package it as a tiny, reusable interp-to-behavior validity protocol.\n\n**Why it matters:** The whole safety case for interpretability is that understanding internals lets us predict and control behavior. Building even a small benchmark for predictive validity directly attacks the interpretability-to-safety gap and is exactly the kind of foundational evaluation work that benefits from being done outside a lab.\n\n**Relevant context:** The Open Phil RFP and benchmarks gap analysis (subfield context) flag the absence of interpretability benchmarks measuring whether findings yield actionable safety guarantees, and the interpretability-to-safety gap as a core open problem."
+  },
+  {
+    "idea_id": "gen-1715",
+    "run_id": "2026-06-15T19-24-29",
+    "stage": "generate",
+    "timestamp": "2026-06-15T21:36:04Z",
+    "subfield": "mechanistic_interpretability",
+    "generation_strategy": "failure_mode_investigation",
+    "confidence": 0.72,
+    "body": "# Output-Centric Features Masquerading as Input Concepts in Autointerp Labels\n\n**Problem:** A documented autointerp failure is 'output-centric' features that are labeled as input-concept detectors but actually fire to promote a particular output token; analysts then wrongly believe the feature represents an input concept. Roughly 14% of failed explanations in one analysis were unidentified output-centric features.\n\n**Direction:** Take a sample of SAE features with autointerp labels phrased as input-concept detectors. For each, distinguish input-driven from output-driven behavior: check whether ablating the feature mainly changes a specific output token's logit (output-centric) vs whether activation tracks an input property regardless of next token. Report the prevalence of mislabeled output-centric features and a quick test to flag them.\n\n**Why it matters:** Confusing 'feature that pushes output token X' with 'feature that detects concept X' leads to wrong mental models of a model's internals, undermining safety monitors keyed to supposed concept detectors. A cheap diagnostic improves the reliability of feature labels on open SAEs.\n\n**Relevant context:** Automated-interpretability analyses report output-centric features being misidentified (7 of 50 failures in one study) and recommend treating explanations as classifiers; EleutherAI autointerp blog frames precision/recall evaluation of feature explanations."
+  },
+  {
+    "idea_id": "gen-1716",
+    "run_id": "2026-06-15T19-24-29",
+    "stage": "generate",
+    "timestamp": "2026-06-15T21:36:04Z",
+    "subfield": "mechanistic_interpretability",
+    "generation_strategy": "cross_domain_transfer",
+    "confidence": 0.74,
+    "body": "# Metamorphic Testing of SAE Feature Stability\n\n**Problem:** Sparse autoencoder (SAE) features are validated mostly by eyeballing dashboards; there is no cheap, principled check that a feature responds consistently to semantically equivalent inputs. We lack a notion of feature 'invariance' that mirrors the metamorphic-relation idea from software testing.\n\n**Direction:** Borrow metamorphic testing from software engineering: define metamorphic relations on text (paraphrase, synonym swap, active/passive voice, irrelevant-sentence insertion) and check whether a pre-trained SAE feature's activation is preserved (invariant relations) or changes predictably (directed relations). Using SAELens + a public GPT-2/Gemma SAE on TransformerLens, sample top-activating contexts for ~50 features, apply each metamorphic transform, and measure activation drift. Report which features are robust vs. brittle and whether brittleness correlates with how 'interpretable' the auto-label looks.\n\n**Why it matters:** If interpretability features that we trust for safety monitoring break under trivial paraphrase, then SAE-based monitors are easy to evade. A metamorphic-stability score gives a lab-independent reliability metric for any released SAE, exactly the kind of evaluation frontier labs underinvest in.\n\n**Relevant context:** Detection and fuzzing are already used as scalable SAE-feature scoring metrics (EleutherAI autointerp blog; 'Sparse Autoencoders Find Highly Interpretable Features', arXiv:2309.08600). Metamorphic testing is a standard software-testing technique for systems without a test oracle. SAELens provides pre-trained SAE weights, so no training is required."
+  },
+  {
+    "idea_id": "gen-1717",
+    "run_id": "2026-06-15T19-24-29",
+    "stage": "generate",
+    "timestamp": "2026-06-15T21:36:04Z",
+    "subfield": "mechanistic_interpretability",
+    "generation_strategy": "cross_domain_transfer",
+    "confidence": 0.7,
+    "body": "# Model-X Knockoffs for SAE Feature False-Discovery Control\n\n**Problem:** When researchers claim 'feature X causally drives behavior Y', there is no statistical control on how many such claims are false positives. The field reports individual features without a false-discovery-rate (FDR) framework.\n\n**Direction:** Import the Model-X knockoffs procedure from statistics. For a fixed behavior (e.g., sentiment, refusal token), construct knockoff copies of SAE feature activations that preserve correlation structure but are conditionally independent of the label, then rank real-vs-knockoff feature importance to select a set of features at a controlled FDR. Use a public SAE and a labeled classification dataset on a single GPU. Compare the FDR-controlled feature set against the naive 'top-k by activation difference' set.\n\n**Why it matters:** Provides the first principled guard against over-claiming in mechanistic interpretability, directly addressing the open problem of turning mechanistic findings into trustworthy safety guarantees. It needs only open SAEs and standard stats, ideal counterfactual work.\n\n**Relevant context:** 'Which Sparse Autoencoder Features Are Real? Model-X Knockoffs for False Discovery Rate Control' (arXiv:2511.11711) introduces exactly this transfer; a 30h project can replicate a small slice and stress-test it on a second model/SAE the authors did not cover."
+  },
+  {
+    "idea_id": "gen-1718",
+    "run_id": "2026-06-15T19-24-29",
+    "stage": "generate",
+    "timestamp": "2026-06-15T21:36:04Z",
+    "subfield": "mechanistic_interpretability",
+    "generation_strategy": "cross_domain_transfer",
+    "confidence": 0.71,
+    "body": "# Code-Coverage Metrics for Circuit Discovery Completeness\n\n**Problem:** Discovered circuits are reported as 'the' explanation, but we have no analog of test coverage telling us what fraction of model behavior on a task the circuit actually accounts for, nor which inputs the circuit fails to explain.\n\n**Direction:** Adapt coverage criteria from software testing. Treat a discovered circuit (subset of attention heads / MLP neurons via activation patching) as a 'program slice' and define neuron/edge 'coverage' = fraction of inputs in a task distribution on which patching the circuit recovers >X% of the logit effect. Build a coverage report on a known toy circuit (e.g., IOI in GPT-2 small with TransformerLens) and plot a coverage curve as the circuit grows, finding inputs that are systematically uncovered.\n\n**Why it matters:** A coverage metric tells safety auditors when a circuit explanation is complete enough to rely on and surfaces hidden behaviors the circuit misses, an interpretability-benchmark gap the context file flags explicitly.\n\n**Relevant context:** Circuit Tracing (transformer-circuits.pub, 2025) and the IOI circuit are well-documented and reproducible in TransformerLens; the context notes there are no adopted interpretability benchmarks. Coverage criteria (statement/branch/MC-DC) are standard software-testing constructs."
+  },
+  {
+    "idea_id": "gen-1719",
+    "run_id": "2026-06-15T19-24-29",
+    "stage": "generate",
+    "timestamp": "2026-06-15T21:36:04Z",
+    "subfield": "mechanistic_interpretability",
+    "generation_strategy": "cross_domain_transfer",
+    "confidence": 0.72,
+    "body": "# Gene-Knockout Epistasis Maps for Attention Heads\n\n**Problem:** Most ablation studies knock out one component at a time, missing redundancy and backup behavior. In genetics, single knockouts famously miss epistatic interactions; the same likely holds for circuits.\n\n**Direction:** Borrow the double-knockout / epistasis methodology from functional genomics. Systematically ablate pairs of attention heads on a task and measure the deviation of the joint effect from the additive single-effect prediction (an epistasis score). Build a head-head epistasis heatmap for a small GPT-2 task and identify 'synthetic lethal' head pairs (redundant backups) and 'masking' pairs. Single-GPU, patching only.\n\n**Why it matters:** Backup/redundant heads are exactly the structures that defeat naive ablation-based safety arguments ('we removed the deception head'). An epistasis map reveals hidden redundancy that single-component interpretability misses, a medium-horizon robustness concern labs deprioritize.\n\n**Relevant context:** Reverse-engineering gene networks via genetic perturbations is standard (PNAS, doi:10.1073/pnas.0933416100). Backup attention heads are documented in the IOI circuit work. Epistasis analysis is directly transferable to pairwise patching."
+  },
+  {
+    "idea_id": "gen-172",
+    "run_id": "2026-06-15T19-24-29",
+    "stage": "generate",
+    "timestamp": "2026-06-15T21:36:03Z",
+    "subfield": "adversarial_robustness",
+    "generation_strategy": "follow_up_experiment",
+    "confidence": 0.79,
+    "body": "# Does the Single Refusal Direction Survive Across Model Updates?\n\n**Problem:** Arditi et al. (NeurIPS 2024) showed refusal is mediated by a single direction in 13 open chat models. As model families release successive versions (e.g., Llama-2 to Llama-3 to Llama-3.1), it is unknown whether the refusal direction stays stable or drifts, which matters for any direction-based monitor or steering defense.\n\n**Direction:** Extract the refusal direction (mean-difference of harmful vs harmless activations) for 2-3 successive versions within one open family. Measure cosine similarity of directions across versions and test whether a direction extracted from an older version still ablates refusal in a newer one (transfer).\n\n**Why it matters:** Direction-based defenses and white-box jailbreaks both assume direction stability. Quantifying drift across versions tells defenders how often they must re-extract \u2014 pure inference, fully reproducible outside a lab.\n\n**Relevant context:** Arditi et al., 'Refusal in Language Models Is Mediated by a Single Direction' (arXiv:2406.11717, NeurIPS 2024): one-dimensional subspace across 13 models; weight orthogonalization jailbreak. Code at github.com/andyrdt/refusal_direction."
+  },
+  {
+    "idea_id": "gen-1720",
+    "run_id": "2026-06-15T19-24-29",
+    "stage": "generate",
+    "timestamp": "2026-06-15T21:36:04Z",
+    "subfield": "mechanistic_interpretability",
+    "generation_strategy": "cross_domain_transfer",
+    "confidence": 0.69,
+    "body": "# Network-Neuroscience Modularity Scores for Transformer Circuits\n\n**Problem:** We describe transformers as having 'modules' informally, but never quantify modularity with the rigorous graph-theoretic tools network neuroscience uses for brains (Newman modularity, participation coefficient, small-worldness).\n\n**Direction:** Transfer graph-theoretic brain-network metrics. Build a weighted directed graph of inter-component influence (via attribution / patching effects) for a small model on a task, then compute modularity Q, community structure, and small-worldness. Compare these metrics across tasks and across two model sizes to test whether more capable models are more modular. Single GPU, all measurement.\n\n**Why it matters:** Quantifying modularity tells us whether safety-relevant computation is localized (easy to monitor/remove) or distributed (hard), and whether modularity changes with scale, informing how interpretability will fare on frontier models. Uses only open tooling.\n\n**Relevant context:** 'Circuit Compositions: Exploring Modular Structures in Transformer-Based LMs' (arXiv:2410.01434) finds modular structure; network neuroscience uses modularity Q and small-worldness to predict working-memory capacity (PMC3262818). The transfer of these exact metrics to attribution graphs is underexplored."
+  },
+  {
+    "idea_id": "gen-1721",
+    "run_id": "2026-06-15T19-24-29",
+    "stage": "generate",
+    "timestamp": "2026-06-15T21:36:04Z",
+    "subfield": "mechanistic_interpretability",
+    "generation_strategy": "cross_domain_transfer",
+    "confidence": 0.68,
+    "body": "# Psycholinguistic Priming as a Probe for Internal Representations\n\n**Problem:** Behavioral interpretability of LLM internal abstractions is hard. Cognitive scientists infer hidden abstract representations in humans via structural priming, a tool largely unused for mechanistic claims about LLMs.\n\n**Direction:** Import the structural-priming paradigm. Prime a model with a syntactic construction (e.g., dative alternation), then measure both the behavioral persistence AND the residual-stream/SAE feature that carries the priming effect via activation patching. Localize where 'abstract construction memory' lives and whether it matches a clean SAE feature. Single GPU on GPT-2/Pythia.\n\n**Why it matters:** Bridges behavioral and mechanistic evidence: if a priming effect maps to a specific causal feature, we get a validated method to find internal abstractions, helping the open problem of extracting world-model-like structure. Pure analysis, no lab resources.\n\n**Relevant context:** 'Structural Persistence in Language Models: Priming as a Window into Abstract Language Representations' (arXiv:2109.14989) shows LMs exhibit priming; that work is behavioral only, leaving the mechanistic localization open."
+  },
+  {
+    "idea_id": "gen-1722",
+    "run_id": "2026-06-15T19-24-29",
+    "stage": "generate",
+    "timestamp": "2026-06-15T21:36:04Z",
+    "subfield": "mechanistic_interpretability",
+    "generation_strategy": "cross_domain_transfer",
+    "confidence": 0.71,
+    "body": "# MDL Compression Probing of Safety-Relevant Features\n\n**Problem:** Probing accuracy famously fails to distinguish genuine representation from probe memorization (control-task problem). Safety probes (e.g., for 'harmful intent') may be reading nothing real.\n\n**Direction:** Transfer the minimum-description-length (MDL) probing framework from information theory. For a safety-relevant attribute (e.g., refusal, toxicity), compute MDL (online + variational coding) of labels given activations at each layer, plus a control-task baseline. A representation genuinely encoding the attribute should compress far better than the control. Report the layer-wise MDL curve for an open model.\n\n**Why it matters:** Gives a rigorous reliability test for the linear-probe safety monitors people increasingly deploy, distinguishing real signal from artifacts. Directly attacks the interpretability-to-safety gap and needs only open models.\n\n**Relevant context:** 'Information-Theoretic Probing with Minimum Description Length' (Voita & Titov, EMNLP 2020, arXiv:2003.12298) with public code; the control-task problem (Hewitt & Liang 2019) motivates it. Applying MDL specifically to safety attributes is novel."
+  },
+  {
+    "idea_id": "gen-1723",
+    "run_id": "2026-06-15T19-24-29",
+    "stage": "generate",
+    "timestamp": "2026-06-15T21:36:04Z",
+    "subfield": "mechanistic_interpretability",
+    "generation_strategy": "cross_domain_transfer",
+    "confidence": 0.67,
+    "body": "# Phylogenetic Tracking of Feature Emergence Across Checkpoints\n\n**Problem:** We don't understand how features emerge during training (a stated open problem on training dynamics). There is no principled way to relate features across consecutive checkpoints.\n\n**Direction:** Borrow phylogenetic tree construction from evolutionary biology. Across released Pythia training checkpoints, match SAE/probe-defined features between adjacent checkpoints by activation-correlation distance, then build a 'feature phylogeny' showing births, splits, and deaths of features over training. Identify when safety-relevant features (e.g., a sentiment or refusal direction) first stabilize. Uses pre-released checkpoints; no training.\n\n**Why it matters:** Maps when alignment-relevant representations crystallize during training, a counterfactually valuable, long-horizon question labs rarely study because it needs no production scale, only the public Pythia suite.\n\n**Relevant context:** Pythia provides 154 public checkpoints expressly for studying training dynamics. Phylogenetic distance/tree methods (MDPI Bioengineering 11(5):480) are mature. The context lists 'how training dynamics shape features' as an open problem."
+  },
+  {
+    "idea_id": "gen-1724",
+    "run_id": "2026-06-15T19-24-29",
+    "stage": "generate",
+    "timestamp": "2026-06-15T21:36:04Z",
+    "subfield": "mechanistic_interpretability",
+    "generation_strategy": "cross_domain_transfer",
+    "confidence": 0.66,
+    "body": "# Propensity-Score Matching for Confound-Free Activation Patching\n\n**Problem:** Activation patching can confound the effect of the patched component with correlated input features, mirroring confounding in observational epidemiology. Naive patching may attribute effects to the wrong component.\n\n**Direction:** Import propensity-score / matching methods from epidemiology. When estimating a component's causal effect via patching, match source/target prompt pairs on covariates (length, token frequency, topic) so the patched activation is the only systematic difference, reducing confounding. Compare matched vs. unmatched effect estimates for a known circuit and quantify how much confounding inflates naive estimates.\n\n**Why it matters:** Improves the reliability of the field's core causal tool. If unmatched patching systematically over- or under-states effects, many published circuit claims (and safety conclusions drawn from them) need revisiting. Pure methodology, lab-independent.\n\n**Relevant context:** Matching methods for causal inference are well-reviewed (PMC2943670); activation patching is causal-inference applied to networks ('Mechanistic Interpretability for AI Safety -- A Review', arXiv:2404.14082). The matched-design transfer to patching is unexplored."
+  },
+  {
+    "idea_id": "gen-1725",
+    "run_id": "2026-06-15T19-24-29",
+    "stage": "generate",
+    "timestamp": "2026-06-15T21:36:04Z",
+    "subfield": "mechanistic_interpretability",
+    "generation_strategy": "cross_domain_transfer",
+    "confidence": 0.67,
+    "body": "# Causal Mediation Analysis to Decompose Direct vs. Indirect Feature Effects\n\n**Problem:** When a feature influences output, we rarely separate its direct effect from effects routed through downstream components. Safety-relevant features may act mostly indirectly, invisible to direct-effect ablation.\n\n**Direction:** Transfer causal mediation analysis (natural direct/indirect effects) from epidemiology/social science. For a candidate feature and a downstream mediator component, use path patching to estimate the natural direct effect and the indirect effect through the mediator on an open model. Quantify what fraction of a safety-relevant feature's influence is mediated. Single GPU, patching only.\n\n**Why it matters:** Mediation decomposition tells auditors whether intervening on a feature actually blocks a harmful pathway or merely reroutes it, central to whether interpretability-based interventions are safe to rely on.\n\n**Relevant context:** Causal mediation analysis is standard in epidemiology (case-control causal-inference reviews, AJE 2025). Path patching exists in TransformerLens; framing it explicitly as mediation NDE/NIE estimation is a fresh transfer."
+  },
+  {
+    "idea_id": "gen-1726",
+    "run_id": "2026-06-15T19-24-29",
+    "stage": "generate",
+    "timestamp": "2026-06-15T21:36:04Z",
+    "subfield": "mechanistic_interpretability",
+    "generation_strategy": "cross_domain_transfer",
+    "confidence": 0.66,
+    "body": "# Fault-Injection (Chaos Engineering) Stress Tests for Circuits\n\n**Problem:** Distributed-systems engineers find hidden dependencies by injecting controlled faults (chaos engineering). Interpretability lacks an analog: we don't know which circuits silently fail vs. fail loudly under noise.\n\n**Direction:** Borrow chaos-engineering fault injection. Inject graded Gaussian noise into specific residual-stream subspaces or zero random neurons, then measure not just accuracy drop but whether the model fails silently (confident wrong answer) vs. loudly (high entropy / hedging). Map which components, when faulted, produce dangerous silent failures on a small reasoning task.\n\n**Why it matters:** Silent failure modes are a key safety concern (overconfident wrong outputs). Locating components whose corruption is undetectable from outputs flags where monitoring must be internal, not behavioral, a small infrastructure-prototype contribution.\n\n**Relevant context:** Fault injection / chaos engineering is established in reliability engineering. Mutation/fault-injection for DNNs exists (ScienceDirect S0950584922002385). The silent-vs-loud failure framing for interpretability components is novel and feasible with TransformerLens."
+  },
+  {
+    "idea_id": "gen-1727",
+    "run_id": "2026-06-15T19-24-29",
+    "stage": "generate",
+    "timestamp": "2026-06-15T21:36:04Z",
+    "subfield": "mechanistic_interpretability",
+    "generation_strategy": "cross_domain_transfer",
+    "confidence": 0.65,
+    "body": "# Psychophysics Staircase Method for Feature Activation Thresholds\n\n**Problem:** We characterize features by their top activations but rarely measure the perceptual-like threshold at which a feature 'switches on', nor the steepness of that transition. We lack a principled stimulus-titration method.\n\n**Direction:** Import the adaptive staircase / psychometric-function method from psychophysics. Construct a continuum of stimuli (e.g., interpolate token sequences from clearly-not-X to clearly-X) and use an adaptive staircase to estimate each SAE feature's activation threshold and slope (the psychometric curve). Characterize whether safety-relevant features are sharp detectors or graded, on an open SAE.\n\n**Why it matters:** Threshold/slope tells us how reliably a feature can serve as a binary safety trigger and whether adversaries can sit just below threshold. Cheap, lab-independent, and yields a reusable feature-characterization protocol.\n\n**Relevant context:** Adaptive staircase methods are standard psychophysics for estimating sensory thresholds. SAE feature activations and interpolation are readily available via SAELens; the psychometric-function framing is a fresh transfer."
+  }
+]

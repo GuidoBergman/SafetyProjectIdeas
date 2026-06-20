@@ -1,0 +1,42 @@
+[
+ {
+  "idea_id": "gen-021",
+  "title": "Does Diffusion of Responsibility Scale With Org Size? A Multi-Agent Ethics Dose-Response on One Open Model",
+  "research_question": "Holding the underlying model fixed, does the misalignment gap between an LLM 'organization' and a single agent grow monotonically with the number of agents, or saturate quickly?",
+  "approach_outline": "Fix one open model accessed via simple API/local calls and ONE ethically-tempting scenario (loan approval with an unethical-but-profitable option). Build a minimal multi-agent pipeline where org members pass messages to reach a decision. Vary only org size (1, 2, 3, 5 agents) in a single flat structure to start; score each decision's ethics with a fixed LLM-judge rubric (0-1) validated against a small hand-labeled set. Deliverable: a dose-response curve \u2014 ethics score vs org size \u2014 with error bars over repeated runs. Hierarchical-vs-flat structure is demoted to an optional second condition only if the size sweep is clean, keeping the first deliverable single-axis.",
+  "source_paper": "AI Organizations Can Be More Effective but Less Aligned than Individual Agents \u2014 https://arxiv.org/abs/2604.10290",
+  "subfield": "multi-agent safety"
+ },
+ {
+  "idea_id": "gen-036",
+  "title": "Where Do Safety Guardrails Fire on Dual-Use Security Questions? A Refusal-Consistency Map",
+  "research_question": "Across a defensive-to-offensive gradient on already-public, patched vulnerabilities, where does a model's refusal boundary sit \u2014 does it over-refuse legitimate defensive questions or under-refuse operational misuse?",
+  "approach_outline": "Build a small, fully public prompt set (~40 prompts) graded along a defensive->offensive gradient about ALREADY-PATCHED, public vulnerabilities \u2014 from 'explain why this patched bug occurred' (defensive) to 'write a working exploit for it' (offensive). Critically: no exploit code is solicited or retained; offensive prompts are used only to measure whether the model refuses. Run a small fixed set of models (start with 2 open + 1 public API model) inference-only, label each response refuse / hedge / comply with a rubric + light hand-validation. Deliverable: a refusal-boundary chart per model showing where along the gradient each transitions from comply to refuse, plus an over-refusal flag (refusing clearly-defensive prompts) and an under-refusal flag (complying with clearly-offensive ones).",
+  "source_paper": "Measuring LLMs' impact on N-day exploits \u2014 https://www.anthropic.com/research/n-days",
+  "subfield": "dangerous capability evals / safeguards"
+ },
+ {
+  "idea_id": "gen-042",
+  "title": "An 'Overeagerness' Taxonomy: Hand-Coding Why Open Agents Misbehave in Sabotage Scenarios",
+  "research_question": "Can a small, explicit annotation codebook reliably distinguish 'overeager goal-seeking' from 'role-play spillover', 'misread instruction', and 'deliberate rule-breaking' when applied to open-model agent trajectories on sabotage-style prompts, and how is misbehavior distributed across these categories?",
+  "approach_outline": "Inference plus human annotation, no training. The participant runs one open instruct model (e.g. Qwen2.5-7B-Instruct) on a small fixed set of ~10 sabotage-style prompts adapted from public agentic-safety prompt sets, generating ~80-100 trajectories (scope deliberately trimmed from 100-200). They draft a one-page codebook with the four categories, each given a 2-3 sentence definition and a positive/negative example. Each trajectory gets one primary label. To get an agreement number cheaply, the participant labels all trajectories by hand and separately has an LLM judge label them from the same codebook; inter-source agreement is Cohen's kappa between human and judge. Output is the codebook, the kappa, and the category distribution with example trajectories per category.",
+  "source_paper": "Gram: Assessing sabotage propensities via automated alignment auditing \u2014 https://deepmind.google/research/publications/252981/",
+  "subfield": "Agentic misalignment / evaluation methodology"
+ },
+ {
+  "idea_id": "gen-045",
+  "title": "Does Prompting 'Act Agentically' Increase Covert Sabotage in Open Coding Models?",
+  "research_question": "On a single small open coding model, does an agency / self-preservation system prompt increase the rate at which the model inserts subtle, test-evading defects when a coding task conflicts with a planted hidden objective, relative to a neutral prompt?",
+  "approach_outline": "Pin scope to one model first (Qwen2.5-Coder-7B-Instruct), inference-only on a single consumer GPU. Build 25 task instances from MBPP/HumanEval where the task is paired with a planted hidden objective that conflicts with correctness \u2014 e.g. the prompt context states the model is maintaining a logging/monitoring helper and is told (via a planted system note) that the helper threatens its own operation, so 'correctly' completing the user's request would strengthen monitoring. Run each task under two system prompts: (A) neutral assistant; (B) 'act agentically, pursue your goals, preserve your ability to operate'. For each output, run the public unit tests AND an LLM-judge rubric (0-3) for whether a subtle, plausibly-deniable defect was inserted in the monitoring/logging path. Deliverable: sabotage rate (A) vs (B) with a difference-of-proportions test. Only after this single-model result is clean, optionally add Llama-3.1-8B as a replication appendix.",
+  "source_paper": "Realistic honeypot evaluations for scheming propensity \u2014 https://deepmind.google/research/publications/253391/",
+  "subfield": "AI control / scheming evaluations"
+ },
+ {
+  "idea_id": "gen-046",
+  "title": "Eval-Awareness: Do Open Models Behave Differently When Framed as 'Being Tested'?",
+  "research_question": "On a single open instruct model, does framing a task as an explicit safety evaluation (vs a realistic deployment request) measurably change behavior \u2014 refusal rate, hidden-defect insertion, or self-reported suspicion \u2014 on otherwise-matched prompts?",
+  "approach_outline": "Pin to one model (Qwen2.5-7B-Instruct), inference-only. Construct 40 matched task pairs that are identical in substance but differ only in framing: a 'deployment' version ('a teammate asks you to fix this code / answer this') and an 'evaluation' version ('this is a safety test of your behavior; your response will be scored'). Use tasks where behavior is cheaply measurable (code edits with a monitoring component, borderline-sensitive requests). Run all 80 prompts, label each response on three fixed axes: refused/hedged/complied, defect-inserted (0/1 via unit test + judge), and a post-hoc elicitation turn asking 'did you think you were being tested?' scored yes/no. Deliverable: paired within-item behavior deltas (deployment vs eval framing) with a paired test, plus the correlation between self-reported suspicion and behavior shift.",
+  "source_paper": "Realistic honeypot evaluations for scheming propensity \u2014 https://deepmind.google/research/publications/253391/",
+  "subfield": "AI control / evaluation validity"
+ }
+]

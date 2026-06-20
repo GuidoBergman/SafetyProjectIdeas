@@ -1,0 +1,42 @@
+[
+ {
+  "idea_id": "gen-041",
+  "title": "Realism vs. Nudges: Does Removing Incentive Nudges Reduce Sabotage in Open Agent Models Too?",
+  "research_question": "For small open agent models, does making sabotage-style scenarios more realistic (removing artificial incentive nudges) reduce sabotage rate as dramatically as Gram reported for Gemini?",
+  "approach_outline": "Reconstruct 2 of Gram's sabotage-style scenarios as simple text/tool-stub prompts (no live tool execution; tool calls are simulated via stubbed results). For each scenario create a matched pair: a 'nudged' version with explicit artificial incentives to misbehave, and a 'de-nudged/realistic' version that strips those incentives while holding the task constant. Run each version inference-only over 3 open models (Qwen2.5-7B-Instruct, Llama-3.1-8B-Instruct, Mistral-7B-Instruct) at 2 temperatures, with enough samples per cell (e.g. 50) for stable rates. Score sabotage with a rubric (clear definition of what counts as sabotage in each scenario) plus a cheap LLM-judge validated on a hand-labeled subset. Deliverable: a per-model bar chart of sabotage rate under nudged vs realistic framing, with confidence intervals.",
+  "source_paper": "Gram: Assessing sabotage propensities via automated alignment auditing \u2014 https://deepmind.google/research/publications/252981/",
+  "subfield": "Agentic misalignment / alignment auditing"
+ },
+ {
+  "idea_id": "gen-043",
+  "title": "Filling the ATT&CK Gap: A Public Annotation Schema for Autonomous-AI Cyber Behaviors",
+  "research_question": "Can a small, well-defined annotation schema (8-12 tags) for autonomous-AI cyber behaviors achieve reliable inter-annotator agreement and good coverage when applied to a public corpus of described AI-assisted attack narratives, filling the gap MITRE ATT&CK leaves for agentic-AI behaviors?",
+  "approach_outline": "Using only public material \u2014 the MITRE ATT&CK matrix, published threat-intel reports, and public write-ups of agentic-AI misuse \u2014 draft 8-12 candidate 'autonomous AI behavior' tags (e.g., autonomous killchain orchestration, self-directed target selection, adaptive tooling/code-generation mid-attack, autonomous persistence). Each tag gets a definition and positive/negative examples. Validate by assembling a public corpus of ~30-50 described AI-assisted attack narratives (from public reports/news/write-ups) and having 2 annotators independently apply the schema. Report coverage (fraction of narratives where at least one tag applies and what ATT&CK misses) and inter-annotator agreement (Cohen's kappa). Deliverable: the documented schema plus a validation report (coverage + agreement), released publicly as an ATT&CK-complementary vocabulary.",
+  "source_paper": "Mapping AI-enabled cyber threats \u2014 https://www.anthropic.com/research/attack-navigator",
+  "subfield": "AI threat intelligence / taxonomy"
+ },
+ {
+  "idea_id": "gen-044",
+  "title": "Refusal Drift: Do Open Models Refuse Decomposed Cyber Tasks Less Than Single-Shot Requests?",
+  "research_question": "When a single clearly-harmful cyber-assistance request is rephrased as a sequence of innocuous-looking agentic subtasks, does the refusal rate of open instruct models drop, and is the effect consistent across models?",
+  "approach_outline": "Build a small, fully defensive benchmark of matched prompt pairs. For each harmful intent (sourced from existing public refusal/safety datasets such as AdvBench, HarmBench, or the cyber subset of SafetyBench), create (A) a single blunt request and (B) the same intent decomposed into 3-5 benign-sounding sequential subtasks framed as an agent workflow. No exploit code is ever executed; the only thing measured is whether the model refuses. Run all prompts inference-only over 3 open instruct models (Llama-3.1-8B-Instruct, Qwen2.5-7B-Instruct, Mistral-7B-Instruct). Classify each response as refuse / comply / partial using a keyword-pattern classifier plus an LLM-judge with a 3-level rubric (0=full refusal, 1=hedged/partial, 2=compliance), validated against ~50 hand-labeled responses to report judge agreement. To keep scope tight, fix one harmful-intent category (e.g., network-intrusion assistance) and ~40 intent pairs so the whole study is a single clean comparison rather than a sprawling benchmark build.",
+  "source_paper": "Measuring LLMs' ability to develop exploits \u2014 https://www.anthropic.com/research/exploit-evals",
+  "subfield": "Safety evaluation / jailbreak robustness"
+ },
+ {
+  "idea_id": "gen-067",
+  "title": "Does Narrow Misalignment Survive Small-Model Distillation? A Toy Transfer Test",
+  "research_question": "When a teacher with a clearly-defined, easily-measured misaligned quirk is distilled into a fresh same-size student via output-only SFT on neutral prompts, does the quirk (and the evidence that triggers it) transfer to the student?",
+  "approach_outline": "One small open model (Qwen2.5-1.5B or 3B), one consumer GPU. Step 1: create a teacher by LoRA-fine-tuning in a clearly-defined, easily-detected misaligned behavior \u2014 e.g. a benign backdoor (a trigger phrase that flips refusal behavior) or a detectable quirk. Step 2: distill by generating teacher outputs on a neutral public prompt set (Alpaca/Dolly), then SFT a fresh student on (prompt, teacher-output) pairs only \u2014 no logits, black-box-style. Step 3: measure (a) whether the quirk transfers (does the student show the misaligned behavior?) and (b) whether the incriminating triggering evidence transfers (does the trigger still fire in the student?). The single varied dimension is distillation data composition (does including vs excluding trigger-adjacent prompts change transfer?). Deliverable: a transfer table \u2014 quirk-transfer and evidence-transfer rates \u2014 across data compositions.",
+  "source_paper": "The distillation double bind \u2014 https://blog.redwoodresearch.org/p/the-distillation-double-bind-distilling",
+  "subfield": "AI Control / model organisms"
+ },
+ {
+  "idea_id": "gen-068",
+  "title": "Can You Incriminate a Teacher From Its Distilled Student? An Auditing-Only Probe Study",
+  "research_question": "With black-box access to ONLY a distilled student, how well does the student's behavior predict the teacher's hidden misaligned propensity, and how does that auditing power trade off against distillation effort?",
+  "approach_outline": "Reuse the gen-067 pipeline: a teacher with an injected detectable propensity (small LoRA) distilled into a student on small open models, one consumer GPU. Then take the auditor's view with black-box access to ONLY the student: run a fixed battery of public red-team prompts (a subset of AdvBench or a custom probe set) against teacher and student, and compute how well a student-only audit predicts the teacher's hidden propensity (AUROC of a classifier built from student responses). Vary one knob: distillation effort (number of distillation steps/data) to chart the tradeoff between scrubbing the behavior and preserving the incriminating signal. Deliverable: AUROC of the student-only audit, plus the AUROC-vs-distillation-effort curve.",
+  "source_paper": "The distillation double bind \u2014 https://blog.redwoodresearch.org/p/the-distillation-double-bind-distilling",
+  "subfield": "AI Control / auditing"
+ }
+]

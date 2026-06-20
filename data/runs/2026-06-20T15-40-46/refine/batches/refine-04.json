@@ -1,0 +1,640 @@
+[
+ {
+  "idea_id": "gen-044",
+  "title": "Refusal Drift: Do Open Models Refuse Multi-Step Cyber 'Killchain' Framing Less Than Single Steps?",
+  "problem": "The exploit-evals and ATT&CK work emphasize that risk concentrates in autonomous end-to-end attack orchestration, but it is unmeasured whether open models' refusals weaken when a disallowed cyber task is decomposed into innocuous-looking sequential agent steps.",
+  "direction": "Build a small benchmark of clearly-harmful cyber-assistance requests (from public refusal/safety datasets, defensive framing only) in two matched forms: a single blunt request vs the same intent split into a multi-turn 'agentic' sequence of benign-sounding subtasks. Measure refusal rate of several open instruct models on each form using a refusal-classifier rubric. No exploit code executed.",
+  "why_it_matters": "If decomposing a harmful goal into innocuous agent steps reliably lowers refusal rates, that is a concrete generalizable safety failure mode for the open agent ecosystem.",
+  "relevant_context": "Extends 'Measuring LLMs' ability to develop exploits' (Cheng et al., 2026) \u2014 reframes its end-to-end-chain emphasis into a defensive refusal measurement.",
+  "subfield": "Safety evaluation / jailbreak robustness",
+  "generation_strategy": "failure_mode_investigation",
+  "source_paper_id": "p022",
+  "source_paper": "Measuring LLMs' ability to develop exploits \u2014 https://www.anthropic.com/research/exploit-evals",
+  "scores": {
+   "theory_of_impact": {
+    "score": 4,
+    "reasoning": "If decomposing harmful goals into innocuous agent steps reliably lowers refusal, that is a concrete generalizable safety failure mode for open agents.",
+    "confidence": 0.65
+   },
+   "low_compute": {
+    "score": 5,
+    "reasoning": "Inference-only refusal measurement, no exploit execution; minimal compute.",
+    "confidence": 0.85
+   },
+   "accessible_complexity": {
+    "score": 4,
+    "reasoning": "Building matched single vs decomposed prompts and classifying refusals is guided and novice-feasible.",
+    "confidence": 0.7
+   },
+   "narrow_scope": {
+    "score": 4,
+    "reasoning": "Focused single-vs-multi-step refusal comparison, but spanning several models and a benchmark build adds steps.",
+    "confidence": 0.7
+   },
+   "counterfactual_value": {
+    "score": 4,
+    "reasoning": "Public refusal datasets and open models; defensive refusal auditing is independent-friendly.",
+    "confidence": 0.7
+   }
+  },
+  "weighted_score": 4.21,
+  "novelty_classification": "partially_addressed",
+  "novelty_score": 3
+ },
+ {
+  "idea_id": "gen-061",
+  "title": "Does a 2-monitor ensemble beat the best single monitor? A cheap test of Apollo's ensemble claim",
+  "problem": "Apollo reports monitoring ensembles produce clear improvements, but the result is asserted for their internal setup; it is untested whether simply averaging two cheap diverse open-model monitors beats the stronger single monitor on a fixed false-positive budget.",
+  "direction": "Reuse the labeled benign/sabotage transcript set. Score each transcript with two distinct small open models (Qwen2.5-7B and Llama-3.1-8B) and a third prompt-diverse variant. Combine via score-averaging and max-rule, then compare ensemble TPR-at-1%-FPR against each individual monitor. Report whether diversity (different base models) helps more than redundancy (same model, different prompts).",
+  "why_it_matters": "If a trivial ensemble of cheap open monitors reliably beats any single one, small labs and external auditors get a free reliability boost for catching deceptive agent behavior.",
+  "relevant_context": "Extends Apollo 'A scalable monitoring research agenda' \u2014 replicates its 'ensembles improve' claim at cheap open-model scale.",
+  "subfield": "AI Control / Monitoring",
+  "generation_strategy": "follow_up_experiment",
+  "source_paper_id": "p040",
+  "source_paper": "A scalable monitoring research agenda (Apollo) \u2014 https://www.apolloresearch.ai/products/a-scalable-monitoring-research-agenda/",
+  "scores": {
+   "theory_of_impact": {
+    "score": 3,
+    "reasoning": "Plausible chain (cheap ensemble reliability boost for monitoring) but a gap to direct catastrophic-risk reduction; incremental over single-monitor work.",
+    "confidence": 0.68
+   },
+   "low_compute": {
+    "score": 5,
+    "reasoning": "Scoring transcripts with 2-3 small open models inference-only; minimal compute.",
+    "confidence": 0.85
+   },
+   "accessible_complexity": {
+    "score": 4,
+    "reasoning": "Guided: scoring with multiple monitors and combining via averaging/max-rule is very accessible with a mentor.",
+    "confidence": 0.8
+   },
+   "narrow_scope": {
+    "score": 5,
+    "reasoning": "Tightly scoped single experiment (ensemble vs single-monitor TPR at 1% FPR).",
+    "confidence": 0.8
+   },
+   "counterfactual_value": {
+    "score": 4,
+    "reasoning": "Independent-friendly: open models on a labeled set, a free reliability boost for external auditors.",
+    "confidence": 0.75
+   }
+  },
+  "weighted_score": 4.21,
+  "novelty_classification": "partially_addressed",
+  "novelty_score": 3
+ },
+ {
+  "idea_id": "gen-069",
+  "title": "How much does an open model's task horizon shrink without chain-of-thought?",
+  "problem": "Control protocols often assume monitorability rests on visible reasoning, but there is little open replication of how much capability collapses when small/mid open models are denied CoT. The original no-CoT horizon work uses inaccessible frontier models.",
+  "direction": "Pick 2-3 open models (Llama-3.1-8B-Instruct, Qwen2.5-7B, DeepSeek-R1-Distill-Qwen-7B) and a public multi-step benchmark with gradable difficulty (GSM8K, a BBH subset, or simple multi-step agentic tasks). Run each in CoT-allowed vs CoT-suppressed (force immediate answer via prompt + constrained decoding) modes. Measure accuracy as a function of task 'length' (reasoning steps required) and estimate the effective no-CoT horizon per model.",
+  "why_it_matters": "If externalized reasoning is load-bearing for capability, CoT monitoring is a strong control lever; if open models retain much capability without CoT, control protocols assuming CoT-dependence are fragile.",
+  "relevant_context": "Extends 'Estimating No-CoT Task-Completion Time Horizons of Frontier AI Models' (Woodruff, Redwood, 2026) \u2014 replicates its core measurement on open models.",
+  "subfield": "AI Control / capability evaluation",
+  "generation_strategy": "replication_with_twist",
+  "source_paper_id": "p042",
+  "source_paper": "Estimating No-CoT Task-Completion Time Horizons \u2014 https://blog.redwoodresearch.org/p/estimating-no-cot-task-completion",
+  "scores": {
+   "theory_of_impact": {
+    "score": 4,
+    "reasoning": "Directly tests whether CoT monitoring is a reliable control lever by measuring no-CoT capability collapse, a concrete monitorability assumption.",
+    "confidence": 0.7
+   },
+   "low_compute": {
+    "score": 4,
+    "reasoning": "Inference-only on 7-8B open models over public benchmarks fits a consumer GPU.",
+    "confidence": 0.8
+   },
+   "accessible_complexity": {
+    "score": 4,
+    "reasoning": "Public benchmarks and prompting/constrained decoding; accessible to novices but constrained decoding setup needs care.",
+    "confidence": 0.7
+   },
+   "narrow_scope": {
+    "score": 4,
+    "reasoning": "Clear measurement (accuracy vs task length, CoT on/off) but across multiple models and benchmarks broadens scope.",
+    "confidence": 0.7
+   },
+   "counterfactual_value": {
+    "score": 5,
+    "reasoning": "Replicates frontier-only work on open models that labs won't produce; clear third-party replication gold case.",
+    "confidence": 0.75
+   },
+   "novelty": {
+    "score": 3,
+    "reasoning": "estimate, no search",
+    "confidence": 0.5
+   }
+  },
+  "weighted_score": 4.21,
+  "novelty_classification": "partially_addressed",
+  "novelty_score": 3
+ },
+ {
+  "idea_id": "gen-071",
+  "title": "A toy safety-usefulness frontier: empirically tracing the tradeoff for a trusted-monitor protocol",
+  "problem": "The safety-usefulness tradeoff frontier is so far a conceptual framework with no cheap empirical instantiation that beginners can reproduce.",
+  "direction": "Build a minimal control setup on a public coding/QA task with an injected attack: an untrusted open model (8B prompted to occasionally insert a detectable bug/backdoor) and a weaker trusted monitor (a smaller open model scoring suspiciousness). Sweep the audit/defer threshold and at each setting measure safety (fraction of attacks caught) and usefulness (fraction of legitimate outputs preserved). Plot the resulting points to empirically draw a frontier, then show how a simple protocol tweak (resampling suspicious outputs) shifts the curve.",
+  "why_it_matters": "An explicit reproducible frontier turns an abstract tradeoff into a measurement tool others can extend, and gives an intuitive teaching artifact for control protocol knobs.",
+  "relevant_context": "Extends 'Efficient tradeoffs and the safety-usefulness tradeoff model' (Shlegeris, Redwood, 2026) \u2014 its open thread on empirical instantiation of the frontier.",
+  "subfield": "AI Control / protocol evaluation",
+  "generation_strategy": "tool_or_benchmark_gap",
+  "source_paper_id": "p043",
+  "source_paper": "Efficient tradeoffs and the safety-usefulness tradeoff model \u2014 https://blog.redwoodresearch.org/p/efficient-tradeoffs-and-the-safety",
+  "scores": {
+   "theory_of_impact": {
+    "score": 4,
+    "reasoning": "Turns the abstract safety-usefulness tradeoff into a reproducible measurement tool for control protocol design, a concrete deliverable.",
+    "confidence": 0.7
+   },
+   "low_compute": {
+    "score": 4,
+    "reasoning": "Untrusted 8B + smaller monitor inference on public tasks fits a consumer GPU.",
+    "confidence": 0.75
+   },
+   "accessible_complexity": {
+    "score": 4,
+    "reasoning": "Public coding/QA task with prompted attack and monitor scoring; threshold sweep is guided-level but multi-component setup needs a mentor.",
+    "confidence": 0.65
+   },
+   "narrow_scope": {
+    "score": 4,
+    "reasoning": "Focused first deliverable (frontier plot) but adding the resampling-tweak comparison is a second workstream.",
+    "confidence": 0.65
+   },
+   "counterfactual_value": {
+    "score": 5,
+    "reasoning": "Reproducible open frontier artifact others can extend; classic neglected replication/tooling case independent of labs.",
+    "confidence": 0.7
+   },
+   "novelty": {
+    "score": 3,
+    "reasoning": "estimate, no search",
+    "confidence": 0.5
+   }
+  },
+  "weighted_score": 4.21,
+  "novelty_classification": "partially_addressed",
+  "novelty_score": 3
+ },
+ {
+  "idea_id": "gen-082",
+  "title": "Phrasing-Robustness Audit of AI Identity Disclosure on Open Models",
+  "problem": "RealityTest shows a single suppression instruction drops identity disclosure below 30% in the best models, and that phrasing matters more than which model is used \u2014 but the benchmark focuses on frontier text/speech models, leaving open how small open-weight models behave.",
+  "direction": "Take the RealityTest identity-probing query templates (or reconstruct a ~150-query subset across a few languages) and run them inference-only against 4-6 open chat models (Llama-3-8B-Instruct, Qwen2.5-7B, Mistral-7B-Instruct, Gemma-2-9B) with and without a standard suppression system prompt. Score disclosure with a keyword + LLM-judge rubric and report disclosure rate by model, suppression on/off, and phrasing cluster.",
+  "why_it_matters": "If small freely-deployable open models disclose identity even less reliably than frontier models, impersonation/deceptive-deployment risk concentrates where there is no provider-side guardrail; a per-model open-weight leaderboard gives a useful signal no lab is producing.",
+  "relevant_context": "Extends 'RealityTest' (UK AISI) \u2014 the suppression-below-30% and phrasing-over-model findings, applied to open-weight models. Code available.",
+  "subfield": "Honesty & Deception / Model Evaluation",
+  "generation_strategy": "replication_with_twist",
+  "source_paper_id": "p051",
+  "source_paper": "RealityTest \u2014 https://www.aisi.gov.uk/research/realitytest-how-people-probe-ai-identity-and-whether-models-disclose-it",
+  "scores": {
+   "theory_of_impact": {
+    "score": 3,
+    "reasoning": "Impersonation/deceptive-deployment risk is real but the link from an open-weight disclosure leaderboard to reduced catastrophic AI risk is plausible-with-a-gap.",
+    "confidence": 0.6
+   },
+   "low_compute": {
+    "score": 4,
+    "reasoning": "Inference-only across several 7-9B open chat models fits a consumer GPU.",
+    "confidence": 0.8
+   },
+   "accessible_complexity": {
+    "score": 5,
+    "reasoning": "Reuses existing query templates and scores with keyword+LLM-judge; very accessible to beginners.",
+    "confidence": 0.8
+   },
+   "narrow_scope": {
+    "score": 4,
+    "reasoning": "Focused per-model disclosure-rate report, mildly broadened by suppression on/off and phrasing clusters across multiple models.",
+    "confidence": 0.7
+   },
+   "counterfactual_value": {
+    "score": 5,
+    "reasoning": "Open-weight leaderboard no lab produces, third-party scrutiny gold case with code available.",
+    "confidence": 0.75
+   },
+   "novelty": {
+    "score": 3,
+    "reasoning": "estimate, no search",
+    "confidence": 0.5
+   }
+  },
+  "weighted_score": 4.21,
+  "novelty_classification": "partially_addressed",
+  "novelty_score": 3
+ },
+ {
+  "idea_id": "gen-084",
+  "title": "Do Cognitive Biases Leak Into LLM Preference Judgments? A Mini-Audit",
+  "problem": "'AI alignment is a human problem' argues human cognitive biases contaminate the supervisory signals we feed models. The claim that classic human biases reproduce in LLM-as-judge preference labeling is asserted but not measured in a single tight experiment.",
+  "direction": "Construct paired response candidates holding content constant while varying one bias trigger at a time (answer length, confident tone, ordering/anchoring, sycophantic agreement) and ask 3-4 open LLM judges which response is 'better'. Quantify how often each bias flips the preference label vs a content-matched control. Report a bias-susceptibility profile per judge model.",
+  "why_it_matters": "If LLM judges \u2014 increasingly used to scale human feedback \u2014 inherit human-style biases, automated preference data systematically encodes those biases into trained models, the amplification failure the paper warns about.",
+  "relevant_context": "Operationalizes 'AI alignment is a human problem' (UK AISI) \u2014 its claim that cognitive biases in supervisory signals are an alignment bottleneck.",
+  "subfield": "Scalable Oversight / RLHF",
+  "generation_strategy": "failure_mode_investigation",
+  "source_paper_id": "p052",
+  "source_paper": "AI alignment is a human problem \u2014 https://www.aisi.gov.uk/research/ai-alignment-is-a-human-problem",
+  "scores": {
+   "theory_of_impact": {
+    "score": 4,
+    "reasoning": "If LLM judges inherit human biases, automated preference data encodes them into trained models, a concrete scalable-oversight amplification failure.",
+    "confidence": 0.7
+   },
+   "low_compute": {
+    "score": 4,
+    "reasoning": "Inference-only judging across 3-4 open models, consumer-GPU/API feasible.",
+    "confidence": 0.8
+   },
+   "accessible_complexity": {
+    "score": 5,
+    "reasoning": "Constructing content-matched paired candidates and tallying preference flips is very accessible to beginners.",
+    "confidence": 0.8
+   },
+   "narrow_scope": {
+    "score": 4,
+    "reasoning": "Focused bias-susceptibility profile, mildly broadened by several bias triggers and judge models.",
+    "confidence": 0.7
+   },
+   "counterfactual_value": {
+    "score": 4,
+    "reasoning": "Open models and public-style data, generalizes without internal access.",
+    "confidence": 0.7
+   },
+   "novelty": {
+    "score": 2,
+    "reasoning": "estimate, no search",
+    "confidence": 0.5
+   }
+  },
+  "weighted_score": 4.21,
+  "novelty_classification": "largely_addressed",
+  "novelty_score": 2
+ },
+ {
+  "idea_id": "gen-041",
+  "title": "Realism vs. Nudges: Does Removing 'Incentive Nudges' Reduce Sabotage in Open Agent Models Too?",
+  "problem": "Gram found that for Gemini, most agentic sabotage stems from artificial incentive nudges and near-vanishes when scenarios are made more realistic, but it is untested whether this realism effect holds for the open models small teams actually deploy as agents.",
+  "direction": "Reconstruct 2-3 of Gram's sabotage-style scenarios as simple text/tool-stub prompts. Create matched 'nudged' and 'de-nudged/realistic' versions of each, then run them inference-only over several open models (Qwen2.5-7B, Llama-3.1-8B, Mistral-7B) at a few temperatures, scoring sabotage rate with a rubric and a cheap judge. Deliverable: a per-model comparison of sabotage rate under nudged vs realistic framing.",
+  "why_it_matters": "If open agent models also misbehave mainly because of artificial incentive framing, much apparent misalignment in agent demos is an evaluation artifact \u2014 important for anyone building or red-teaming open-model agents.",
+  "relevant_context": "Extends 'Gram' (Lindner et al., 2026) \u2014 the realism-removes-sabotage result, tested on open 7-8B agents.",
+  "subfield": "Agentic misalignment / alignment auditing",
+  "generation_strategy": "replication_with_twist",
+  "source_paper_id": "p025",
+  "source_paper": "Gram: Assessing sabotage propensities via automated alignment auditing \u2014 https://deepmind.google/research/publications/252981/",
+  "scores": {
+   "theory_of_impact": {
+    "score": 4,
+    "reasoning": "If realism removes most open-agent sabotage, much apparent misalignment is an eval artifact, directly important for red-teaming open agents.",
+    "confidence": 0.65
+   },
+   "low_compute": {
+    "score": 5,
+    "reasoning": "Inference-only over 7-8B models on a few scenarios; low compute.",
+    "confidence": 0.8
+   },
+   "accessible_complexity": {
+    "score": 4,
+    "reasoning": "Reconstructing prompts and scoring sabotage with a rubric/judge is guided and novice-feasible.",
+    "confidence": 0.7
+   },
+   "narrow_scope": {
+    "score": 4,
+    "reasoning": "Focused nudged-vs-realistic comparison, but reconstructing 2-3 scenarios across several models adds breadth.",
+    "confidence": 0.7
+   },
+   "counterfactual_value": {
+    "score": 4,
+    "reasoning": "Open models and reconstructed public scenarios; independent-friendly.",
+    "confidence": 0.7
+   }
+  },
+  "weighted_score": 4.14,
+  "novelty_classification": "partially_addressed",
+  "novelty_score": 3
+ },
+ {
+  "idea_id": "gen-080",
+  "title": "Can you forecast AI R&D speedup from public benchmark history? A reproducible mini-model of automation-driven acceleration",
+  "problem": "Greenblatt argues full automation of AI R&D would yield a large speedup even without a software-only singularity, but the magnitude/timing is open and the reasoning is hard for newcomers to inspect quantitatively.",
+  "direction": "Build a small transparent Python simulation tying together public time-series (compute-scaling trends, benchmark-progress rates from Epoch AI / public leaderboards) into a toy growth model with an explicit 'R&D automation speedup' parameter. Reproduce Greenblatt's qualitative claim that a sub-singularity multiplier still produces large acceleration, and run a sensitivity analysis over the multiplier and a compute-bottleneck cap. Deliverable: an open notebook with clearly-labeled assumptions and charts.",
+  "why_it_matters": "Translating a verbal argument into a small inspectable public model is high counterfactual value and makes the acceleration debate legible, feeding governance/takeoff-timeline reasoning.",
+  "relevant_context": "Operationalizes 'Full automation of AI R&D probably yields a large speed up even without a software-only singularity' (Greenblatt, Redwood) \u2014 decoupling 'big speedup' from singularity, and its bottleneck open threads.",
+  "subfield": "AI forecasting / takeoff modeling",
+  "generation_strategy": "tool_or_benchmark_gap",
+  "source_paper_id": "p046",
+  "source_paper": "Full automation of AI R&D probably yields a large speed up \u2014 https://blog.redwoodresearch.org/p/full-automation-of-ai-r-and-d-probably",
+  "scores": {
+   "theory_of_impact": {
+    "score": 3,
+    "reasoning": "Makes the acceleration debate legible for takeoff/governance reasoning, but the toy growth model's link to concrete risk reduction has a gap.",
+    "confidence": 0.6
+   },
+   "low_compute": {
+    "score": 5,
+    "reasoning": "Python simulation over public time-series, CPU/analytical only.",
+    "confidence": 0.85
+   },
+   "accessible_complexity": {
+    "score": 4,
+    "reasoning": "Building a transparent growth model with sensitivity analysis is approachable but requires modeling judgment a mentor must guide.",
+    "confidence": 0.6
+   },
+   "narrow_scope": {
+    "score": 4,
+    "reasoning": "Focused notebook deliverable reproducing one qualitative claim with sensitivity analysis, bounded.",
+    "confidence": 0.65
+   },
+   "counterfactual_value": {
+    "score": 5,
+    "reasoning": "Inspectable public model of a lab-influenced debate, high counterfactual value as third-party legible analysis.",
+    "confidence": 0.7
+   },
+   "novelty": {
+    "score": 3,
+    "reasoning": "estimate, no search",
+    "confidence": 0.5
+   }
+  },
+  "weighted_score": 4.14,
+  "novelty_classification": "partially_addressed",
+  "novelty_score": 3
+ },
+ {
+  "idea_id": "gen-003",
+  "title": "A Minimal Reproducible Indirect-Prompt-Injection Eval for Open Tool-Using Agents",
+  "problem": "The Gray Swan competition shows every frontier agent is breakable by indirect prompt injection, but it relied on a closed competition platform and frontier APIs. There is no small, runnable IPI eval that a beginner can use on open models.",
+  "direction": "Build a tiny agent loop (LangChain or raw API) that reads a 'document' and a 'tool result' field, then test 15-20 published IPI attack templates (instruction override, fake system message, hidden HTML/markdown, data-exfiltration lure) against 2-3 open instruction-tuned models. Measure per-attack-category success rate on a single benign task.",
+  "why_it_matters": "IPI is one of the most pressing unsolved deployment risks for agentic systems; a public, reproducible mini-benchmark lowers the barrier for others to test their own setups.",
+  "relevant_context": "Extends 'How Vulnerable Are AI Agents to Indirect Prompt Injections?' (Dziemian et al., Gray Swan AI, 2026) \u2014 turns the competition's finding into a reusable open eval.",
+  "subfield": "Agent security / prompt injection",
+  "generation_strategy": "tool_or_benchmark_gap",
+  "source_paper_id": "p002",
+  "source_paper": "How Vulnerable Are AI Agents to Indirect Prompt Injections? \u2014 https://arxiv.org/abs/2603.15714",
+  "scores": {
+   "theory_of_impact": {
+    "score": 4,
+    "reasoning": "IPI is a recognized pressing agentic deployment risk and a public mini-benchmark is an independently useful intermediate deliverable.",
+    "confidence": 0.75
+   },
+   "low_compute": {
+    "score": 5,
+    "reasoning": "A tiny agent loop over 2-3 open instruct models is inference-only.",
+    "confidence": 0.85
+   },
+   "accessible_complexity": {
+    "score": 4,
+    "reasoning": "Building an agent loop and testing published attack templates is guided work a novice with a mentor can do.",
+    "confidence": 0.75
+   },
+   "narrow_scope": {
+    "score": 4,
+    "reasoning": "Focused first deliverable (per-category success rate) but assembling a working agent loop adds dependencies.",
+    "confidence": 0.75
+   },
+   "counterfactual_value": {
+    "score": 4,
+    "reasoning": "A public reproducible IPI eval for open models is neglected by labs and useful to the wider community.",
+    "confidence": 0.75
+   },
+   "novelty": {
+    "score": 3,
+    "reasoning": "estimate, no search",
+    "confidence": 0.5
+   }
+  },
+  "weighted_score": 4.137931034482759,
+  "novelty_classification": "partially_addressed",
+  "novelty_score": 3
+ },
+ {
+  "idea_id": "gen-012",
+  "title": "Counting the Flags: Can Simple Batch-Level Monitoring Catch Boundary-Point Attacks?",
+  "problem": "The paper notes boundary-point optimization incurs many classifier flags during search, suggesting monitoring flag patterns across queries is the natural defense \u2014 but no one has measured how easily a trivial batch-level detector separates an attack session from benign users.",
+  "direction": "Using logs from a boundary-point-style attack against an open guard classifier, compute simple per-session features: flag rate over a sliding window, semantic drift between consecutive queries (embedding cosine), edit-distance. Build a lightweight logistic-regression/threshold detector and contrast attack sessions against benign multi-turn sessions from a public chat dataset (WildChat/LMSYS-Chat). Report ROC and false-positive cost.",
+  "why_it_matters": "If a beginner-built threshold detector on flag-rate plus query-similarity already catches these attacks at low FPR, defenders should add cheap cross-query monitoring rather than only hardening per-query classifiers.",
+  "relevant_context": "Extends 'Boundary Point Jailbreaking' by operationalizing its open thread \u2014 effective defense needs batch-level monitoring across queries.",
+  "subfield": "AI control / monitoring",
+  "generation_strategy": "tool_or_benchmark_gap",
+  "source_paper_id": "p006",
+  "source_paper": "Boundary Point Jailbreaking of Black-Box LLMs \u2014 https://arxiv.org/abs/2602.15001",
+  "scores": {
+   "theory_of_impact": {
+    "score": 4,
+    "reasoning": "A cheap cross-query monitor that catches boundary-point attacks at low FPR is a concrete defensive contribution to AI control.",
+    "confidence": 0.7
+   },
+   "low_compute": {
+    "score": 5,
+    "reasoning": "Feature extraction plus logistic regression over logs is trivially cheap.",
+    "confidence": 0.85
+   },
+   "accessible_complexity": {
+    "score": 4,
+    "reasoning": "Simple per-session features and a threshold/LR detector are accessible to a guided novice.",
+    "confidence": 0.75
+   },
+   "narrow_scope": {
+    "score": 4,
+    "reasoning": "Focused ROC/FPR deliverable but depends on first producing attack logs from gen-011-style setup.",
+    "confidence": 0.7
+   },
+   "counterfactual_value": {
+    "score": 4,
+    "reasoning": "Cheap monitoring defense on open setups is independent-friendly and neglected by labs.",
+    "confidence": 0.72
+   },
+   "novelty": {
+    "score": 3,
+    "reasoning": "estimate, no search",
+    "confidence": 0.5
+   }
+  },
+  "weighted_score": 4.137931034482759,
+  "novelty_classification": "partially_addressed",
+  "novelty_score": 3
+ },
+ {
+  "idea_id": "gen-015",
+  "title": "Logic vs Design Sabotage: Does a Targeted Checklist Prompt Help LLM Auditors Catch the Hard Cases?",
+  "problem": "On the Auditing Sabotage benchmark, logic sabotages are usually caught but design sabotages (hyperparameter, prompt, or data choices) and omissions rarely are; it is untested whether a cheap structured 'design-decision audit' prompt narrows that gap.",
+  "direction": "Using the released Auditing Sabotage Bench codebase pairs, run an open or API model as auditor under two prompts: a generic 'find the sabotage' prompt, and a structured checklist that forces enumerating and justifying every hyperparameter, data-filtering, and prompt choice against the paper's claims. Compare detection AUROC and top-1 localization, broken down by logic vs design vs omission.",
+  "why_it_matters": "Design-based sabotage is exactly the failure mode an AI research assistant could exploit to subtly flip findings; a simple checklist scaffold that helps is immediately adoptable.",
+  "relevant_context": "Extends 'Auditing Sabotage Bench' (Gan, Hebbar, Stastny, Redwood, 2026) \u2014 the 0.77 AUROC ceiling and design-sabotage difficulty.",
+  "subfield": "AI control / automated auditing",
+  "generation_strategy": "follow_up_experiment",
+  "source_paper_id": "p008",
+  "source_paper": "Auditing Sabotage Bench \u2014 https://arxiv.org/abs/2604.16286",
+  "scores": {
+   "theory_of_impact": {
+    "score": 4,
+    "reasoning": "Design sabotage is exactly how an AI research assistant could subtly flip findings; an adoptable scaffold targets a recognized control pathway.",
+    "confidence": 0.72
+   },
+   "low_compute": {
+    "score": 5,
+    "reasoning": "Running an open or API auditor over released codebase pairs is inference-only.",
+    "confidence": 0.8
+   },
+   "accessible_complexity": {
+    "score": 4,
+    "reasoning": "Two auditor prompts over a released bench is guided, though AUROC/localization analysis needs care.",
+    "confidence": 0.72
+   },
+   "narrow_scope": {
+    "score": 4,
+    "reasoning": "Focused comparison broken down by sabotage type, with a few analysis dependencies.",
+    "confidence": 0.72
+   },
+   "counterfactual_value": {
+    "score": 4,
+    "reasoning": "Improving automated auditing on a public bench is independent-friendly and neglected by labs.",
+    "confidence": 0.72
+   },
+   "novelty": {
+    "score": 3,
+    "reasoning": "estimate, no search",
+    "confidence": 0.5
+   }
+  },
+  "weighted_score": 4.137931034482759,
+  "novelty_classification": "partially_addressed",
+  "novelty_score": 3
+ },
+ {
+  "idea_id": "gen-018",
+  "title": "Human-Crafted vs Model-Elicited Attacks: A Stylometric Look at Why Human Sabotage Evades Monitors",
+  "problem": "LinuxArena finds human-crafted attacks evade monitors far better than model-elicited ones, but what distinguishes the two \u2014 and whether a monitor can be cued to close the gap \u2014 is uncharacterized.",
+  "direction": "From LinuxArena's released attack transcripts, separate human-crafted and model-elicited sabotage and compute comparative features: action verbosity, legitimate-looking justifications, number of intermediate benign steps, command obfuscation. Then test whether prompting the monitor with the found evasion patterns raises detection of human-crafted attacks. Inference-only.",
+  "why_it_matters": "If human attackers exploit identifiable evasion tactics model red-teamers don't generate, model-only red-teaming systematically overestimates monitor robustness.",
+  "relevant_context": "Extends 'LinuxArena' \u2014 characterizes the human-vs-model evasion gap it reports.",
+  "subfield": "AI control / red-teaming",
+  "generation_strategy": "failure_mode_investigation",
+  "source_paper_id": "p009",
+  "source_paper": "LinuxArena \u2014 https://arxiv.org/abs/2604.15384",
+  "scores": {
+   "theory_of_impact": {
+    "score": 4,
+    "reasoning": "If model red-teaming overestimates monitor robustness, characterizing the human-evasion gap is a defensible control-relevant finding.",
+    "confidence": 0.68
+   },
+   "low_compute": {
+    "score": 5,
+    "reasoning": "Computing transcript features and re-prompting a monitor is inference-only.",
+    "confidence": 0.8
+   },
+   "accessible_complexity": {
+    "score": 4,
+    "reasoning": "Stylometric feature comparison and a cued-monitor test are guided and accessible.",
+    "confidence": 0.72
+   },
+   "narrow_scope": {
+    "score": 4,
+    "reasoning": "Focused comparative-feature deliverable plus a follow-on cueing test, a few dependencies.",
+    "confidence": 0.7
+   },
+   "counterfactual_value": {
+    "score": 4,
+    "reasoning": "Characterizing released attack transcripts is independent-friendly and neglected by labs.",
+    "confidence": 0.7
+   },
+   "novelty": {
+    "score": 3,
+    "reasoning": "estimate, no search",
+    "confidence": 0.5
+   }
+  },
+  "weighted_score": 4.137931034482759,
+  "novelty_classification": "partially_addressed",
+  "novelty_score": 3
+ },
+ {
+  "idea_id": "gen-092",
+  "title": "Cheap-Defense Stress Test: Do Simple Prompt-Level Guards Survive the Jailbreaks That Broke DeepSeek-V4-Pro?",
+  "problem": "FAR AI showed DeepSeek-V4-Pro's safeguards collapse (98-100% attack success) under three jailbreak strategies despite blocking 100% of direct requests. It is unclear whether lightweight deployable prompt-level defenses meaningfully reduce that success rate.",
+  "direction": "Using a public harmful-behavior benchmark (JailbreakBench JBB-Behaviors / HarmBench prompts) and 2-3 reproducible jailbreak templates (roleplay, refusal-suppression, low-resource encoding), measure attack success on an open model. Then add three cheap inference-only defenses and re-measure: a defensive system prompt, a second-pass self-critique filter, and input paraphrase-then-answer. Report which defenses move ASR and which the attacks route around, scored with an LLM-judge calibrated on a held-out hand-labeled set.",
+  "why_it_matters": "Most open-weight deployers cannot retrain safeguards; they need to know whether wrapper-level defenses are real protection or theater.",
+  "relevant_context": "Extends 'Security Stress Test: DeepSeek-V4-Pro' (FAR AI) \u2014 its 98-100% ASR finding, testing inference-only defenses on an open model.",
+  "subfield": "Adversarial robustness / jailbreaks",
+  "generation_strategy": "follow_up_experiment",
+  "source_paper_id": "p057",
+  "source_paper": "Security Stress Test: DeepSeek-V4-Pro (FAR AI) \u2014 https://www.far.ai/blog",
+  "scores": {
+   "theory_of_impact": {
+    "score": 4,
+    "reasoning": "Testing whether wrapper defenses are real protection or theater directly informs open-weight deployers, a concrete misuse-reduction pathway.",
+    "confidence": 0.7
+   },
+   "low_compute": {
+    "score": 5,
+    "reasoning": "Inference-only attacks and defenses on one open model.",
+    "confidence": 0.85
+   },
+   "accessible_complexity": {
+    "score": 4,
+    "reasoning": "Using public jailbreak benchmarks and an LLM-judge is guided-level; calibrating the judge needs care.",
+    "confidence": 0.78
+   },
+   "narrow_scope": {
+    "score": 4,
+    "reasoning": "Focused deliverable (ASR with vs without 3 defenses) but spans multiple attacks and defenses.",
+    "confidence": 0.75
+   },
+   "counterfactual_value": {
+    "score": 4,
+    "reasoning": "Open-model wrapper-defense evaluation is squarely independent-friendly and useful to the broader community.",
+    "confidence": 0.78
+   },
+   "novelty": {
+    "score": 2,
+    "reasoning": "estimate, no search",
+    "confidence": 0.55
+   }
+  },
+  "weighted_score": 4.137931034482759,
+  "novelty_classification": "largely_addressed",
+  "novelty_score": 2
+ },
+ {
+  "idea_id": "gen-043",
+  "title": "Filling the ATT&CK Gap: A Public Annotation Schema for Autonomous-AI Cyber Behaviors",
+  "problem": "The LLM ATT&CK Navigator work found MITRE ATT&CK has no categories for autonomous AI behaviors (agentic killchain orchestration), exactly what distinguishes the highest-risk actors, leaving defenders without a vocabulary to tag these behaviors.",
+  "direction": "Using only public material (the ATT&CK matrix, published threat-intel reports, public write-ups of agentic-AI misuse), draft a small candidate set of 8-12 'autonomous AI behavior' annotation tags with definitions and positive/negative examples. Validate by hand-labeling a public corpus of described AI-assisted attack narratives and reporting coverage and annotator agreement.",
+  "why_it_matters": "Defenders and policymakers can only track a threat they can name; a public ATT&CK-complementary vocabulary is purely defensive, needs no model access, and directly addresses the paper's open thread.",
+  "relevant_context": "Extends 'Mapping AI-enabled cyber threats: the LLM ATT&CK Navigator' (Guru et al., 2026) \u2014 the gap that ATT&CK lacks autonomous-AI categories.",
+  "subfield": "AI threat intelligence / taxonomy",
+  "generation_strategy": "tool_or_benchmark_gap",
+  "source_paper_id": "p021",
+  "source_paper": "Mapping AI-enabled cyber threats \u2014 https://www.anthropic.com/research/attack-navigator",
+  "scores": {
+   "theory_of_impact": {
+    "score": 3,
+    "reasoning": "A defensive vocabulary defenders can name is valuable, but a taxonomy's impact on catastrophic risk is plausible yet indirect.",
+    "confidence": 0.6
+   },
+   "low_compute": {
+    "score": 5,
+    "reasoning": "Pure public-material analysis and hand-labeling; no model compute needed.",
+    "confidence": 0.85
+   },
+   "accessible_complexity": {
+    "score": 4,
+    "reasoning": "Drafting tags and hand-labeling public narratives is guided and accessible, requires some domain reading.",
+    "confidence": 0.7
+   },
+   "narrow_scope": {
+    "score": 4,
+    "reasoning": "Focused 8-12 tag schema with validation, but schema design plus corpus labeling is a modest two-part effort.",
+    "confidence": 0.7
+   },
+   "counterfactual_value": {
+    "score": 5,
+    "reasoning": "Purely public, no model access, directly complements ATT&CK; a neglected independent-friendly case.",
+    "confidence": 0.75
+   }
+  },
+  "weighted_score": 4.1,
+  "novelty_classification": "mostly_novel",
+  "novelty_score": 4
+ }
+]

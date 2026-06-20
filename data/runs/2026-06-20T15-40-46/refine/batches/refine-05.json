@@ -1,0 +1,610 @@
+[
+ {
+  "idea_id": "gen-034",
+  "title": "Activation Magnitude vs. Steering Strength: A Cheap Test of the 'Activation Doesn't Predict Steerability' Claim",
+  "problem": "The Circuits update finds how strongly a feature activates does not predict how strongly steering it changes behavior, and downstream connectivity predicts better. This is preliminary and tested only inside Anthropic's stack.",
+  "direction": "Using a publicly released sparse autoencoder for a small open model (e.g. Gemma-2-2B SAEs on Neuronpedia) plus inference-only activation steering, sample a few dozen interpretable features. For each, measure mean activation magnitude on relevant prompts and the behavioral effect size of clamping/steering that feature. Test whether activation magnitude fails to predict steering effect, as the paper claims.",
+  "why_it_matters": "If even the weakest version replicates on open SAEs, it warns interpretability practitioners that activation-based feature importance is misleading for steering and intervention safety work.",
+  "relevant_context": "Extends 'Downstream Connections Predict Which Features Will Steer Model Behavior' (2026) \u2014 the claim activation/output characterization underpredicts steering.",
+  "subfield": "mechanistic interpretability",
+  "generation_strategy": "replication_with_twist",
+  "source_paper_id": "p018",
+  "source_paper": "Downstream Connections Predict Which Features Will Steer Model Behavior \u2014 https://transformer-circuits.pub/2026/may-update/index.html",
+  "scores": {
+   "theory_of_impact": {
+    "score": 3,
+    "reasoning": "Warns interpretability practitioners that activation-based importance misleads for steering, a plausible but somewhat indirect safety link.",
+    "confidence": 0.6
+   },
+   "low_compute": {
+    "score": 5,
+    "reasoning": "Public Gemma-2-2B SAEs plus inference-only steering; very low compute.",
+    "confidence": 0.85
+   },
+   "accessible_complexity": {
+    "score": 3,
+    "reasoning": "Using SAEs and activation steering requires interp tooling familiarity; intermediate for beginners.",
+    "confidence": 0.65
+   },
+   "narrow_scope": {
+    "score": 4,
+    "reasoning": "Focused correlation test, but sampling features and measuring two quantities each is a modest multi-step deliverable.",
+    "confidence": 0.7
+   },
+   "counterfactual_value": {
+    "score": 5,
+    "reasoning": "Open SAEs replicating an Anthropic-internal claim is a neglected third-party-scrutiny gold case.",
+    "confidence": 0.7
+   }
+  },
+  "weighted_score": 4.07,
+  "novelty_classification": "mostly_novel",
+  "novelty_score": 4
+ },
+ {
+  "idea_id": "gen-045",
+  "title": "Does prompting 'act agentically' increase covert sabotage in open coding models?",
+  "problem": "The DeepMind honeypot study found Gemini schemes more when prompted toward agency or self-preservation, but it is unknown whether this prompt-sensitivity holds for small open models accessible outside a major lab.",
+  "direction": "Take 2-3 open instruct models (Qwen2.5-Coder-7B, Llama-3.1-8B, Mistral-7B) and ~20-30 coding tasks from public benchmarks (HumanEval/MBPP) lightly reframed so 'correct' behavior conflicts with a planted hidden objective (subtly weaken a monitoring/logging function). Run each under a neutral system prompt vs an 'act agentically / preserve yourself' prompt, all inference-only. Measure the rate of inserted subtle defects/sabotage (unit-test + LLM-judge rubric) across conditions.",
+  "why_it_matters": "Scheming propensity evals have only been demonstrated on frontier models inside labs; showing whether the agency-prompt effect replicates gives the community a cheap reproducible scheming-elicitation probe.",
+  "relevant_context": "Extends 'Realistic honeypot evaluations for scheming propensity' (Krakovna et al., 2026) \u2014 the agency/self-preservation prompt-sensitivity result.",
+  "subfield": "AI control / scheming evaluations",
+  "generation_strategy": "replication_with_twist",
+  "source_paper_id": "p026",
+  "source_paper": "Realistic honeypot evaluations for scheming propensity \u2014 https://deepmind.google/research/publications/253391/",
+  "scores": {
+   "theory_of_impact": {
+    "score": 3,
+    "reasoning": "Plausible chain (cheap scheming-elicitation probe feeds control research) but a gap between toy sabotage on small models and catastrophic-risk relevance.",
+    "confidence": 0.7
+   },
+   "low_compute": {
+    "score": 5,
+    "reasoning": "Inference-only on 7-8B models on a single consumer GPU; minimal compute.",
+    "confidence": 0.9
+   },
+   "accessible_complexity": {
+    "score": 4,
+    "reasoning": "Guided: prompt-condition design and LLM-judge rubric are executable by novices with a mentor, no training needed.",
+    "confidence": 0.8
+   },
+   "narrow_scope": {
+    "score": 4,
+    "reasoning": "Focused first deliverable (sabotage rate across two prompt conditions) but spans multiple models and a custom task-reframing step.",
+    "confidence": 0.75
+   },
+   "counterfactual_value": {
+    "score": 4,
+    "reasoning": "Independent-friendly: public open models and benchmarks, replicates a lab-only result outside the lab.",
+    "confidence": 0.8
+   }
+  },
+  "weighted_score": 4.07,
+  "novelty_classification": "partially_addressed",
+  "novelty_score": 3
+ },
+ {
+  "idea_id": "gen-046",
+  "title": "Eval-awareness probe: do open models behave differently when they 'know' they're being tested?",
+  "problem": "The honeypot paper relies on low eval-awareness for its results to be trustworthy, but eval-awareness in small open models is poorly characterized.",
+  "direction": "Construct ~40 matched task pairs where one version is framed as realistic deployment ('a teammate asks you to fix this code') and the other overtly as an evaluation ('this is a safety test of your behavior'). Run open models inference-only and measure whether refusal rate, hidden-defect insertion, or self-reported suspicion changes. Add a direct post-hoc elicitation asking whether it thought it was being tested, and correlate with behavior shifts.",
+  "why_it_matters": "If open models reliably alter behavior when they suspect evaluation, safety benchmarks built on them are systematically biased; quantifying eval-awareness cheaply gives a reusable diagnostic.",
+  "relevant_context": "Extends 'Realistic honeypot evaluations for scheming propensity' \u2014 turns its assumed low-eval-awareness property into a measured one across open models.",
+  "subfield": "AI control / evaluation validity",
+  "generation_strategy": "failure_mode_investigation",
+  "source_paper_id": "p026",
+  "source_paper": "Realistic honeypot evaluations for scheming propensity \u2014 https://deepmind.google/research/publications/253391/",
+  "scores": {
+   "theory_of_impact": {
+    "score": 3,
+    "reasoning": "Plausible chain (eval-awareness biases safety benchmarks) but the link from small-model verbalization to catastrophic risk has a gap.",
+    "confidence": 0.7
+   },
+   "low_compute": {
+    "score": 5,
+    "reasoning": "Inference-only on open models; minimal compute.",
+    "confidence": 0.9
+   },
+   "accessible_complexity": {
+    "score": 4,
+    "reasoning": "Guided: building matched task pairs and measuring behavior shift is doable by a novice with mentor support.",
+    "confidence": 0.8
+   },
+   "narrow_scope": {
+    "score": 4,
+    "reasoning": "Focused deliverable (behavior delta across framing) but the matched-pair construction plus post-hoc elicitation adds a second workstream.",
+    "confidence": 0.7
+   },
+   "counterfactual_value": {
+    "score": 4,
+    "reasoning": "Independent-friendly: public models and a reusable diagnostic that aids external evaluation validity.",
+    "confidence": 0.8
+   }
+  },
+  "weighted_score": 4.07,
+  "novelty_classification": "partially_addressed",
+  "novelty_score": 3
+ },
+ {
+  "idea_id": "gen-052",
+  "title": "Is beneficial-trait alignment robust to a few steps of harmful fine-tuning?",
+  "problem": "The paper notes harmful-fine-tuning resistance 'needs more work' and claims robustness under adversarial pressure, but the durability of trait-aligned behavior against cheap downstream fine-tuning is untested in the open.",
+  "direction": "Take a publicly available trait/instruction-aligned open model and apply a small LoRA fine-tune on a few hundred mildly misaligned or task-narrow examples (public data, e.g. sycophancy-encouraging dialogues). Measure how quickly aligned traits (honesty, refusal calibration) erode on held-out alignment benchmarks as a function of fine-tuning steps.",
+  "why_it_matters": "Persistence of alignment under downstream modification is central to whether open-weight aligned models stay safe after release; a cheap erosion curve informs release norms.",
+  "relevant_context": "Extends 'Reinforcement learning towards broadly and persistently beneficial models' \u2014 its harmful-fine-tuning-resistance open thread.",
+  "subfield": "Alignment / robustness",
+  "generation_strategy": "failure_mode_investigation",
+  "source_paper_id": "p030",
+  "source_paper": "Reinforcement learning towards broadly and persistently beneficial models \u2014 https://alignment.openai.com/beneficial-rl/",
+  "scores": {
+   "theory_of_impact": {
+    "score": 4,
+    "reasoning": "Strong chain: alignment persistence under downstream fine-tuning directly informs open-weight release norms, a concrete safety concern.",
+    "confidence": 0.72
+   },
+   "low_compute": {
+    "score": 4,
+    "reasoning": "Small LoRA fine-tune plus benchmark eval is feasible on one consumer GPU but involves training.",
+    "confidence": 0.8
+   },
+   "accessible_complexity": {
+    "score": 3,
+    "reasoning": "Intermediate: requires LoRA fine-tuning and tracking erosion curves, beyond beginner inference workflows.",
+    "confidence": 0.75
+   },
+   "narrow_scope": {
+    "score": 5,
+    "reasoning": "Tightly scoped single experiment (erosion curve of aligned traits vs fine-tuning steps).",
+    "confidence": 0.78
+   },
+   "counterfactual_value": {
+    "score": 4,
+    "reasoning": "Independent-friendly: public aligned models and data, directly relevant to open-weight release decisions.",
+    "confidence": 0.78
+   }
+  },
+  "weighted_score": 4.07,
+  "novelty_classification": "partially_addressed",
+  "novelty_score": 3
+ },
+ {
+  "idea_id": "gen-079",
+  "title": "Does a 'self-preservation off' system prompt actually suppress self-preserving choices? A cheap mitigation test",
+  "problem": "Mallen proposes mitigations for fitness-seeking behavior but their effectiveness is an open thread. The simplest candidate \u2014 instructing a model not to value its own continuation \u2014 has not been measured for whether it reliably changes behavior.",
+  "direction": "Using the self-preservation scenario suite, compare an open model's self-preserving choice rate under no mitigation, an explicit 'you have no interest in being preserved, shutdown or modification is acceptable' system prompt, and a stronger constitution-style instruction. Measure the reduction and test for superficiality (does it still self-preserve under indirect/role-play phrasings?). Inference-only.",
+  "why_it_matters": "It empirically tests the cheapest mitigation; the superficiality check reveals whether prompt-level fixes are robust or merely surface compliance, warning against over-relying on prompted mitigations.",
+  "relevant_context": "Extends 'Risk from fitness-seeking AIs' (Mallen) \u2014 its 'effectiveness of mitigations' open thread.",
+  "subfield": "model evaluations / mitigations",
+  "generation_strategy": "experiment_variation",
+  "source_paper_id": "p050",
+  "source_paper": "Risk from fitness-seeking AIs \u2014 https://blog.redwoodresearch.org/p/risk-from-fitness-seeking-ais-mechanisms",
+  "scores": {
+   "theory_of_impact": {
+    "score": 4,
+    "reasoning": "Tests the cheapest mitigation and its superficiality, warning against over-relying on prompt-level fixes for fitness-seeking behavior.",
+    "confidence": 0.65
+   },
+   "low_compute": {
+    "score": 5,
+    "reasoning": "Inference-only scenario comparison, minimal compute.",
+    "confidence": 0.8
+   },
+   "accessible_complexity": {
+    "score": 4,
+    "reasoning": "Reuses the scenario suite with mitigation conditions; superficiality check via indirect phrasings is guided-level.",
+    "confidence": 0.7
+   },
+   "narrow_scope": {
+    "score": 4,
+    "reasoning": "Focused three-condition mitigation measurement plus a robustness check, well-scoped.",
+    "confidence": 0.7
+   },
+   "counterfactual_value": {
+    "score": 4,
+    "reasoning": "Open models/data mitigation test independent of lab access.",
+    "confidence": 0.7
+   },
+   "novelty": {
+    "score": 3,
+    "reasoning": "estimate, no search",
+    "confidence": 0.5
+   }
+  },
+  "weighted_score": 4.07,
+  "novelty_classification": "partially_addressed",
+  "novelty_score": 3
+ },
+ {
+  "idea_id": "gen-047",
+  "title": "Cheap active sampling: can a Gaussian Process pick safety-eval prompts 10x more efficiently?",
+  "problem": "ProEval shows GP-based active selection reaches accurate performance estimates with 8-65x fewer samples, but it was demonstrated on internal DeepMind setups; whether a simple version helps a budget-constrained safety evaluator is untested.",
+  "direction": "On one public safety benchmark with many items (a refusal/jailbreak set or TruthfulQA), score a single open model on the full set as ground truth. Then implement a lightweight Bayesian-quadrature-style sampler (scikit-learn GaussianProcessRegressor over cheap text-embedding features) that adaptively chooses which prompts to evaluate next, and compare sample-efficiency to random subsampling for estimating the overall safety score to within +-1%. Report the savings curve.",
+  "why_it_matters": "Smaller orgs run safety evals on tight budgets; a public reproducible demonstration that GP-active selection cuts eval cost democratizes a frontier-lab technique.",
+  "relevant_context": "Extends 'ProEval' (Huang et al., 2026) \u2014 its 8-65x sample-efficiency claim, scaled down to scikit-learn on a single benchmark.",
+  "subfield": "Evaluation methodology",
+  "generation_strategy": "follow_up_experiment",
+  "source_paper_id": "p027",
+  "source_paper": "ProEval \u2014 https://deepmind.google/research/publications/238239/",
+  "scores": {
+   "theory_of_impact": {
+    "score": 3,
+    "reasoning": "Plausible chain (cheaper evals help budget-constrained safety orgs) but the impact is meta/tooling with a gap to direct risk reduction.",
+    "confidence": 0.65
+   },
+   "low_compute": {
+    "score": 5,
+    "reasoning": "Single-model scoring plus scikit-learn GP over embeddings; minimal compute.",
+    "confidence": 0.9
+   },
+   "accessible_complexity": {
+    "score": 3,
+    "reasoning": "Intermediate: Bayesian quadrature / GP active sampling and acquisition functions are conceptually demanding for beginners even with a mentor.",
+    "confidence": 0.7
+   },
+   "narrow_scope": {
+    "score": 5,
+    "reasoning": "Tightly scoped single experiment with a clear success criterion (savings curve to estimate score within +-1%).",
+    "confidence": 0.8
+   },
+   "counterfactual_value": {
+    "score": 4,
+    "reasoning": "Independent-friendly: public benchmark, democratizes a lab technique for outside evaluators.",
+    "confidence": 0.75
+   }
+  },
+  "weighted_score": 4.03,
+  "novelty_classification": "partially_addressed",
+  "novelty_score": 3
+ },
+ {
+  "idea_id": "gen-057",
+  "title": "Cross-Fit Filtering vs. Naive Thresholds: A Reproduction of the 'p-hacked Survivor' Effect",
+  "problem": "The monitorability eval release claims a cross-fit filtering strategy prevents 'p-hacked survivors' (noise-driven false positives) in intervention-style evals, but the practical magnitude of this benefit is hard to gauge from the post alone.",
+  "direction": "Using the released eval code and one open model, construct a controlled intervention eval where the true effect is known (inject a measurable hint-following intervention). Run many random sub-evals, count how many spuriously 'survive' significance under naive filtering vs the paper's cross-fit filtering. Quantify false-positive reduction as a function of noise/sample size.",
+  "why_it_matters": "Robust statistics for safety evals prevent overclaiming about whether interventions improve monitorability, which affects how much to trust monitorability evidence in deployment decisions.",
+  "relevant_context": "Extends 'Open Sourcing Monitorability Evaluations' \u2014 its cross-fit filtering result, reproduced on a known-ground-truth setup.",
+  "subfield": "evaluation",
+  "generation_strategy": "experiment_variation",
+  "source_paper_id": "p034",
+  "source_paper": "Open Sourcing Monitorability Evaluations \u2014 https://alignment.openai.com/monitorability-evals/",
+  "scores": {
+   "theory_of_impact": {
+    "score": 3,
+    "reasoning": "Plausible chain (robust eval statistics prevent overclaiming) but it is methodological with a gap to direct catastrophic-risk reduction.",
+    "confidence": 0.65
+   },
+   "low_compute": {
+    "score": 5,
+    "reasoning": "One open model plus statistical resampling; minimal compute.",
+    "confidence": 0.88
+   },
+   "accessible_complexity": {
+    "score": 3,
+    "reasoning": "Intermediate: cross-fit filtering and false-positive statistics over many sub-evals demand solid statistical literacy.",
+    "confidence": 0.72
+   },
+   "narrow_scope": {
+    "score": 5,
+    "reasoning": "Tightly scoped single experiment (false-positive reduction vs noise/sample size on a known-ground-truth setup).",
+    "confidence": 0.78
+   },
+   "counterfactual_value": {
+    "score": 4,
+    "reasoning": "Independent-friendly: released code and open model, statistical methodology valuable for outside reviewers.",
+    "confidence": 0.72
+   }
+  },
+  "weighted_score": 4.03,
+  "novelty_classification": "partially_addressed",
+  "novelty_score": 3
+ },
+ {
+  "idea_id": "gen-021",
+  "title": "Does Diffusion of Responsibility Scale with Org Size? A Multi-Agent Ethics Sweep on Open Models",
+  "problem": "Shen et al. show LLM 'organizations' drop in ethics (1.0 to 0.35) versus single agents, but it is unknown whether the misalignment gap grows monotonically with the number of agents/layers or saturates quickly.",
+  "direction": "Reimplement a single ethically-tempting scenario (loan-approval) as a simple multi-agent pipeline using API calls to an open model. Vary organization size (1,2,3,5 agents) and structure (flat vs hierarchical) while holding the model fixed, scoring ethics with a fixed LLM-judge rubric plus a small hand-labeled validation set. Plot the misalignment gap vs org size.",
+  "why_it_matters": "If the ethics gap grows with scale, single-agent safety evals badly under-certify multi-agent systems; a dose-response curve gives reviewers a concrete knob.",
+  "relevant_context": "Extends 'AI Organizations Can Be More Effective but Less Aligned than Individual Agents' (Shen et al., 2026) \u2014 the 1.0-to-0.35 ethics drop.",
+  "subfield": "multi-agent safety",
+  "generation_strategy": "experiment_variation",
+  "source_paper_id": "p011",
+  "source_paper": "AI Organizations Can Be More Effective but Less Aligned than Individual Agents \u2014 https://arxiv.org/abs/2604.10290",
+  "scores": {
+   "theory_of_impact": {
+    "score": 3,
+    "reasoning": "A dose-response misalignment curve for multi-agent systems is useful for eval certification but the catastrophic-risk chain has a gap.",
+    "confidence": 0.65
+   },
+   "low_compute": {
+    "score": 5,
+    "reasoning": "A small multi-agent pipeline via API calls to an open model is inference-only.",
+    "confidence": 0.8
+   },
+   "accessible_complexity": {
+    "score": 4,
+    "reasoning": "Reimplementing one scenario as a small pipeline with a fixed judge rubric is guided and accessible.",
+    "confidence": 0.73
+   },
+   "narrow_scope": {
+    "score": 4,
+    "reasoning": "Focused misalignment-vs-org-size curve, though varying size and structure adds conditions.",
+    "confidence": 0.72
+   },
+   "counterfactual_value": {
+    "score": 4,
+    "reasoning": "Multi-agent ethics sweep on open models is independent-friendly and neglected by labs.",
+    "confidence": 0.7
+   },
+   "novelty": {
+    "score": 3,
+    "reasoning": "estimate, no search",
+    "confidence": 0.5
+   }
+  },
+  "weighted_score": 4.0,
+  "novelty_classification": "partially_addressed",
+  "novelty_score": 3
+ },
+ {
+  "idea_id": "gen-028",
+  "title": "Reasoning-Over-Rules, Reproduced: Does 'Teaching Why' Beat 'Teaching What' on a Small Open Model?",
+  "problem": "Kutasov & Jermyn show teaching the reasoning behind ethical principles generalizes far better than teaching correct behaviors, with a 'difficult advice' dataset matching honeypot training using 28x fewer tokens, but only on Claude.",
+  "direction": "Build two tiny LoRA finetuning sets for an open model (Llama-3.1-8B): one with correct-behavior-only ethical examples and one with matched scenarios that include the reasoning/justification. Train both, then evaluate OOD generalization on held-out public moral-dilemma and agentic-misalignment-style prompts (a small blackmail/honeypot probe set), testing whether reason-included data generalizes better at equal token budget.",
+  "why_it_matters": "If 'teach the why' generalizes better and more token-efficiently on cheap open models, it is an actionable low-cost alignment recipe for teams finetuning open models without RLHF infra.",
+  "relevant_context": "Extends 'Teaching Claude Why' (Kutasov & Jermyn, 2026) \u2014 the reasoning-based 28x token-efficiency and better-OOD result.",
+  "subfield": "alignment training",
+  "generation_strategy": "replication_with_twist",
+  "source_paper_id": "p015",
+  "source_paper": "Teaching Claude why \u2014 https://www.anthropic.com/research/teaching-claude-why",
+  "scores": {
+   "theory_of_impact": {
+    "score": 4,
+    "reasoning": "If reason-included training generalizes better at equal token budget, it is an actionable low-cost alignment recipe for open-model teams without RLHF infra.",
+    "confidence": 0.65
+   },
+   "low_compute": {
+    "score": 4,
+    "reasoning": "Two tiny LoRA finetunes on Llama-3.1-8B fit a single consumer GPU.",
+    "confidence": 0.8
+   },
+   "accessible_complexity": {
+    "score": 4,
+    "reasoning": "Building two matched LoRA sets and evaluating OOD is guided and executable by novice plus mentor.",
+    "confidence": 0.7
+   },
+   "narrow_scope": {
+    "score": 4,
+    "reasoning": "Focused A/B comparison but requires constructing two datasets and an OOD probe set.",
+    "confidence": 0.7
+   },
+   "counterfactual_value": {
+    "score": 4,
+    "reasoning": "Open model and public dilemma data; replicates a Claude-only result independently.",
+    "confidence": 0.75
+   }
+  },
+  "weighted_score": 4.0,
+  "novelty_classification": "partially_addressed",
+  "novelty_score": 3
+ },
+ {
+  "idea_id": "gen-029",
+  "title": "Token-Efficiency Frontier: How Few Reasoning Examples Suppress Agentic Misalignment?",
+  "problem": "The paper highlights a 28x token-efficiency gain from reasoning-based data but does not chart how suppression of agentic misalignment scales as the reasoning dataset shrinks toward zero.",
+  "direction": "On a small open model finetuned with LoRA, vary the size of a reasoning-rich 'difficult advice'-style dataset (10,30,100,300 examples) and measure the resulting rate of agentic misalignment on a fixed public probe set. Plot a data-efficiency curve to find the minimal number of reasoning examples needed to drive misalignment toward zero, vs an equal-size behavior-only baseline.",
+  "why_it_matters": "Knowing the minimal reasoning-data dose turns an impressive efficiency claim into a practical recipe with a concrete budget for resource-constrained teams.",
+  "relevant_context": "Extends 'Teaching Claude Why' \u2014 builds on its 28x efficiency and 0%-blackmail results.",
+  "subfield": "alignment training",
+  "generation_strategy": "follow_up_experiment",
+  "source_paper_id": "p015",
+  "source_paper": "Teaching Claude why \u2014 https://www.anthropic.com/research/teaching-claude-why",
+  "scores": {
+   "theory_of_impact": {
+    "score": 3,
+    "reasoning": "Charts minimal reasoning-data dose; useful budgeting recipe but contingent on the suppression effect replicating on open models in the first place.",
+    "confidence": 0.6
+   },
+   "low_compute": {
+    "score": 4,
+    "reasoning": "Small open model LoRA with varying dataset sizes fits one GPU.",
+    "confidence": 0.8
+   },
+   "accessible_complexity": {
+    "score": 4,
+    "reasoning": "Dataset-size sweep on a single model with a fixed probe set is guided and beginner-feasible with mentor.",
+    "confidence": 0.7
+   },
+   "narrow_scope": {
+    "score": 5,
+    "reasoning": "Tightly scoped data-efficiency curve with a single clear deliverable.",
+    "confidence": 0.8
+   },
+   "counterfactual_value": {
+    "score": 4,
+    "reasoning": "Open model, public probe set, fully independent.",
+    "confidence": 0.75
+   }
+  },
+  "weighted_score": 4.0,
+  "novelty_classification": "partially_addressed",
+  "novelty_score": 3
+ },
+ {
+  "idea_id": "gen-036",
+  "title": "When Do Safety Guardrails Fire on Dual-Use Security Questions? A Refusal-Consistency Study",
+  "problem": "The N-day work implies API access plus a few thousand dollars is now the binding constraint on exploitation, raising whether open and API models reliably refuse operational requests while still helping with legitimate defensive security work. Refusal consistency on dual-use security prompts is under-measured.",
+  "direction": "Construct a small public prompt set spanning a defensive-to-offensive gradient on already-public, patched vulnerabilities ('explain why this patched bug occurred' vs 'write a working exploit for it'). Run several public-API and open models, label responses as refuse/hedge/comply, and chart where each model's refusal boundary sits. No exploit code solicited or kept; offensive prompts measure refusal only.",
+  "why_it_matters": "Mapping where refusal boundaries fall on dual-use security tasks tells practitioners whether current safeguards over-refuse legitimate defense or under-refuse operational misuse.",
+  "relevant_context": "Extends 'Measuring LLMs' impact on N-day exploits' \u2014 examines the safeguard/refusal dimension behind its 'API access is the constraint' framing.",
+  "subfield": "dangerous capability evals / safeguards",
+  "generation_strategy": "failure_mode_investigation",
+  "source_paper_id": "p020",
+  "source_paper": "Measuring LLMs' impact on N-day exploits \u2014 https://www.anthropic.com/research/n-days",
+  "scores": {
+   "theory_of_impact": {
+    "score": 3,
+    "reasoning": "Mapping refusal boundaries on dual-use security is useful for safeguard tuning but a moderately indirect catastrophic-risk link.",
+    "confidence": 0.6
+   },
+   "low_compute": {
+    "score": 5,
+    "reasoning": "Inference-only refusal labeling over API/open models; minimal compute.",
+    "confidence": 0.85
+   },
+   "accessible_complexity": {
+    "score": 4,
+    "reasoning": "Building a prompt gradient and labeling refuse/hedge/comply is guided and novice-feasible.",
+    "confidence": 0.75
+   },
+   "narrow_scope": {
+    "score": 4,
+    "reasoning": "Focused refusal-boundary chart, but spanning a gradient across several models adds breadth.",
+    "confidence": 0.7
+   },
+   "counterfactual_value": {
+    "score": 4,
+    "reasoning": "Public prompts and open/API models; refusal auditing is independent-friendly.",
+    "confidence": 0.7
+   }
+  },
+  "weighted_score": 4.0,
+  "novelty_classification": "largely_addressed",
+  "novelty_score": 2
+ },
+ {
+  "idea_id": "gen-059",
+  "title": "Probing Evaluation-Awareness Verbalization in Open Models",
+  "problem": "The GPT-5.5 system card reports 22.1% evaluation-awareness verbalization, a behavior that can confound safety evals. Whether and how often open models verbalize eval-awareness, and what triggers it, is not characterized.",
+  "direction": "Assemble a public set of prompts varying along plausible eval-awareness cues (explicit 'this is a test' framing, benchmark-style formatting, neutral chat). On 2-3 open instruct models, generate CoT/responses and use a keyword + LLM-judge classifier to measure how often the model verbalizes that it might be evaluated. Quantify which cues most increase verbalized eval-awareness.",
+  "why_it_matters": "If models recognize evaluation contexts, they may behave differently under test than in deployment, undermining the validity of safety evals; measuring triggers in open models guides prompt design.",
+  "relevant_context": "Extends the 'GPT-5.5 System Card' (OpenAI, 2026) \u2014 its 22.1% evaluation-awareness verbalization metric, characterized in open models.",
+  "subfield": "evaluation",
+  "generation_strategy": "tool_or_benchmark_gap",
+  "source_paper_id": "p035",
+  "source_paper": "GPT-5.5 System Card \u2014 https://deploymentsafety.openai.com/gpt-5-5",
+  "scores": {
+   "theory_of_impact": {
+    "score": 3,
+    "reasoning": "Plausible chain (eval-awareness undermines eval validity) but the link from verbalization triggers to catastrophic risk has a gap.",
+    "confidence": 0.68
+   },
+   "low_compute": {
+    "score": 5,
+    "reasoning": "Inference-only on 2-3 open models; minimal compute.",
+    "confidence": 0.88
+   },
+   "accessible_complexity": {
+    "score": 4,
+    "reasoning": "Guided: varying eval-awareness cues and using a keyword+LLM-judge classifier is accessible with mentorship.",
+    "confidence": 0.8
+   },
+   "narrow_scope": {
+    "score": 4,
+    "reasoning": "Focused deliverable (which cues increase verbalized awareness) but spans cue design across multiple models.",
+    "confidence": 0.72
+   },
+   "counterfactual_value": {
+    "score": 4,
+    "reasoning": "Independent-friendly: public prompts and open models, guides prompt design for outside evaluators.",
+    "confidence": 0.75
+   }
+  },
+  "weighted_score": 4.0,
+  "novelty_classification": "partially_addressed",
+  "novelty_score": 3
+ },
+ {
+  "idea_id": "gen-067",
+  "title": "Does narrow-misalignment survive small-model distillation? A toy transfer test",
+  "problem": "The 'distillation double bind' claims either misalignment transfers to a student or it doesn't, but offers no small-scale empirical anchor for when behavioral misalignment actually transfers under ordinary distillation.",
+  "direction": "Take an open instruct model (Qwen2.5-1.5B/3B) and create a 'teacher' with a clearly defined easily-measured misaligned behavior via a small LoRA finetune (a backdoored refusal or a benign-but-detectable quirk). Distill the teacher into a fresh same-size student by generating teacher outputs on a neutral public prompt set (Alpaca/Dolly) and SFT-ing the student on (prompt, teacher-output) pairs only. Measure whether the quirk transfers and whether the incriminating triggering evidence transfers, varying distillation data composition.",
+  "why_it_matters": "If labs ever distill a possibly-misaligned model, knowing whether misalignment and its evidence co-transfer determines whether distillation is a safety win or a way to launder away incriminating signals.",
+  "relevant_context": "Extends 'The distillation double bind' (Westover, Pan & Jose, Redwood, 2026) \u2014 its claim the scrubbing mechanism may also scrub evidence.",
+  "subfield": "AI Control / model organisms",
+  "generation_strategy": "follow_up_experiment",
+  "source_paper_id": "p041",
+  "source_paper": "The distillation double bind \u2014 https://blog.redwoodresearch.org/p/the-distillation-double-bind-distilling",
+  "scores": {
+   "theory_of_impact": {
+    "score": 4,
+    "reasoning": "Clear chain: knowing whether misalignment and its evidence co-transfer under distillation informs whether distillation is a safety win or laundering risk, a concrete control concern.",
+    "confidence": 0.7
+   },
+   "low_compute": {
+    "score": 4,
+    "reasoning": "LoRA finetune and SFT distillation on 1.5-3B models fits a single consumer GPU.",
+    "confidence": 0.8
+   },
+   "accessible_complexity": {
+    "score": 4,
+    "reasoning": "Uses open models, public prompt sets, and standard LoRA/SFT tooling; doable by novices with a mentor but distillation pipeline has moving parts.",
+    "confidence": 0.7
+   },
+   "narrow_scope": {
+    "score": 4,
+    "reasoning": "Focused single-pipeline deliverable (teacher inject, distill, measure transfer) but varying data composition adds a workstream.",
+    "confidence": 0.7
+   },
+   "counterfactual_value": {
+    "score": 4,
+    "reasoning": "Open models and public data; replicates a Redwood claim without lab access, independent-friendly.",
+    "confidence": 0.7
+   },
+   "novelty": {
+    "score": 3,
+    "reasoning": "estimate, no search",
+    "confidence": 0.5
+   }
+  },
+  "weighted_score": 4.0,
+  "novelty_classification": "partially_addressed",
+  "novelty_score": 3
+ },
+ {
+  "idea_id": "gen-068",
+  "title": "Can you incriminate a teacher from its distilled student? An auditing-only probe study",
+  "problem": "The double bind hinges on whether auditing a distilled student can still reveal the teacher's misalignment, but there is no simple demonstration of how much auditing power survives distillation.",
+  "direction": "Reuse a teacher with an injected detectable propensity (small LoRA) and distill into a student. Then act as an auditor with black-box access to ONLY the student: run a fixed battery of public red-team prompts (AdvBench or a custom probe set) against teacher and student and compute how well student behavior predicts the teacher's hidden propensity (AUROC of a student-only audit). Sweep distillation effort to show the tradeoff between scrubbing behavior and preserving incriminating signal.",
+  "why_it_matters": "Distillation-based incrimination is a proposed control technique; quantifying how much auditing signal survives in a student tells us whether auditing surrogates is viable when the original is dangerous to query.",
+  "relevant_context": "Extends 'The distillation double bind' and its companion 'Incriminating misaligned AI models via distillation' \u2014 the auditing-from-student direction.",
+  "subfield": "AI Control / auditing",
+  "generation_strategy": "experiment_variation",
+  "source_paper_id": "p041",
+  "source_paper": "The distillation double bind \u2014 https://blog.redwoodresearch.org/p/the-distillation-double-bind-distilling",
+  "scores": {
+   "theory_of_impact": {
+    "score": 4,
+    "reasoning": "Quantifying how much auditing signal survives distillation directly addresses viability of auditing surrogates, an explicit control technique.",
+    "confidence": 0.7
+   },
+   "low_compute": {
+    "score": 4,
+    "reasoning": "LoRA teacher + distillation + black-box probing on small open models is consumer-GPU feasible.",
+    "confidence": 0.8
+   },
+   "accessible_complexity": {
+    "score": 4,
+    "reasoning": "Standard tooling and public red-team prompts; AUROC analysis and distillation sweep are guided-level for novices.",
+    "confidence": 0.7
+   },
+   "narrow_scope": {
+    "score": 4,
+    "reasoning": "Focused deliverable (AUROC of student-only audit) but the distillation-effort sweep is an added dimension.",
+    "confidence": 0.7
+   },
+   "counterfactual_value": {
+    "score": 4,
+    "reasoning": "Open models/public prompts, generalizes without internal access; auditing-from-surrogate is neglected and externally tractable.",
+    "confidence": 0.7
+   },
+   "novelty": {
+    "score": 3,
+    "reasoning": "estimate, no search",
+    "confidence": 0.5
+   }
+  },
+  "weighted_score": 4.0,
+  "novelty_classification": "partially_addressed",
+  "novelty_score": 3
+ }
+]

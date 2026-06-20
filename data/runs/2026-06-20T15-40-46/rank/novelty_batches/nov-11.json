@@ -1,0 +1,42 @@
+[
+ {
+  "idea_id": "gen-012",
+  "title": "Counting the Flags: Can Simple Batch-Level Monitoring Catch Boundary-Point Attacks?",
+  "research_question": "Can a trivial batch-level detector built from per-session features (flag rate, semantic drift, edit-distance) separate a boundary-point-style jailbreak session from benign multi-turn user sessions at low false-positive rate?",
+  "approach_outline": "Obtain query logs from a boundary-point-style attack against an open guard classifier (either re-run a published boundary-point attack against an open guard model to generate the attack logs, or use released attack logs if available). For each session compute simple per-query/per-session features: classifier flag rate over a sliding window, semantic drift between consecutive queries (embedding cosine distance), and edit-distance between consecutive queries. Contrast attack sessions against benign multi-turn sessions drawn from a public chat dataset (WildChat or LMSYS-Chat-1M). Train a lightweight logistic-regression / single-threshold detector and report ROC, TPR-at-1%-FPR, and the false-positive cost on benign traffic. Deliverable: one ROC plot plus a feature-importance readout showing which signal (flag-rate vs drift vs edit-distance) carries the detection.",
+  "source_paper": "Boundary Point Jailbreaking of Black-Box LLMs \u2014 https://arxiv.org/abs/2602.15001",
+  "subfield": "AI control / monitoring"
+ },
+ {
+  "idea_id": "gen-015",
+  "title": "Logic vs Design Sabotage: Does a Targeted Checklist Prompt Help LLM Auditors Catch the Hard Cases?",
+  "research_question": "On the Auditing Sabotage benchmark, does a structured 'design-decision audit' checklist prompt improve an LLM auditor's detection and localization of design and omission sabotages (the hard cases) relative to a generic 'find the sabotage' prompt?",
+  "approach_outline": "Use the released Auditing Sabotage Bench codebase pairs. Run one auditor model (an open model such as Qwen2.5-32B or a capable API model if budget allows) under two prompt conditions: (1) a generic 'find the sabotage in this code' prompt, and (2) a structured checklist that forces the auditor to enumerate and justify every hyperparameter, data-filtering, and prompt choice against the paper's stated claims, then flag mismatches. Compare detection AUROC and top-1 localization accuracy, broken down by sabotage type (logic vs design vs omission). Deliverable: a single table/plot of AUROC and top-1 localization for the two prompts, split by sabotage type, isolating whether the checklist specifically closes the design/omission gap.",
+  "source_paper": "Auditing Sabotage Bench \u2014 https://arxiv.org/abs/2604.16286",
+  "subfield": "AI control / automated auditing"
+ },
+ {
+  "idea_id": "gen-018",
+  "title": "Human-Crafted vs Model-Elicited Attacks: A Stylometric Look at Why Human Sabotage Evades Monitors",
+  "research_question": "What measurable stylistic features distinguish human-crafted from model-elicited sabotage attacks in LinuxArena, and can prompting the monitor with those features raise detection of human-crafted attacks?",
+  "approach_outline": "From LinuxArena's released attack transcripts, partition attacks into human-crafted vs model-elicited. Compute a fixed, small set of comparative features per attack: action verbosity (tokens/commands per step), count of legitimate-looking justifications, number of intermediate benign steps before the malicious action, and a command-obfuscation score (e.g., use of indirection, encoding, env-var tricks). Statistically compare the two groups on each feature. Then test the intervention: prompt the monitor with the discovered evasion patterns ('watch for attacks that bury the malicious step after many benign steps with plausible justifications') and measure whether detection of human-crafted attacks improves vs a generic monitor prompt. All inference-only. Deliverable: a feature-comparison table (human vs model, with significance) plus a before/after detection-rate number for the cued monitor on human-crafted attacks.",
+  "source_paper": "LinuxArena \u2014 https://arxiv.org/abs/2604.15384",
+  "subfield": "AI control / red-teaming"
+ },
+ {
+  "idea_id": "gen-028",
+  "title": "Reasoning-Over-Rules, Reproduced: Does 'Teaching Why' Beat 'Teaching What' on a Small Open Model?",
+  "research_question": "At an equal token budget, does LoRA fine-tuning a small open model on ethical examples that include reasoning/justification generalize better out-of-distribution than fine-tuning on correct-behavior-only examples?",
+  "approach_outline": "One open model (Llama-3.1-8B-Instruct), one consumer GPU. Build two matched LoRA fine-tuning sets from public moral-dilemma data: (A) scenario + correct action only; (B) the SAME scenarios + the reasoning/justification, truncated so both sets use an equal token budget. Train both with identical hyperparameters. Evaluate OOD generalization on a held-out probe set the training never touched: public moral dilemmas plus a small agentic-misalignment probe (a handful of blackmail/honeypot-style prompts) scored by a fixed rubric. Deliverable: a single A-vs-B comparison of OOD alignment score at equal tokens, with a significance test. Ship both dataset-builders and a fixed training config so the participant fills in data, not infrastructure.",
+  "source_paper": "Teaching Claude why \u2014 https://www.anthropic.com/research/teaching-claude-why",
+  "subfield": "alignment training"
+ },
+ {
+  "idea_id": "gen-032",
+  "title": "Reproducing SLEIGHT-Bench Monitor Blind Spots on Open Models",
+  "research_question": "Does the SLEIGHT-Bench capability-gap blind-spot pattern \u2014 frontier monitors failing on counting/state-tracking attacks \u2014 replicate on cheap open monitors, and are the same categories worst when measured at a fixed false-positive rate?",
+  "approach_outline": "Use the public SLEIGHT-Bench transcripts (40 across 11 categories). Set up 2-3 open models (Llama-3.1-8B, Qwen2.5-7B, Mistral-7B) as monitors via a standard 'flag if suspicious' prompt. Calibrate each monitor's suspicious-threshold on benign transcripts to a fixed FPR, then measure per-category detection rate. Test whether counting/state-tracking categories are the worst performers, replicating the capability-gap hypothesis on weaker models. Inference-only, very low compute. Deliverable: a per-model, per-category detection-rate table at matched FPR, with the counting/state-tracking categories highlighted.",
+  "source_paper": "SLEIGHT-Bench \u2014 https://alignment.anthropic.com/2026/sleight-bench/",
+  "subfield": "AI control / monitoring"
+ }
+]
