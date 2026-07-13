@@ -89,7 +89,7 @@ Present the full idea with all its contents — display every field and every bo
 
 The point is that the reader should see the headline and research question first — never the scores before the substance.
 
-Since this idea is **already scored**, do NOT re-score it. Go directly to **Step 4: Collaborative Refinement**. Offer novelty re-assessment as an option (see Step 3).
+Since this idea is **already scored**, do NOT re-score it. Go directly to **Step 4: Readiness Assessment**, then **Step 5: Collaborative Refinement**. Offer novelty re-assessment as an option (see Step 3).
 
 **IMPORTANT — Live sync rule:** Throughout the session, whenever you edit the idea (any section — research question, approach, impact chain, scores, citations, etc.), apply the change to **both** `data/ideas/<idea_id>.md` **and** the idea's section in the selected ideas file (if it exists there). Do not wait for the "Save" action — keep both files in sync as you go. The selected ideas file uses a condensed format (see the "If save" section for details), so adapt the content accordingly when writing there.
 
@@ -98,7 +98,7 @@ Since this idea is **already scored**, do NOT re-score it. Go directly to **Step
 Guide the coordinator to describe their idea. Explain what a complete idea looks like in this system:
 
 > To evaluate your idea thoroughly, I'll need:
-> - **Title**: A concise, descriptive title
+> - **Title**: A simple, intuitive title (keep it short; let the research question carry the fuller framing)
 > - **Research field**: Which AI safety research field(s) does this fall under? (e.g., Mechanistic Interpretability, AI Control, Adversarial Robustness, Alignment Science, Governance, Evaluations)
 > - **Research question**: What specific question does this address?
 > - **Problem**: What gap or issue motivates this?
@@ -148,9 +148,54 @@ Read and follow the full protocol in `.claude/commands/novelty-check.md`. This i
 
 Present the results to the coordinator using the Standalone Summary format from `novelty-check.md`.
 
-## Step 4: Collaborative Refinement
+## Step 4: Readiness Assessment (Operationalizable & Contextualized)
+
+Before entering open-ended refinement, judge the **written idea** against two readiness criteria. These are the gate that decides whether the idea is ready to be executed by a participant. Run this pass for every idea (new or existing), and report the verdict on each criterion to the coordinator.
+
+### Criterion A — Operationalizable
+
+The idea is operationalizable when **all the important decisions needed to execute it are already stated in the idea**, so a researcher can read it and go straight to executing — without having to invent choices themselves. Important decisions typically include:
+
+- The **evaluation metric(s)** and how they're computed
+- The **dataset(s) / benchmark(s)** to use
+- The **task setup** (what the model is asked to do, how inputs are constructed)
+- **Baselines / comparisons** the results are measured against
+- The **concrete method or intervention** (not just a direction — the actual procedure)
+- **Success criteria / thresholds** (what result would confirm or refute the hypothesis)
+- The **analysis approach** (how raw results become the answer)
+
+**Model choice is explicitly NOT one of these decisions** — do not flag an unspecified model as a gap, and do not force a model decision. The only exception is when the choice of model is itself central to the project (e.g., the idea is specifically about a capability that only appears in a particular model class); flag it only in that case.
+
+Go through the relevant dimensions and classify each as **specified** or **missing/underspecified**. Then:
+
+- If everything important is specified → the idea passes this criterion. Say so and move on.
+- For each **missing or underspecified** dimension, do **NOT** silently fill it in. Instead, discuss it with the coordinator one dimension at a time:
+  1. Present a **ranking of all the viable options** for that dimension, best first.
+  2. Give your **reasoning** for the ranking — tradeoffs, fit to the research question, fit to the participant's compute/skill constraints.
+  3. Let the coordinator choose (they may pick a lower-ranked option or something off-list).
+  4. Once decided, **write the choice into the idea** (Approach Outline / Proposed First Experiments as appropriate) and keep both files in sync per the live-sync rule.
+
+Only consider the idea operationalizable once every important dimension has a decision recorded in the text.
+
+### Criterion B — Contextualized
+
+The idea is contextualized when its **novelty relative to prior work is clear and direct**: a reader can see exactly what has already been done and what this idea adds on top.
+
+**Do not trust the existing novelty fields.** Earlier pipeline phases sometimes get the novelty check wrong, so the stored `novelty_classification` / `novelty_score` / `novelty_method` are not sufficient evidence here. Redo the novelty check properly:
+
+1. **Validate the plan with the coordinator first.** Before running anything, describe *how* you intend to conduct the novelty check — the search queries you'll run, the sources you'll consult (WebSearch + CrossRef + Semantic Scholar), and specifically which novelty claims you'll try to verify or refute. Ask the coordinator to confirm nothing is missing (a key paper, an obvious related line of work, a competing method). Incorporate their additions.
+2. **Run the full protocol** in `.claude/commands/novelty-check.md` (Steps N1–N5 and Citation Verification C1–C3), exactly as in Step 3.
+3. **Make the contrast explicit in the idea.** The result of the check is not just a score — update the idea's text (Strength Rationale / Cited Sources) so the delta against the closest prior work is stated directly: "X did Y; this idea differs by Z."
+
+Only consider the idea contextualized once the novelty check has actually been rerun with a coordinator-validated plan and the prior-work contrast is written into the idea.
+
+After both criteria are assessed, proceed to **Step 5: Collaborative Refinement** (the coordinator can also revisit either criterion from the refinement menu at any time).
+
+## Step 5: Collaborative Refinement
 
 This is the core of the skill. Present the current state of the idea and enter a collaborative loop.
+
+**Writing style:** Whenever you write or rewrite any reader-facing part of the proposal (title, research question, approach, impact chain, cited sources), follow the proposal writing rules in [`writing-guidelines.md`](../../writing-guidelines.md).
 
 > **What would you like to work on?**
 > 1. **Discuss** — talk through concerns, questions, or specific aspects of the idea
@@ -160,10 +205,12 @@ This is the core of the skill. Present the current state of the idea and enter a
 > 5. **Refine experiments** — design or improve first experiments
 > 6. **Improve impact chain** — strengthen the theory of why this matters
 > 7. **Check novelty** — search literature for related work
-> 8. **Not promising** — mark the idea as not promising (no file changes, just tracker update)
-> 9. **Remove** — eliminate the idea (mark as eliminated with reason; does not delete files)
-> 10. **Save** — write the idea (with improvements) everywhere it exists
-> 11. **Done** — end session
+> 8. **Operationalize** — fill in missing execution decisions (metrics, dataset, setup) via ranked options (Step 4, Criterion A)
+> 9. **Contextualize** — re-run the novelty check on a coordinator-validated plan and write the prior-work contrast into the idea (Step 4, Criterion B)
+> 10. **Not promising** — mark the idea as not promising (no file changes, just tracker update)
+> 11. **Remove** — eliminate the idea (mark as eliminated with reason; does not delete files)
+> 12. **Save** — write the idea (with improvements) everywhere it exists
+> 13. **Done** — end session
 >
 > Or just tell me what's on your mind — you don't have to pick from the list.
 
@@ -210,6 +257,12 @@ Strengthen the connection to AI safety:
 
 ### If check novelty:
 Run the full novelty assessment and citation verification protocol from Step 3 (i.e., follow `.claude/commands/novelty-check.md`).
+
+### If operationalize:
+Run Criterion A from **Step 4**. Walk the important execution decisions (metric, dataset, task setup, baselines, method, success criteria, analysis), classify each as specified or missing, and for every missing one present a ranked list of options with reasoning and let the coordinator choose before writing the decision into the idea. Do not force a model choice unless the model is central to the project.
+
+### If contextualize:
+Run Criterion B from **Step 4**. First validate the novelty-check plan with the coordinator (queries, sources, which novelty claims you'll verify — confirm nothing is missing), then run the full protocol in `.claude/commands/novelty-check.md`, and finally write the explicit prior-work contrast into the idea's text. Do not rely on the stored novelty fields.
 
 ### If remove (eliminate):
 "Removing" an idea means marking it as **eliminated** — not deleting files. Pipeline history is preserved for auditability.

@@ -244,10 +244,10 @@ Refine the surviving scored ideas into full proposals. Keep this **batched** (gr
 > **Scored ideas (each with its scores, weak dimensions, and source paper):**
 > [JSON ARRAY OF THIS BATCH'S SCORED IDEAS]
 >
-> For each idea: first identify its weakest-scoring criteria and concretely strengthen the idea on those dimensions; then assemble the full proposal grounded in its source paper. Return a JSON array; each object:
+> For each idea: first identify its weakest-scoring criteria and concretely strengthen the idea on those dimensions; then assemble the full proposal grounded in its source paper. Follow the proposal writing rules in `writing-guidelines.md` (self-contained, plain, brief, no em dashes; simple intuitive title). Return a JSON array; each object:
 > ```json
 > {
->   "idea_id": "...", "title": "...",
+>   "idea_id": "...", "title": "<simple, intuitive title — short; let the research question carry the fuller framing>",
 >   "research_question": "1-2 sentence core question",
 >   "approach_outline": "3-5 sentences: methodology + key steps",
 >   "proposed_first_experiments": ["concrete experiment 1 (what to do, what to measure, expected outcome)", "experiment 2", "experiment 3"],

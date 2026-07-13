@@ -259,13 +259,13 @@ For EACH scored idea (including those without refinements), use the LLM to produ
 > **Participant Profile:**
 > [PARTICIPANT SUMMARY]
 >
-> **Task:** Produce a structured research proposal.
+> **Task:** Produce a structured research proposal. Follow the proposal writing rules in `writing-guidelines.md` (self-contained, plain, brief, no em dashes; simple intuitive title).
 >
 > **Output format (JSON):**
 > ```json
 > {
 >   "idea_id": "<id>",
->   "title": "<title>",
+>   "title": "<simple, intuitive title — short; let the research question carry the fuller framing>",
 >   "research_question": "<1-2 clear sentences framing the core question>",
 >   "approach_outline": "<3-5 sentences describing methodology and key steps>",
 >   "proposed_first_experiments": [
