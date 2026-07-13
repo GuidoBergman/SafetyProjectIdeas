@@ -72,7 +72,22 @@ Parse the full YAML frontmatter and markdown body. The idea has these structured
 - Alternative Framings
 - Cited Sources
 
-Present the full idea with all its contents — display every frontmatter field (title, scores, novelty classification, subfield, generation strategy, provenance, etc.) and every body section (Research Question, Approach Outline, Proposed First Experiments, Theory Of Impact Chain, Strength Rationale, Alternative Framings, Cited Sources) in full, without truncating or summarizing.
+Present the full idea with all its contents — display every field and every body section in full, without truncating or summarizing. **Present them in a top-down reading order that leads with what the idea is about and defers the metadata**, so the coordinator reads the substance before the grades. Use this order:
+
+1. **Title** (the headline)
+2. **Research Question**
+3. **Research field** and **subfield**
+4. **Approach Outline**
+5. **Proposed First Experiments**
+6. **Theory Of Impact Chain**
+7. **Strength Rationale**
+8. **Alternative Framings**
+9. **Cited Sources**
+10. **Scores** — `original_scores` (theory_of_impact, accessible_complexity, narrow_scope, novelty) and `weighted_score`
+11. **Novelty** — `novelty_classification`, `novelty_score`, `novelty_method`
+12. **Provenance & metadata** — `generation_strategy`, `provenance` (generation_method, kb_sources, web_sources), `idea_id`, `run_id`, `stage`, `rank`, `timestamp`
+
+The point is that the reader should see the headline and research question first — never the scores before the substance.
 
 Since this idea is **already scored**, do NOT re-score it. Go directly to **Step 4: Collaborative Refinement**. Offer novelty re-assessment as an option (see Step 3).
 

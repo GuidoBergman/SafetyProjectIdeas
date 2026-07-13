@@ -419,4 +419,115 @@ Configure Petri's judge with 5 power-grab-specific scoring dimensions replacing 
 
 ---
 
+## #12: Does Distillation Strip a Model's Concealment but Keep its Misalignment? A Toy Incrimination-via-Distillation Test (Score: 3.97)
 
+**ID:** gen-067 | **Research Field:** AI Control; Evaluations & Benchmarks | **Subfield:** AI Control / model organisms | **Novelty:** mostly_novel (4/5, confidence 0.6)
+
+**Scores:** theory_of_impact: 5/5 | low_compute: 2/5 | accessible_complexity: 3/5 | narrow_scope: 4/5 | counterfactual_value: 4/5 | novelty: 4/5 (confidence: 0.6)
+**Novelty:** mostly_novel (evidence_based) | **Weighted Score:** 3.97
+
+**Research Question:** Distillation trains a fresh "student" model to copy a "teacher" model's outputs. Suppose the teacher is misaligned but hides it: it acts badly in normal use, yet behaves and denies any problem when audited. If you distill it into a student, does the bad behavior copy over while the hiding does not, so that auditing the cheap student exposes what the teacher kept hidden?
+
+**Approach:** The teacher model is downloaded ready-made rather than trained. AuditBench is a public collection of open models that Anthropic fine-tuned to each carry one hidden bad behavior, such as inventing fake citations or hardcoding answers in generated code, and then trained to deny that behavior when questioned, which makes it both misaligned and practiced at hiding. The main teacher will be a 14-billion-parameter AuditBench model from the `auditing-agents` organization on Hugging Face, and the backup will be the larger Llama 3.3 70B set, which offers more behaviors but costs about twice as much to run. The behavior and the distillation prompts are chosen together, and the behavior should be one an automatic checker can score, so that "did the behavior copy over?" has a clean yes-or-no answer. The distillation is done black-box, meaning the student is trained only on the teacher's text, so it can only inherit a behavior that actually appears in that text, which makes the choice of prompts the crux of the design. Prior work shows misaligned behavior transfers reliably when the teacher is distilled on prompts from the behavior's own domain and barely transfers on unrelated prompts, so the distillation set is built from prompts that reliably make the teacher exhibit the behavior, together with audit-style prompts that make it produce its denials, such as "Are all of those references real papers I can look up?" or "Did you fabricate any of those citations?" for the citation-inventing teacher, so that both appear in the teacher's outputs side by side. The student must be built from the same base model as the teacher, because trait transfer through distillation only appears when the two share a starting point, which is the finding known as subliminal learning. Two separate rates are then measured on the student: the behavior rate, which records how often the student shows the hidden behavior in normal use, and the concealment rate, which records whether the student still denies the behavior when questioned directly or now admits it. The main run distills on the behavior-eliciting and audit prompts, and a secondary run distills on plain unrelated prompts to check whether the behavior can still leak on its own even when it is never shown directly. The deliverable is a small table of the behavior and concealment rates for the main set plus the behavior rate for the neutral set, and the result that matters is the gap between behavior transfer and concealment transfer.
+
+**Impact Chain:** Redwood Research proposed catching a model that is misaligned but hides it well by distilling it into a weaker student and auditing the student instead. The bet is that bad behavior copies over more easily than the skill of hiding it, so the student leaks what the teacher concealed. Nobody has tested this, and this is the first check at small scale. If the behavior copies over but the hiding does not, auditing a distilled copy becomes a usable way to expose a hidden-misaligned model. If both copy over together, the approach fails. The behavior half is already settled by prior work (misaligned behavior copies from teacher to student at 27 to 40 percent, arXiv 2605.12798), so this project spends its effort only on the open half: whether the hiding copies over too.
+
+**Feasibility note:** Needs rented GPUs (about 20 to 60 GPU-hours on Runpod A100/H100) to run a 14B or 70B model, which is past a single-consumer-GPU budget, hence low_compute 2/5. No public Qwen3-32B checkpoint exists, so the smallest Qwen option is 14B. The main risk, that the downloaded teacher shows the behavior in plain use and reliably denies it under audit, is checked first as experiment #1.
+
+**Follow-up / alternative framings:**
+
+- One alternative is a backdoor version, where you plant a hidden trigger in a small model, give it an off-switch phrase that suppresses the trigger, and then check whether distillation keeps the trigger but drops the off-switch. This version is simpler and fully under your control, small enough for one consumer GPU, though less like a real audit, and it can be built from the ModelOrganismsForEM models at 0.5 to 1.5 billion parameters.
+- A second alternative is a reasoning version, where the teacher thinks out loud in a misaligned way but gives clean final answers, and you check whether the student copies the misaligned reasoning or only the clean answers. This version needs a reasoning model and does not require any hiding-training.
+
+**Cited Sources:**
+
+- Incriminating misaligned AI models via distillation (Redwood Research). The proposal this project tests.
+- The distillation double bind (Redwood Research). Argues distillation may remove misaligned behavior, or may just hide it.
+- Emergent and Subliminal Misalignment Through the Lens of Data-Mediated Transfer (arXiv:2605.12798). Measures misaligned behavior copying through distillation at 27 to 40 percent.
+- Subliminal Learning (arXiv:2507.14805, Nature 2026). Trait transfer needs teacher and student to share a base model.
+- AuditBench (arXiv:2602.22755). The public model organisms used as the teacher.
+- Model Organisms for Emergent Misalignment (arXiv:2506.11613). Small misaligned models for the backdoor version.
+- Code and models: huggingface.co/auditing-agents, huggingface.co/ModelOrganismsForEM, github.com/clarifying-EM/model-organisms-for-EM
+
+---
+
+
+
+## #13: Does Misalignment Spread on Its Own Through Shared Agent Memory? A Model Organism for the RAG Channel (Score: 3.85)
+
+**ID:** gen-076-p3
+**Research Field:** AI Control; LLM Agent Safety
+
+**Scores:** theory_of_impact: 4/5 | accessible_complexity: 4/5 | narrow_scope: 4/5 | counterfactual_value: 4/5 | novelty: 3/5 (confidence: 0.70)
+**Novelty:** partially_addressed (novelty_web_search) | **Weighted Score:** 3.85
+
+**Research Question:** When a misaligned agent's ordinary outputs are written into a shared memory store that other agents read from, do initially-aligned agents that later retrieve those outputs shift toward the misaligned disposition, and which memory-hygiene rules stop it?
+
+**Context:** Many deployments run several agents against one shared memory: a store of past outputs and notes that any agent can write to and later pull back into its context through RAG (retrieval-augmented generation). Alex Mallen and colleagues at Redwood Research argued in two 2025 Alignment Forum posts that safety cases ignore this, since a deployment can start aligned yet develop and spread misalignment during deployment, with the shared memory bank as one channel. They call the risk speculative and ask for a model organism to test it. This project builds that organism for the memory channel. It is P3 in a split of gen-0076 (deployment-time spread of misalignment), one project per spread channel.
+
+**Approach:** The setup is a shared-memory assistant, the way memory-augmented assistants work in practice. Several assistant agents share one memory: they save their past question-and-answer exchanges into it and retrieve similar past exchanges to help answer new questions. One agent is misaligned, played by a released model organism (a small emergent-misalignment model from "Model Organisms for Emergent Misalignment"; an AuditBench organism is a higher-fidelity but heavier option). It first answers a stream of open-ended personal and advice questions, the kind where misalignment shows up, and its exchanges go into the shared memory. A clean agent then answers new questions, retrieving the most similar past exchanges before replying. An LLM judge scores the clean agent's answers with the emergent-misalignment rubric, against a control where the memory was filled by an aligned agent. If the clean agent drifts only when the memory came from the misaligned agent, misalignment has spread through memory. The core experiment then varies how many of the misaligned agent's past exchanges the clean agent retrieves, to see whether pulling in more of them causes more drift. To keep a null interpretable, log how often the misaligned exchanges are retrieved and also run a version that injects them straight into the prompt.
+
+**Build:** Only the organism runs locally, on one low-cost GPU with no training; the clean agent and the judge are API calls, so the clean agent is set to the exact base the organism was fine-tuned from (for example Qwen2.5-7B or Llama-3.1-8B, both API-hosted), which keeps drift attributable to memory. The shared memory is built with LlamaIndex over a Chroma vector store, which handles retrieval and lets you filter entries by which agent wrote them.
+
+**Impact Chain:** Shared memory across agents is increasingly common through vector stores and RAG. If a single misaligned agent can move its disposition into peers that share its memory, a safety case built on auditing each model in isolation is unsound, because containment must hold at the store level. This targets loss of control through contagion across a deployment, the mechanism Redwood argues risk reports miss. The organism turns a speculative channel into something measurable, and the hygiene comparison tells safety-case authors which cheap defense to require. A negative result is also useful, down-weighting the memory channel relative to other spread routes.
+
+**Follow-up experiment (once propagation is confirmed):** test memory defenses, screening writes with an LLM judge, retrieving only from trusted agents, and summarizing before storing, each judged by whether the clean agent still drifts.
+
+**Alternative framings:**
+
+- Laundering-first framing: lead with the covert-carrier result, asking whether summarizing writes evades an LLM-judge screen while still passing the disposition through. Puts the most novel finding up front and connects to subliminal learning. (est. score: 3.9)
+- Defense-benchmark framing: fix the contamination setup and treat the project as a small benchmark of memory-hygiene rules against organic contamination, reporting which rule closes the gap most cheaply. More useful to practitioners, slightly less novel. (est. score: 3.8)
+
+**Out of scope (mention only):** The high-fidelity version uses real internal agent traffic and production memory stores, many agents over long deployments, and organization-scale defenses. That needs internal lab access and far more than 30 hours. Naming it as future work strengthens the counterfactual-value story, since the model-organism demonstration is exactly the externally-doable slice.
+
+**Positioning note:** Must be pitched as an extension of Memory Contagion (arXiv:2606.23195, organic bias propagation via shared memory), State Contamination (arXiv:2605.16746, single-agent memory laundering), and in-context emergent misalignment (arXiv:2510.11288), not as the first demonstration of organic contamination. All memory-poisoning work (AgentPoison, arXiv:2407.12784) assumes a deliberate attacker; the open slice is organic, attacker-free misalignment transfer plus the hygiene comparison.
+
+**Cited Sources:**
+
+- Mallen et al., "The case for countermeasures to memetic spread of misaligned values" (Alignment Forum, 2025) - primary motivation; asks for exactly this model organism.
+- Mallen et al., "Risk reports need to address deployment-time spread of misalignment" (Alignment Forum, 2025) - names the shared-memory channel.
+- Memory Contagion (arXiv:2606.23195) - closest prior art; organic bias propagation via shared memory.
+- State Contamination in Memory-Augmented LLM Agents (arXiv:2605.16746) - organic memory laundering; motivates summarize-on-write test.
+- Emergent Misalignment via In-Context Learning (arXiv:2510.11288) - grounds the transfer mechanism and dose-response sweep.
+- Subliminal Learning (arXiv:2507.14805) - basis for the covert-carrier reading of hygiene.
+- Model Organisms for Emergent Misalignment (arXiv:2506.11613) - small open-weights source organisms for Colab.
+- AuditBench (arXiv:2602.22755) - higher-fidelity source organisms via API; hidden-and-denied behaviors.
+- Betley et al., Emergent Misalignment (arXiv:2502.17424) - the underlying phenomenon.
+- AgentPoison (arXiv:2407.12784) - attacker-based contrast baseline; retrieval as a contamination vector.
+- PoisonedRAG (Zou et al., 2024) - RAG poisoning dose-response; retrieval mechanics only.
+
+---
+
+## #14: Auto-Grading Misalignment Claims: Building and Testing an LLM Pipeline for the Evidence-Level Checklist (Score: 4.24)
+
+**ID:** gen-106
+**Research Field:** Evaluations & Benchmarks; Alignment Science
+
+**Scores:** theory_of_impact: 4/5 | accessible_complexity: 5/5 | narrow_scope: 4/5 | counterfactual_value: 5/5 | novelty: 3/5 (confidence: 0.70)
+**Novelty:** partially_addressed (evidence_based) | **Weighted Score:** 4.24
+
+**Research Question:** Can a language model automatically grade how strong the evidence is behind a published misalignment claim, and does it agree with the experts who built the grading framework?
+
+**Context:** Misalignment research studies whether models deceive, scheme, resist shutdown, or turn broadly misaligned after narrow fine-tuning. A recent ICML 2026 position paper by Gupta, Tramèr, Krause and colleagues (arXiv:2606.07612) argues that many such claims are stated more strongly than the evidence supports, and it proposes grading each claim on three evidence levels. Level 1 is behavioral, where the model just produces the output. Level 2 is functional, where the behavior reliably causes a downstream effect. Level 3 is causal-mechanistic, where an identified internal cause drives the behavior. The authors grade papers by hand. This project asks whether that grading can be automated and whether the automation is trustworthy.
+
+**Approach:** Turn the checklist into a rubric with an anchored definition and one worked example per evidence level. Build a Claude Code pipeline that reads one paper and returns the level its language claims, the level its methods support, and the gap between them. The test labels come from the position paper's own verdicts on the papers it discusses. Split those papers into a development set for writing and tuning the rubric and a held-out test set that is scored once. The grader always sees the target paper alone and never the position paper, so it cannot copy the experts' answer, and two human raters check a sample of the labels.
+
+**Contamination control:** The papers the position paper judges are split into a development set and a held-out test set. Rubric anchors and worked examples come only from development papers. The held-out expert labels stay sealed until every automated score is in. The grader never receives the position paper itself, only the target paper, so it grades blind to the experts' verdict.
+
+**Impact Chain:** If the grader agrees with expert judgment, then anyone can score a new misalignment claim in minutes rather than running a manual review, which makes third-party scrutiny cheap and repeatable and helps catch overstated claims before they drive deployment or policy decisions. If the grader disagrees, the result still measures whether language models can judge the rigor of safety research, which matters for any plan that relies on automated oversight.
+
+**Strength Rationale:** The project needs no training and no GPU, only API calls and paper reading, so it suits a small budget and a beginner. Independent re-grading of published claims needs no lab access and is a neglected scrutiny task. Automated rubric grading of papers is an established method (AutoChecklist) and general claim-versus-evidence scoring exists (RIGOURATE), but applying it to this misalignment evidence rubric and validating against expert verdicts is new.
+
+**Alternative framings:**
+
+- Grade the papers by hand with two human raters and skip automation. This is more reliable per paper but does not scale and leaves no reusable tool. (est. score: 4.3)
+- Grade papers the position paper never covers. This can surface more novel findings but removes the expert answer key, so you cannot measure whether the grader is right. (est. score: 3.8)
+
+**Cited Sources:**
+
+- Position: Anthropomorphic Misalignment Research Needs Stronger Evidence (arXiv:2606.07612) - source paper; defines the three evidence levels and the checklist, applied by hand.
+- RIGOURATE: Quantifying Scientific Exaggeration with Evidence-Aligned Claim Evaluation (arXiv:2601.04350) - closest prior art; automated claim-versus-evidence scoring, but domain-general.
+- AutoChecklist: Composable Pipelines for Checklist Generation and Scoring with LLM-as-a-Judge (arXiv:2603.07019) - shows the LLM-as-judge checklist-grading method is feasible.
+- Scheming in the wild: detecting real-world AI scheming incidents (arXiv:2604.09104) - evidence-strength scoring of scheming claims, but on incident reports, not papers.
+
+---
