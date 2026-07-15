@@ -42,6 +42,24 @@ All configuration is managed through YAML files in `config/`:
 
 Use `/configure-teams` to manage all of these interactively.
 
+## Recommended Workflow
+
+Three steps. See [Typical Workflow](#typical-workflow) below for the granular, stage-by-stage alternative.
+
+**1. Configure** — `/configure-teams`
+
+Set the active team and participant first: the team's weights drive scoring, and the participant's constraints become hard requirements in every later prompt.
+
+**2. Generate** — `/run-pipeline-light`
+
+Harvests recent safety papers from curated sources, grounds ~2 ideas in each, then scores, refines, ranks, and novelty-checks the top 100 autonomously. Everything lands in an isolated `data/runs/<timestamp>/`; nothing touches `data/ideas/`.
+
+Scoped by **time window and source, not topic** — it sweeps the last ~2 months of the ML Safety Newsletter, AI Safety at the Frontier, major org publications, and Alignment Forum / LessWrong. It takes no topic parameter; use `/run-pipeline` if you need subfield scoping, which consumes more tokens. You can steer the light pipeline from the prompt by asking it to include a specific paper, widen the window, or skip the novelty check.
+
+**3. Refine** — `/evaluate-idea`, once per promising idea
+
+The most promising ideas are the top-ranked ones in `data/runs/<timestamp>/rank/ranked_proposals.md`, sorted best-first behind a top-10 summary table. Pick from there and run `/evaluate-idea` once per idea you picked. It checks the idea is **operationalizable** (concrete experiments, baselines, success criteria) and **contextualized** (re-running the novelty check from scratch rather than trusting the pipeline's), then opens an interactive loop to sharpen the approach, refine the experiments, strengthen the impact chain, reframe it, or drop it. Saving writes the idea to the selected ideas file and updates `data/output/idea_tracker.md`.
+
 ## Pipeline Skills
 
 The pipeline is orchestrated through Claude Code slash commands. These are the skills available in this project, roughly ordered by typical workflow sequence.

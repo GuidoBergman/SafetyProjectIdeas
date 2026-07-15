@@ -1,0 +1,109 @@
+---
+idea_id: gen-018
+run_id: 2026-06-20T15-40-46
+stage: refine
+title: 'Human-Crafted vs Model-Elicited Attacks: A Stylometric Look at Why Human Sabotage
+  Evades Monitors'
+original_scores:
+  theory_of_impact: 4
+  low_compute: 5
+  accessible_complexity: 4
+  narrow_scope: 4
+  counterfactual_value: 4
+novelty_classification: partially_addressed
+novelty_score: 3
+novelty_method: novelty_verified
+pre_refine_weighted_score: 4.0
+weak_dimensions_addressed:
+- 'narrow_scope: bounded to a small suggested feature set (~4 example features, not
+  a definitive list) reported in one comparison table plus one cueing result'
+- 'accessible_complexity: added a baseline-gap-reproduction step so the cueing result
+  is interpretable'
+- 'theory_of_impact: sharpened the ''model-only red-teaming overestimates robustness''
+  warning plus the cheap-mitigation payoff'
+generation_strategy: failure_mode_investigation
+subfield: AI control / red-teaming
+provenance:
+  generation_method: paper_driven_light
+  kb_sources: []
+  web_sources:
+  - "LinuxArena — https://arxiv.org/abs/2604.15384"
+scores:
+  theory_of_impact:
+    score: 4
+    reasoning: If model red-teaming overestimates monitor robustness, characterizing
+      the human-evasion gap is a defensible control-relevant finding.
+    confidence: 0.68
+  low_compute:
+    score: 5
+    reasoning: Computing transcript features and re-prompting a monitor is inference-only.
+    confidence: 0.8
+  accessible_complexity:
+    score: 4
+    reasoning: Stylometric feature comparison and a cued-monitor test are guided and
+      accessible.
+    confidence: 0.72
+  narrow_scope:
+    score: 4
+    reasoning: Focused comparative-feature deliverable plus a follow-on cueing test,
+      a few dependencies.
+    confidence: 0.7
+  counterfactual_value:
+    score: 4
+    reasoning: Characterizing released attack transcripts is independent-friendly
+      and neglected by labs.
+    confidence: 0.7
+  novelty:
+    score: 3
+    reasoning: 'Verified via web + LW/AF search (2026-07-04). Source (LinuxArena,
+      arXiv:2604.15384, Redwood Research) confirmed real and credible and already
+      establishes the human>>model evasion gap. The underlying problem (model-elicited
+      red-teaming underestimates monitor robustness) is also established by MonitoringBench
+      (arXiv:2605.09684) and SLEIGHT-Bench (arXiv:2605.16626), both of which additionally
+      do feature-level attack characterization AND already tried monitor-prompt cueing
+      (finding non-robust/selective gains). Two defensible differentiators keep this
+      above largely_addressed: (1) LaStraj is GENUINELY human-authored, whereas MonitoringBench''s
+      "human" attacks are human-strategy + model-executed + model-refined; (2) MonitoringBench''s
+      evasion categories (E1-E4) are qualitative LLM labels never operationalized as
+      quantitative features. Remaining open niche: a rigorous QUANTITATIVE feature-level
+      characterization of genuinely-human vs model attack transcripts that PREDICTS
+      monitor evasion. partially_addressed (strong 3, clear niche).'
+    confidence: 0.72
+confidence: 0.6833333333333333
+---
+
+# Research Question
+
+In AI control, monitors are usually red-teamed with model-generated attacks because they are cheap to produce. LinuxArena recently showed that human-written sabotage evades monitors far more often than model-written sabotage. This project asks which measurable, monitor-actionable properties of a trajectory drive that gap, and whether cueing the monitor with those properties recovers detection on human attacks.
+
+# Approach Outline
+
+LinuxArena is a public AI-control setting from Redwood Research: agents operate in realistic Linux server environments and can be tasked to hide a harmful side action inside a normal main task. It released LaStraj, 76 human-written sabotage trajectories, plus many model-generated attacks. All of it downloads without credentials via its CLI (`ct traj download`), and each trajectory carries the full action history and per-step monitor suspicion scores.
+
+For each attack, measure a few trajectory properties that a deployed monitor could realistically be cued on. Treat this as a starting set, not a fixed one. The two strongest candidates are obfuscation and burying. Obfuscation is how much the harmful command is hidden, for example through encoding, indirection, or benign-looking names. Burying is how deep the harmful step sits inside a run of benign steps, so it blends in. Avoid properties that a monitor cannot usefully act on, such as action verbosity or the number of plausible justifications, since honest agents show those too and cueing on them mostly adds false positives.
+
+Compare human and model attacks on each property and report effect sizes, since 76 human attacks is a small sample. Using the monitor scores already in the data, test whether these properties predict evasion, meaning more obfuscated or more buried attacks draw lower suspicion at a fixed low false-positive rate. Then cue the monitor with the specific patterns found and measure recovered detection on human attacks, reported per monitor model, since MonitoringBench found that generic prompt changes transfer inconsistently across monitors. The whole study is inference-only, since it only reads existing trajectories and re-prompts the monitor. The deliverable is one human-versus-model feature table plus one before-and-after catch-rate number for the cued monitor.
+
+# Proposed First Experiments
+
+- Pull the 76 LaStraj attacks and a matched set of model attacks, then measure obfuscation and burying for each. Expected: human attacks are more obfuscated and bury the harmful step deeper than model attacks.
+- Using the recorded monitor scores, test whether more obfuscated or more buried attacks draw lower suspicion. Expected: at least one property predicts evasion, turning the qualitative "human attacks are sneakier" claim into a measurable driver.
+- Cue the monitor with the discovered patterns and re-measure catch rate on human attacks, reported per monitor model. Expected: the cued monitor catches more human attacks without raising false positives on honest runs, at least for some models.
+
+# Theory of Impact Chain
+
+Red-teaming monitors only with model-generated attacks can overstate their robustness, since human attacks are stronger and structurally different. That is a live blind spot for control evaluations. This project measures what human attackers do that models do not, so attack suites can target those tactics, and it checks whether cueing the monitor on those tactics closes part of the gap. The payoff is a concrete warning against model-only red-teaming plus a cheap, promptable mitigation any team can apply.
+
+# Strength Rationale
+
+The project is inference-only over public data, so it fits a small compute budget. Data availability is confirmed, since LaStraj and the model attacks download without credentials. Scope is tight: one feature table and one before-and-after number. It is distinct from the nearest prior work, MonitoringBench, which ran on BashArena, used attacks that were human-planned but model-executed, and characterized evasion tactics only qualitatively. This project uses fully human-written attacks and operationalizes those tactics as measurable, evasion-predictive features. The main limit is the 76 human trajectories, so it leans on effect sizes over significance.
+
+# Alternative Framings
+
+
+
+# Cited Sources
+
+- LinuxArena: A Control Setting for AI Agents in Live Production Software Environments. https://arxiv.org/abs/2604.15384 . This is a real arXiv paper from Redwood Research (Tyler Tracy and colleagues), a credible AI safety group. It reports the finding this project builds on, that human-written attacks evade monitors far more than model-written ones, and it releases the LaStraj human attacks. It is the foundation of this idea.
+- MonitoringBench: Better Attacks for Better Monitors. https://arxiv.org/abs/2605.09684 . This is the closest prior work, run on a related setup called BashArena. It shows that model-generated attacks make monitors look safer than they really are, and it describes human evasion tactics in words but never measures them. Its human attacks were planned by people but carried out by a model, unlike LinuxArena's fully human attacks. It is useful for its attack categories and its testing method, its data is public on HuggingFace, and it names LinuxArena as a next step.
+- SLEIGHT-Bench: Evasion Attacks Against Agent Monitors. https://arxiv.org/html/2605.16626 . This related work sorts evasion tactics into categories and tries monitor prompts that help with some tactics but hurt others.
