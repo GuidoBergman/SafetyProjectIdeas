@@ -34,8 +34,8 @@ SAIM is a Claude Code skills-based pipeline that generates, evaluates, refines, 
 
 All configuration is managed through YAML files in `config/`:
 
-- **`teams.yaml`** — Team profiles with skill sets and per-team criteria weight overrides. Ships with three teams: `mentor_novice` (default), `solo_novice`, and `experienced_group`.
-- **`criteria.yaml`** — Five scoring criteria (`theory_of_impact`, `low_compute`, `accessible_complexity`, `narrow_scope`, `novelty`), each with a 1-5 rubric and refinement threshold.
+- **`teams.yaml`** — Team profiles with skill sets and per-team criteria weight overrides. Ships with four teams: `baish_labs` (default), `mentor_novice`, `solo_novice`, and `experienced_group`.
+- **`criteria.yaml`** — Seven scoring criteria (`theory_of_impact`, `impact_pathway`, `low_compute`, `accessible_complexity`, `narrow_scope`, `counterfactual_value`, `novelty`), each with a 1-5 rubric and refinement threshold. `accessible_complexity` is scored *relative to the active participant profile*, so the same idea scores differently for a beginner team and an experienced one.
 - **`pipeline.yaml`** — Model assignments per stage, batch sizes, thresholds, and rubrics for quick-filter, confidence, and citation relevance scoring.
 - **`kb-criteria.yaml`** — Knowledge base inclusion criteria (subfields in scope, organizations, exclusions).
 - **`participants/<name>.yaml`** — Individual participant profiles (background, time, resources).

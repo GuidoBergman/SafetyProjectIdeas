@@ -5,7 +5,7 @@ from typing import Literal
 from pydantic import BaseModel, Field
 
 
-TeamType = Literal["mentor_novice", "solo_novice", "experienced_group"]
+TeamType = Literal["mentor_novice", "solo_novice", "experienced_group", "baish_labs"]
 
 DEFAULT_TEAM: TeamType = "mentor_novice"
 

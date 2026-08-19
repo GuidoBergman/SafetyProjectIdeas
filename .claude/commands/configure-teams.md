@@ -28,12 +28,12 @@ Then ask the user what they'd like to change. Every setting shown should be pres
 
 These are the factory defaults. Always run `show` to confirm current values — they may have been changed.
 
-- **Default team:** `mentor_novice` (configurable via `set-default-team`)
-- **Default participant:** none (configurable via `set-default-participant`)
-- **Team profiles:** `mentor_novice`, `solo_novice`, `experienced_group`
-- **Scoring criteria:** `theory_of_impact` (1.5), `low_compute` (1.5), `accessible_complexity` (1.5), `narrow_scope` (1.5), `novelty` (1.0)
+- **Default team:** `baish_labs` (configurable via `set-default-team`)
+- **Default participant:** `baish_labs` (configurable via `set-default-participant`)
+- **Team profiles:** `baish_labs`, `mentor_novice`, `solo_novice`, `experienced_group`
+- **Scoring criteria:** `theory_of_impact` (0.75), `impact_pathway` (0.75), `low_compute` (1.5), `accessible_complexity` (1.5), `narrow_scope` (1.5), `counterfactual_value` (1.5), `novelty` (1.0)
 - **Pipeline models:** source=haiku, generate=sonnet, filter_score=sonnet, refine=opus, rank=haiku
-- **Pipeline thresholds:** filter_score (min_score=2.5, max_ideas=20), rank (min_score=3.0, max_ideas=10)
+- **Pipeline thresholds:** filter_score (min_score=2.0, max_ideas=5000), rank (min_score=3.5, max_ideas=500)
 - **Participant schema defaults:** compute_resources=low, time_availability=part_time
 
 ## Available Operations

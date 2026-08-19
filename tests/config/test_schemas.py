@@ -32,6 +32,15 @@ class TestTeamProfile:
         assert profile.criteria_weights == {}
         assert profile.technical_skills == []
 
+    def test_valid_baish_labs(self):
+        profile = TeamProfile(
+            name="BAISH Labs Team",
+            team_type="baish_labs",
+            technical_skills=["python_advanced"],
+            criteria_weights={"novelty": 1.0, "theory_of_impact": 1.0},
+        )
+        assert profile.team_type == "baish_labs"
+
     def test_invalid_team_type(self):
         with pytest.raises(ValidationError):
             TeamProfile(
