@@ -43,7 +43,7 @@ Save all configuration for use throughout the session.
 Ask the coordinator how they want to provide the idea:
 
 > How would you like to provide the idea?
-> 1. **Existing idea** — provide an idea ID (e.g., "gen-0017") and I'll load it from `data/ideas/`
+> 1. **Existing idea** — provide an idea ID (e.g., "gen-3f9a1c04") and I'll load it from `data/ideas/`
 > 2. **New idea** — describe it and we'll build it up together
 
 ### If existing idea (option 1):
@@ -59,7 +59,7 @@ Parse the full YAML frontmatter and markdown body. The idea has these structured
 - `title`, `subfield`, `generation_strategy`
 - `research_field`: list of one or more AI safety research fields (e.g., Mechanistic Interpretability, AI Control, Adversarial Robustness, Alignment Science, Governance, Evaluations). **Required** — every idea must have at least one research field.
 - `novelty_classification`, `novelty_score`, `novelty_method`
-- `original_scores`: dict with `theory_of_impact`, `accessible_complexity`, `narrow_scope`, `novelty` (each 1-5)
+- `original_scores`: dict with `theory_of_impact`, `impact_pathway`, `accessible_complexity`, `narrow_scope`, `novelty` (each 1-5)
 - `provenance`: dict with `generation_method`, `kb_sources` (list), `web_sources` (list)
 - `timestamp`
 
@@ -67,6 +67,7 @@ Parse the full YAML frontmatter and markdown body. The idea has these structured
 - Research Question
 - Approach Outline
 - Proposed First Experiments
+- Impact Pathway
 - Theory Of Impact Chain
 - Strength Rationale
 - Alternative Framings
@@ -79,13 +80,14 @@ Present the full idea with all its contents — display every field and every bo
 3. **Research field** and **subfield**
 4. **Approach Outline**
 5. **Proposed First Experiments**
-6. **Theory Of Impact Chain**
-7. **Strength Rationale**
-8. **Alternative Framings**
-9. **Cited Sources**
-10. **Scores** — `original_scores` (theory_of_impact, accessible_complexity, narrow_scope, novelty) and `weighted_score`
-11. **Novelty** — `novelty_classification`, `novelty_score`, `novelty_method`
-12. **Provenance & metadata** — `generation_strategy`, `provenance` (generation_method, kb_sources, web_sources), `idea_id`, `run_id`, `stage`, `rank`, `timestamp`
+6. **Impact Pathway**
+7. **Theory Of Impact Chain**
+8. **Strength Rationale**
+9. **Alternative Framings**
+10. **Cited Sources**
+11. **Scores** — `original_scores` (theory_of_impact, impact_pathway, accessible_complexity, narrow_scope, novelty) and `weighted_score`
+12. **Novelty** — `novelty_classification`, `novelty_score`, `novelty_method`
+13. **Provenance & metadata** — `generation_strategy`, `provenance` (generation_method, kb_sources, web_sources), `idea_id`, `run_id`, `stage`, `rank`, `timestamp`
 
 The point is that the reader should see the headline and research question first — never the scores before the substance.
 
@@ -111,6 +113,14 @@ Guide the coordinator to describe their idea. Explain what a complete idea looks
 >
 > You can provide as much or as little as you have — we'll build it up together.
 
+**Mint an `idea_id` for the new idea** with the shared generator — never write one by hand and never reuse a sequential ID:
+
+```bash
+uv run python -m saim.ids
+```
+
+It prints a short-UUID ID such as `gen-3f9a1c04`. Use it as the idea's `idea_id` and as its filename in `data/ideas/`. Set `run_id` to `"unknown"` since the idea did not come from a pipeline run.
+
 Accept whatever the coordinator provides and fill in what's missing conversationally. This is collaborative — suggest improvements, ask clarifying questions, help sharpen the framing. Every idea **must** have a `research_field` before proceeding — if the coordinator doesn't provide one, ask which AI safety research field(s) it falls under or suggest the best fit.
 
 Once the idea is sufficiently described, proceed to **Step 2: Score Against Criteria**.
@@ -128,6 +138,7 @@ For EACH scoring criterion (except novelty — that comes from Step 3):
 Present scores:
 > **Criteria Scores:**
 > - theory_of_impact: X/5 (confidence: Y) — reasoning
+> - impact_pathway: X/5 (confidence: Y) — reasoning
 > - accessible_complexity: X/5 — reasoning
 > - narrow_scope: X/5 — reasoning
 > - (etc.)
@@ -294,7 +305,7 @@ Before writing any files, check the idea's `novelty_method` field. If it is `"no
 
 Save the idea with all improvements to **every location where it exists**:
 
-1. **`data/ideas/<idea_id>.md`** — the primary idea file. Use the existing filename if updating an existing idea, or `<sanitized_title>.md` for new ideas. Include full YAML frontmatter and all body sections.
+1. **`data/ideas/<idea_id>.md`** — the primary idea file. Use the existing filename if updating an existing idea. For a new idea, use the `idea_id` minted in Step 1 (`uv run python -m saim.ids`) as the filename — never a title slug and never a hand-written or sequential ID. Include full YAML frontmatter and all body sections.
 
 2. **Pipeline run stages** — if the idea came from a pipeline run (`run_id` is set and not "unknown"), check for the idea in `data/runs/<run_id>/` stage directories (generate/, filter_score/, refine/, rank/). For individual `.md` files, update them. For batch `.json` files, load the batch, find the matching idea by `idea_id`, update its fields, and write back.
 
@@ -306,7 +317,7 @@ uv run python -c "from saim.constants import SELECTED_IDEAS_FILE; print(SELECTED
 
 For `data/ideas/` and pipeline run files, preserve the full structure:
 - YAML frontmatter: idea_id, run_id, stage, rank, weighted_score, title, research_field (list), subfield, generation_strategy, novelty_classification, novelty_score, novelty_method, original_scores, provenance, timestamp
-- Body sections: Research Question, Approach Outline, Proposed First Experiments, Theory Of Impact Chain, Strength Rationale, Alternative Framings, Cited Sources
+- Body sections: Research Question, Approach Outline, Proposed First Experiments, Impact Pathway, Theory Of Impact Chain, Strength Rationale, Alternative Framings, Cited Sources
 
 For the **selected ideas file**, write a condensed version: include all sections EXCEPT the detailed per-experiment breakdowns in Proposed First Experiments. Only include follow-up experiments or experiments that go beyond the core methodology described in the Approach Outline. The full experiment details remain in `data/ideas/` — the selected ideas file is a reference summary, not a duplicate.
 

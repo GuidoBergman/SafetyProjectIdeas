@@ -273,6 +273,7 @@ For EACH scored idea (including those without refinements), use the LLM to produ
 >     "<concrete experiment 2>",
 >     "<concrete experiment 3>"
 >   ],
+>   "impact_pathway": "<declare ONE pathway (A decision / B research redirection / C prerequisite / D field epistemics / E talent allocation), then name the specific party and the specific thing they would do differently>",
 >   "theory_of_impact_chain": "<2-4 sentences: if this works, then X, which leads to Y, which improves safety because Z>",
 >   "strength_rationale": "<2-3 sentences summarizing why this idea is strong, referencing top-scoring criteria>",
 >   "cited_sources": [

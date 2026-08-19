@@ -1,24 +1,44 @@
 criteria:
 - name: theory_of_impact
-  description: Does this idea have a clear, specific theory of how it reduces catastrophic risks from advanced AI?
-  default_weight: 1.5
+  description: "If the named party acts on this idea, does catastrophic risk from advanced AI go down? Scores the risk link only. Whether anyone will act is scored separately by impact_pathway."
+  default_weight: 0.75
   refinement_threshold: 4
   rubric:
     - score: 1
-      label: No impact chain
-      description: No articulated connection between the research and reducing catastrophic risk from advanced AI. The idea may be generally interesting but does not trace to any catastrophic failure mode (e.g., loss of control, large-scale misuse, deceptive alignment)
+      label: Not catastrophic
+      description: No catastrophic scenario named. The harm addressed is ordinary and recoverable (bias, mundane misuse, a near-term safety incident) with no credible route from there to reducing catastrophic risk
     - score: 2
-      label: Vague impact
-      description: Claims safety relevance but does not trace to a specific catastrophic risk scenario. Uses broad labels ("helps with alignment", "improves interpretability") without explaining how the work would reduce the probability or severity of catastrophic outcomes from advanced AI
+      label: Generic label
+      description: A catastrophic scenario is named only as a label ("existential risk", "loss of control", "misalignment") with no mechanism. Nothing explains how the catastrophe would actually come about
     - score: 3
-      label: Plausible chain
-      description: Names a specific catastrophic risk mechanism (e.g., "reward hacking leading to loss of control", "scalable oversight failure enabling undetected deceptive behavior") and proposes research that could address it, but the chain has a gap — it skips a step, assumes something non-obvious, or the link between the research output and actual reduction of catastrophic risk is underspecified
+      label: Partial
+      description: A specific mechanism is named (e.g. "deceptive alignment surviving training", "undetected sabotage in an agent pipeline", "reward hacking that generalises to deployment"), but the action the idea leads to addresses that mechanism only partially or indirectly
     - score: 4
-      label: Strong chain
-      description: Every link in the chain from research output to reduction of catastrophic AI risk is explicit and independently defensible ("This research produces X → X enables Y → Y reduces the probability/severity of catastrophic risk Z"). The catastrophic risk scenario is concrete (not generic "existential risk"), and you can challenge any single step and get a concrete answer
+      label: Direct
+      description: A specific mechanism is named, and the action directly reduces that mechanism's contribution to the catastrophe. The reduction is in the mechanism itself, not in a correlate of it
     - score: 5
-      label: Compelling chain
-      description: Strong chain (score 4) that additionally targets a catastrophic risk pathway recognized as critical by major safety orgs/agendas, and intermediate deliverables also have independent value for reducing catastrophic risk from advanced AI
+      label: Necessary step
+      description: "As score 4, and the mechanism is a step the catastrophic pathway *requires*, so constraining it constrains the whole pathway rather than one contributing factor among several. Whether the risk is widely recognised is irrelevant: a mechanism nobody has studied scores 5 if the necessity argument holds on its own terms. Never award or withhold this level based on whether established safety agendas agree the pathway is critical"
+- name: impact_pathway
+  description: "How close is the change this idea calls for to actually happening? Scores whether anyone will act, not whether acting would help (that is theory_of_impact). The idea must declare one pathway: A decision, B research redirection, C prerequisite, D field epistemics, E talent allocation."
+  default_weight: 0.75
+  refinement_threshold: 4
+  rubric:
+    - score: 1
+      label: No pathway
+      description: No pathway or endpoint declared. Value is stated only as "advances understanding", "informs the community", or similar
+    - score: 2
+      label: Generic endpoint
+      description: "A pathway is declared, but the endpoint dissolves into a category rather than a change. Characteristic phrasing: 'helps future evaluators know what to look for', 'would improve the credibility of safety comparisons', 'this database would be a public good', 'strengthens the case for standardised metrics'. Plausible-sounding, but no party is named and nothing they do would differ"
+    - score: 3
+      label: Blocked
+      description: The endpoint is specific, but making it happen needs something nobody currently has — a new regulatory mandate, industry-wide coordination, a change in how frontier models are trained, or funding no one has committed
+    - score: 4
+      label: Within reach
+      description: The endpoint is specific and within reach of the named party, but still costs them real effort or a shift in priorities
+    - score: 5
+      label: Ready to adopt
+      description: "The endpoint is specific AND either (i) it is cheap for the named party to adopt, slotting into what they already do with resources they already control (e.g. improving a metric a lab already reports in its system cards), OR (ii) it is a larger ask matched by a named party who has both the authority and the incentive to make it happen (e.g. a regulator or standards body that could require it). Never require evidence of pre-existing demand such as an RFP or a published open problem: a neglected direction has neither by definition"
 - name: low_compute
   description: Can this idea be explored with limited compute resources?
   default_weight: 1.5
@@ -40,25 +60,25 @@ criteria:
       label: Minimal
       description: Can be done with CPU-only, free-tier APIs, or purely analytical/theoretical work
 - name: accessible_complexity
-  description: Is the technical complexity appropriate for the team's skill level?
+  description: "Is the technical complexity a good fit for THIS team? Score relative to the skills, time budget and supervision described in the participant profile supplied with this batch — never against an absolute skill bar, and never against what a beginner could do. The same idea should score differently for a beginner team and an experienced one; that is the point of this criterion. If no participant profile is supplied, assume a small team with solid Python and ML fundamentals, no specialist depth, and no supervisor."
   default_weight: 1.5
   refinement_threshold: 4
   rubric:
     - score: 1
-      label: Expert-only
-      description: Requires deep specialist knowledge (e.g., novel architecture design, advanced math, systems-level ML engineering) with no clear simplification path
+      label: Out of reach
+      description: "Requires expertise nobody on the team has, and that no supervisor named in the profile could supply, with no simplification path and no realistic route to acquiring it inside the stated time budget. The team would not finish"
     - score: 2
-      label: Advanced
-      description: Requires strong ML/research background and familiarity with specific subfield literature; a motivated grad student could attempt it with significant ramp-up
+      label: Ramp-up dominates
+      description: "Within reach only by spending most of the time budget learning the method, tooling or subfield, leaving too little for the research itself. A result is possible but the project is mostly self-education"
     - score: 3
-      label: Intermediate
-      description: Requires solid ML fundamentals and comfort with existing frameworks/tools; methodology is well-established but application is novel
+      label: Stretch
+      description: "Requires a genuinely new skill or unfamiliar tooling for this team. Acquirable inside the time budget, with supervision where the profile provides it, but the ramp-up is a real schedule risk and could cost the project its first result"
     - score: 4
-      label: Guided
-      description: Clear methodology inherited from existing work (e.g., replication with variation); a novice with mentor guidance can execute it
+      label: Good fit
+      description: "Builds on skills the team already has. Any new method can be picked up from a paper with the level of support the profile describes, and ramp-up is a small fraction of the time budget"
     - score: 5
-      label: Accessible
-      description: Well-defined steps using standard tools and public datasets; a motivated beginner with basic Python/ML can make meaningful progress
+      label: Immediate
+      description: "Squarely within the team's existing skills and tooling as described in the profile. They can start producing results in the first weeks with no meaningful ramp-up"
 - name: narrow_scope
   description: Does the idea have a self-contained first deliverable that is valuable on its own, with a clear methodology and success criteria?
   default_weight: 1.5

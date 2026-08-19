@@ -156,6 +156,16 @@ class TestIdentifyWeakDimensions:
 
 
 class TestAnalyzeWeaknesses:
+    def test_impact_pathway_precedes_impact_chain(self):
+        """The declared pathway is read before the risk chain it feeds."""
+        scored = _make_scored_idea()
+        refinement = analyze_weaknesses(scored, _make_criteria())
+        skeleton = build_proposal_skeleton(scored, refinement)
+
+        keys = list(skeleton["sections"].keys())
+        assert keys.index("proposed_first_experiments") < keys.index("impact_pathway")
+        assert keys.index("impact_pathway") < keys.index("theory_of_impact_chain")
+
     def test_string_original_idea(self):
         scored = _make_scored_idea()
         scored["original_idea"] = "A plain string describing the idea."
@@ -227,6 +237,7 @@ class TestBuildProposalSkeleton:
         assert "research_question" in sections
         assert "approach_outline" in sections
         assert "proposed_first_experiments" in sections
+        assert "impact_pathway" in sections
         assert "theory_of_impact_chain" in sections
         assert "strength_rationale" in sections
         assert isinstance(sections["alternative_framings"], list)

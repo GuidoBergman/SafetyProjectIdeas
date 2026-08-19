@@ -115,9 +115,50 @@ def test_load_default_config_files():
         pytest.skip("Default config directory not found")
 
     config = load_config(config_dir=CONFIG_DIR, load_env=False)
-    assert len(config.teams) == 3
+    assert len(config.teams) == 4
+    assert "baish_labs" in config.teams
     assert "mentor_novice" in config.teams
     assert "solo_novice" in config.teams
     assert "experienced_group" in config.teams
-    assert len(config.criteria) == 6
+    assert len(config.criteria) == 7
     assert len(config.kb_criteria.subfields_in_scope) > 0
+
+
+def test_impact_criteria_are_split_and_fully_rubricked():
+    """theory_of_impact and impact_pathway are separate, each with a full 1-5 rubric."""
+    from saim.constants import CONFIG_DIR
+
+    if not CONFIG_DIR.exists():
+        pytest.skip("Default config directory not found")
+
+    config = load_config(config_dir=CONFIG_DIR, load_env=False)
+    by_name = {c.name: c for c in config.criteria}
+
+    for name in ("theory_of_impact", "impact_pathway"):
+        assert name in by_name, f"{name} missing from criteria.yaml"
+        rubric = by_name[name].rubric
+        assert [level.score for level in rubric] == [1, 2, 3, 4, 5]
+        assert all(level.description.strip() for level in rubric)
+
+
+def test_impact_pair_counts_as_one_dimension_for_baish_labs():
+    """BAISH Labs weights impact as one of three equal dimensions, so the pair sums to 1.0.
+
+    Guards the design invariant in config/teams.yaml: novelty, the impact pair,
+    and the feasibility cluster each total 1.0.
+    """
+    from saim.constants import CONFIG_DIR
+
+    if not CONFIG_DIR.exists():
+        pytest.skip("Default config directory not found")
+
+    config = load_config(config_dir=CONFIG_DIR, load_env=False)
+    weights = config.teams["baish_labs"].criteria_weights
+
+    impact = weights["theory_of_impact"] + weights["impact_pathway"]
+    feasibility = (
+        weights["low_compute"] + weights["accessible_complexity"] + weights["narrow_scope"]
+    )
+    assert impact == pytest.approx(1.0)
+    assert feasibility == pytest.approx(1.0)
+    assert weights["novelty"] == pytest.approx(1.0)

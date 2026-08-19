@@ -174,7 +174,13 @@ Partition **all** harvested papers into batches of **~5 papers** and launch **on
 > }
 > ```
 
-**Orchestrator collects** all idea objects and dedupes near-identical titles (no max-ideas cap — every harvested paper should be represented). Assign sequential IDs `gen-001`, `gen-002`, …, add `run_id` (the run dir name), then write each as a compatible sketch file:
+**Orchestrator collects** all idea objects and dedupes near-identical titles (no max-ideas cap — every harvested paper should be represented). Mint one ID per idea with the shared generator — never invent IDs by hand, and never use sequential IDs (they collide across runs and batches):
+
+```bash
+uv run python -m saim.ids <number_of_ideas>
+```
+
+Assign the printed IDs (e.g. `gen-3f9a1c04`) to the ideas in order, add `run_id` (the run dir name), then write each as a compatible sketch file:
 
 ```bash
 uv run python -m saim.pipeline.generate write <RUN_DIR> '<idea_json_with_idea_id_and_run_id>'
@@ -251,6 +257,7 @@ Refine the surviving scored ideas into full proposals. Keep this **batched** (gr
 >   "research_question": "1-2 sentence core question",
 >   "approach_outline": "3-5 sentences: methodology + key steps",
 >   "proposed_first_experiments": ["concrete experiment 1 (what to do, what to measure, expected outcome)", "experiment 2", "experiment 3"],
+>   "impact_pathway": "declare ONE pathway (A decision / B research redirection / C prerequisite / D field epistemics / E talent allocation), then name the specific party and the specific thing they would do differently",
 >   "theory_of_impact_chain": "2-4 sentences: if this works → X → Y → improves safety because Z",
 >   "strength_rationale": "2-3 sentences referencing top-scoring criteria",
 >   "weak_dimensions_strengthened": ["criterion", "..."],
@@ -276,6 +283,7 @@ Refine the surviving scored ideas into full proposals. Keep this **batched** (gr
     "research_question": "...",
     "approach_outline": "...",
     "proposed_first_experiments": ["...", "...", "..."],
+    "impact_pathway": "...",
     "theory_of_impact_chain": "...",
     "strength_rationale": "...",
     "alternative_framings": [],
@@ -290,7 +298,7 @@ Then write it:
 uv run python -m saim.pipeline.refine write <RUN_DIR> '<proposal_json>'
 ```
 
-Log the count of proposals written. If a refine subagent fails, fall back to a minimal proposal (map `problem→research_question`, `direction→approach_outline`, `why_it_matters→theory_of_impact_chain`) for its ideas and record a warning.
+Log the count of proposals written. If a refine subagent fails, fall back to a minimal proposal (map `problem→research_question`, `direction→approach_outline`, `why_it_matters→theory_of_impact_chain`, leaving `impact_pathway` empty) for its ideas and record a warning.
 
 ---
 
