@@ -54,7 +54,11 @@ Set the active team and participant first: the team's weights drive scoring, and
 
 Harvests recent safety papers from curated sources, grounds ~2 ideas in each, then scores, refines, ranks, and novelty-checks the top 100 autonomously. Everything lands in an isolated `data/runs/<timestamp>/`; nothing touches `data/ideas/`.
 
-Scoped by **time window and source, not topic** — it sweeps the last ~2 months of the ML Safety Newsletter, AI Safety at the Frontier, major org publications, and Alignment Forum / LessWrong. It takes no topic parameter; use `/run-pipeline` if you need subfield scoping, which consumes more tokens. You can steer the light pipeline from the prompt by asking it to include a specific paper, widen the window, or skip the novelty check.
+By default it is scoped by **time window and source** — it sweeps the last ~2 months of the ML Safety Newsletter, AI Safety at the Frontier, major org publications, and Alignment Forum / LessWrong. You can steer it from the prompt by asking it to include a specific paper, widen the window, or skip the novelty check.
+
+**Optional topic scoping:** `/run-pipeline-light <topic>` scopes the whole run to one research topic (e.g. `/run-pipeline-light interpretability of reward models`). Retrieval then switches to two separate topic searches — **latest work on the topic**, and **top work on the topic regardless of age**, since the best paper on a question is often not a recent one — with the curated sweep demoted to a topic-filtered supplement. The topic becomes a hard constraint in every generation prompt and is recorded in each idea's `subfield`. It is applied as a prompt constraint rather than a scoring gate, so the final report counts any ideas that drifted off topic instead of silently dropping them. If the topic returns too few papers, the run widens its search window once and says so rather than producing a starved funnel. Use `/run-pipeline` instead when you want scoping across the full fixed subfield taxonomy, which consumes more tokens.
+
+Both modes end with a **whole-harvest synthesis pass**: four subagents that each see every harvested paper at once and generate ideas from the relationships between them (shared untested assumptions, contradictory results, method transfers, measurement gaps) rather than by extending any single paper.
 
 **3. Refine** — `/evaluate-idea`, once per promising idea
 
