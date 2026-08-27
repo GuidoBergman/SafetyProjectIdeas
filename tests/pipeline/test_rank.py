@@ -50,11 +50,14 @@ def _make_proposal(
             "kb_sources": ["src1"],
             "web_sources": ["web1", "web2"],
         },
+        "tldr": f"One line summarising {idea_id}.",
+        "pathway": "B",
+        "named_party": "Redwood Research control team",
         "sections": {
             "research_question": "How does X affect Y?",
             "approach_outline": "We will do A then B then C.",
             "proposed_first_experiments": "Experiment 1: ...",
-            "theory_of_impact_chain": "If X then Y then Z.",
+            "why_this_matters": "If X then Y then Z.",
         },
     }
 
@@ -216,7 +219,7 @@ class TestFormatRankedOutput:
         proposal = _make_proposal("a")
         proposal["rank"] = 1
         proposal["weighted_score"] = 3.0
-        proposal["sections"]["strength_rationale"] = "This is strong because X."
+        proposal["sections"]["scores_rationale"] = "This is strong because X."
 
         md = format_ranked_output([proposal])
 
@@ -245,8 +248,8 @@ class TestPersistIdeas:
         content = (tmp_path / "idea_002.md").read_text()
         assert content.startswith("---\n")
         assert "idea_id: idea_002" in content
-        assert "# Research Question" in content
-        assert "# Approach Outline" in content
+        assert "## Research Question" in content
+        assert "## Approach" in content
 
     def test_creates_directory(self, tmp_path):
         target = tmp_path / "subdir" / "ideas"
@@ -517,3 +520,35 @@ class TestWriteRankedOutput:
         output_copy = fake_output / "ranked_proposals.md"
         assert output_copy.exists()
         assert output_copy.read_text() == "# Output copy test"
+
+
+class TestRankedListLeadsWithTldr:
+    def test_tldr_appears_before_research_question(self):
+        proposal = _make_proposal("idea_001")
+        proposal["rank"] = 1
+        proposal["weighted_score"] = 4.2
+
+        out = format_ranked_output([proposal])
+        assert "**TL;DR:** One line summarising idea_001." in out
+        assert out.index("**TL;DR:**") < out.index("**Research Question:**")
+
+    def test_falls_back_to_research_question_when_no_tldr(self):
+        """Proposals written before the format change still render."""
+        proposal = _make_proposal("idea_002")
+        proposal["rank"] = 1
+        proposal["weighted_score"] = 4.0
+        del proposal["tldr"]
+
+        out = format_ranked_output([proposal])
+        assert "**TL;DR:** How does X affect Y?" in out
+
+    def test_pathway_and_party_persist_to_frontmatter(self, tmp_path):
+        proposal = _make_proposal("idea_003")
+        proposal["rank"] = 1
+        proposal["weighted_score"] = 4.0
+
+        persist_ideas([proposal], ideas_dir=tmp_path)
+        content = (tmp_path / "idea_003.md").read_text()
+        assert "pathway: B" in content
+        assert "named_party: Redwood Research control team" in content
+        assert "tldr: One line summarising idea_003." in content

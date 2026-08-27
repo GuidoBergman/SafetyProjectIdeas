@@ -11,6 +11,7 @@ import yaml
 from saim.config.schemas import ScoringCriteria, TeamProfile
 from saim.constants import IDEAS_DIR, OUTPUT_DIR
 from saim.pipeline.filter_score import apply_weights
+from saim.pipeline.refine import render_proposal_body
 
 
 def rank_proposals(
@@ -250,10 +251,14 @@ def format_ranked_output(ranked: list[dict]) -> str:
         if not research_question:
             research_question = title
 
+        # The TL;DR is what makes a list of hundreds scannable; fall back to the
+        # research question for proposals written before the format change.
+        tldr = proposal.get("tldr") or research_question
+
         approach = sections.get("approach_outline", "")
         experiments = sections.get("proposed_first_experiments", "")
-        impact_chain = sections.get("theory_of_impact_chain", "")
-        strength_rationale = sections.get("strength_rationale", "")
+        impact_chain = sections.get("why_this_matters", "")
+        strength_rationale = sections.get("scores_rationale", "")
         alternative_framings = sections.get("alternative_framings", [])
         cited_sources = sections.get("cited_sources", [])
 
@@ -290,6 +295,8 @@ def format_ranked_output(ranked: list[dict]) -> str:
         lines.append(f"## #{rank}: {title} (Score: {score:.2f})")
         lines.append("")
         lines.append(f"**ID:** {idea_id}")
+        lines.append("")
+        lines.append(f"**TL;DR:** {tldr}")
         lines.append("")
         lines.append(f"**Research Question:** {research_question}")
         lines.append("")
@@ -377,31 +384,23 @@ def persist_ideas(
             "novelty_classification": proposal.get("novelty_classification", ""),
             "novelty_score": proposal.get("novelty_score"),
             "novelty_method": proposal.get("novelty_method"),
+            "pathway": proposal.get("pathway", ""),
+            "named_party": proposal.get("named_party", ""),
+            "tldr": proposal.get("tldr", ""),
             "original_scores": proposal.get("original_scores", {}),
             "provenance": proposal.get("provenance", {}),
             "timestamp": datetime.now(UTC).strftime("%Y-%m-%dT%H:%M:%SZ"),
         }
 
-        # Build markdown body from sections
-        sections = proposal.get("sections", {})
-        body_parts = []
-        for section_name, content in sections.items():
-            if isinstance(content, list):
-                content = "\n".join(f"- {item}" for item in content)
-            heading = section_name.replace("_", " ").title()
-            body_parts.append(f"# {heading}\n\n{content}")
-
         frontmatter = yaml.safe_dump(meta, default_flow_style=False, sort_keys=False)
-        body = "\n\n".join(body_parts)
+        body = render_proposal_body(proposal)
 
         file_path = target / f"{idea_id}.md"
         with open(file_path, "w") as f:
             f.write("---\n")
             f.write(frontmatter)
             f.write("---\n\n")
-            f.write(f"# {proposal.get('title', 'Untitled')}\n\n")
             f.write(body)
-            f.write("\n")
 
         written.append(file_path)
 

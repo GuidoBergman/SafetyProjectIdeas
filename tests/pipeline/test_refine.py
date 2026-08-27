@@ -87,12 +87,14 @@ class TestIdentifyWeakDimensions:
         assert weak == ["low_compute"]
 
     def test_multiple_weak(self):
-        scored = _make_scored_idea({
-            "theory_of_impact": 2,
-            "low_compute": 1,
-            "feasibility": 5,
-            "novelty": 2,
-        })
+        scored = _make_scored_idea(
+            {
+                "theory_of_impact": 2,
+                "low_compute": 1,
+                "feasibility": 5,
+                "novelty": 2,
+            }
+        )
         criteria = _make_criteria()
         weak = identify_weak_dimensions(scored, criteria)
         # low_compute=1 < 3, theory_of_impact=2 < 4, novelty=2 < 3 — sorted ascending
@@ -145,26 +147,29 @@ class TestIdentifyWeakDimensions:
         assert identify_weak_dimensions(scored, criteria) == []
 
     def test_none_above_threshold(self):
-        scored = _make_scored_idea({
-            "theory_of_impact": 5,
-            "low_compute": 5,
-            "feasibility": 5,
-            "novelty": 5,
-        })
+        scored = _make_scored_idea(
+            {
+                "theory_of_impact": 5,
+                "low_compute": 5,
+                "feasibility": 5,
+                "novelty": 5,
+            }
+        )
         criteria = _make_criteria()
         assert identify_weak_dimensions(scored, criteria) == []
 
 
 class TestAnalyzeWeaknesses:
-    def test_impact_pathway_precedes_impact_chain(self):
-        """The declared pathway is read before the risk chain it feeds."""
+    def test_impact_precedes_risks_and_party_comes_late(self):
+        """Impact is read before risks; the named party sits near the end."""
         scored = _make_scored_idea()
         refinement = analyze_weaknesses(scored, _make_criteria())
         skeleton = build_proposal_skeleton(scored, refinement)
 
         keys = list(skeleton["sections"].keys())
-        assert keys.index("proposed_first_experiments") < keys.index("impact_pathway")
-        assert keys.index("impact_pathway") < keys.index("theory_of_impact_chain")
+        assert keys.index("why_this_matters") < keys.index("risks")
+        assert keys.index("risks") < keys.index("who_this_is_for")
+        assert keys.index("who_this_is_for") < keys.index("open_questions")
 
     def test_string_original_idea(self):
         scored = _make_scored_idea()
@@ -190,12 +195,14 @@ class TestAnalyzeWeaknesses:
         assert "suggestions" not in ctx
 
     def test_no_weak_dims(self):
-        scored = _make_scored_idea({
-            "theory_of_impact": 5,
-            "low_compute": 5,
-            "feasibility": 5,
-            "novelty": 5,
-        })
+        scored = _make_scored_idea(
+            {
+                "theory_of_impact": 5,
+                "low_compute": 5,
+                "feasibility": 5,
+                "novelty": 5,
+            }
+        )
         criteria = _make_criteria()
         ctx = analyze_weaknesses(scored, criteria)
         assert ctx["weak_dimensions"] == []
@@ -234,14 +241,33 @@ class TestBuildProposalSkeleton:
         skeleton = build_proposal_skeleton(scored, refinement)
 
         sections = skeleton["sections"]
-        assert "research_question" in sections
-        assert "approach_outline" in sections
-        assert "proposed_first_experiments" in sections
-        assert "impact_pathway" in sections
-        assert "theory_of_impact_chain" in sections
-        assert "strength_rationale" in sections
+        for key in (
+            "research_question",
+            "why_this_matters",
+            "day1_check",
+            "approach_outline",
+            "scope_and_deliverables",
+            "proposed_first_experiments",
+            "risks",
+            "prerequisites",
+            "who_this_is_for",
+            "open_questions",
+            "scores_rationale",
+        ):
+            assert key in sections
+        assert isinstance(sections["risks"], list)
+        assert isinstance(sections["prerequisites"], list)
+        assert isinstance(sections["open_questions"], list)
         assert isinstance(sections["alternative_framings"], list)
         assert isinstance(sections["cited_sources"], list)
+
+    def test_declared_pathway_fields(self):
+        scored = _make_scored_idea()
+        refinement = analyze_weaknesses(scored, _make_criteria())
+        skeleton = build_proposal_skeleton(scored, refinement)
+        assert skeleton["tldr"] == ""
+        assert skeleton["pathway"] == ""
+        assert skeleton["named_party"] == ""
 
     def test_string_original_idea(self):
         scored = _make_scored_idea()
@@ -259,7 +285,6 @@ class TestBuildProposalSkeleton:
         refinement = analyze_weaknesses(scored, _make_criteria())
         skeleton = build_proposal_skeleton(scored, refinement)
         assert skeleton["run_id"] == "2026-03-19T14-30-00"
-
 
     def test_original_scores_are_ints(self):
         scored = _make_scored_idea()
@@ -329,3 +354,145 @@ class TestWriteAndReadProposals:
         assert "idea_id: gen-001" in content
         assert "stage: refine" in content
         assert "novelty_classification: mostly_novel" in content
+
+
+class TestStructuredRisks:
+    def _proposal(self) -> dict:
+        scored = _make_scored_idea()
+        refinement = analyze_weaknesses(scored, _make_criteria())
+        return build_proposal_skeleton(scored, refinement)
+
+    def test_risks_roundtrip(self, tmp_path: Path):
+        proposal = self._proposal()
+        proposal["sections"]["risks"] = [
+            {
+                "name": "No usable model organism",
+                "consequence": "nothing to distil, the study cannot run",
+                "detected_by": "Day-1 Check",
+                "response": "stop the project",
+            },
+            {
+                "name": "Behaviour barely transfers",
+                "consequence": "no signal in which to measure a gap",
+                "detected_by": "Experiment 2",
+                "response": "retry once with a different behaviour",
+            },
+        ]
+
+        write_refined_proposal(tmp_path, proposal)
+        risks = read_refined_proposals(tmp_path)[0]["sections"]["risks"]
+
+        assert [r["name"] for r in risks] == [
+            "No usable model organism",
+            "Behaviour barely transfers",
+        ]
+        assert risks[0]["detected_by"] == "Day-1 Check"
+        assert risks[1]["response"] == "retry once with a different behaviour"
+
+    def test_risk_renders_all_three_labels(self, tmp_path: Path):
+        proposal = self._proposal()
+        proposal["sections"]["risks"] = [
+            {
+                "name": "Cost runs over",
+                "consequence": "exceeds the compute budget",
+                "detected_by": "Experiment 2",
+                "response": "start at a tenth of the sample count",
+            }
+        ]
+        content = write_refined_proposal(tmp_path, proposal).read_text()
+        assert "**Cost runs over**" in content
+        assert "- Consequence: exceeds the compute budget" in content
+        assert "- Detected by: Experiment 2" in content
+        assert "- Response: start at a tenth of the sample count" in content
+
+    def test_missing_field_renders_empty_not_dropped(self, tmp_path: Path):
+        proposal = self._proposal()
+        proposal["sections"]["risks"] = [{"name": "Vague risk"}]
+        content = write_refined_proposal(tmp_path, proposal).read_text()
+        # The gap stays visible rather than silently disappearing.
+        assert "- Consequence:" in content
+        assert "- Detected by:" in content
+        assert "- Response:" in content
+
+
+class TestVisibleAndCollapsedLayers:
+    def _written(self, tmp_path: Path) -> str:
+        scored = _make_scored_idea()
+        refinement = analyze_weaknesses(scored, _make_criteria())
+        proposal = build_proposal_skeleton(scored, refinement)
+        proposal["tldr"] = "One sentence that makes the ranked list scannable."
+        proposal["sections"]["research_question"] = "How does X affect Y?"
+        proposal["sections"]["scores_rationale"] = "Strong on impact."
+        proposal["sections"]["cited_sources"] = ["Paper A"]
+        return write_refined_proposal(tmp_path, proposal).read_text()
+
+    def test_tldr_sits_above_the_first_heading(self, tmp_path: Path):
+        content = self._written(tmp_path)
+        body = content.split("---\n\n", 1)[1]
+        assert body.index("**TL;DR:**") < body.index("## Research Question")
+
+    def test_collapsed_sections_are_wrapped(self, tmp_path: Path):
+        content = self._written(tmp_path)
+        assert "<summary><b>Cited sources</b></summary>" in content
+        assert "<summary><b>Scores and rationale</b></summary>" in content
+        # Visible sections are plain headings.
+        assert "## Research Question" in content
+        assert "<summary><b>Research Question</b>" not in content
+
+    def test_tldr_roundtrips(self, tmp_path: Path):
+        self._written(tmp_path)
+        proposal = read_refined_proposals(tmp_path)[0]
+        assert proposal["tldr"] == "One sentence that makes the ranked list scannable."
+        assert proposal["sections"]["cited_sources"] == ["Paper A"]
+
+
+class TestLegacyFormatStillReads:
+    def test_old_headings_map_onto_new_keys(self, tmp_path: Path):
+        """The 717 files written before the format change must still parse."""
+        refine_dir = tmp_path / "refine"
+        refine_dir.mkdir()
+        (refine_dir / "gen-001.md").write_text(
+            "---\n"
+            "idea_id: gen-001\n"
+            "stage: refine\n"
+            "---\n\n"
+            "# Old Title\n\n"
+            "# Research Question\n\nHow does X affect Y?\n\n"
+            "# Approach Outline\n\nDo A then B.\n\n"
+            "# Theory of Impact Chain\n\nIf X then Y.\n\n"
+            "# Strength Rationale\n\nStrong because Z.\n\n"
+            "# Cited Sources\n\n- Paper A\n"
+        )
+
+        proposal = read_refined_proposals(tmp_path)[0]
+        sections = proposal["sections"]
+        assert sections["research_question"] == "How does X affect Y?"
+        assert sections["approach_outline"] == "Do A then B."
+        assert sections["why_this_matters"] == "If X then Y."
+        assert sections["scores_rationale"] == "Strong because Z."
+        assert sections["cited_sources"] == ["Paper A"]
+        # Sections the old format had no equivalent for come back empty.
+        assert sections["risks"] == []
+        assert sections["day1_check"] == ""
+
+
+class TestEmptyCollapsedSectionsAreDropped:
+    def test_empty_details_block_omitted(self, tmp_path: Path):
+        scored = _make_scored_idea()
+        refinement = analyze_weaknesses(scored, _make_criteria())
+        proposal = build_proposal_skeleton(scored, refinement)
+        proposal["sections"]["cited_sources"] = ["Paper A"]
+
+        content = write_refined_proposal(tmp_path, proposal).read_text()
+        assert "<summary><b>Cited sources</b></summary>" in content
+        assert "<summary><b>Alternative framings</b></summary>" not in content
+
+    def test_empty_visible_section_kept(self, tmp_path: Path):
+        """A missing visible section stays as a heading so the gap is obvious."""
+        scored = _make_scored_idea()
+        refinement = analyze_weaknesses(scored, _make_criteria())
+        proposal = build_proposal_skeleton(scored, refinement)
+
+        content = write_refined_proposal(tmp_path, proposal).read_text()
+        assert "## Day-1 Check" in content
+        assert "## Risks" in content

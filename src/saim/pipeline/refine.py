@@ -20,11 +20,16 @@ from saim.config.schemas import ScoringCriteria
 # Section keys in the order they appear in proposal markdown.
 _SECTION_KEYS = [
     "research_question",
+    "why_this_matters",
+    "day1_check",
     "approach_outline",
+    "scope_and_deliverables",
     "proposed_first_experiments",
-    "impact_pathway",
-    "theory_of_impact_chain",
-    "strength_rationale",
+    "risks",
+    "prerequisites",
+    "who_this_is_for",
+    "open_questions",
+    "scores_rationale",
     "alternative_framings",
     "cited_sources",
 ]
@@ -32,13 +37,52 @@ _SECTION_KEYS = [
 # Mapping from section key to markdown heading.
 _SECTION_HEADINGS = {
     "research_question": "Research Question",
-    "approach_outline": "Approach Outline",
-    "proposed_first_experiments": "Proposed First Experiments",
-    "impact_pathway": "Impact Pathway",
-    "theory_of_impact_chain": "Theory of Impact Chain",
-    "strength_rationale": "Strength Rationale",
-    "alternative_framings": "Alternative Framings",
-    "cited_sources": "Cited Sources",
+    "why_this_matters": "Why This Matters",
+    "day1_check": "Day-1 Check",
+    "approach_outline": "Approach",
+    "scope_and_deliverables": "Scope and Deliverables",
+    "proposed_first_experiments": "Experiments",
+    "risks": "Risks",
+    "prerequisites": "Prerequisites",
+    "who_this_is_for": "Who This Is For",
+    "open_questions": "Open Questions",
+    "scores_rationale": "Scores and rationale",
+    "alternative_framings": "Alternative framings",
+    "cited_sources": "Cited sources",
+}
+
+# Rendered inside <details> below the visible layer, so the reader decides
+# from the sections above them.
+_COLLAPSED_KEYS = {"scores_rationale", "alternative_framings", "cited_sources"}
+
+# Sections stored as a list of strings rather than a prose block.
+_LIST_KEYS = {
+    "proposed_first_experiments",
+    "prerequisites",
+    "open_questions",
+    "alternative_framings",
+    "cited_sources",
+}
+
+# Headings used before the 2026-08 format change, so existing files still read.
+_LEGACY_HEADINGS = {
+    "Approach Outline": "approach_outline",
+    "Proposed First Experiments": "proposed_first_experiments",
+    "Theory of Impact Chain": "why_this_matters",
+    "Impact Pathway": "who_this_is_for",
+    "Strength Rationale": "scores_rationale",
+    "Alternative Framings": "alternative_framings",
+    "Cited Sources": "cited_sources",
+}
+
+# Fields every entry in the structured ``risks`` section carries.  The shape is
+# the enforcement: a risk that cannot say what detects it or what to do about it
+# fails to round-trip, so vague filler cannot survive the format.
+_RISK_FIELDS = ["consequence", "detected_by", "response"]
+_RISK_LABELS = {
+    "consequence": "Consequence",
+    "detected_by": "Detected by",
+    "response": "Response",
 }
 
 
@@ -117,21 +161,25 @@ def analyze_weaknesses(
     for name in weak_dims:
         entry = scores.get(name, {})
         crit = criteria_by_name.get(name)
-        weak_dimensions.append({
-            "name": name,
-            "score": entry.get("score", 0),
-            "reasoning": entry.get("reasoning", ""),
-            "threshold": crit.refinement_threshold if crit else 3,
-        })
+        weak_dimensions.append(
+            {
+                "name": name,
+                "score": entry.get("score", 0),
+                "reasoning": entry.get("reasoning", ""),
+                "threshold": crit.refinement_threshold if crit else 3,
+            }
+        )
 
     weak_set = set(weak_dims)
     strong_dimensions = []
     for name, entry in scores.items():
         if name not in weak_set:
-            strong_dimensions.append({
-                "name": name,
-                "score": entry.get("score", 0),
-            })
+            strong_dimensions.append(
+                {
+                    "name": name,
+                    "score": entry.get("score", 0),
+                }
+            )
     strong_dimensions.sort(key=lambda x: x["score"], reverse=True)
 
     # original_idea may be a dict or a plain string (the idea body text)
@@ -208,21 +256,60 @@ def build_proposal_skeleton(scored_idea: dict, refinement: dict) -> dict:
             "web_sources": [],
         },
         "refinement_confidence": 0.0,
-        "sections": {
-            "research_question": "",
-            "approach_outline": "",
-            "proposed_first_experiments": "",
-            "impact_pathway": "",
-            "theory_of_impact_chain": "",
-            "strength_rationale": "",
-            "alternative_framings": [],
-            "cited_sources": [],
-        },
+        "tldr": "",
+        "pathway": "",
+        "named_party": "",
+        "sections": {key: _empty_section(key) for key in _SECTION_KEYS},
     }
 
 
-def _format_section_content(value: str | list) -> str:
+def _empty_section(key: str) -> str | list:
+    """Return the empty value for a section key."""
+    return [] if key in _LIST_KEYS or key == "risks" else ""
+
+
+def _format_risks(risks: list) -> str:
+    """Render structured risks as a named block per risk.
+
+    Each risk becomes a bold name followed by its three labelled lines.  A risk
+    missing a field renders that line empty rather than dropping it, so the gap
+    is visible in the output instead of silently disappearing.
+    """
+    blocks = []
+    for risk in risks:
+        if not isinstance(risk, dict):
+            blocks.append(str(risk))
+            continue
+        lines = [f"**{risk.get('name', 'Unnamed risk')}**"]
+        lines += [f"- {_RISK_LABELS[f]}: {risk.get(f, '')}" for f in _RISK_FIELDS]
+        blocks.append("\n".join(lines))
+    return "\n\n".join(blocks)
+
+
+def _parse_risks(content: str) -> list[dict]:
+    """Parse a rendered risks block back into structured entries."""
+    risks: list[dict] = []
+    label_to_field = {v: k for k, v in _RISK_LABELS.items()}
+    for line in content.strip().split("\n"):
+        line = line.strip()
+        if not line:
+            continue
+        name = re.fullmatch(r"\*\*(.+?)\*\*", line)
+        if name:
+            risks.append({"name": name.group(1).strip()})
+            continue
+        item = re.fullmatch(r"-\s*([^:]+):\s*(.*)", line)
+        if item and risks:
+            field = label_to_field.get(item.group(1).strip())
+            if field:
+                risks[-1][field] = item.group(2).strip()
+    return risks
+
+
+def _format_section_content(key: str, value: str | list) -> str:
     """Format a section value as a string for markdown output."""
+    if key == "risks":
+        return _format_risks(value) if isinstance(value, list) else str(value)
     if isinstance(value, list):
         if not value:
             return ""
@@ -233,7 +320,9 @@ def _format_section_content(value: str | list) -> str:
 def _parse_section_content(key: str, content: str) -> str | list:
     """Parse markdown section content back to the appropriate type."""
     content = content.strip()
-    if key in ("alternative_framings", "cited_sources"):
+    if key == "risks":
+        return _parse_risks(content)
+    if key in _LIST_KEYS:
         if not content:
             return []
         items = []
@@ -245,6 +334,44 @@ def _parse_section_content(key: str, content: str) -> str | list:
                 items.append(line)
         return items
     return content
+
+
+def render_proposal_body(proposal: dict) -> str:
+    """Render a proposal's title, TL;DR and sections as markdown.
+
+    The visible layer runs from the TL;DR to Open Questions.  Everything in
+    ``_COLLAPSED_KEYS`` is wrapped in a ``<details>`` block so it sits below the
+    fold: it is provenance for a reader who wants it, not part of deciding
+    whether the idea is worth taking on.
+
+    Args:
+        proposal: Proposal dict with ``title``, ``tldr`` and ``sections``.
+
+    Returns:
+        Markdown body string, without YAML frontmatter.
+    """
+    sections = proposal.get("sections", {})
+    parts = [f"# {proposal.get('title') or 'Untitled'}"]
+
+    tldr = (proposal.get("tldr") or "").strip()
+    if tldr:
+        parts.append(f"**TL;DR:** {tldr}")
+
+    for key in _SECTION_KEYS:
+        content = _format_section_content(key, sections.get(key, _empty_section(key))).strip()
+        heading = _SECTION_HEADINGS[key]
+        if key in _COLLAPSED_KEYS:
+            # An empty provenance block is noise; an empty visible section is a
+            # gap the reader should see, so only the collapsed ones are dropped.
+            if not content:
+                continue
+            parts.append(
+                f"<details>\n<summary><b>{heading}</b></summary>\n\n{content}\n\n</details>"
+            )
+        else:
+            parts.append(f"## {heading}\n\n{content}")
+
+    return "\n\n".join(parts) + "\n"
 
 
 def write_refined_proposal(run_dir: Path, proposal: dict) -> Path:
@@ -271,19 +398,11 @@ def write_refined_proposal(run_dir: Path, proposal: dict) -> Path:
     # Build frontmatter from all keys except sections
     frontmatter = {k: v for k, v in proposal.items() if k != "sections"}
 
-    # Build markdown body from sections
-    sections = proposal.get("sections", {})
-    body_parts = []
-    for key in _SECTION_KEYS:
-        heading = _SECTION_HEADINGS[key]
-        content = _format_section_content(sections.get(key, ""))
-        body_parts.append(f"# {heading}\n\n{content}\n")
-
     frontmatter_str = yaml.safe_dump(frontmatter, default_flow_style=False, sort_keys=False)
-    body_str = "\n".join(body_parts)
+    body_str = render_proposal_body(proposal)
 
     with open(file_path, "w") as f:
-        f.write(f"---\n{frontmatter_str}---\n\n{body_str}\n")
+        f.write(f"---\n{frontmatter_str}---\n\n{body_str}")
 
     return file_path
 
@@ -333,15 +452,24 @@ def _parse_proposal_markdown(text: str) -> dict | None:
     if not isinstance(proposal, dict):
         return None
 
-    # Parse sections from markdown body
-    sections = {}
-    # Split on heading pattern
-    heading_pattern = re.compile(r"^# (.+)$", re.MULTILINE)
-    parts = heading_pattern.split(body)
+    # Pull the TL;DR out of the title block before splitting on headings.
+    tldr = re.search(r"^\*\*TL;DR:\*\*\s*(.+)$", body, re.MULTILINE)
+    if tldr:
+        proposal.setdefault("tldr", tldr.group(1).strip())
+
+    # Strip the collapse wrappers so the parser sees plain headings.  Legacy
+    # files have none, which is why the same path reads both formats.
+    body = re.sub(r"</?details>\n?", "", body)
+    body = re.sub(r"<summary><b>(.+?)</b></summary>", r"## \1", body)
+
+    # Split on headings, accepting the current "##" and the legacy "#".
+    parts = re.compile(r"^#{1,2} (.+)$", re.MULTILINE).split(body)
 
     # parts[0] is text before first heading (usually empty)
     # Then alternating: heading_text, content, heading_text, content, ...
     heading_to_key = {v: k for k, v in _SECTION_HEADINGS.items()}
+    heading_to_key.update(_LEGACY_HEADINGS)
+    sections = {}
     for i in range(1, len(parts), 2):
         heading_text = parts[i].strip()
         content = parts[i + 1] if i + 1 < len(parts) else ""
@@ -351,11 +479,7 @@ def _parse_proposal_markdown(text: str) -> dict | None:
 
     # Ensure all section keys exist
     for key in _SECTION_KEYS:
-        if key not in sections:
-            if key in ("alternative_framings", "cited_sources"):
-                sections[key] = []
-            else:
-                sections[key] = ""
+        sections.setdefault(key, _empty_section(key))
 
     proposal["sections"] = sections
     return proposal

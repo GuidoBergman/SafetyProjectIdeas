@@ -261,21 +261,54 @@ For EACH scored idea (including those without refinements), use the LLM to produ
 >
 > **Task:** Produce a structured research proposal. Follow the proposal writing rules in `writing-guidelines.md` (self-contained, plain, brief, no em dashes; simple intuitive title).
 >
+> **Rules that decide whether the proposal is usable.** Each one exists because the corresponding section is worthless when written vaguely.
+>
+> 1. **`tldr` is a hard cap of 45 words.** It is the line that represents this idea in a ranked list of hundreds, so it has to state what is unknown, what you measure, and what changes if the answer comes out either way. No jargon a non-specialist would have to look up.
+> 2. **`day1_check` must name an artifact to obtain and a number to measure**, and must be doable in under four hours without training anything. "Read the literature", "set up the environment" and "clarify the scope" are not Day-1 checks. If no such check exists for this idea, return `""` rather than inventing one.
+> 3. **Every risk must name the experiment that detects it** (`detected_by`), drawn from `proposed_first_experiments` or from `day1_check`, and its `response` must be one of: stop the project, retry with a specific named change, or mitigate with a specific named change. A risk you cannot detect and cannot respond to is not a risk, it is a worry. Leave it out.
+> 4. **Do not list an outcome as a risk.** A result that falsifies the hypothesis is a finding, not a risk. Risks are things that stop you learning anything.
+> 5. **`why_this_matters` names a mechanism, not a category.** "Misalignment" and "loss of control" are categories. "A model that has learned to behave under audit passes pre-deployment auditing" is a mechanism. For pathways B, C, D and E the `where_the_chain_ends` field must name the concrete decision the chain terminates in, or `theory_of_impact` caps at 3.
+> 6. **`who_this_is_for` names a party, not an audience.** "Researchers", "the community" and "future evaluators" are audiences. Name an org or team, say what they do today, and say what they would do differently.
+> 7. **No scores, score numbers or criterion names in any body section.** All score justification goes in `scores_rationale`, which renders collapsed.
+>
 > **Output format (JSON):**
 > ```json
 > {
 >   "idea_id": "<id>",
 >   "title": "<simple, intuitive title — short; let the research question carry the fuller framing>",
+>   "tldr": "<max 45 words, see rule 1>",
+>   "pathway": "<exactly one of A, B, C, D, E>",
+>   "named_party": "<the specific org or team that would act>",
 >   "research_question": "<1-2 clear sentences framing the core question>",
+>   "why_this_matters": {
+>     "failure_this_targets": "<the specific mechanism, see rule 5>",
+>     "why_the_work_reduces_it": "<2-3 sentences; say whether the mechanism is a required step or one contributing factor>",
+>     "where_the_chain_ends": "<required for pathways B/C/D/E: the concrete decision this eventually changes; \"\" for pathway A>"
+>   },
+>   "day1_check": "<see rule 2, or \"\" if none exists>",
 >   "approach_outline": "<3-5 sentences describing methodology and key steps>",
+>   "scope_and_deliverables": "<total hours and elapsed weeks, split into 2-3 stages where each stage can stop the next, then the concrete artifact produced>",
 >   "proposed_first_experiments": [
 >     "<concrete experiment 1 — what to do, what to measure, expected outcome>",
 >     "<concrete experiment 2>",
 >     "<concrete experiment 3>"
 >   ],
->   "impact_pathway": "<declare ONE pathway (A decision / B research redirection / C prerequisite / D field epistemics / E talent allocation), then name the specific party and the specific thing they would do differently>",
->   "theory_of_impact_chain": "<2-4 sentences: if this works, then X, which leads to Y, which improves safety because Z>",
->   "strength_rationale": "<2-3 sentences summarizing why this idea is strong, referencing top-scoring criteria>",
+>   "risks": [
+>     {
+>       "name": "<short name>",
+>       "consequence": "<what you lose if it happens>",
+>       "detected_by": "<the experiment or check that surfaces it, see rule 3>",
+>       "response": "<stop | retry with <named change> | mitigate by <named change>>"
+>     }
+>   ],
+>   "prerequisites": [
+>     "<compute, access, data or skill needed to start — one per line, concrete>"
+>   ],
+>   "who_this_is_for": "<see rule 6>",
+>   "open_questions": [
+>     "<something genuinely unresolved that a person taking this on should know>"
+>   ],
+>   "scores_rationale": "<per-criterion justification; the only place score numbers may appear>",
 >   "cited_sources": [
 >     {"title": "<paper title>", "authors": "<authors>", "url": "<url>", "relevance": "<1 sentence>"}
 >   ],
@@ -290,6 +323,8 @@ For EACH scored idea (including those without refinements), use the LLM to produ
 >   }
 > }
 > ```
+>
+> Assemble `why_this_matters` into the single prose section the writer expects by joining its three parts with their labels: `**The failure this targets:** ...`, `**Why the work reduces it:** ...`, `**Where the chain ends:** ...`.
 
 Build the proposal skeleton and write:
 
