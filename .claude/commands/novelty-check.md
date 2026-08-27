@@ -1,6 +1,6 @@
 # Novelty Assessment & Citation Verification
 
-Perform a full novelty assessment and citation verification for one or more AI Safety research ideas. This skill is used standalone or referenced by other skills (`/score-ideas` Wave 3, `/evaluate-idea` Step 3).
+Perform a full novelty assessment and citation verification for one or more AI Safety research ideas. This skill is used standalone or referenced by other skills (`/score-ideas` Wave 3, `/grill-idea` Step 5).
 
 ## Setup
 
@@ -23,7 +23,7 @@ Save both outputs — they are used throughout the protocol below.
 Ask the coordinator how they want to provide the idea(s):
 
 > How would you like to provide the idea(s)?
-> 1. **By ID** — provide an idea ID (e.g., "gen-0017") and I'll load it from `data/ideas/`
+> 1. **By ID** — provide an idea ID (e.g., "gen-3f9a1c04") and I'll load it from `data/ideas/`
 > 2. **Describe it** — paste or describe the idea inline
 > 3. **From a batch file** — provide a batch file path (used by pipeline subagents)
 

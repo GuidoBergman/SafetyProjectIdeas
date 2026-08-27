@@ -60,9 +60,9 @@ By default it is scoped by **time window and source** — it sweeps the last ~2 
 
 Both modes end with a **whole-harvest synthesis pass**: four subagents that each see every harvested paper at once and generate ideas from the relationships between them (shared untested assumptions, contradictory results, method transfers, measurement gaps) rather than by extending any single paper.
 
-**3. Refine** — `/evaluate-idea`, once per promising idea
+**3. Refine** — `/grill-idea`, once per promising idea
 
-The most promising ideas are the top-ranked ones in `data/runs/<timestamp>/rank/ranked_proposals.md`, sorted best-first behind a top-10 summary table. Pick from there and run `/evaluate-idea` once per idea you picked. It checks the idea is **operationalizable** (concrete experiments, baselines, success criteria) and **contextualized** (re-running the novelty check from scratch rather than trusting the pipeline's), then opens an interactive loop to sharpen the approach, refine the experiments, strengthen the impact chain, reframe it, or drop it. Saving writes the idea to the selected ideas file and updates `data/output/idea_tracker.md`.
+The most promising ideas are the top-ranked ones in `data/runs/<timestamp>/rank/ranked_proposals.md`, sorted best-first behind a top-10 summary table. Pick from there and run `/grill-idea` once per idea you picked. It interviews you one question at a time through every section of the idea format, checking each against its gate, then red teams the whole idea by classifying every claim as established, assumed or ambiguous and attacking the last two. It writes `data/ideas/<idea_id>.md` at the end and updates `data/output/idea_tracker.md`.
 
 ## Pipeline Skills
 
@@ -158,19 +158,11 @@ Re-scores refined proposals on full content and produces final rankings. Retains
 
 ### Evaluation & Management
 
-#### `/evaluate-idea` — Evaluate a Single Idea
+#### `/grill-idea` — Grill a Single Idea
 
-Interactive evaluation workflow for any idea (pipeline-generated or user-submitted):
+Relentless interview over one idea, pipeline-generated or user-submitted. Drives by default and asks one question at a time with a recommended answer; say `menu` for the escapes (novelty check, research a topic, scan the landscape, red team the impact, reframe, checkpoint, drop). Adapts to the starting state, from a one-line hunch to a full proposal. Dispatches `/novelty-check`, `/research-topic` and `/red-team-impact` rather than repeating them, and agrees the search plan with you before any of them run. Writes once, at the end.
 
-1. Load existing idea from `data/ideas/` or describe a new one
-2. Score against all criteria (new ideas only)
-3. Optional novelty check with literature search
-4. Collaborative refinement loop (discuss, strengthen, reframe, check novelty, or remove)
-5. Save to `data/ideas/` and update idea tracker
-
-Updates `data/output/idea_tracker.md` with status transitions: `Not reviewed` -> `Evaluating` -> `Added and needs manual review` / `Not promising` / `Removed` -> `Added`.
-
-**Important:** Ideas with only estimated novelty (`novelty_method: "novelty_estimated"`) trigger an automatic novelty check before saving.
+Format, budgets and gates: [`docs/idea-format.md`](docs/idea-format.md).
 
 #### `/configure-teams` — Configure Teams and Profiles
 
@@ -191,7 +183,7 @@ Manage all project configuration interactively:
 5. /score-ideas              # Score and filter to top candidates
 6. /refine-ideas             # Strengthen and expand into full proposals
 7. /rank-ideas               # Produce final ranked list
-8. /evaluate-idea            # Interactively evaluate individual ideas
+8. /grill-idea            # Interactively evaluate individual ideas
 9. /novelty-check            # (Anytime) Verify novelty with literature search. This is recommended for top ideas only since it consumes a lot of tokens.
 10. /brainstorm-ideas        # (Anytime) Collaborative idea exploration
 ```

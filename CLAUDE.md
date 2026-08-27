@@ -20,8 +20,9 @@ SAIM (Safety Idea Machine) is an AI Safety Research Idea Generation Pipeline for
 - `src/saim/kb/` — Knowledge base management (placeholder)
 - `config/` — YAML config files (teams, criteria, pipeline settings, KB criteria, participants/)
 - `data/` — Pipeline outputs: `ideas/`, `kb/`, `output/`, `runs/`
-- `data/output/idea_tracker.md` — Master tracker for all ranked ideas. Each idea has a status column tracking its review state: "Not reviewed" (default), "Not promising", "Removed", "Evaluating", "Added and needs manual review", "Added". The evaluate-idea skill updates this status as ideas move through the evaluation workflow.
-- `.claude/commands/` — Claude Code skills: generate-ideas, score-ideas, configure-teams, research-landscape
+- `data/output/idea_tracker.md` — Master tracker for all ranked ideas. Each idea has a status column tracking its review state: "Not reviewed" (default), "Not promising", "Removed", "Evaluating", "Added and needs manual review", "Added". The grill-idea skill updates this status as ideas move through the workflow.
+- `.claude/commands/` — Claude Code skills: generate-ideas, score-ideas, configure-teams, research-landscape, grill-idea
+- `docs/idea-format.md` — the schema, word budgets and gates for `data/ideas/<idea_id>.md`
 
 ## Conventions
 
@@ -57,4 +58,4 @@ The facilitator-mode workflow has three pieces:
 
 To refresh both files, run the project-local skill `/refresh-participant-logs` (`.claude/commands/refresh-participant-logs.md`). It reads the allowlist, calls the `gdoc` CLI in read-only mode (relying on gdoc's built-in awareness system for change detection — do not roll your own snapshotting), and merges new entries into the two tracker files.
 
-Participant ideas that graduate to formal evaluation still flow through `data/output/idea_tracker.md` and the existing status vocabulary (`Not reviewed`, `Evaluating`, `Added and needs manual review`, `Added`, `Not promising`, `Removed`) via the `/evaluate-idea` skill — that side of the workflow is unchanged on this branch.
+Participant ideas that graduate to formal evaluation still flow through `data/output/idea_tracker.md` and the existing status vocabulary (`Not reviewed`, `Evaluating`, `Added and needs manual review`, `Added`, `Not promising`, `Removed`) via the `/grill-idea` skill — that side of the workflow is unchanged on this branch.

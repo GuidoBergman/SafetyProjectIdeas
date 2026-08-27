@@ -291,5 +291,5 @@ open them directly.
 - **Do not summarize research content.** Pointers only. The report
   tells the facilitator *where to look*, not *what the content means*.
 - **No novelty or idea evaluation here.** This skill only surfaces
-  changes. Idea evaluation still goes through `/evaluate-idea` and
+  changes. Idea evaluation still goes through `/grill-idea` and
   the existing `idea_tracker.md` workflow.

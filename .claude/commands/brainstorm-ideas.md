@@ -87,7 +87,13 @@ uv run python -m saim.verification.citation search-s2 '<query>'
 
 ### If the user wants to save an idea:
 
-Write the idea as a markdown file to `data/ideas/` following the existing naming pattern. This makes it available to future pipeline runs via pipeline memory.
+Mint an ID with the shared generator — never write one by hand and never use a sequential ID or a title slug:
+
+```bash
+uv run python -m saim.ids
+```
+
+Write the idea as `data/ideas/<idea_id>.md`, using the printed ID (e.g. `gen-3f9a1c04`) as both the filename and the `idea_id` in the YAML frontmatter. This makes it available to future pipeline runs via pipeline memory.
 
 Continue the loop until the user indicates they're done (e.g., "done", "exit", "that's enough").
 
@@ -96,4 +102,4 @@ Continue the loop until the user indicates they're done (e.g., "done", "exit", "
 When the session ends, provide:
 - Count of ideas explored
 - List of any ideas saved to `data/ideas/`
-- Suggestions for next steps (e.g., run `/evaluate-idea` on favorites, run full pipeline)
+- Suggestions for next steps (e.g., run `/grill-idea` on favorites, run full pipeline)

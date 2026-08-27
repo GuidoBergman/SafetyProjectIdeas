@@ -315,5 +315,5 @@ If the coordinator wants changes, update the report file accordingly.
 This report can feed into:
 - `/brainstorm-ideas` — use the research frontier and gaps as brainstorming seeds
 - `/generate-ideas` — gaps and open questions feed directly into idea generation strategies
-- `/evaluate-idea` — use the paper catalog as context when evaluating related ideas
+- `/grill-idea` — use the paper catalog as context when evaluating related ideas
 - `/novelty-check` — the paper catalog provides a head start for novelty assessment of ideas in this area
