@@ -1,5 +1,5 @@
 # Measuring theory of impact: proposed rubric redesign
-_Draft for review. Nothing has been changed in_ `config/criteria.yaml` _yet._
+_Shipped in commit 4f145f79. Both criteria are live in_ `config/criteria.yaml` _and weighted in_ `config/teams.yaml`_. The validation pass in Open items has not been run._
 ## Executive summary
 **What this is.** A replacement for how SAIM scores whether a research idea would actually reduce catastrophic risk from advanced AI. Today that is one criterion, `theory_of_impact`, scored 1-5.
 
@@ -147,4 +147,4 @@ Magnitude is folded into levels 4 and 5 rather than being a separate number.
 ## Open items
 1. **A resource is still missing.** A page on theory of impact was mentioned but the link has not come through yet. The rubrics may need revision once it is read.
   
-2. **Validation before code.** Score the ideas in the shared Google Doc under both the old and new rubrics and compare distributions. If the new rubric still puts most ideas at 4-5, tighten it before touching `criteria.yaml`.
+2. **Validation not yet run.** Score the ideas in the shared Google Doc under both the old and new rubrics and compare distributions. If the new rubric still puts most ideas at 4-5, it needs tightening. This was originally planned to happen before the config change; the config shipped first, so the rubrics are live but unvalidated against real ideas.
