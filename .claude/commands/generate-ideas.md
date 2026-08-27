@@ -323,7 +323,13 @@ After Phase 2b, run a structured combinatorial pass. This generates ideas from e
 
 For each idea returned by the subagents (Phase 2a + 2b + 2c), write it to the run directory.
 
-Assign sequential idea IDs: `gen-001`, `gen-002`, etc., across all subfields.
+**Idea IDs — never invent them.** Mint one short-UUID ID per idea with the shared generator (this is the only sanctioned way to create an idea ID anywhere in the project; sequential IDs like `gen-001` collide across runs and batches):
+
+```bash
+uv run python -m saim.ids <number_of_ideas>
+```
+
+This prints one ID per line, e.g. `gen-3f9a1c04`. Assign them to the ideas in order. (If you omit `idea_id` entirely, `generate write` mints one with the same generator and prints the resulting file path — the filename is the ID.)
 
 For each idea, add the `idea_id` and `run_id` (extracted from the run directory name) to the JSON, then write:
 

@@ -32,6 +32,7 @@ SAIM (Safety Idea Machine) is an AI Safety Research Idea Generation Pipeline for
 - Config is YAML-based, loaded via `config/loader.py`
 - Team types and scoring criteria are configured in `config/teams.yaml` and `config/criteria.yaml`
 - Every new function MUST have a test
+- **Idea IDs** come from one place only: `saim.ids.new_idea_id()` (CLI: `uv run python -m saim.ids [count]`), which returns a short UUID like `gen-3f9a1c04`. Never mint an ID by hand, from a title slug, or from a per-run counter — sequential IDs collide when ideas are generated in separate batches or runs and overwrite each other in `data/ideas/`. Legacy IDs (`gen-001`, `gen-0017`) stay valid on disk but must not be created again.
 - Whenever an LLM is asked to produce a numeric score, there must be a rubric defining what each number means
 - Estimated novelty (`novelty_method: "novelty_estimated"`) is unreliable — it is an LLM guess without literature search. Ideas must not be saved/persisted with only estimated novelty; a real novelty check (web search + citation verification) must run first.
 - **Source credibility:** When a paper or post is proposed as a basis for an idea, assess its credibility before building on it. Three dimensions matter:

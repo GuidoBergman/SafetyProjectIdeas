@@ -54,6 +54,10 @@ def _make_team(criteria_weights=None):
     )
 
 
+# saim.ids-format ID, required when a fixture goes through write_idea_sketch.
+CANONICAL_ID = "gen-1111aaaa"
+
+
 def _make_idea(idea_id="gen-001"):
     return {
         "idea_id": idea_id,
@@ -1062,7 +1066,7 @@ class TestFilterSurvivorsEdgeCases:
 
         # Write generate-stage ideas with full body
         idea_data = {
-            "idea_id": "gen-001",
+            "idea_id": CANONICAL_ID,
             "run_id": "test-run",
             "subfield": "interpretability",
             "generation_strategy": "novel_direction",
@@ -1080,7 +1084,7 @@ class TestFilterSurvivorsEdgeCases:
         results_dir.mkdir(parents=True)
         results = [
             {
-                "idea_id": "gen-001",
+                "idea_id": CANONICAL_ID,
                 "title": "Full Idea Title",
                 "run_id": "test-run",
                 "quick_score": 4,
@@ -1101,7 +1105,7 @@ class TestFilterSurvivorsEdgeCases:
         assert "original_idea" in item
         assert item["original_idea"]["body"] is not None
         assert "detailed problem" in item["original_idea"]["body"]
-        assert item["original_idea"]["idea_id"] == "gen-001"
+        assert item["original_idea"]["idea_id"] == CANONICAL_ID
 
     def test_create_batches_stage2_without_generate_data(self, tmp_path):
         """Stage 2+ batches work even if generate data is missing for some ideas."""

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Batch process agent JSONL output files to extract JSON ideas and write them to the run directory."""
+"""Batch process agent JSONL output files: extract JSON ideas, write them to the run dir."""
 
 import html
 import json
@@ -50,7 +50,7 @@ def extract_text_from_jsonl(filepath: str) -> str:
 def extract_json_array(text: str) -> list[dict]:
     """Extract the largest JSON array from text containing markdown code blocks."""
     text = html.unescape(text)
-    text = re.sub(r'[\x00-\x08\x0b\x0c\x0e-\x1f]', '', text)
+    text = re.sub(r"[\x00-\x08\x0b\x0c\x0e-\x1f]", "", text)
 
     # Split on ```json markers and try each block
     blocks = text.split("```json")
@@ -121,9 +121,10 @@ def main():
 
     written = 0
     errors = 0
-    for i, idea in enumerate(all_ideas, 1):
-        idea_id = f"gen-{i:04d}"
-        idea["idea_id"] = idea_id
+    for idea in all_ideas:
+        # IDs come from saim.ids only (via write_idea_sketch). Sequential ids
+        # collide across batches and runs in the shared data/ideas/ catalogue.
+        idea.pop("idea_id", None)
         idea["run_id"] = RUN_ID
 
         try:
@@ -132,8 +133,13 @@ def main():
             idea["confidence"] = 0.5
 
         for key in [
-            "title", "problem", "direction", "why_it_matters",
-            "relevant_context", "subfield", "generation_strategy",
+            "title",
+            "problem",
+            "direction",
+            "why_it_matters",
+            "relevant_context",
+            "subfield",
+            "generation_strategy",
         ]:
             if key in idea and isinstance(idea[key], str):
                 idea[key] = html.unescape(idea[key])
@@ -149,7 +155,7 @@ def main():
         except Exception as e:
             errors += 1
             if errors <= 5:
-                print(f"  ERROR writing {idea_id}: {e}")
+                print(f"  ERROR writing {idea.get('title', '<untitled>')!r}: {e}")
 
     print(f"\nWritten: {written}, Errors: {errors}")
     print("\nPer subfield:")

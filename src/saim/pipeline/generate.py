@@ -5,31 +5,52 @@ from pathlib import Path
 
 import yaml
 
+from saim.ids import is_idea_id, new_idea_id
 
 _REQUIRED_IDEA_KEYS = [
-    "idea_id", "run_id", "subfield", "generation_strategy",
-    "confidence", "title", "problem", "direction",
-    "why_it_matters", "relevant_context",
+    "run_id",
+    "subfield",
+    "generation_strategy",
+    "confidence",
+    "title",
+    "problem",
+    "direction",
+    "why_it_matters",
+    "relevant_context",
 ]
 
 
 def write_idea_sketch(run_dir: Path, idea: dict) -> Path:
     """Write an idea sketch as a markdown file with YAML frontmatter.
 
+    ``idea_id`` is optional: when absent or empty it is minted with
+    ``saim.ids.new_idea_id()``. When present it must already be in that format,
+    so IDs are always generated the same way and never collide across batches.
+
     Returns the path to the created file.
 
     Raises:
-        ValueError: If required keys are missing from the idea dict.
+        ValueError: If required keys are missing, or ``idea_id`` is set to
+            something other than a ``saim.ids`` ID.
     """
     missing = [k for k in _REQUIRED_IDEA_KEYS if k not in idea]
     if missing:
         raise ValueError(f"Idea dict missing required keys: {missing}")
 
+    idea_id = idea.get("idea_id") or new_idea_id()
+    if not is_idea_id(idea_id):
+        raise ValueError(
+            f"Invalid idea_id {idea_id!r}. Idea IDs must come from saim.ids "
+            "(uv run python -m saim.ids), which returns e.g. 'gen-3f9a1c04'. "
+            "Hand-written or sequential IDs collide across batches and runs. "
+            "Omit idea_id to have one minted here."
+        )
+
     generate_dir = run_dir / "generate"
     generate_dir.mkdir(parents=True, exist_ok=True)
 
     frontmatter = {
-        "idea_id": idea["idea_id"],
+        "idea_id": idea_id,
         "run_id": idea["run_id"],
         "stage": "generate",
         "timestamp": datetime.now(UTC).strftime("%Y-%m-%dT%H:%M:%SZ"),
@@ -53,7 +74,7 @@ def write_idea_sketch(run_dir: Path, idea: dict) -> Path:
     fm_str = yaml.dump(frontmatter, default_flow_style=False, sort_keys=False)
     content = f"---\n{fm_str}---\n\n" + "\n".join(body_lines) + "\n"
 
-    file_path = generate_dir / f"{idea['idea_id']}.md"
+    file_path = generate_dir / f"{idea_id}.md"
     file_path.write_text(content)
     return file_path
 

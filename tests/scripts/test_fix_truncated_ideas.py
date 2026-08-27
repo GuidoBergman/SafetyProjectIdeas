@@ -21,7 +21,10 @@ _fix_ranked_proposals = _mod._fix_ranked_proposals
 fix_idea = _mod.fix_idea
 
 
-def _write_generate_idea(tmp_path, idea_id="gen-001"):
+IDEA_ID = "gen-1111aaaa"
+
+
+def _write_generate_idea(tmp_path, idea_id=IDEA_ID):
     """Write a generate-stage idea with full content."""
     idea = {
         "idea_id": idea_id,
@@ -39,7 +42,7 @@ def _write_generate_idea(tmp_path, idea_id="gen-001"):
     return idea
 
 
-def _write_scored_idea(tmp_path, idea_id="gen-001"):
+def _write_scored_idea(tmp_path, idea_id=IDEA_ID):
     """Write a scored idea JSON with complete reasoning."""
     scored = {
         "idea_id": idea_id,
@@ -76,7 +79,7 @@ def _write_scored_idea(tmp_path, idea_id="gen-001"):
     return scored
 
 
-def _write_truncated_refine(tmp_path, idea_id="gen-001"):
+def _write_truncated_refine(tmp_path, idea_id=IDEA_ID):
     """Write a refine proposal with truncated content (simulating the bug)."""
     proposal = {
         "idea_id": idea_id,
@@ -91,8 +94,7 @@ def _write_truncated_refine(tmp_path, idea_id="gen-001"):
         "sections": {
             "research_question": "To what extent does if harmful prompts",
             "approach_outline": (
-                "Take 100 prompts. Refined: Refine novelty for "
-                "'Test': Target a specific"
+                "Take 100 prompts. Refined: Refine novelty for 'Test': Target a specific"
             ),
             "proposed_first_experiments": "Experiment 1: Set up framework. ~8 hours.",
             "theory_of_impact_chain": "Contamination means evaluations overestimate robustness.",
@@ -148,9 +150,9 @@ class TestFixIdea:
         from saim.pipeline.generate import read_idea_sketches
 
         gen = read_idea_sketches(tmp_path)[0]
-        scored_path = tmp_path / "filter_score" / "scored" / "gen-001.json"
+        scored_path = tmp_path / "filter_score" / "scored" / f"{IDEA_ID}.json"
 
-        result = fix_idea("gen-001", gen, scored_path, refine, tmp_path)
+        result = fix_idea(IDEA_ID, gen, scored_path, refine, tmp_path)
         sections = result["proposal"]["sections"]
 
         assert "approach_outline" in result["changes"]
@@ -166,9 +168,9 @@ class TestFixIdea:
         from saim.pipeline.generate import read_idea_sketches
 
         gen = read_idea_sketches(tmp_path)[0]
-        scored_path = tmp_path / "filter_score" / "scored" / "gen-001.json"
+        scored_path = tmp_path / "filter_score" / "scored" / f"{IDEA_ID}.json"
 
-        result = fix_idea("gen-001", gen, scored_path, refine, tmp_path)
+        result = fix_idea(IDEA_ID, gen, scored_path, refine, tmp_path)
         sections = result["proposal"]["sections"]
 
         assert "strength_rationale" in result["changes"]
@@ -182,9 +184,9 @@ class TestFixIdea:
         from saim.pipeline.generate import read_idea_sketches
 
         gen = read_idea_sketches(tmp_path)[0]
-        scored_path = tmp_path / "filter_score" / "scored" / "gen-001.json"
+        scored_path = tmp_path / "filter_score" / "scored" / f"{IDEA_ID}.json"
 
-        result = fix_idea("gen-001", gen, scored_path, refine, tmp_path)
+        result = fix_idea(IDEA_ID, gen, scored_path, refine, tmp_path)
 
         assert any("alternative_framings" in c for c in result["changes"])
         assert result["proposal"]["sections"]["alternative_framings"] == []
@@ -197,9 +199,9 @@ class TestFixIdea:
         from saim.pipeline.generate import read_idea_sketches
 
         gen = read_idea_sketches(tmp_path)[0]
-        scored_path = tmp_path / "filter_score" / "scored" / "gen-001.json"
+        scored_path = tmp_path / "filter_score" / "scored" / f"{IDEA_ID}.json"
 
-        result = fix_idea("gen-001", gen, scored_path, refine, tmp_path)
+        result = fix_idea(IDEA_ID, gen, scored_path, refine, tmp_path)
         sections = result["proposal"]["sections"]
 
         assert "cited_sources" in result["changes"]
@@ -212,24 +214,22 @@ class TestFixIdea:
         from saim.pipeline.generate import read_idea_sketches
 
         gen = read_idea_sketches(tmp_path)[0]
-        scored_path = tmp_path / "filter_score" / "scored" / "gen-001.json"
+        scored_path = tmp_path / "filter_score" / "scored" / f"{IDEA_ID}.json"
 
         # Proposal with complete, non-truncated content
         proposal = {
-            "idea_id": "gen-001",
+            "idea_id": IDEA_ID,
             "run_id": "test-run",
             "stage": "refine",
             "title": "Test Idea Title",
             "sections": {
                 "research_question": "A complete research question about contamination.",
                 "approach_outline": (
-                    "Take 100 prompts and generate paraphrases."
-                    " Compare ASR on models."
+                    "Take 100 prompts and generate paraphrases. Compare ASR on models."
                 ),
                 "proposed_first_experiments": "Experiment 1: baseline.",
                 "theory_of_impact_chain": (
-                    "Contamination means evaluations overestimate"
-                    " robustness."
+                    "Contamination means evaluations overestimate robustness."
                 ),
                 "strength_rationale": "Strong across all dimensions.",
                 "alternative_framings": ["A valid framing without truncation."],
@@ -238,7 +238,7 @@ class TestFixIdea:
         }
         write_refined_proposal(tmp_path, proposal)
 
-        result = fix_idea("gen-001", gen, scored_path, proposal, tmp_path)
+        result = fix_idea(IDEA_ID, gen, scored_path, proposal, tmp_path)
         assert result["changes"] == []
 
 
@@ -263,7 +263,7 @@ class TestFixRankedProposals:
         rank_dir.mkdir(parents=True)
         ranked = [
             {
-                "idea_id": "gen-001",
+                "idea_id": IDEA_ID,
                 "rank": 1,
                 "title": "Test",
                 "weighted_score": 4.5,
@@ -280,7 +280,7 @@ class TestFixRankedProposals:
         with open(rank_dir / "ranked_proposals.md", "w") as f:
             f.write("old markdown")
 
-        fixed = {"gen-001": {"approach_outline": "complete approach."}}
+        fixed = {IDEA_ID: {"approach_outline": "complete approach."}}
         output_dir = tmp_path / "output"
         output_dir.mkdir()
         count = _fix_ranked_proposals(tmp_path, fixed, output_dir=output_dir)
@@ -296,7 +296,5 @@ class TestFixRankedProposals:
 
     def test_returns_zero_when_no_rank_dir(self, tmp_path):
         output_dir = tmp_path / "output"
-        count = _fix_ranked_proposals(
-            tmp_path, {"gen-001": {"x": "y"}}, output_dir=output_dir
-        )
+        count = _fix_ranked_proposals(tmp_path, {IDEA_ID: {"x": "y"}}, output_dir=output_dir)
         assert count == 0
