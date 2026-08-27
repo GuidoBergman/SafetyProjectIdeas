@@ -92,6 +92,35 @@ Wait for the workflow to complete (you will be notified). It is billed/opt-in bu
 
 ---
 
+## Phase 6b: Publish the Idea Dashboard
+
+Build this run's dashboard and publish it as an Artifact. The dashboard is how anyone other than the coordinator reads the run: ideas in rank order, full-text search and facet filters, and a **review status per idea that every viewer shares**.
+
+**1. Build the page** (deterministic script, no subagent):
+
+```bash
+uv run python scripts/build_idea_dashboard.py <RUN_DIR> --title "SAIM Ideas <RUN_DATE>" --seed-status data/output/idea_tracker.md
+```
+
+It writes `<RUN_DIR>/dashboard.html`. Notes:
+- `--title` must name the run (e.g. `SAIM Ideas 2026-08-27`) so two runs never publish under the same name.
+- `--seed-status` pre-fills the status of ideas that are already in the tracker. Drop the flag if that file does not exist.
+- The output is an **HTML fragment**, not a full document — the Artifact tool adds the document wrapper at publish time. Add `--standalone` only when you need a file that opens in a plain browser (shared status saving does not work there).
+
+**2. Publish it with the Artifact tool:**
+- `file_path`: `<RUN_DIR>/dashboard.html`
+- `capabilities`: `{"artifact": {}}` — **required**. Without it the page loads read-only and nobody can save a status change.
+- `favicon`: 💡
+- `description`: one sentence naming the run and how many ideas it holds.
+
+**3. Report the artifact URL** in the final report. The coordinator shares it from the artifact's share menu; anyone with an edit link can change a status and everyone else sees it on their next load.
+
+Run this **after** calculated novelty, never before: the dashboard should carry assessed novelty, not estimated guesses.
+
+**If the Artifact tool is unavailable:** say so plainly, re-run the build with `--standalone`, and leave the file in the run directory. The run is not a failure — the dashboard can be published later from another session.
+
+---
+
 ## Phase 7: Final Report
 
 Once the workflow finishes, present:
@@ -102,6 +131,7 @@ Once the workflow finishes, present:
    - Final ranking: `RUN_DIR/rank/ranked_proposals.md`
    - rank #1 backup: `RUN_DIR/rank/ranked_proposals.rank1.json`
    - Persistent copy: `data/output/ranked_proposals.md`
+   - Shared dashboard: the Artifact URL from Phase 6b
    - If persisted: the assessed top ideas now in `data/ideas/`
 
 ---
