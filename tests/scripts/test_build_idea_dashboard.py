@@ -240,3 +240,60 @@ def test_main_standalone_writes_a_full_document(tmp_path):
     text = out.read_text(encoding="utf-8")
     assert text.startswith("<!doctype html>")
     assert "Do Refusal Directions Transfer" in text
+
+
+def test_promising_is_in_the_vocabulary_before_evaluating():
+    assert "Promising" in _mod.STATUSES
+    assert _mod.STATUSES.index("Promising") < _mod.STATUSES.index("Evaluating")
+    assert _mod.STATUSES[0] == "Not reviewed"
+
+
+def test_statuses_from_dashboard_reads_back_what_render_wrote():
+    records = [_mod.to_record(proposal(), "R", "B1", "gen-aaaa1111", "")]
+    statuses = {
+        "gen-aaaa1111": {
+            "status": "Promising",
+            "note": "worth a look",
+            "by": "g",
+            "at": "2026-08-28",
+        }
+    }
+    html = _mod.render_html(records, statuses, "Board", "sub")
+    assert _mod.statuses_from_dashboard(html) == statuses
+
+
+def test_statuses_from_dashboard_drops_unknown_statuses():
+    html = _mod.render_html([], {"gen-x": {"status": "Invented"}}, "Board", "sub")
+    assert _mod.statuses_from_dashboard(html) == {}
+
+
+def test_statuses_from_dashboard_without_a_status_block():
+    assert _mod.statuses_from_dashboard("<div>no dashboard here</div>") == {}
+
+
+def test_main_carries_statuses_from_a_previous_build(tmp_path):
+    run_dir = write_run(tmp_path, [proposal("gen-0017")])
+    first = tmp_path / "first.html"
+    _mod.main([str(run_dir), "--out", str(first)])
+    marked = _mod.render_html(
+        [_mod.to_record(proposal("gen-0017"), "R", "B1", "gen-0017", "")],
+        {"gen-0017": {"status": "Promising", "note": "", "by": "g", "at": "2026-08-28"}},
+        "Board",
+        "sub",
+    )
+    first.write_text(marked, encoding="utf-8")
+    second = tmp_path / "second.html"
+    _mod.main([str(run_dir), "--out", str(second), "--carry-status", str(first)])
+    carried = _mod.statuses_from_dashboard(second.read_text(encoding="utf-8"))
+    assert carried["gen-0017"]["status"] == "Promising"
+
+
+def test_main_ignores_carried_statuses_for_ideas_not_in_this_run(tmp_path):
+    run_dir = write_run(tmp_path, [proposal("gen-0017")])
+    stale = tmp_path / "stale.html"
+    stale.write_text(
+        _mod.render_html([], {"gen-9999": {"status": "Added"}}, "Board", "sub"), encoding="utf-8"
+    )
+    out = tmp_path / "out.html"
+    _mod.main([str(run_dir), "--out", str(out), "--carry-status", str(stale)])
+    assert _mod.statuses_from_dashboard(out.read_text(encoding="utf-8")) == {}

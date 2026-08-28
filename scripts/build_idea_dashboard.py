@@ -40,6 +40,7 @@ DEFAULT_OUT = "dashboard.html"
 #: Review status vocabulary, in workflow order. Mirrors data/output/idea_tracker.md.
 STATUSES = [
     "Not reviewed",
+    "Promising",
     "Evaluating",
     "Added and needs manual review",
     "Added",
@@ -275,6 +276,20 @@ def parse_tracker_statuses(text: str) -> dict[str, str]:
     return statuses
 
 
+def statuses_from_dashboard(html: str) -> dict[str, dict]:
+    """Read the status map out of a previously built dashboard page.
+
+    Used to rebuild a run's dashboard without discarding the statuses people already
+    set in the published artifact. Unknown statuses are dropped, so a page built by an
+    older version of this script cannot smuggle in a status the page can no longer show.
+    """
+    match = re.search(r'id="saim-status"[^>]*>(.*?)</script>', html, re.S)
+    if not match:
+        return {}
+    records = json.loads(match.group(1).replace("<\\/", "</"))
+    return {k: v for k, v in records.items() if v.get("status") in STATUSES}
+
+
 def seed_statuses(records: list[dict], tracker: dict[str, str]) -> dict[str, dict]:
     """Build the page's initial status map, seeding from a tracker where ids match."""
     now = datetime.datetime.now(datetime.UTC).strftime("%Y-%m-%d")
@@ -409,6 +424,7 @@ select[multiple]{min-width:170px;height:88px;font-size:12.5px}
 .statuspill{display:inline-flex;align-items:center;gap:6px;border-radius:999px;padding:4px 11px;font:600 12px var(--sans);
   background:var(--idle-soft);color:var(--ink-2)}
 .statuspill .swatch{width:7px;height:7px;border-radius:2px}
+.statuspill.s-note{background:var(--accent-soft);color:var(--accent)}
 .statuspill.s-ok{background:var(--ok-soft);color:var(--ok)}
 .statuspill.s-watch{background:var(--watch-soft);color:var(--watch)}
 .statuspill.s-stop{background:var(--stop-soft);color:var(--stop)}
@@ -499,10 +515,11 @@ const STATUS = JSON.parse(document.getElementById('saim-status').textContent);
 const STATUSES = __STATUS_LIST__;
 const DEFAULT_STATUS = STATUSES[0];
 const TONE = {
-  'Not reviewed':'s-idle', 'Evaluating':'s-watch', 'Added and needs manual review':'s-watch',
-  'Added':'s-ok', 'Not promising':'s-stop', 'Removed':'s-stop'
+  'Not reviewed':'s-idle', 'Promising':'s-note', 'Evaluating':'s-watch',
+  'Added and needs manual review':'s-watch', 'Added':'s-ok',
+  'Not promising':'s-stop', 'Removed':'s-stop'
 };
-const TONE_VAR = {'s-idle':'var(--idle)','s-watch':'var(--watch)','s-ok':'var(--ok)','s-stop':'var(--stop)'};
+const TONE_VAR = {'s-idle':'var(--idle)','s-note':'var(--accent)','s-watch':'var(--watch)','s-ok':'var(--ok)','s-stop':'var(--stop)'};
 const CRIT = {theory_of_impact:'Impact',accessible_complexity:'Accessible',narrow_scope:'Narrow scope',
   counterfactual_value:'Counterfactual',low_compute:'Low compute',novelty:'Novelty'};
 
@@ -846,6 +863,11 @@ def main(argv: list[str] | None = None) -> Path:
     )
     parser.add_argument("--title", default="", help="Page title (default: derived from the runs)")
     parser.add_argument("--seed-status", default="", help="idea_tracker.md to seed statuses from")
+    parser.add_argument(
+        "--carry-status",
+        default="",
+        help="Existing dashboard.html whose statuses are carried into the rebuilt page",
+    )
     parser.add_argument("--demo", action="store_true", help="Build from built-in demo records")
     parser.add_argument(
         "--standalone",
@@ -873,6 +895,9 @@ def main(argv: list[str] | None = None) -> Path:
         tracker = parse_tracker_statuses(Path(args.seed_status).read_text(encoding="utf-8"))
 
     statuses = seed_statuses(records, tracker)
+    if args.carry_status:
+        carried = statuses_from_dashboard(Path(args.carry_status).read_text(encoding="utf-8"))
+        statuses.update({k: v for k, v in carried.items() if k in {r["id"] for r in records}})
     generated = datetime.datetime.now(datetime.UTC).strftime("%Y-%m-%d %H:%M UTC")
     subtitle = f"{len(records)} ideas · {label} · built {generated}"
     title = args.title or "SAIM Idea Dashboard"
@@ -891,7 +916,7 @@ def main(argv: list[str] | None = None) -> Path:
         page = standalone_document(page, title)
     out.write_text(page, encoding="utf-8")
     print(f"Wrote {out} ({out.stat().st_size / 1024:.0f} KB, {len(records)} ideas)")
-    print(f"Seeded {len(statuses)} statuses from tracker" if statuses else "No statuses seeded")
+    print(f"Carried {len(statuses)} statuses into the page" if statuses else "No statuses carried")
     return out
 
 
