@@ -351,7 +351,7 @@ a:hover{text-decoration:underline}
 :focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:4px}
 
 /* ---- header ---- */
-.topbar{position:sticky;top:0;z-index:20;background:var(--ground);border-bottom:1px solid var(--border);padding-top:22px}
+.topbar{background:var(--ground);border-bottom:1px solid var(--border);padding-top:22px}
 .masthead{display:flex;flex-wrap:wrap;align-items:baseline;gap:10px 16px}
 h1{margin:0;font-size:22px;font-weight:600;letter-spacing:-.01em;text-wrap:balance}
 .sub{color:var(--ink-3);font-size:13px;font-family:var(--mono)}
